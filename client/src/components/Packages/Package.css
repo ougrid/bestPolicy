@@ -1,0 +1,36 @@
+.buyBtn:hover {
+    cursor: pointer;
+    background-color: white;
+    border: 1.5px solid #0f0e9f;
+    color:#0f0e9f;
+}
+#modal{
+    background-color: rgba(255,255,255,0.9);
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100vw;
+	z-index: 1;
+	overflow: auto;
+    margin: auto;
+}
+
+#logo-qr {
+    /* margin-top: 100px ; */
+    width: 400px;
+    height: 140px;
+}
+
+button{
+    background-color: #0f0e9f;
+    color: #fff;
+    border-radius: 8px;
+    margin-left: 5px;
+    border: 1px solid #0f0e9f;
+}
+button:hover{
+    cursor: pointer;
+    background-color:#fff;
+    color:#0f0e9f;
+}

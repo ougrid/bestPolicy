@@ -1,0 +1,18 @@
+.dashboardBtn {
+    background-color: #ded5fe;
+    border: 1px solid #ded5fe;
+    border-radius: 5px;
+    margin: 2px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.dashboardBtn:hover{
+    background-color: #0f0e9f ;
+    color: #fff;
+}
+
+.active{
+    background-color: #0f0e9f;
+    color: #fff;
+}
