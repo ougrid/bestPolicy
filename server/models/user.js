@@ -14,11 +14,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    personType: DataTypes.CHAR,
-    t_ogName: DataTypes.STRING
+    userName:  DataTypes.STRING,
+    password:  DataTypes.STRING,
+    empCode: DataTypes.STRING,
+    // password expire date
+    pwExpDate:  DataTypes.DATEONLY,
+    passwordOld1:DataTypes.STRING,
+    passwordOld2: DataTypes.STRING,
+    roleID:  DataTypes.INTEGER,
+    // Y = lock N = unlock
+    lockStatus: DataTypes.CHAR,
+    loginFailCount: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'User',
+    schema: 'static_data'
   });
   return User;
 };

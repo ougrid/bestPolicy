@@ -15,10 +15,37 @@ module.exports = (sequelize, DataTypes) => {
   }
   Entity.init({
     personType: DataTypes.CHAR,
-    t_ogName: DataTypes.STRING
+    titleID:  DataTypes.INTEGER,
+    t_ogName: DataTypes.STRING,
+    e_ogName:  DataTypes.STRING,
+    t_firstName: DataTypes.STRING,
+    t_lastName: DataTypes.STRING,
+    e_firstName: DataTypes.STRING,
+    e_lastName: DataTypes.STRING,
+    email:  DataTypes.STRING,
+    // IDCARD type บัตรปชช หนังสือเดินทาง
+    idCardType: DataTypes.STRING,
+    idCardNo: DataTypes.STRING,
+    idCardActDate: DataTypes.DATEONLY,
+    idCardExpDate: DataTypes.DATEONLY,
+    dateOfBirth: DataTypes.DATEONLY,
+    gender: DataTypes.STRING,
+    // ประเภทการประกอบธุรกิจ
+    ogType: DataTypes.STRING,
+    // เลขทะเบียนการค้า
+    taxNo:  DataTypes.STRING,
+    taxActDate: DataTypes.DATEONLY,
+    taxExpDate: DataTypes.DATEONLY,
+    // จดทะเบียน VAT ไหม
+    vatRegis:  DataTypes.BOOLEAN,
+    // เลขที่ ภพ 20
+    pk20: DataTypes.STRING,
+    //ชื่อสาขา กรณี เป็น สาขาย่อย ,
+    note: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Entity',
+    schema: 'static_data'
   });
   return Entity;
 };

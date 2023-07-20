@@ -14,11 +14,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Insuree.init({
-    personType: DataTypes.CHAR,
-    t_ogName: DataTypes.STRING
+    insureeCode: DataTypes.STRING,
+    entityID:  DataTypes.INTEGER,
+    // เดี่ยว กลุ่ม ภายใต้กลุ่ม
+    insureeType:  DataTypes.CHAR,
+    // ระดับความเสี่ยง สูง กลาง ต่ำ
+    blackList:  DataTypes.CHAR,
+    blacklistDesp: DataTypes.STRING,
+    note:  DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Insuree',
+    schema: 'static_data'
   });
   return Insuree;
 };

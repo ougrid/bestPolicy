@@ -14,11 +14,25 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Agent.init({
-    personType: DataTypes.CHAR,
-    t_ogName: DataTypes.STRING
+    agentCode:  DataTypes.STRING,
+    agentGroupCode:DataTypes.STRING,
+    // พนงประจำ พนงขาย พนงอิสระ
+    EMPType: DataTypes.CHAR,
+    // ใบอนุญาติ
+    licentNo: DataTypes.STRING,
+    licentExp: DataTypes.DATEONLY,
+      // ใบอนุญาติชีวิต
+    licentLifeNo: DataTypes.STRING,
+    licentLifeExp:  DataTypes.DATEONLY,
+    // A = active I = inactive
+    status: DataTypes.CHAR,
+    note:  DataTypes.STRING,
+    entityID: DataTypes.INTEGER,
+    
   }, {
     sequelize,
     modelName: 'Agent',
+    schema: 'static_data'
   });
   return Agent;
 };

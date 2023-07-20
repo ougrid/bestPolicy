@@ -14,11 +14,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Insurer.init({
-    personType: DataTypes.CHAR,
-    t_ogName: DataTypes.STRING
+    insurerCode: DataTypes.STRING,
+    // code คปภ ของ บริษัทประกัน
+    KPPCode:  DataTypes.STRING,
+    // รูปแบบการหักภาษี
+    deductTaxType:  DataTypes.CHAR,
+    // อัตราภาษี
+    deductTaxRate:  DataTypes.INTEGER,
+    premCreditT:  DataTypes.INTEGER,
+    commCreditT:  DataTypes.INTEGER,
+    ovCreditT: DataTypes.INTEGER,
+    entityID:  DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Insurer',
+    schema: 'static_data'
   });
   return Insurer;
 };
