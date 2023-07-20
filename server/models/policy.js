@@ -14,22 +14,22 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Policy.init({
-    policyNo:  Sequelize.STRING,
-    insureeCode: Sequelize.STRING,
-    insurerCode:  Sequelize.STRING,
-    agentCode: Sequelize.STRING,
+    policyNo:  DataTypes.STRING,
+    insureeCode: DataTypes.STRING,
+    insurerCode:  DataTypes.STRING,
+    agentCode: DataTypes.STRING,
     // itemlistID or motorID
-    itemList:  Sequelize.INTEGER,
-    insureID: Sequelize.INTEGER,
+    itemList:  DataTypes.INTEGER,
+    insureID: DataTypes.INTEGER,
     // Y = lastversion N = old version
-    lastVersion:  Sequelize.CHAR,
-    actDate: Sequelize.DATEONLY,
-    expDate: Sequelize.DATEONLY,
-    prem:  Sequelize.FLOAT,
-    duty: Sequelize.FLOAT,
-    stamp:  Sequelize.FLOAT,
-    total:  Sequelize.FLOAT,
-    detail:  Sequelize.STRING,
+    lastVersion:  DataTypes.CHAR,
+    actDate: DataTypes.DATEONLY,
+    expDate: DataTypes.DATEONLY,
+    prem:  DataTypes.FLOAT,
+    duty: DataTypes.FLOAT,
+    stamp:  DataTypes.FLOAT,
+    total:  DataTypes.FLOAT,
+    detail:  DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Policy',

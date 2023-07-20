@@ -23,16 +23,29 @@ const showOne = (req, res) => {
 };
 
 const searchBy = (req,res)=>{
-  Province.findAll({
-    attributes: ['provinceid', 't_provincename','e_provincename'],
-    where: {
-      [req.params.para] :{
-        [Op.like]:'%'+ req.params.value +'%'
+  if (req.params.para === 'EN') {
+    Province.findAll({
+      attributes: ['provinceid', 't_provincename','e_provincename'],
+      where: {
+        e_provincename :{
+          [Op.like]:'%'+ req.params.value +'%'
+        }
       }
-    }
-  }).then((province) => {
-    res.json(province);
-  });
+    }).then((province) => {
+      res.json(province);
+    });
+  }else if (req.params.para === 'TH'){
+    Province.findAll({
+      attributes: ['provinceid', 't_provincename','e_provincename'],
+      where: {
+        t_provincename :{
+          [Op.like]:'%'+ req.params.value +'%'
+        }
+      }
+    }).then((province) => {
+      res.json(province);
+    });
+  }
 }
 
 

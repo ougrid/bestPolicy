@@ -1,4 +1,4 @@
-const Location = require("../../models").Location; //imported fruits array
+const Location = require("../models").Location; //imported fruits array
 // const Package = require("../models").Package;
 // const User = require("../models").User;
 const { Op } = require("sequelize");
@@ -28,7 +28,7 @@ const newLocation = (req, res) => {
 
 
 module.exports = {
-//   showAll,
+
   getByid,
   newLocation
   // postCar,

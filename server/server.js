@@ -33,11 +33,18 @@ const transporter = nodemailer.createTransport({
    });
 const routes = require("./routes");
 
+//static data
 app.use("/", routes.system);
 app.use("/v1/static/provinces", routes.provinces);
 app.use("/v1/static/amphurs", routes.amphurs);
 app.use("/v1/static/tambons", routes.tambons);
 app.use("/v1/static/titles", routes.titles);
+app.use("/v1/static/mt_brands", routes.MT_Brands);
+app.use("/v1/static/mt_models", routes.MT_Models);
+
+app.use("/v1/locations", routes.locations);
+app.use("/v1/persons", routes.persons);
+
 // app.use("/sendmail", routes.sendmail);
 
 // const morgan = require('morgan');

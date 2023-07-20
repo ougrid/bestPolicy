@@ -7,6 +7,8 @@ module.exports = {
     sendmail: require("./sendmail"),
     MT_Brands: require("./static/MT_Brands"),
     MT_Models: require("./static/MT_Models"),
+    locations : require("./location"),
+    persons : require("./persons"),
 
 
 };
