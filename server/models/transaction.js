@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Transaction.init({
-    transID:  DataTypes.INTEGER,
+    
     // prem comm ov1 ov2 ov3 disc
     transType:  DataTypes.STRING,
     // i = in or o = out

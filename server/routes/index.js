@@ -9,6 +9,8 @@ module.exports = {
     MT_Models: require("./static/MT_Models"),
     locations: require("./locations"),
     persons : require("./persons"),
+    insures : require("./insures"),
+    auth : require("./auth"),
     
 
 

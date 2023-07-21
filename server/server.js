@@ -13,9 +13,13 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT ;
 
+const corsOptions = {
+  origin: process.env.alloworigin,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 //middleware-every request goes through it
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser);
 app.use(cookieParser());
 app.use(express.static("public"));
@@ -44,7 +48,8 @@ app.use("/v1/static/mt_models", routes.MT_Models);
 
 app.use("/v1/locations", routes.locations);
 app.use("/v1/persons", routes.persons);
-
+app.use("/v1/auth", routes.auth);
+// app.use("/v1/insures", routes.insures);
 // app.use("/sendmail", routes.sendmail);
 
 // const morgan = require('morgan');
