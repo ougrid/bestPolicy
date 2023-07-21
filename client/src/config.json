@@ -1,5 +1,5 @@
 {
-   "url":"https://tdainsurance.fly.dev",
+   "url":"http://localhost:3001/v1",
     "carType" : ["car","super_car","truck","van","bus"],
     "class" : ["Motor","PA","Property"],
     "subClass" : ["MT1255","MT63586","PA1552"]

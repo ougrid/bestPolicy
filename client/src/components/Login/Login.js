@@ -49,7 +49,7 @@ const Login = () => {
         localStorage.setItem("jwt", token);
       })
       .catch((err) => {
-        if (err.response.status === 400) {
+        if (err.response.status === 401) {
           alert("Wrong Password");
         } else if (err.response.status === 404) {
           alert("Wrong Username");
@@ -66,7 +66,7 @@ const Login = () => {
           <InputBtn
             type="text"
             placeholder="Username"
-            name="username"
+            name="userName"
             onChange={handleChange}
           />{" "}
           <InputBtn

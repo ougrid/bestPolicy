@@ -11,6 +11,7 @@ import SignUp from "./components/SignUp/SignUp";
 import Packages from "./components/Packages/Packages";
 import Profile from "./components/Profile/Profile";
 import Footer from "./components/Footer/Footer";
+import Static from "./components/Static/Static";
 function App() {
   return (
     <div className="App">
@@ -23,13 +24,15 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/static" element={<Static />} />
+          <Route path="/static/:name" element={<Static />} />
           <Route path="/packages/:id" element={<Packages />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
-      <footer>
+      {/* <footer>
         <Footer />
-      </footer>
+      </footer> */}
     </div>
   );
 }
