@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   CommOVIn.init({
-    coInID: DataTypes.INTEGER,
+    // coInID: DataTypes.INTEGER,
     insurerCode: DataTypes.STRING,
     insureID: DataTypes.INTEGER,
     // for MT

@@ -29,7 +29,7 @@ const Insuree = () => {
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({entityID : null});
     const [entityData, setEntityData] = useState({personType : 'P'});
-    const [locationData, setLocationData] = useState({entityID : null});
+    const [locationData, setLocationData] = useState({entityID : null, locationType: 'A'});
 
     const changeInsuree = (e) => {
         setinsureeData((prevState) => ({
@@ -56,20 +56,20 @@ const Insuree = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
-            .post(url + "/auth/login", {insurer: insureeData, entity:entityData, location:locationData })
+            .post(url + "/persons/insureenew", {insuree: insureeData, entity:entityData, location:locationData })
             .then((res) => {
-                let token = res.data.jwt;
-                let decode = jwt_decode(token);
-                navigate("/");
-                window.location.reload();
-                localStorage.setItem("jwt", token);
+                // let token = res.data.jwt;
+                // let decode = jwt_decode(token);
+                // navigate("/");
+                // window.location.reload();
+                // localStorage.setItem("jwt", token);
+                console.log(res.data);
+                alert("create new insuree success")
             })
             .catch((err) => {
-                if (err.response.status === 401) {
-                    alert("Wrong Password");
-                } else if (err.response.status === 404) {
-                    alert("Wrong Username");
-                }
+              
+                    alert("create new insuree fail");
+                
             });
     };
 
@@ -89,7 +89,7 @@ const Insuree = () => {
                             className="col-md-4"
                             type="text"
                             // placeholder="InsurerCode"
-                            name="InsureeCode"
+                            name="insureeCode"
                             onChange={changeInsuree}
                         />
                     </div>

@@ -9,6 +9,7 @@ router.post('/commovinnew', ctrl.insures.newCommOVIn);
 router.get('/commovinget/:id', ctrl.insures.getCommOVInByid);
 router.post('/commovoutnew', ctrl.insures.newCommOVOut);
 router.get('/commovoutget/:id', ctrl.insures.getCommOVOutByid);
+router.post('/commovnew', ctrl.insures.newCommOV);
 
 
 // router.post('/', ctrl.cars.postCar);

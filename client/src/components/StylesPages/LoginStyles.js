@@ -16,7 +16,7 @@ export const Header = styled.h2`
 `
 export const InputBtn = styled.input`
     border: none;
-    border-radius: 20px;
+    border-radius: 5px;
     background: #DED5FE;
     color: black;
     height: 35px;

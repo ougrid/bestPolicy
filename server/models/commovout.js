@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   CommOVOut.init({
-    coOutID: DataTypes.INTEGER,
+    // coOutID: DataTypes.INTEGER,
     insurerCode: DataTypes.STRING,
     AgentGroupCode: DataTypes.STRING,
     insureID: DataTypes.INTEGER,

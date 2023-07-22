@@ -49,19 +49,12 @@ function NavStatic() {
             <NavLink to="/static/agent">agent</NavLink>
           </NavList>
           <NavList>
-            <NavLink to="/static/motor">motor</NavLink>
-          </NavList>
-          <NavList>
-            <NavLink to="/static/location">location</NavLink>
+            <NavLink to="/static/commOv">commision - OV</NavLink>
           </NavList>
           <NavList>
             <NavLink to="/static/policy">policy</NavLink>
           </NavList>
-            <NavList>
-              <NavLink to="/" onClick={handleLogOut}>
-                Log Out
-              </NavLink>
-            </NavList>
+   
           </NavMenu>
         </NavBar>
       </>

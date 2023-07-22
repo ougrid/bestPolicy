@@ -3,6 +3,7 @@ const Insuree = require("../models").Insuree;
 const Insurer = require("../models").Insurer;
 const Agent = require("../models").Agent;
 const User = require("../models").User;
+const Location = require("../models").Location;
 const AgentGroup = require("../models").AgentGroup;
 
 const { Op } = require("sequelize");
@@ -41,9 +42,18 @@ const getInsureeByid = (req, res) => {
 };
 
 const newInsuree = (req, res) => {
-    Insuree.create(req.body).then((insuree) => {
-      res.json(insuree);
+  Entity.create(req.body.entity).then((entity) => {
+    req.body.insuree.entityID = entity.id
+    req.body.location.entityID = entity.id
+    Insuree.create(req.body.insuree).then((insuree) => {
+      Location.create(req.body.location).then((location) => {
+        res.json({...insuree, ...entity,...location});
     });
+    
+      // res.json(location);
+    });
+    // res.json({});
+  });
   };
 
   const getInsurerByid = (req, res) => {
@@ -57,9 +67,19 @@ const newInsuree = (req, res) => {
 };
 
 const newInsurer = (req, res) => {
-    Insurer.create(req.body).then((insurer) => {
-      res.json(insurer);
+  Entity.create(req.body.entity).then((entity) => {
+    req.body.insurer.entityID = entity.id
+    req.body.location.entityID = entity.id
+    Insurer.create(req.body.insurer).then((insurer) => {
+      Location.create(req.body.location).then((location) => {
+        res.json({...insurer, ...entity,...location});
     });
+    
+      // res.json(location);
+    });
+    // res.json({});
+  });
+   
   };
 
   const getAgentByid = (req, res) => {
@@ -73,9 +93,18 @@ const newInsurer = (req, res) => {
 };
 
 const newAgent = (req, res) => {
-    Agent.create(req.body).then((agent) => {
-      res.json(agent);
+  Entity.create(req.body.entity).then((entity) => {
+    req.body.agent.entityID = entity.id
+    req.body.location.entityID = entity.id
+    Agent.create(req.body.agent).then((agent) => {
+      Location.create(req.body.location).then((location) => {
+        res.json({...agent, ...entity,...location});
     });
+    
+      // res.json(location);
+    });
+    // res.json({});
+  });
   };
 
 const getUserByid = (req, res) => {

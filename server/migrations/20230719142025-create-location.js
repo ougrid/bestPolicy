@@ -56,15 +56,15 @@ module.exports = {
         type: Sequelize.STRING
       },
       telNum_1: {
-        allowNull: false,
+    
         type: Sequelize.STRING
       },
       telNum_2: {
-        allowNull: false,
+      
         type: Sequelize.STRING
       },
       telNum_3: {
-        allowNull: false,
+       
         type: Sequelize.STRING
       },
       locationType: {
@@ -76,7 +76,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       note: {
-        allowNull: false,
+
         type: Sequelize.STRING
       },
       createdAt: {

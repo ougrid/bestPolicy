@@ -2,47 +2,34 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Insurers', {
+    await queryInterface.createTable('Motors', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      insurerCode: {
-        unique: true,
+      brandID: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      modelID: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      chassisNo: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      // code คปภ ของ บริษัทประกัน
-      KPPCode: {
-        unique: true,
-        allowNull: false,
+      carRegisNo: {
+        
         type: Sequelize.STRING
       },
-      // รูปแบบการหักภาษี
-      deductTaxType: {
-        allowNull: false,
-        type: Sequelize.CHAR
-      },
-      // อัตราภาษี
-      deductTaxRate: {
-        allowNull: false,
-        type: Sequelize.FLOAT
-      },
-      premCreditT: {
-        type: Sequelize.INTEGER
-      },
-      commCreditT: {
-        type: Sequelize.INTEGER
-      },
-      ovCreditT: {
-        type: Sequelize.INTEGER
-      },
-      entityID: {
+      carRegisYear: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,
@@ -56,6 +43,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Insurers',{ schema: 'static_data'});
+    await queryInterface.dropTable('Motors',{ schema: 'static_data'});
   }
 };

@@ -8,7 +8,10 @@ import jwt_decode from "jwt-decode";
 import NavStatic from "./NavStatic"
 import Insurer  from "./Insurer";
 import Insuree  from "./Insuree";
-import InsureType from "./insureType";
+import InsureType from "./InsureType";
+import Agent from "./Agent";
+import CommOv from "./CommOv"
+import Policy from "./Policy";
 
 
 const Static = () => {
@@ -27,12 +30,14 @@ const Static = () => {
             setPage(<Insuree />)
         }else if (name === 'insureType'){
             setPage(<InsureType />)
-        }else if (name === 'insuree'){
-            setPage(<Insuree />)
-        }else if (name === 'insuree'){
-            setPage(<Insuree />)
-        }
-    },[page]);
+        }else if (name === 'agent'){
+            setPage(<Agent />)
+        }else if (name === 'commOv'){
+            setPage(<CommOv />)
+        }else if (name === 'policy'){
+          setPage(<Policy />)
+      }
+    },[name]);
   if (localStorage.getItem("jwt") !== null) {
     const decoded = jwt_decode(localStorage.getItem("jwt"));
     

@@ -29,7 +29,7 @@ const Insurer = () => {
     const navigate = useNavigate();
     const [insurerData, setInsurerData] = useState({entityID : null});
     const [entityData, setEntityData] = useState({personType : 'C'});
-    const [locationData, setLocationData] = useState({entityID : null});
+    const [locationData, setLocationData] = useState({entityID : null, locationType: 'A'});
 
     const changeInsurer = (e) => {
         setInsurerData((prevState) => ({
@@ -39,11 +39,14 @@ const Insurer = () => {
     };
 
     const changeEntity = (e) => {
+        // console.log(entityData);
         setEntityData((prevState) => ({
             ...prevState,
             [e.target.name]: e.target.value,
         }));
     };
+
+    
 
     const changeLocation = (e) => {
         setLocationData((prevState) => ({
@@ -56,20 +59,20 @@ const Insurer = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
-            .post(url + "/auth/login", {insurer: insurerData, entity:entityData, location: locationData})
+            .post(url + "/persons/insurernew", {insurer: insurerData, entity:entityData, location: locationData})
             .then((res) => {
-                let token = res.data.jwt;
-                let decode = jwt_decode(token);
-                navigate("/");
-                window.location.reload();
-                localStorage.setItem("jwt", token);
+                // let token = res.data.jwt;
+                // let decode = jwt_decode(token);
+                // navigate("/");
+                // window.location.reload();
+                // localStorage.setItem("jwt", token);
+                console.log(res.data);
+                alert("create new insurer success")
             })
             .catch((err) => {
-                if (err.response.status === 401) {
-                    alert("Wrong Password");
-                } else if (err.response.status === 404) {
-                    alert("Wrong Username");
-                }
+              
+                    alert("create new insurer fail");
+                
             });
     };
 
@@ -88,8 +91,9 @@ const Insurer = () => {
                         <InputBtn
                             className="col-md-4"
                             type="text"
+                            required
                             // placeholder="InsurerCode"
-                            name="InsurerCode"
+                            name="insurerCode"
                             onChange={changeInsurer}
                         />
                     </div>
@@ -98,7 +102,8 @@ const Insurer = () => {
                     </div>
                     <div class="col">
                         <InputBtn
-                            type="password"
+                            type="text"
+                            required
                             // placeholder="Password"
                             name="KPPCode"
                             onChange={changeInsurer}
@@ -110,6 +115,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="text"
+                            required
                             // placeholder="Password"
                             name="deductTaxType"
                             onChange={changeInsurer}
@@ -120,7 +126,9 @@ const Insurer = () => {
                         </div>
                         <div class="col">
                             <InputBtn
-                                type="text"
+                                type="number" 
+                                step={0.1}
+                                required
                                 // placeholder="Password"
                                 name="deductTaxRate"
                                 onChange={changeInsurer}
@@ -172,6 +180,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="number"
+                            required
                             // placeholder="Password"
                             name="titleID"
                             onChange={changeEntity}
@@ -183,6 +192,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="text"
+                            required
                             // placeholder="Password"
                             name="t_ogName"
                             onChange={changeEntity}
@@ -208,6 +218,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="string"
+                            required
                             // placeholder="Password"
                             name="taxNo"
                             onChange={changeEntity}
@@ -219,6 +230,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="date"
+                            required
                             // placeholder="Password"
                             name="taxActDate"
                             onChange={changeEntity}
@@ -230,6 +242,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="date"
+                            required
                             // placeholder="Password"
                             name="taxExpDate"
                             onChange={changeEntity}
@@ -243,10 +256,12 @@ const Insurer = () => {
                     </div>
                     <div class="col">
                         <InputBtn
-                            type="boolean"
+                            type="checkbox"
+                            
                             // placeholder="Password"
                             name="vatRegis"
-                            onChange={changeEntity}
+                            onChange={e => setEntityData({...entityData, vatRegis: e.target.checked})}
+                         
                         />
                     </div>
                     <div class="col">
@@ -299,6 +314,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="text"
+                            required
                             // placeholder="Password"
                             name="t_location_1"
                             onChange={changeLocation}
@@ -357,6 +373,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="number"
+                            required
                             // placeholder="Password"
                             name="provinceID"
                             onChange={changeLocation}
@@ -368,6 +385,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="number"
+                            required
                             // placeholder="Password"
                             name="districtID"
                             onChange={changeLocation}
@@ -379,6 +397,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="number"
+                            required
                             // placeholder="Password"
                             name="subDistrictID"
                             onChange={changeLocation}
@@ -393,6 +412,7 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="text"
+                            required
                             // placeholder="Password"
                             name="zipcode"
                             onChange={changeLocation}

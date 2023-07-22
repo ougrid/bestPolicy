@@ -23,7 +23,7 @@ const getInsureTypeByid = (req, res) => {
 };
 
 const newInsureType = (req, res) => {
-    InsureType.create(req.body).then((insureType) => {
+    InsureType.create(req.body.insure).then((insureType) => {
       res.json(insureType);
     });
   };
@@ -60,6 +60,17 @@ const newCommOVIn = (req, res) => {
     });
   };
 
+  const newCommOV = (req, res) => {
+    CommOVIn.create({...req.body.commIn, ...req.body.insure}).then((commovIn) => {
+      // res.json(commovIn);
+      CommOVOut.create({...req.body.commOut, ...req.body.insure}).then((commovIn) => {
+        res.json(commovIn);
+      });
+    });
+   
+  };
+
+
 module.exports = {
 //   showAll,
   getInsureTypeByid,
@@ -68,6 +79,7 @@ module.exports = {
   newCommOVOut,
   getCommOVInByid,
   newCommOVIn,  
+  newCommOV
 
   // removeCar,AgentditCar,
 };

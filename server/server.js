@@ -49,6 +49,7 @@ app.use("/v1/static/mt_models", routes.MT_Models);
 app.use("/v1/locations", routes.locations);
 app.use("/v1/persons", routes.persons);
 app.use("/v1/auth", routes.auth);
+app.use("/v1/insures", routes.insures);
 // app.use("/v1/insures", routes.insures);
 // app.use("/sendmail", routes.sendmail);
 
