@@ -50,6 +50,8 @@ app.use("/v1/locations", routes.locations);
 app.use("/v1/persons", routes.persons);
 app.use("/v1/auth", routes.auth);
 app.use("/v1/insures", routes.insures);
+app.use("/v1/policies", routes.policies);
+
 // app.use("/v1/insures", routes.insures);
 // app.use("/sendmail", routes.sendmail);
 

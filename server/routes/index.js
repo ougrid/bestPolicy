@@ -11,6 +11,7 @@ module.exports = {
     persons : require("./persons"),
     insures : require("./insures"),
     auth : require("./auth"),
+    policies : require("./policies"),
     
 
 

@@ -26,11 +26,9 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       insurerCode: {
-        allowNull: false,
         type: Sequelize.STRING
       },
       agentGroupCode: {
-        allowNull: false,
         type: Sequelize.STRING
       },
       agentCode: {
