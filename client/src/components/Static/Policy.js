@@ -48,21 +48,21 @@ const Policy = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(url + "/auth/login", { policy: policyData, motor: motorData })
+      .post(url + "/policies/policynew", { policy: policyData, motor: motorData })
       .then((res) => {
-        let token = res.data.jwt;
-        let decode = jwt_decode(token);
-        navigate("/");
-        window.location.reload();
-        localStorage.setItem("jwt", token);
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          alert("Wrong Password");
-        } else if (err.response.status === 404) {
-          alert("Wrong Username");
-        }
-      });
+        // let token = res.data.jwt;
+        // let decode = jwt_decode(token);
+        // navigate("/");
+        // window.location.reload();
+        // localStorage.setItem("jwt", token);
+        console.log(res.data);
+        alert("create new policy success")
+    })
+    .catch((err) => {
+      
+            alert("create new policy fail");
+        
+    });
   };
 
   return (
@@ -121,6 +121,23 @@ const Policy = () => {
               onChange={changePolicy}
             />
           </div>
+
+          <div class="col">
+            <h6>ประเภทประกัน</h6>
+          </div>
+          <div class="col">
+            <select
+              className="col-md-8"
+              name="insureType"
+              onChange={(e) =>
+                setPolicyData({ ...policyData, insureType: e.target.value })
+              }
+            >
+              <option value="Motor">Motor</option>
+              <option value="PA">PA</option>
+              <option value="FR">FR</option>
+            </select>
+          </div>
           <div class="col">
             <h6>แผนประกัน</h6>
           </div>
@@ -135,7 +152,9 @@ const Policy = () => {
         </div>
 
         {/* motor table */}
-        <div class="row">
+        {policyData.insureType === "Motor" ? (
+          <>
+          <div class="row">
           <div class="col">
             <h6>ยี่ห้อรถยนต์</h6>
           </div>
@@ -211,6 +230,9 @@ const Policy = () => {
             />
           </div>
         </div>
+        </>
+        ):null}
+        
         {/* policy table */}
         <div class="row">
           <div class="col">
@@ -245,7 +267,8 @@ const Policy = () => {
           <div class="col">
             <InputBtn
               className="col-md-4"
-              type="float"
+               type="number"
+              step={0.1}
               // placeholder="InsurerCode"
               name="prem"
               onChange={changePolicy}
@@ -256,7 +279,8 @@ const Policy = () => {
           </div>
           <div class="col">
             <InputBtn
-              type="float"
+               type="number"
+              step={0.1}
               // placeholder="Password"
               name="duty"
               onChange={changePolicy}
@@ -267,7 +291,8 @@ const Policy = () => {
           </div>
           <div class="col">
             <InputBtn
-              type="float"
+               type="number"
+              step={0.1}
               // placeholder="Password"
               name="stamp"
               onChange={changePolicy}
@@ -282,7 +307,10 @@ const Policy = () => {
           <div class="col">
             <InputBtn
               className="col-md-4"
-              type="float"
+               type="number"
+              step={0.1}
+              // disabled
+              // defaultValue={policyData.total}
               // placeholder="InsurerCode"
               name="total"
               onChange={changePolicy}
