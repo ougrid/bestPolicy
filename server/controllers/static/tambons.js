@@ -13,7 +13,7 @@ const showAll = (req,res) =>{
 
 const showAllinAmphur = (req, res) => {
   Tambon.findAll ({
-    attributes: ['tambonid','t_tambonname','e_tambonname','amphurid'],
+    attributes: ['tambonid','t_tambonname','e_tambonname','amphurid','postcodeall'],
     where: {
         amphurid: req.params.index
     }
