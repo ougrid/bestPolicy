@@ -30,6 +30,8 @@ const Policy = () => {
 
   const [policyData, setPolicyData] = useState({ itemList: null });
   const [motorData, setMotorData] = useState({});
+  const [commInData, setCommInData] = useState({});
+  const [commOutData, setCommOutData] = useState({});
 
   const changePolicy = (e) => {
     setPolicyData((prevState) => ({
@@ -57,12 +59,12 @@ const Policy = () => {
         // localStorage.setItem("jwt", token);
         console.log(res.data);
         alert("create new policy success")
-    })
-    .catch((err) => {
-      
-            alert("create new policy fail");
-        
-    });
+      })
+      .catch((err) => {
+
+        alert("create new policy fail");
+
+      });
   };
 
   return (
@@ -154,85 +156,85 @@ const Policy = () => {
         {/* motor table */}
         {policyData.insureType === "Motor" ? (
           <>
-          <div class="row">
-          <div class="col">
-            <h6>ยี่ห้อรถยนต์</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              className="col-md-4"
-              type="number"
-              // placeholder="InsurerCode"
-              name="brandID"
-              onChange={changeMotor}
-            />
-          </div>
-          <div class="col">
-            <h6>รุ่น</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="number"
-              // placeholder="Password"
-              name="modelID"
-              onChange={changeMotor}
-            />
-          </div>
-          <div class="col">
-            <h6>เลขตัวถังรถ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="chassisNo"
-              onChange={changeMotor}
-            />
-          </div>
-        </div>
+            <div class="row">
+              <div class="col">
+                <h6>ยี่ห้อรถยนต์</h6>
+              </div>
+              <div class="col">
+                <InputBtn
+                  className="col-md-4"
+                  type="number"
+                  // placeholder="InsurerCode"
+                  name="brandID"
+                  onChange={changeMotor}
+                />
+              </div>
+              <div class="col">
+                <h6>รุ่น</h6>
+              </div>
+              <div class="col">
+                <InputBtn
+                  type="number"
+                  // placeholder="Password"
+                  name="modelID"
+                  onChange={changeMotor}
+                />
+              </div>
+              <div class="col">
+                <h6>เลขตัวถังรถ</h6>
+              </div>
+              <div class="col">
+                <InputBtn
+                  type="text"
+                  // placeholder="Password"
+                  name="chassisNo"
+                  onChange={changeMotor}
+                />
+              </div>
+            </div>
 
-        <div class="row">
-          <div class="col">
-            <InputBtn
-              className="col-md-4"
-              type="checkbox"
-              // placeholder="InsurerCode"
-              name="forredflag"
-              id="forredflag"
-              onChange={changeMotor}
-            />
-          </div>
-          <div class="col">
-            <label class="form-check-label" for="forredflag">
-              ป้ายแดง
-            </label>
-          </div>
-          <div class="col">
-            <h6>เลขทะเบียนรถ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="carRegisNo"
-              onChange={changeMotor}
-            />
-          </div>
-          <div class="col">
-            <h6>ปีที่จดทะเบียน</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="carRegisYear"
-              onChange={changeMotor}
-            />
-          </div>
-        </div>
-        </>
-        ):null}
-        
+            <div class="row">
+              <div class="col">
+                <InputBtn
+                  className="col-md-4"
+                  type="checkbox"
+                  // placeholder="InsurerCode"
+                  name="forredflag"
+                  id="forredflag"
+                  onChange={changeMotor}
+                />
+              </div>
+              <div class="col">
+                <label class="form-check-label" for="forredflag">
+                  ป้ายแดง
+                </label>
+              </div>
+              <div class="col">
+                <h6>เลขทะเบียนรถ</h6>
+              </div>
+              <div class="col">
+                <InputBtn
+                  type="text"
+                  // placeholder="Password"
+                  name="carRegisNo"
+                  onChange={changeMotor}
+                />
+              </div>
+              <div class="col">
+                <h6>ปีที่จดทะเบียน</h6>
+              </div>
+              <div class="col">
+                <InputBtn
+                  type="text"
+                  // placeholder="Password"
+                  name="carRegisYear"
+                  onChange={changeMotor}
+                />
+              </div>
+            </div>
+          </>
+        ) : null}
+
         {/* policy table */}
         <div class="row">
           <div class="col">
@@ -267,7 +269,7 @@ const Policy = () => {
           <div class="col">
             <InputBtn
               className="col-md-4"
-               type="number"
+              type="number"
               step={0.1}
               // placeholder="InsurerCode"
               name="prem"
@@ -279,7 +281,7 @@ const Policy = () => {
           </div>
           <div class="col">
             <InputBtn
-               type="number"
+              type="number"
               step={0.1}
               // placeholder="Password"
               name="duty"
@@ -291,7 +293,7 @@ const Policy = () => {
           </div>
           <div class="col">
             <InputBtn
-               type="number"
+              type="number"
               step={0.1}
               // placeholder="Password"
               name="stamp"
@@ -307,7 +309,7 @@ const Policy = () => {
           <div class="col">
             <InputBtn
               className="col-md-4"
-               type="number"
+              type="number"
               step={0.1}
               // disabled
               // defaultValue={policyData.total}
@@ -328,6 +330,92 @@ const Policy = () => {
             />
           </div>
         </div>
+
+        {/* commov in */}
+        <h3>commision ov in</h3>
+        <div class="row">
+          <div class="col">
+            <h6>ค่าคอมมิสชั่น</h6>
+          </div>
+          <div class="col">
+            <InputBtn
+              className="col-md-4"
+              type="number"
+              step={0.1}
+              // placeholder="InsurerCode"
+              name="amountComIn"
+              onChange={changePolicy}
+            />
+          </div>
+          <div class="col">
+            <h6>ภาษี</h6>
+          </div>
+          <div class="col">
+            <InputBtn
+              type="number"
+              step={0.1}
+              // placeholder="Password"
+              name="duty"
+              onChange={changePolicy}
+            />
+          </div>
+          <div class="col">
+            <h6>ค่าแสตมอากรณ์</h6>
+          </div>
+          <div class="col">
+            <InputBtn
+              type="number"
+              step={0.1}
+              // placeholder="Password"
+              name="stamp"
+              onChange={changePolicy}
+            />
+          </div>
+        </div>
+
+
+        {/* commov out */}
+        <h3>commision ov in</h3>
+        <div class="row">
+          <div class="col">
+            <h6>ค่าคอมมิสชั่น</h6>
+          </div>
+          <div class="col">
+            <InputBtn
+              className="col-md-4"
+              type="number"
+              step={0.1}
+              // placeholder="InsurerCode"
+              name="prem"
+              onChange={changePolicy}
+            />
+          </div>
+          <div class="col">
+            <h6>ภาษี</h6>
+          </div>
+          <div class="col">
+            <InputBtn
+              type="number"
+              step={0.1}
+              // placeholder="Password"
+              name="duty"
+              onChange={changePolicy}
+            />
+          </div>
+          <div class="col">
+            <h6>ค่าแสตมอากรณ์</h6>
+          </div>
+          <div class="col">
+            <InputBtn
+              type="number"
+              step={0.1}
+              // placeholder="Password"
+              name="stamp"
+              onChange={changePolicy}
+            />
+          </div>
+        </div>
+
 
         <LoginBtn type="submit">Submit</LoginBtn>
       </form>

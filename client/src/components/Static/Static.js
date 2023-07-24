@@ -8,7 +8,7 @@ import jwt_decode from "jwt-decode";
 import NavStatic from "./NavStatic"
 import Insurer  from "./Insurer";
 import Insuree  from "./Insuree";
-import InsureType from "./InsureType";
+import InsureType from "./insureType";
 import Agent from "./Agent";
 import CommOv from "./CommOv"
 import Policy from "./Policy";

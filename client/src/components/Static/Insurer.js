@@ -30,6 +30,12 @@ const Insurer = () => {
     const [insurerData, setInsurerData] = useState({entityID : null});
     const [entityData, setEntityData] = useState({personType : 'C'});
     const [locationData, setLocationData] = useState({entityID : null, locationType: 'A'});
+    // dropdown
+    const [provinceDD, setProvinceDD] = useState([])
+    const [districDD, setDistricDD] = useState([])
+    const [subDistricDD, setSubDistricDD] = useState([])
+    const [zipcodeDD, setZipCodeDD] = useState([])
+    const [titleDD, setTitleDD] = useState([])
 
     const changeInsurer = (e) => {
         setInsurerData((prevState) => ({
@@ -53,8 +59,97 @@ const Insurer = () => {
             ...prevState,
             [e.target.name]: e.target.value,
         }));
+        if (e.target.name === 'provinceID') {
+            getDistrict(e.target.value)
+        }else if ((e.target.name === 'districtID')){
+            getSubDistrict(e.target.value)
+        }
     };
 
+    const getDistrict =(provinceID) =>{
+        //get distric in province selected
+        axios
+            .get(url + "/static/amphurs/" + provinceID)
+            .then((distric) => {
+                const array = []
+                distric.data.forEach(ele => {
+                   array.push(<option key={ele.amphurid} value={ele.amphurid}>{ele.t_amphurname}</option>)
+                });
+                setDistricDD(array)
+            })
+            .catch((err) => {
+              
+                    alert("cant get aumphur");
+                
+            });
+    }
+
+    
+    const getSubDistrict =(districID) =>{
+        //get tambons in distric selected
+        axios
+            .get(url + "/static/tambons/" + districID)
+            .then((subdistric) => {
+                const arraySub = []
+                const arrayZip = []
+                const zip  = []
+                subdistric.data.forEach(ele=> {
+                   arraySub.push(<option key={ele.tambonid} value={ele.tambonid}>{ele.t_tambonname}</option>)
+                   zip.push(ele.postcodeall.split("/"))
+                });
+                const uniqueZip = [...new Set(...zip)];
+                console.log(uniqueZip);
+                uniqueZip.forEach(zip =>{arrayZip.push(<option  value={zip}>{zip}</option>)})
+                setSubDistricDD(arraySub)
+                setZipCodeDD(arrayZip)
+            })
+            .catch((err) => {
+              
+                    alert("cant get tambons");
+                
+            });
+    }
+
+    useEffect(() => {
+        //get province
+        axios
+        .get(url + "/static/provinces/all")
+        .then((province) => {
+            // let token = res.data.jwt;
+            // let decode = jwt_decode(token);
+            // navigate("/");
+            // window.location.reload();
+            // localStorage.setItem("jwt", token);
+    
+            const array = []
+            province.data.forEach(ele => {
+                array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
+            });
+            setProvinceDD(array)
+
+            axios
+            .get(url + "/static/titles/company/all")
+            .then((title) => {
+                const array2 = []
+                title.data.forEach(ele => {
+                    array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
+                });
+                setTitleDD(array2)
+            })
+            .catch((err) => {
+              
+                    alert("cant get company");
+                
+            });
+        })
+        .catch((err) => {
+          
+                alert("cant get province");
+            
+        });
+        // get title all of company type
+       
+    },[]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -178,13 +273,17 @@ const Insurer = () => {
                         <h6>คำนำหน้า</h6>
                     </div>
                     <div class="col">
-                        <InputBtn
+                        {/* <InputBtn
                             type="number"
                             required
                             // placeholder="Password"
                             name="titleID"
                             onChange={changeEntity}
-                        />
+                        /> */}
+                            <select   className="col" name="titleID"  onChange={changeEntity}>
+                            <option value="" selected disabled hidden>เลือกคำนำหน้า</option>
+                                {titleDD}
+                            </select>
                     </div>
                     <div class="col">
                         <h6>ชื่อ</h6>
@@ -371,37 +470,49 @@ const Insurer = () => {
                         <h6>จังหวัด</h6>
                     </div>
                     <div class="col">
-                        <InputBtn
+                        {/* <InputBtn
                             type="number"
                             required
                             // placeholder="Password"
                             name="provinceID"
                             onChange={changeLocation}
-                        />
+                        />onChange={e => setInsureData({...insureData, insureType: e.target.value})} */}
+                            <select   className="col" name="provinceID" onChange={changeLocation}>
+                            <option value="" selected disabled hidden>เลือกจังหวัด</option>
+                                {provinceDD}
+                            </select>
                     </div>
                     <div class="col">
                         <h6>อำเภอ</h6>
                     </div>
                     <div class="col">
-                        <InputBtn
+                        {/* <InputBtn
                             type="number"
                             required
                             // placeholder="Password"
                             name="districtID"
                             onChange={changeLocation}
-                        />
+                        /> */}
+                        <select   className="col" name="districtID" onChange={changeLocation}>
+                        <option value="" selected disabled hidden>เลือกอำเภอ</option>
+                                {districDD}
+                            </select>
                     </div>
                     <div class="col">
                         <h6>ตำบล</h6>
                     </div>
                     <div class="col">
-                        <InputBtn
+                        {/* <InputBtn
                             type="number"
                             required
                             // placeholder="Password"
                             name="subDistrictID"
                             onChange={changeLocation}
-                        />
+                        /> */}
+                        <select   className="col" name="subDistrictID" onChange={changeLocation}>
+                        <option value="" selected disabled hidden>เลือกตำบล</option>
+                                {subDistricDD}
+                            </select>
                     </div>
                 </div>
 
@@ -410,13 +521,17 @@ const Insurer = () => {
                         <h6>รหัสไปรษณีย์</h6>
                     </div>
                     <div class="col">
-                        <InputBtn
+                        {/* <InputBtn
                             type="text"
                             required
                             // placeholder="Password"
                             name="zipcode"
                             onChange={changeLocation}
-                        />
+                        /> */}
+                         <select   className="col" name="zipcode" onChange={changeLocation}>
+                        <option value="" selected disabled hidden>เลือกรหัสไปรษณีย์</option>
+                                {zipcodeDD}
+                            </select>
                     </div>
                     <div class="col">
                         <h6>เบอร์โทรศัพท์</h6>
