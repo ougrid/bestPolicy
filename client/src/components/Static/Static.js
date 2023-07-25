@@ -12,6 +12,7 @@ import InsureType from "./insureType";
 import Agent from "./Agent";
 import CommOv from "./CommOv"
 import Policy from "./Policy";
+import ExportFile from "./ExportFile"
 
 
 const Static = () => {
@@ -36,6 +37,8 @@ const Static = () => {
             setPage(<CommOv />)
         }else if (name === 'policy'){
           setPage(<Policy />)
+      }else if (name === 'report'){
+          setPage(<ExportFile />)
       }
     },[name]);
   if (localStorage.getItem("jwt") !== null) {
