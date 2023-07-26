@@ -12,6 +12,7 @@ module.exports = {
     insures : require("./insures"),
     auth : require("./auth"),
     policies : require("./policies"),
+    reports : require("./report"),
     
 
 

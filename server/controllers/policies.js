@@ -142,16 +142,15 @@ const newPolicyList = async (req, res) => {
         },
         type: QueryTypes.INSERT
       }
-    ).then((entity) => {
+    ).then(async (entity) => {
          
-          
-          if(entity[1] === 1){   // entity[1] === 1 when create new entity
+          console.log(entity);
+           if(entity[1] === 1){   // entity[1] === 1 when create new entity
             
             
-            Insuree.create({ entityID: entity.id, insureeCode: 'A' + entity[0][0].id }, { returning: ['insureeCode'] }).then((insuree)=>{
-              console.log('insuree' +insuree);
-               // create policy
-              sequelize.query(
+            const insuree = await Insuree.create({ entityID: entity[0][0].id, insureeCode: 'A' + entity[0][0].id }, { returning: ['insureeCode'] })
+             console.log({true:insuree});
+            await  sequelize.query(
                 'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
                 // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
                 'values (:policyNo, :insureeCode, ' +
@@ -162,7 +161,7 @@ const newPolicyList = async (req, res) => {
                   replacements: {
                     policyNo: req.body[i].policyNo,
                     // entityInsuree:
-                    insureeCode: insuree.insureeCode,
+                    insureeCode: insuree['dataValues'].insureeCode,
                     insurername: req.body[i].insurerName,
                     agentCode: req.body[i].agentCode,
                     insureName: req.body[i].insureName,
@@ -176,9 +175,9 @@ const newPolicyList = async (req, res) => {
                   type: QueryTypes.INSERT
                 }
               )
-            })
+            
             //create location
-            sequelize.query(
+           await sequelize.query(
           //       'WITH data_to_insert AS ( SELECT ' +
           //       ':entityID AS entityID, ' +
           //       ':t_location_1 AS t_location_1,' +
@@ -234,106 +233,103 @@ const newPolicyList = async (req, res) => {
         )
       }else{
         //select insuree
-        sequelize.query(
-        'select ent.id FROM static_data."Insurees" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id" WHERE (CASE WHEN true THEN "idCardNo" ELSE "taxNo" END) = :idNo',
-        {replacements:{idNo: req.body[i].personType === "P" ? req.body[i].idCardNo: req.body[i].taxNo  },type: QueryTypes.SELECT}).then((insuree) =>{
-           // create policy
-           console.log(insuree);
-          // sequelize.query(
-          //   'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
-          //   // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
-          //   'values (:policyNo, :insureeCode, ' +
-          //   '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
-          //   ':agentCode, (select "id" from static_data."InsureTypes" where "insureName" = :insureName), ' +
-          //   ':actDate, :expDate, :prem, :duty, :stamp, :total) ',
-          //   {
-          //     replacements: {
-          //       policyNo: req.body[i].policyNo,
-          //       // entityInsuree:
-          //       insureeCode: insuree.insureeCode,
-          //       insurername: req.body[i].insurerName,
-          //       agentCode: req.body[i].agentCode,
-          //       insureName: req.body[i].insureName,
-          //       actDate: req.body[i].actDate,
-          //       expDate: req.body[i].expDate,
-          //       prem: req.body[i].prem,
-          //       duty: req.body[i].duty,
-          //       stamp: req.body[i].stamp,
-          //       total: req.body[i].total
-          //     },
-          //     type: QueryTypes.INSERT
-          //   }
-          // )
-        })    
+       const insuree = await sequelize.query(
+        'select * FROM static_data."Insurees" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id" WHERE (CASE WHEN ent."personType" = \'P\' THEN "idCardNo" ELSE "taxNo" END) = :idNo ',
+        {replacements:{idNo: req.body[i].personType === "P" ? req.body[i].idCardNo: req.body[i].taxNo  },type: QueryTypes.SELECT})
+        console.log({false:insuree});
+        await  sequelize.query(
+            'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
+            // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
+            'values (:policyNo, :insureeCode, ' +
+            '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
+            ':agentCode, (select "id" from static_data."InsureTypes" where "insureName" = :insureName), ' +
+            ':actDate, :expDate, :prem, :duty, :stamp, :total) ',
+            {
+              replacements: {
+                policyNo: req.body[i].policyNo,
+                // entityInsuree:
+                insureeCode: insuree[0].insureeCode,
+                insurername: req.body[i].insurerName,
+                agentCode: req.body[i].agentCode,
+                insureName: req.body[i].insureName,
+                actDate: req.body[i].actDate,
+                expDate: req.body[i].expDate,
+                prem: req.body[i].prem,
+                duty: req.body[i].duty,
+                stamp: req.body[i].stamp,
+                total: req.body[i].total
+              },
+              type: QueryTypes.INSERT
+            }
+          )
+           
        }
       
-     
-      //  
         
       })
 
 
       // edit transection
-      // sequelize.query(
-      //   'select * FROM static_data."CommOVOuts" comout ' +
-      //   'JOIN static_data."CommOVIns" comin ' +
-      //   'ON comin."insurerCode" = comout."insurerCode" and comin."insureID" = comout."insureID" ' +
-      //   'where comout."AgentGroupCode" = ( ' +
-      //   'SELECT "agentGroupCode" FROM static_data."Agents" ' +
-      //   'where "agentCode" = :agentcode) ' +
-      //   'and comout."insureID" = (select "id" from static_data."InsureTypes" where "insureName" = :insureName) ',
-      //   {
-      //     replacements: { agentcode: req.body[i].agentCode, insureName: req.body[i].insureName },
-      //     type: QueryTypes.SELECT
-      //   }
-      // ).then((records) => {
-      //   // let record =  JSON.stringify(records[0],null,2)
-      //   // res.json(records[0].id)
-      //   const setupcom = [["rateComOut", "amountComOut", 'Com', 'O'],
-      //   ["rateComIn", "amountComIn", 'Com', 'I'],
-      //   ["rateOVOut_1", "amountOVOut_1", 'OV', 'O'],
-      //   ["rateOVOut_2", "amountOVOut_2", 'OV', 'O'],
-      //   ["rateOVOut_3", "amountOVOut_3", 'OV', 'O'],
-      //   ["rateOVOut_4", "amountOVOut_4", 'OV', 'O'],
-      //   ["rateOVOut_5", "amountOVOut_5", 'OV', 'O'],
-      //   ["rateOVIn_1", "amountOVIn_1", 'OV', 'I'],
-      //   ["rateOVIn_2", "amountOVIn_2", 'OV', 'I'],
-      //   ["rateOVIn_3", "amountOVIn_3", 'OV', 'I'],
-      //   ["rateOVIn_4", "amountOVIn_4", 'OV', 'I'],
-      //   ["rateOVIn_5", "amountOVIn_5", 'OV', 'I']]
+      sequelize.query(
+        'select * FROM static_data."CommOVOuts" comout ' +
+        'JOIN static_data."CommOVIns" comin ' +
+        'ON comin."insurerCode" = comout."insurerCode" and comin."insureID" = comout."insureID" ' +
+        'where comout."AgentGroupCode" = ( ' +
+        'SELECT "agentGroupCode" FROM static_data."Agents" ' +
+        'where "agentCode" = :agentcode) ' +
+        'and comout."insureID" = (select "id" from static_data."InsureTypes" where "insureName" = :insureName) ',
+        {
+          replacements: { agentcode: req.body[i].agentCode, insureName: req.body[i].insureName },
+          type: QueryTypes.SELECT
+        }
+      ).then((records) => {
+        // let record =  JSON.stringify(records[0],null,2)
+        // res.json(records[0].id)
+        const setupcom = [["rateComOut", "amountComOut", 'Com', 'O'],
+        ["rateComIn", "amountComIn", 'Com', 'I'],
+        ["rateOVOut_1", "amountOVOut_1", 'OV', 'O'],
+        ["rateOVOut_2", "amountOVOut_2", 'OV', 'O'],
+        ["rateOVOut_3", "amountOVOut_3", 'OV', 'O'],
+        ["rateOVOut_4", "amountOVOut_4", 'OV', 'O'],
+        ["rateOVOut_5", "amountOVOut_5", 'OV', 'O'],
+        ["rateOVIn_1", "amountOVIn_1", 'OV', 'I'],
+        ["rateOVIn_2", "amountOVIn_2", 'OV', 'I'],
+        ["rateOVIn_3", "amountOVIn_3", 'OV', 'I'],
+        ["rateOVIn_4", "amountOVIn_4", 'OV', 'I'],
+        ["rateOVIn_5", "amountOVIn_5", 'OV', 'I']]
 
-      //   for (let j = 0; j < setupcom.length; j++) {
-      //     if (records[0][setupcom[j][0]] != null || records[0][setupcom[j][1]] != null) {
+        for (let j = 0; j < setupcom.length; j++) {
+          if (records[0][setupcom[j][0]] != null || records[0][setupcom[j][1]] != null) {
 
-      //       sequelize.query(
-      //         'INSERT INTO static_data."Transactions" ' +
-      //         '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
-      //         'VALUES (:type, :status, 1, ' +
-      //         '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
-      //         ':agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
-      //         {
-      //           replacements: {
-      //             type: setupcom[j][2],
-      //             status: setupcom[j][3],
-      //             insurername: req.body[i].insurerName,
-      //             agentGroupCode: records[0]["AgentGroupCode"],
-      //             agentCode: req.body[i].agentCode,
-      //             policyNo: req.body[i].policyNo,
-      //             rate: records[0][setupcom[j][0]],
-      //             amount: records[0][setupcom[j][1]],
-      //             duty: null,
-      //             stamp: null,
-      //             total: null,
-      //             duedate: '2022-05-01'
-      //           },
-      //           type: QueryTypes.INSERT
-      //         }
-      //       );
+            sequelize.query(
+              'INSERT INTO static_data."Transactions" ' +
+              '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
+              'VALUES (:type, :status, 1, ' +
+              '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
+              ':agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
+              {
+                replacements: {
+                  type: setupcom[j][2],
+                  status: setupcom[j][3],
+                  insurername: req.body[i].insurerName,
+                  agentGroupCode: records[0]["AgentGroupCode"],
+                  agentCode: req.body[i].agentCode,
+                  policyNo: req.body[i].policyNo,
+                  rate: records[0][setupcom[j][0]],
+                  amount: records[0][setupcom[j][1]],
+                  duty: null,
+                  stamp: null,
+                  total: null,
+                  duedate: '2022-05-01'
+                },
+                type: QueryTypes.INSERT
+              }
+            );
 
-      //     }
+          }
 
-      //   }
-      // })
+        }
+      })
 
 
     

@@ -25,31 +25,19 @@ const NormalText = {
 };
 /* eslint-disable react-hooks/exhaustive-deps */
 
-const fillExcelTemplateAndExport = (data) => {
-    // Load the template file
-    const workbook = XLSX.readFile('temp.xlsx');
-
-    // Get the first sheet from the template (assuming it's the only sheet)
-    // const sheetName = workbook.SheetNames[0];
-    // const worksheet = workbook.Sheets[sheetName];
   
-    // // Replace placeholders in the worksheet with actual data
-    // data.forEach((item, index) => {
-    //   const cellAddress = `A${index + 2}`; // Assuming the data starts from row 2 (skip header row)
-    //   worksheet[cellAddress].v = item.name; // Replace "{name}" with the actual name
-    //   // Similarly, update other cells with the corresponding data
-    // });
-  
-    // // Export the updated workbook
-    // XLSX.writeFile(workbook, 'filled_template.xlsx');
-  };
-
 const ExportFile = () => {
   const url = config.url;
   const navigate = useNavigate();
   const [insureData, setInsureData] = useState({});
   // const [locationData, setLocationData] = useState({entityID : null});
 
+  const exportToExcel = (jsonData, filename) => {
+    const worksheet = XLSX.utils.json_to_sheet(jsonData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    XLSX.writeFile(workbook, filename + '.xlsx');
+  };
   const changeInsurer = (e) => {
       setInsureData((prevState) => ({
           ...prevState,
@@ -88,7 +76,7 @@ const ExportFile = () => {
         // Add more data objects as needed
       ];
 
-      fillExcelTemplateAndExport(data);
+      exportToExcel(data, 'exported_data');
   };
 
   return (

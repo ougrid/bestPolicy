@@ -34,7 +34,6 @@ const UserCarList = (props) => {
     t_location_3: null,
     t_location_4: null,
     t_location_5: null,
-
     province: null,
     distric: null,
     subdistric: null,
