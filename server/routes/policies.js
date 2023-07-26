@@ -4,6 +4,7 @@ const ctrl = require("../controllers");
 
 // router.get("path", fucntion);
 router.post('/policynew', ctrl.policies.newPolicy);
+router.post('/policynew/batch', ctrl.policies.newPolicyList);
 router.post('/policyget', ctrl.policies.getPolicy);
 router.post('/transectionnew', ctrl.policies.newTransaction);
 router.get('/transectionget/:id', ctrl.policies.getTransactionByid);
