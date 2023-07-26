@@ -40,6 +40,18 @@ const Policy = () => {
     }));
   };
 
+//   function exportToJsonFile(jsonData) {
+//     let dataStr = JSON.stringify(jsonData);
+//     let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+//     let exportFileDefaultName = 'data.json';
+
+//     let linkElement = document.createElement('a');
+//     linkElement.setAttribute('href', dataUri);
+//     linkElement.setAttribute('download', exportFileDefaultName);
+//     linkElement.click();
+// }
+
   const changeMotor = (e) => {
     setMotorData((prevState) => ({
       ...prevState,
@@ -49,6 +61,7 @@ const Policy = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // exportToJsonFile({ policy: policyData, motor: motorData })
     axios
       .post(url + "/policies/policynew", { policy: policyData, motor: motorData })
       .then((res) => {

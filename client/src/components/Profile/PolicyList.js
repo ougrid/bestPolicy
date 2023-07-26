@@ -201,17 +201,17 @@ const UserCarList = (props) => {
     });
   };
 
-//   function exportToJsonFile(jsonData) {
-//     let dataStr = JSON.stringify(jsonData);
-//     let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  function exportToJsonFile(jsonData) {
+    let dataStr = JSON.stringify(jsonData);
+    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
-//     let exportFileDefaultName = 'data.json';
+    let exportFileDefaultName = 'data.json';
 
-//     let linkElement = document.createElement('a');
-//     linkElement.setAttribute('href', dataUri);
-//     linkElement.setAttribute('download', exportFileDefaultName);
-//     linkElement.click();
-// }
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
   const handleCreate = (e) => {
     e.preventDefault();
     const array = []
@@ -236,10 +236,10 @@ const UserCarList = (props) => {
         policyNo: e.target.elements[`policyNo_${i}`].value,
         actDate: e.target.elements[`actDate_${i}`].value,
         expDate: e.target.elements[`expDate_${i}`].value,
-        insurerCode: e.target.elements[`insurerCode_${i}`].value,
+        insurerName: e.target.elements[`insurerCode_${i}`].value,
         agentCode: e.target.elements[`agentCode_${i}`].value,
         insureType: e.target.elements[`insureType_${i}`].value,
-        insureID: e.target.elements[`insureID_${i}`].value,
+        insureName: e.target.elements[`insureID_${i}`].value,
         prem: e.target.elements[`prem_${i}`].value,
         duty: e.target.elements[`duty_${i}`].value,
         stamp: e.target.elements[`stamp_${i}`].value,
@@ -274,7 +274,7 @@ const UserCarList = (props) => {
       array.push(data)
     }
     console.log(array);
-
+    exportToJsonFile(array)
     // axios.post(url + "/cars/", data).then((res) => {
     //   alert("Car Created");
     //   window.location.reload(false);
@@ -319,7 +319,7 @@ const UserCarList = (props) => {
         for (let i = 2; i <= excelData.length; i++) {
           element.push(excelData[i])
         }
-        // exportToJsonFile(excelData.slice(2))
+        
         console.log(excelData.slice(2));
         if (excelData.length > 2) {
           setFormData(excelData.slice(2));
