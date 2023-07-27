@@ -3,7 +3,7 @@ const router = express.Router(); //creates a router object
 const ctrl = require("../controllers");
 
 // router.get("path", fucntion);
-router.post('/exporttb1', ctrl.reports.exportTB1);
+// router.post('/exporttb1', ctrl.reports.exportTB1);
 
 // router.post('/', ctrl.cars.postCar);
 // router.delete('/:inderx', ctrl.cars.removeCar);

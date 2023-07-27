@@ -13,10 +13,10 @@ const UserCarList = (props) => {
     policyNo: null,
     actDate: null,
     expDate: null,
-    insurerCode: null,
+    insurerName: null,
     agentCode: null,
     insureType: null,
-    insureID: null,
+    insureName: null,
     prem: null,
     duty: null,
     stamp: null,
@@ -193,9 +193,31 @@ const UserCarList = (props) => {
     });
   };
 
-  const handleDelete = (e) => {
-    axios.delete(url + "/cars/" + e.target.id).then((res) => {
-      alert("Car deleted");
+  const handleSubmit = async (e) => {
+    const data = []
+     for (let i = 0; i < formData.length; i++) {
+      let t_ogName =null
+      let t_firstName = null
+      let t_lastName = null
+      let idCardType = "idcard"
+      let idCardNo =  null
+      let taxNo = null
+      if (formData[i].personType === 'P'){
+        t_firstName = formData[i].t_fn
+        t_lastName = formData[i].t_ln
+        idCardNo = formData[i].regisNo
+        data.push({...formData[i], t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType, t_ogName:t_ogName , taxNo:taxNo})
+      }else{
+        t_ogName = formData[i].t_fn
+        
+        taxNo = formData[i].regisNo
+        data.push({...formData[i], t_ogName:t_ogName , taxNo:taxNo, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType})
+      }
+    }
+    console.log(data);
+    e.preventDefault();
+    await axios.post(url + "/policies/policynew/batch", data).then((res) => {
+      alert("policy batch Created");
       window.location.reload(false);
     });
   };
@@ -235,10 +257,10 @@ const UserCarList = (props) => {
         policyNo: e.target.elements[`policyNo_${i}`].value,
         actDate: e.target.elements[`actDate_${i}`].value,
         expDate: e.target.elements[`expDate_${i}`].value,
-        insurerName: e.target.elements[`insurerCode_${i}`].value,
+        insurerName: e.target.elements[`insurerName_${i}`].value,
         agentCode: e.target.elements[`agentCode_${i}`].value,
         insureType: e.target.elements[`insureType_${i}`].value,
-        insureName: e.target.elements[`insureID_${i}`].value,
+        insureName: e.target.elements[`insureName_${i}`].value,
         prem: e.target.elements[`prem_${i}`].value,
         duty: e.target.elements[`duty_${i}`].value,
         stamp: e.target.elements[`stamp_${i}`].value,
@@ -273,11 +295,9 @@ const UserCarList = (props) => {
       array.push(data)
     }
     console.log(array);
-    exportToJsonFile(array)
-    // axios.post(url + "/cars/", data).then((res) => {
-    //   alert("Car Created");
-    //   window.location.reload(false);
-    // });
+
+    // exportToJsonFile(array)
+    setFormData(array)
   };
 
   const newRow = (e) => {
@@ -567,8 +587,8 @@ const UserCarList = (props) => {
           <div class="col-2">
             <input
               type="text"
-              defaultValue={formData[0].insurerCode}
-              name="insurerCode_0"
+              defaultValue={formData[0].insurerName}
+              name="insurerName_0"
 
             />
           </div>
@@ -604,8 +624,8 @@ const UserCarList = (props) => {
           <div class="col-2">
             <input
               type="text"
-              defaultValue={formData[0].insureID}
-              name="insureID_0"
+              defaultValue={formData[0].insureName}
+              name="insureName_0"
 
             />
           </div>
@@ -960,8 +980,8 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined? formData[index + 1].insurerCode:null}
-                  name={`insurerCode_${index + 1}`}
+                  defaultValue={formData[index + 1] !== undefined? formData[index + 1].insurerName:null}
+                  name={`insurerName_${index + 1}`}
                 />
               </div>
               <div class="col-1">
@@ -997,8 +1017,8 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].insureID: null}
-                  name={`insureID_${index + 1}`}
+                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].insureName: null}
+                  name={`insureName_${index + 1}`}
 
                 />
               </div>
@@ -1307,7 +1327,7 @@ const UserCarList = (props) => {
               className="col-md-4"
               type="number"
               step={0.1}
-              // placeholder="InsurerCode"
+              // placeholder="insurerName"
               name="amountComIn"
              
             />
@@ -1350,7 +1370,7 @@ const UserCarList = (props) => {
               className="col-md-4"
               type="number"
               step={0.1}
-              // placeholder="InsurerCode"
+              // placeholder="insurerName"
               name="prem"
              
             />
@@ -1382,7 +1402,7 @@ const UserCarList = (props) => {
         </div> */}
 
 
-        <input type="submit" value="create" />
+        <input type="submit" value="create" onClick={(e)=>handleSubmit(e)} />
       </form>
       <div></div>
     </CenterPage>
