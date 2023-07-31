@@ -4,6 +4,7 @@ const ctrl = require("../controllers");
 
 // router.get("path", fucntion);
 router.post('/insuretypenew', ctrl.insures.newInsureType);
+router.get('/insuretypeall', ctrl.insures.getInsureTypeAll);
 router.get('/insuretypeget/:id', ctrl.insures.getInsureTypeByid);
 router.post('/commovinnew', ctrl.insures.newCommOVIn);
 router.get('/commovinget/:id', ctrl.insures.getCommOVInByid);

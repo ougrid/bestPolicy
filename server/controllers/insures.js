@@ -22,6 +22,13 @@ const getInsureTypeByid = (req, res) => {
   });
 };
 
+
+const getInsureTypeAll = (req, res) => {
+  InsureType.findAll ().then((insureType) => {
+  res.json(insureType);
+});
+};
+
 const newInsureType = (req, res) => {
     InsureType.create(req.body.insure).then((insureType) => {
       res.json(insureType);
@@ -73,6 +80,7 @@ const newCommOVIn = (req, res) => {
 
 module.exports = {
 //   showAll,
+  getInsureTypeAll,
   getInsureTypeByid,
   newInsureType,
   getCommOVOutByid,

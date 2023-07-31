@@ -3,11 +3,12 @@ import * as XLSX from 'xlsx';
 import { useEffect, useState } from "react";
 import { CenterPage } from "../StylesPages/AdminStyles";
 import { Container } from "../StylesPages/PagesLayout";
+import { async } from "q";
 const config = require("../../config.json");
 
 const UserCarList = (props) => {
   const url = config.url;
-  const [row, setRow] = useState(1);
+  const [row, setRow] = useState(0);
   //import excel
   const [formData, setFormData] = useState([{
     policyNo: null,
@@ -175,23 +176,16 @@ const UserCarList = (props) => {
   //   });
 
 
-  const handleEdit = (e) => {
+  const handleChange = async (e) => {
     e.preventDefault();
-
-    const data = {
-      id: e.target.elements.id.value,
-      user_id: e.target.elements.user_id.value,
-      plate_number: e.target.elements.plate_number.value,
-      brand: e.target.elements.brand.value,
-      model: e.target.elements.model.value,
-      year: e.target.elements.year.value,
-      type: e.target.elements.type.value,
-    };
-    axios.put(url + "/cars/" + data.id, data).then((res) => {
-      alert("Car edited");
-      window.location.reload(false);
-    });
+    const name = e.target.name.split('_')[0]
+    const index = parseInt(e.target.name.split('_')[1])
+  const array =    { ...formData[index], [name]: e.target.value}
+  formData[index] = array
+  setFormData(formData)
+    console.log(formData);
   };
+ 
 
   const handleSubmit = async (e) => {
     const data = []
@@ -205,12 +199,12 @@ const UserCarList = (props) => {
       if (formData[i].personType === 'P'){
         t_firstName = formData[i].t_fn
         t_lastName = formData[i].t_ln
-        idCardNo = formData[i].regisNo
+        idCardNo = formData[i].regisNo.toString()
         data.push({...formData[i], t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType, t_ogName:t_ogName , taxNo:taxNo})
       }else{
         t_ogName = formData[i].t_fn
         
-        taxNo = formData[i].regisNo
+        taxNo = formData[i].regisNo.toString()
         data.push({...formData[i], t_ogName:t_ogName , taxNo:taxNo, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType})
       }
     }
@@ -245,16 +239,16 @@ const UserCarList = (props) => {
       let taxNo = null
       if (e.target.elements[`personType_${i}`].value === 'C') {
         t_og = e.target.elements[`t_fn_${i}`].value
-        taxNo = e.target.elements[`regisNo_${i}`].value
+        taxNo = e.target.elements[`regisNo_${i}`].value.toString()
       } else {
         idCardType = 'idcard'
-        idCardNo = e.target.elements[`regisNo_${i}`].value
+        idCardNo = e.target.elements[`regisNo_${i}`].value.toString()
         t_fn = e.target.elements[`t_fn_${i}`].value
         t_ln = e.target.elements[`t_ln_${i}`].value
       }
 
       const data = {
-        policyNo: e.target.elements[`policyNo_${i}`].value,
+        policyNo: e.target.elements[`policyNo_${i}`].value.toString(),
         actDate: e.target.elements[`actDate_${i}`].value,
         expDate: e.target.elements[`expDate_${i}`].value,
         insurerName: e.target.elements[`insurerName_${i}`].value,
@@ -282,7 +276,7 @@ const UserCarList = (props) => {
         province: e.target.elements[`province_${i}`].value,
         distric: e.target.elements[`distric_${i}`].value,
         subdistric: e.target.elements[`subdistric_${i}`].value,
-        zipcode: e.target.elements[`zipcode_${i}`].value,
+        zipcode: e.target.elements[`zipcode_${i}`].value.toString(),
         carRegisNo: e.target.elements[`carRegisNo_${i}`].value,
         brandID: e.target.elements[`brandID_${i}`].value,
         modelID: e.target.elements[`modelID_${i}`].value,
@@ -309,6 +303,7 @@ const UserCarList = (props) => {
     e.preventDefault();
     if (row > 0) {
       setRow(row - 1);
+      setFormData(formData.slice(0,row));
 
     }
 
@@ -358,186 +353,14 @@ const UserCarList = (props) => {
       <button onClick={removeRow} >import EXCEL</button> */}
 
       <input type="file" id="fileInput" onChange={(e) => handleFileChange(e)} />
-      {/* <label htmlFor="fileInput">
-        <button >Import Excel</button>
-
-      </label> */}
-      {/* <table>
-        <thead>
-          <tr>
-            <th>class</th>
-            <th>subclass</th>
-            <th>เลขกรมธรรม์</th>
-            <th>(P/C)</th>
-            <th>คำนำหน้า</th>
-            <th>ชื่อ</th>
-            <th>นามสกุล</th>
-            <th>id/taxNo</th>
-            <th>วันเริ่ม</th>
-            <th>วันสิ้นสุด</th>
-            <th>บ้านเลขที่</th>
-            <th>หมู่บ้าน/อาคาร</th>
-            <th>หมู่</th>
-            <th>ซอย</th>
-            <th>ถนน</th>
-            <th>จังหวัด</th>
-            <th>อำเภอ</th>
-            <th>ตำบล</th>
-            <th>รหัสไปรษณี</th>
-            <th>เบอร์โทร</th>
-            <th>ทะเบียน</th>
-            <th>ยี่ห้อ</th>
-            <th>รุ่น</th>
-            <th>Model</th>
-            <th>ปีจดทะเบียน</th>
-            <th>เลขตัวถัง</th>
-          
-          </tr>
-        </thead>
-        <tbody>
-          {carsElement}
-          <>
-            <form
-              method="POST"
-              id={"policyadd"}
-              onSubmit={(e) => handleCreate(e)}
-            ></form>
-
-          {Array.from({ length: row }, (_, index) => (
-            <tr>
-              <td>
-              <select form={"policyadd"} name="type">
-                  {classList}
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  {subClassList}
-                </select>
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="brand" />
-              </td>
-              <td>
-                <select form={"policyadd"} name="type">
-                  <option value="P">Person</option>
-                  <option value="C">Company</option>
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">นาย</option>
-                  <option value="M">ดช.</option>
-                  <option value="M">ดญ.</option>
-                  <option value="F">นาง</option>
-                  <option value="F">นางสาว</option>
-                </select>
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-              <input type="text" form={"policyadd"} name="year" />
-             
-              </td>
-              <td>
-              <input type="date" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="date" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">กรุงเทพ</option>
-                  <option value="M">สมุทรปราการ</option>
-                  <option value="M">นนทบุรี</option>
-                  <option value="F">ปทุมธานี</option>
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">บางเขน</option>
-                  <option value="M">อำเภอ</option>
-                  
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">ตำบลนะจ๊ะ</option>
-                  
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">zipcode</option>
-                  
-                </select>
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-                <input type="text" form={"policyadd"} name="year" />
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">toyota</option>
-                  <option value="M">maxda</option>
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">city</option>
-                  <option value="M">civic</option>
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">x</option>
-                  <option value="M">2</option>
-                </select>
-              </td>
-              <td>
-              <select form={"policyadd"} name="type">
-                  <option value="M">2023</option>
-                  <option value="M">2022</option>
-                  <option value="M">2021</option>
-                  <option value="M">2020</option>
-                </select>
-              </td>
-              <td>
-              <input type="text" form={"policyadd"} name="year" />
-              </td>
-            </tr>
-          ))}
-
-          </>
-        </tbody>
-      </table> */}
+     
+      
       <form className="container-fluid" method="POST"
-        id="policyList"
-        onSubmit={(e) => handleCreate(e)}>
-        <h1>กรมธรรม์ฉบับที่ 1</h1>
-        {/* policy table */}
+        id="policyList">
+        {/* onSubmit={(e) => handleCreate(e)}> */}
+        {/* <h1>กรมธรรม์ฉบับที่ 1</h1> */}
+        <>
+        {/* policy table 
         <div class="row ">
           <div class="col-1 ">
             <h6>เลขที่กรมธรรม์</h6>
@@ -574,7 +397,7 @@ const UserCarList = (props) => {
             />
           </div>
           <div class="col-3">
-            {/* null */}
+      
           </div>
 
         </div>
@@ -630,7 +453,7 @@ const UserCarList = (props) => {
             />
           </div>
         </div>
-        {/* policy table */}
+        // policy table 
 
 
         <div class="row">
@@ -682,7 +505,7 @@ const UserCarList = (props) => {
             />
           </div>
         </div>
-        {/* entity table */}
+        // entity table 
         <div class="row">
           <div class="col-1">
             <select
@@ -739,7 +562,7 @@ const UserCarList = (props) => {
             />
           </div>
         </div>
-        {/* location table */}
+        // location table 
         <div class="row">
           <div class="col-1">
             <h6>บ้านเลขที่</h6>
@@ -850,7 +673,7 @@ const UserCarList = (props) => {
           </div>
 
         </div>
-        {/* motor table */}
+        //motor table 
         {"Motor" === "Motor" ? (
           <>
             <div class="row">
@@ -925,14 +748,14 @@ const UserCarList = (props) => {
               name="telNum_1_0"
             />
           </div>
-        </div>
-
+        </div>*/}
+        </>
 
 
         {/* loop new row */}
-        {Array.from({ length: row }, (_, index) => (
+        {Array.from({ length: row+1 }, (_, index) => (
           <>
-            <h1>กรมธรรม์ฉบับที่ {index + 2}</h1>
+            <h1>กรมธรรม์ฉบับที่ {index + 1}</h1>
             {/* policy table */}
             <div class="row justify-content-start">
               <div class="col-1 ">
@@ -942,8 +765,9 @@ const UserCarList = (props) => {
                 <input
                   className="col"
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ?formData[index + 1].policyNo :null }
-                  name={`policyNo_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ?formData[index].policyNo :null }
+                  name={`policyNo_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -953,8 +777,9 @@ const UserCarList = (props) => {
                 <input
                   className="col"
                   type="date"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].actDate: null}
-                  name={`actDate_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].actDate: null}
+                  name={`actDate_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -963,8 +788,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="date"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].expDate :null}
-                  name={`expDate_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].expDate :null}
+                  name={`expDate_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-3">
@@ -980,8 +806,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined? formData[index + 1].insurerName:null}
-                  name={`insurerName_${index + 1}`}
+                  defaultValue={formData[index] !== undefined? formData[index].insurerName:null}
+                  name={`insurerName_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -991,8 +818,9 @@ const UserCarList = (props) => {
                 <input
                   className="col-md-4"
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].agentCode :null}
-                  name={`agentCode_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].agentCode :null}
+                  name={`agentCode_${index}`}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -1002,10 +830,11 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <select
                   className="col-md-8"
-                  name={`insureType_${index + 1}`}
+                  name={`insureType_${index}`}
+                  onChange={handleChange}
 
                 > 
-                <option value={formData[index + 1] !== undefined ? formData[index + 1].insureType: null} selected disabled hidden>{formData[index + 1] !== undefined ? formData[index + 1].insureType: null}</option>
+                <option value={formData[index] !== undefined ? formData[index].insureType: null} selected disabled hidden>{formData[index] !== undefined ? formData[index].insureType: null}</option>
                   <option value="Motor">Motor</option>
                   <option value="PA">PA</option>
                   <option value="FR">FR</option>
@@ -1017,8 +846,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].insureName: null}
-                  name={`insureName_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].insureName: null}
+                  name={`insureName_${index}`}
+                  onChange={handleChange}
 
                 />
               </div>
@@ -1035,8 +865,9 @@ const UserCarList = (props) => {
                   className="col"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].prem : null}
-                  name={`prem_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].prem : null}
+                  name={`prem_${index}`}
+                  onChange={handleChange}
 
                 />
               </div>
@@ -1047,8 +878,9 @@ const UserCarList = (props) => {
                 <input
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].duty : null}
-                  name={`duty_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
+                  name={`duty_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1058,8 +890,9 @@ const UserCarList = (props) => {
                 <input
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].stamp : null}
-                  name={`stamp_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
+                  name={`stamp_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1070,8 +903,9 @@ const UserCarList = (props) => {
                   className="col"
                   type="number"
                   step={0.1}
-                  name={`total_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].total : null}
+                  name={`total_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].total : null}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -1080,9 +914,10 @@ const UserCarList = (props) => {
               <div class="col-1">
                 <select
                   className="col-md-8"
-                  name={`personType_${index + 1}`}
+                  name={`personType_${index}`}
+                  onChange={handleChange}
                 >
-                  <option value={formData[index + 1] !== undefined ? formData[index + 1].personType : null} disabled selected hidden>{formData[index + 1] !== undefined ? formData[index + 1].personType : null}</option>
+                  <option value={formData[index] !== undefined ? formData[index].personType : null} disabled selected hidden>{formData[index] !== undefined ? formData[index].personType : null}</option>
                   <option value="P">บุคคล</option>
                   <option value="C">นิติบุคคล</option>
                 </select>
@@ -1094,8 +929,9 @@ const UserCarList = (props) => {
                 <input
                   className="col-md-8"
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].title : null}
-                  name={`title_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].title : null}
+                  name={`title_${index}`}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -1105,8 +941,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].t_fn : null}
-                  name={`t_fn_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].t_fn : null}
+                  name={`t_fn_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1115,8 +952,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined? formData[index + 1].t_ln : null}
-                  name={`t_ln_${index + 1}`}
+                  defaultValue={formData[index] !== undefined? formData[index].t_ln : null}
+                  name={`t_ln_${index}`}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1125,8 +963,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].regisNo : null}
-                  name={`regisNo_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].regisNo : null}
+                  name={`regisNo_${index}`}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -1139,8 +978,9 @@ const UserCarList = (props) => {
                 <input
                   className="col-md-10"
                   type="text"
-                  name={`t_location_1_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].t_location_1 : null}
+                  name={`t_location_1_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].t_location_1 : null}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1150,8 +990,9 @@ const UserCarList = (props) => {
                 <input
                   className="col-md-10"
                   type="text"
-                  name={`t_location_2_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].t_location_2 : null}
+                  name={`t_location_2_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].t_location_2 : null}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -1162,8 +1003,9 @@ const UserCarList = (props) => {
                 <input
                   type="text"
                   className="col-md-10"
-                  name={`t_location_3_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].t_location_3 : null}
+                  name={`t_location_3_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].t_location_3 : null}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1172,8 +1014,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  name={`t_location_4_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].t_location_4 : null}
+                  name={`t_location_4_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].t_location_4 : null}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1182,8 +1025,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  name={`t_location_5_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].t_location_5 : null}
+                  name={`t_location_5_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].t_location_5 : null}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -1195,8 +1039,9 @@ const UserCarList = (props) => {
                 <input
                   className="col"
                   type="text"
-                  name={`province_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].province : null}
+                  name={`province_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].province : null}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1206,8 +1051,9 @@ const UserCarList = (props) => {
                 <input
                   className="col"
                   type="text"
-                  name={`distric_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined? formData[index + 1].distric : null}
+                  name={`distric_${index}`}
+                  defaultValue={formData[index] !== undefined? formData[index].distric : null}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -1218,8 +1064,9 @@ const UserCarList = (props) => {
                 <input
                   type="text"
                   className="col"
-                  name={`subdistric_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].subdistric : null}
+                  name={`subdistric_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].subdistric : null}
+                  onChange={handleChange}
                 />
               </div>
               <div class="col-1">
@@ -1228,8 +1075,9 @@ const UserCarList = (props) => {
               <div class="col-2">
                 <input
                   type="text"
-                  name={`zipcode_${index + 1}`}
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].zipcode : null}
+                  name={`zipcode_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].zipcode : null}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -1245,8 +1093,9 @@ const UserCarList = (props) => {
                     <input
                       type="text"
                       class="col-md-10"
-                      name={`carRegisNo_${index + 1}`}
-                      defaultValue={formData[index + 1] !== undefined ? formData[index + 1].carRegisNo : null}
+                      name={`carRegisNo_${index}`}
+                      defaultValue={formData[index] !== undefined ? formData[index].carRegisNo : null}
+                      onChange={handleChange}
                     />
                   </div>
                   <div class="col-1">
@@ -1256,8 +1105,9 @@ const UserCarList = (props) => {
                     <input
                       className="col-md-10"
                       type="text"
-                      name={`brandID_${index + 1}`}
-                      defaultValue={formData[index + 1] !== undefined? formData[index + 1].brandID : null}
+                      name={`brandID_${index}`}
+                      defaultValue={formData[index] !== undefined? formData[index].brandID : null}
+                      onChange={handleChange}
                     />
                   </div>
                   <div class="col-1">
@@ -1267,8 +1117,9 @@ const UserCarList = (props) => {
                     <input
                       type="text"
                       className="col-md-10"
-                      name={`modelID_${index + 1}`}
-                      defaultValue={formData[index + 1] !== undefined ? formData[index + 1].modelID : null}
+                      name={`modelID_${index}`}
+                      defaultValue={formData[index] !== undefined ? formData[index].modelID : null}
+                      onChange={handleChange}
                     />
                   </div>
                   <div class="col-1">
@@ -1278,8 +1129,9 @@ const UserCarList = (props) => {
                     <input
                       type="text"
                       className="col"
-                      name={`chassisNo_${index + 1}`}
-                      defaultValue={formData[index + 1] !== undefined ? formData[index + 1].chassisNo : null}
+                      name={`chassisNo_${index}`}
+                      defaultValue={formData[index] !== undefined ? formData[index].chassisNo : null}
+                      onChange={handleChange}
                     />
                   </div>
                   <div class="col-1">
@@ -1288,8 +1140,9 @@ const UserCarList = (props) => {
                   <div class="col-2">
                     <input
                       type="text"
-                      defaultValue={formData[index + 1] !== undefined ? formData[index + 1].carRegisYear : null}
-                      name={`carRegisYear_${index + 1}`}
+                      name={`carRegisYear_${index}`}
+                      defaultValue={formData[index] !== undefined ? formData[index].carRegisYear : null}
+                      onChange={handleChange}
                     
                     />
                   </div>
@@ -1306,8 +1159,9 @@ const UserCarList = (props) => {
                 <input
                   type="text"
                   class="col-md-10"
-                  defaultValue={formData[index + 1] !== undefined ? formData[index + 1].telNum_1 : null}
-                  name={`telNum_1_${index + 1}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].telNum_1 : null}
+                  name={`telNum_1_${index}`}
+                  onChange={handleChange}
                 />
               </div>
             </div>

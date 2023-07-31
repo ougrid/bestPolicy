@@ -27,15 +27,18 @@ const NormalText = {
 const Insurer = () => {
     const url = config.url;
     const navigate = useNavigate();
-    const [insurerData, setInsurerData] = useState({entityID : null});
-    const [entityData, setEntityData] = useState({personType : 'C'});
-    const [locationData, setLocationData] = useState({entityID : null, locationType: 'A'});
+    const [insurerData, setInsurerData] = useState({ entityID: null });
+    const [entityData, setEntityData] = useState({ personType: 'C' ,ogType:"ประกันภัย"});
+    const [locationData, setLocationData] = useState({ entityID: null, locationType: 'A' });
+    const [comOvInData, setComOvInData] = useState([]);
     // dropdown
     const [provinceDD, setProvinceDD] = useState([])
     const [districDD, setDistricDD] = useState([])
     const [subDistricDD, setSubDistricDD] = useState([])
     const [zipcodeDD, setZipCodeDD] = useState([])
     const [titleDD, setTitleDD] = useState([])
+    const [insureTypeDD, setInsureTypeDD] = useState([])
+    const [row, setRow] = useState(0);
 
     const changeInsurer = (e) => {
         setInsurerData((prevState) => ({
@@ -53,6 +56,14 @@ const Insurer = () => {
     };
 
     
+    const changeComOv = (e) => {
+        // console.log(entityData);
+        const index = e.target.key
+        const data = {...comOvInData[index], [e.target.name] : e.target.value }
+        comOvInData[index]= data
+        setComOvInData (comOvInData);
+    };
+
 
     const changeLocation = (e) => {
         setLocationData((prevState) => ({
@@ -61,100 +72,123 @@ const Insurer = () => {
         }));
         if (e.target.name === 'provinceID') {
             getDistrict(e.target.value)
-        }else if ((e.target.name === 'districtID')){
+        } else if ((e.target.name === 'districtID')) {
             getSubDistrict(e.target.value)
         }
     };
 
-    const getDistrict =(provinceID) =>{
+    const getDistrict = (provinceID) => {
         //get distric in province selected
         axios
             .get(url + "/static/amphurs/" + provinceID)
             .then((distric) => {
                 const array = []
                 distric.data.forEach(ele => {
-                   array.push(<option key={ele.amphurid} value={ele.amphurid}>{ele.t_amphurname}</option>)
+                    array.push(<option key={ele.amphurid} value={ele.amphurid}>{ele.t_amphurname}</option>)
                 });
                 setDistricDD(array)
             })
             .catch((err) => {
-              
-                    alert("cant get aumphur");
-                
+
+                alert("cant get aumphur");
+
             });
     }
 
-    
-    const getSubDistrict =(districID) =>{
+
+    const getSubDistrict = (districID) => {
         //get tambons in distric selected
         axios
             .get(url + "/static/tambons/" + districID)
             .then((subdistric) => {
                 const arraySub = []
                 const arrayZip = []
-                const zip  = []
-                subdistric.data.forEach(ele=> {
-                   arraySub.push(<option key={ele.tambonid} value={ele.tambonid}>{ele.t_tambonname}</option>)
-                   zip.push(ele.postcodeall.split("/"))
+                const zip = []
+                subdistric.data.forEach(ele => {
+                    arraySub.push(<option key={ele.tambonid} value={ele.tambonid}>{ele.t_tambonname}</option>)
+                    zip.push(ele.postcodeall.split("/"))
                 });
                 const uniqueZip = [...new Set(...zip)];
                 console.log(uniqueZip);
-                uniqueZip.forEach(zip =>{arrayZip.push(<option  value={zip}>{zip}</option>)})
+                uniqueZip.forEach(zip => { arrayZip.push(<option value={zip}>{zip}</option>) })
                 setSubDistricDD(arraySub)
                 setZipCodeDD(arrayZip)
             })
             .catch((err) => {
-              
-                    alert("cant get tambons");
-                
+
+                alert("cant get tambons");
+
             });
     }
 
     useEffect(() => {
         //get province
         axios
-        .get(url + "/static/provinces/all")
-        .then((province) => {
-            // let token = res.data.jwt;
-            // let decode = jwt_decode(token);
-            // navigate("/");
-            // window.location.reload();
-            // localStorage.setItem("jwt", token);
-    
-            const array = []
-            province.data.forEach(ele => {
-                array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
-            });
-            setProvinceDD(array)
+            .get(url + "/static/provinces/all")
+            .then((province) => {
+                // let token = res.data.jwt;
+                // let decode = jwt_decode(token);
+                // navigate("/");
+                // window.location.reload();
+                // localStorage.setItem("jwt", token);
 
-            axios
-            .get(url + "/static/titles/company/all")
-            .then((title) => {
-                const array2 = []
-                title.data.forEach(ele => {
-                    array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
+                const array = []
+                province.data.forEach(ele => {
+                    array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
                 });
-                setTitleDD(array2)
+                setProvinceDD(array)
+
+                axios
+                    .get(url + "/static/titles/company/all")
+                    .then((title) => {
+                        const array2 = []
+                        title.data.forEach(ele => {
+                            array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
+                        });
+                        setTitleDD(array2)
+                    })
+                    .catch((err) => {
+
+                        alert("cant get company");
+
+                    });
             })
             .catch((err) => {
-              
-                    alert("cant get company");
-                
-            });
-        })
-        .catch((err) => {
-          
+
                 alert("cant get province");
-            
-        });
+
+            });
         // get title all of company type
-       
-    },[]);
+
+        //get insureType
+        axios
+            .get(url + "/insures/insuretypeall")
+            .then((province) => {
+                // let token = res.data.jwt;
+                // let decode = jwt_decode(token);
+                // navigate("/");
+                // window.location.reload();
+                // localStorage.setItem("jwt", token);
+
+                const array = []
+                province.data.forEach(ele => {
+                    array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+                });
+                setInsureTypeDD(array)
+
+            })
+            .catch((err) => {
+
+                alert("cant get province");
+
+            });
+
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
-            .post(url + "/persons/insurernew", {insurer: insurerData, entity:entityData, location: locationData})
+            .post(url + "/persons/insurernew", { insurer: insurerData, entity: entityData, location: locationData })
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -163,13 +197,39 @@ const Insurer = () => {
                 // localStorage.setItem("jwt", token);
                 console.log(res.data);
                 alert("create new insurer success")
+                axios.post(url + "/insures/commovinnew", { insurer: insurerData, entity: entityData, location: locationData })
+                .then((res) => {
+                    // let token = res.data.jwt;
+                    // let decode = jwt_decode(token);
+                    // navigate("/");
+                    // window.location.reload();
+                    // localStorage.setItem("jwt", token);
+                    console.log(res.data);
+                    alert("setup new com ov in success")
+                   
+                })
             })
             .catch((err) => {
-              
-                    alert("create new insurer fail");
-                
+
+                alert("create new insurer fail");
+
             });
     };
+
+    const newRow = (e) => {
+        e.preventDefault();
+        setRow(row + 1);
+
+    };
+    const removeRow = (e) => {
+        e.preventDefault();
+        if (row > 0) {
+            setRow(row - 1);
+
+        }
+
+    };
+
 
     return (
         <>
@@ -217,20 +277,20 @@ const Insurer = () => {
                         />
                     </div>
                     <div class="col">
-                            <h6>อัตราภาษี</h6>
-                        </div>
-                        <div class="col">
-                            <InputBtn
-                                type="number" 
-                                step={0.1}
-                                required
-                                // placeholder="Password"
-                                name="deductTaxRate"
-                                onChange={changeInsurer}
-                            />
-                        </div>
+                        <h6>อัตราภาษี</h6>
+                    </div>
+                    <div class="col">
+                        <InputBtn
+                            type="number"
+                            step={0.1}
+                            required
+                            // placeholder="Password"
+                            name="deductTaxRate"
+                            onChange={changeInsurer}
+                        />
+                    </div>
                 </div>
-                    
+
                 <div class="row">
                     <div class="col">
                         <h6>เครดิตเทอมค่าเบี้ย</h6>
@@ -280,10 +340,10 @@ const Insurer = () => {
                             name="titleID"
                             onChange={changeEntity}
                         /> */}
-                            <select   className="col" name="titleID"  onChange={changeEntity}>
+                        <select className="col" name="titleID" onChange={changeEntity}>
                             <option value="" selected disabled hidden>เลือกคำนำหน้า</option>
-                                {titleDD}
-                            </select>
+                            {titleDD}
+                        </select>
                     </div>
                     <div class="col">
                         <h6>ชื่อ</h6>
@@ -305,6 +365,8 @@ const Insurer = () => {
                             type="text"
                             // placeholder="Password"
                             name="ogType"
+                            value="ประกันภัย"
+                            disabled
                             onChange={changeEntity}
                         />
                     </div>
@@ -356,11 +418,11 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="checkbox"
-                            
+
                             // placeholder="Password"
                             name="vatRegis"
-                            onChange={e => setEntityData({...entityData, vatRegis: e.target.checked})}
-                         
+                            onChange={e => setEntityData({ ...entityData, vatRegis: e.target.checked })}
+
                         />
                     </div>
                     <div class="col">
@@ -399,12 +461,12 @@ const Insurer = () => {
                             onChange={changeEntity}
                         />
                     </div>
-                    
+
                 </div>
 
                 {/* location table */}
                 <div class="row">
-                <h5>Location</h5>
+                    <h5>Location</h5>
                 </div>
                 <div class="row">
                     <div class="col">
@@ -477,10 +539,10 @@ const Insurer = () => {
                             name="provinceID"
                             onChange={changeLocation}
                         />onChange={e => setInsureData({...insureData, insureType: e.target.value})} */}
-                            <select   className="col" name="provinceID" onChange={changeLocation}>
+                        <select className="col" name="provinceID" onChange={changeLocation}>
                             <option value="" selected disabled hidden>เลือกจังหวัด</option>
-                                {provinceDD}
-                            </select>
+                            {provinceDD}
+                        </select>
                     </div>
                     <div class="col">
                         <h6>อำเภอ</h6>
@@ -493,10 +555,10 @@ const Insurer = () => {
                             name="districtID"
                             onChange={changeLocation}
                         /> */}
-                        <select   className="col" name="districtID" onChange={changeLocation}>
-                        <option value="" selected disabled hidden>เลือกอำเภอ</option>
-                                {districDD}
-                            </select>
+                        <select className="col" name="districtID" onChange={changeLocation}>
+                            <option value="" selected disabled hidden>เลือกอำเภอ</option>
+                            {districDD}
+                        </select>
                     </div>
                     <div class="col">
                         <h6>ตำบล</h6>
@@ -509,10 +571,10 @@ const Insurer = () => {
                             name="subDistrictID"
                             onChange={changeLocation}
                         /> */}
-                        <select   className="col" name="subDistrictID" onChange={changeLocation}>
-                        <option value="" selected disabled hidden>เลือกตำบล</option>
-                                {subDistricDD}
-                            </select>
+                        <select className="col" name="subDistrictID" onChange={changeLocation}>
+                            <option value="" selected disabled hidden>เลือกตำบล</option>
+                            {subDistricDD}
+                        </select>
                     </div>
                 </div>
 
@@ -528,10 +590,10 @@ const Insurer = () => {
                             name="zipcode"
                             onChange={changeLocation}
                         /> */}
-                         <select   className="col" name="zipcode" onChange={changeLocation}>
-                        <option value="" selected disabled hidden>เลือกรหัสไปรษณีย์</option>
-                                {zipcodeDD}
-                            </select>
+                        <select className="col" name="zipcode" onChange={changeLocation}>
+                            <option value="" selected disabled hidden>เลือกรหัสไปรษณีย์</option>
+                            {zipcodeDD}
+                        </select>
                     </div>
                     <div class="col">
                         <h6>เบอร์โทรศัพท์</h6>
@@ -580,9 +642,77 @@ const Insurer = () => {
                             onChange={changeLocation}
                         />
                     </div>
-                    
+
                 </div>
-                
+
+                {/* commission-ov-in table */}
+                <div class="row">
+                    <div class="col-10">
+                        <h5>commission OV IN</h5>
+                    </div>
+                    <div class="col">
+                        <button onClick={newRow} >add</button>
+                    </div>
+                    <div class="col">
+                        <button onClick={removeRow} >Remove</button>
+                    </div>
+
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>InsureType</th>
+                            {/* <th>class</th>
+                            <th>subclass</th> */}
+                            <th>% commmission</th>
+                            <th>จำนวนเงิน</th>
+                            <th>% OV</th>
+                            <th>จำนวนเงิน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <>
+                            {/* <form
+                                method="POST"
+                                id={"policyadd"}
+                            //   onSubmit={(e) => handleCreate(e)}
+                            ></form> */}
+
+                            {Array.from({ length: row+1 }, (_, index) => (
+                                <tr>
+                                    <td>
+                                        <select  name="insureID" onChange={changeComOv } key = {index}>
+                                            {insureTypeDD}
+                                        </select>
+                                    </td>
+                                    {/* <td>
+                                        <select form={"policyadd"} name="type">
+                                            {subClassList}
+                                        </select>
+                                    </td> */}
+                                    <td>
+                                        <input type="text"  name="rateComIn" onChange={changeComOv } key = {index} />
+                                    </td>
+                                    <td>
+                                    <input type="text"  name="amountComIn" onChange={changeComOv } key = {index}/>
+                                    </td>
+                                    <td>
+                                    <input type="text"  name="rateOVIn_1" onChange={changeComOv } key = {index}/>
+                                    </td>
+                                    <td>
+                                        <input type="text"  name="amountOVIn_1" onChange={changeComOv } key = {index}/>
+                                    </td>
+
+
+                                </tr>
+                            ))}
+
+                        </>
+                    </tbody>
+                </table>
+
+
+
                 <LoginBtn type="submit">Submit</LoginBtn>
             </form>
 
