@@ -637,7 +637,6 @@ const Insurer = () => {
                     <div class="col">
                         <InputBtn
                             type="text"
-                            // placeholder="Password"
                             name="note"
                             onChange={changeLocation}
                         />

@@ -909,6 +909,115 @@ const UserCarList = (props) => {
                 />
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-1">
+                <h6>คอมมิสชั่น ขาเข้า%</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  className="col"
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].prem : null}
+                  name={`prem_${index}`}
+                  onChange={handleChange}
+
+                />
+              </div>
+              <div class="col-1">
+                <h6>จำนวนเงิน</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
+                  name={`duty_${index}`}
+                  onChange={handleChange}
+                />
+              </div>
+              <div class="col-1">
+                <h6>OV ขาเข้า %</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
+                  name={`stamp_${index}`}
+                  onChange={handleChange}
+                />
+              </div>
+              <div class="col-1">
+                <h6>จำนวนเงิน</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  // className="col-2"
+                  type="number"
+                  step={0.1}
+                  name={`total_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].total : null}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              
+            <div class="col-1">
+                <h6>คอมมิสชั่น ขาออก%</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  // className="col-2"
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].prem : null}
+                  name={`prem_${index}`}
+                  onChange={handleChange}
+
+                />
+              </div>
+              <div class="col-1">
+                <h6>จำนวนเงิน</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
+                  name={`duty_${index}`}
+                  onChange={handleChange}
+                />
+              </div>
+              <div class="col-1">
+                <h6>OV ขาออก %</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
+                  name={`stamp_${index}`}
+                  onChange={handleChange}
+                />
+              </div>
+              <div class="col-1">
+                <h6>จำนวนเงิน</h6>
+              </div>
+              <div class="col-2">
+                <input
+                  className="col"
+                  type="number"
+                  step={0.1}
+                  name={`total_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].total : null}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
             {/* entity table */}
             <div class="row">
               <div class="col-1">

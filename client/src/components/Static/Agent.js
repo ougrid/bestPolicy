@@ -30,12 +30,15 @@ const Agent = () => {
   const [agentData, setAgentData] = useState({ entityID: null });
   const [entityData, setEntityData] = useState({ personType: "P" });
   const [locationData, setLocationData] = useState({ entityID: null, locationType: 'A' });
+  const [row, setRow] = useState(0);
+  const [comOvInData, setComOvInData] = useState([]);
   // dropdown
   const [provinceDD, setProvinceDD] = useState([])
   const [districDD, setDistricDD] = useState([])
   const [subDistricDD, setSubDistricDD] = useState([])
   const [zipcodeDD, setZipCodeDD] = useState([])
   const [titleDD, setTitleDD] = useState([])
+  const [insureTypeDD, setInsureTypeDD] = useState([])
 
   useEffect(() => {
     //get province
@@ -76,7 +79,61 @@ const Agent = () => {
       });
     // get title all of company type
 
+    // get all insuretype
+    axios
+            .get(url + "/insures/insuretypeall")
+            .then((province) => {
+                // let token = res.data.jwt;
+                // let decode = jwt_decode(token);
+                // navigate("/");
+                // window.location.reload();
+                // localStorage.setItem("jwt", token);
+
+                const array = []
+                province.data.forEach(ele => {
+                    array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+                });
+                setInsureTypeDD(array)
+
+            })
+            .catch((err) => {
+
+                alert("cant get province");
+
+            });
+
+             // get all insuretype
+    axios
+    .get(url + "/insures/insuretypeall")
+    .then((province) => {
+        // let token = res.data.jwt;
+        // let decode = jwt_decode(token);
+        // navigate("/");
+        // window.location.reload();
+        // localStorage.setItem("jwt", token);
+
+        const array = []
+        province.data.forEach(ele => {
+            array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+        });
+        setInsureTypeDD(array)
+
+    })
+    .catch((err) => {
+
+        alert("cant get province");
+
+    });
+
   }, []);
+
+  const changeComOv = (e) => {
+    // console.log(entityData);
+    const index = e.target.key
+    const data = {...comOvInData[index], [e.target.name] : e.target.value }
+    comOvInData[index]= data
+    setComOvInData (comOvInData);
+};
 
   const changeAgent = (e) => {
     setAgentData((prevState) => ({
@@ -147,6 +204,20 @@ const Agent = () => {
 
       });
   }
+
+  const newRow = (e) => {
+    e.preventDefault();
+    setRow(row + 1);
+
+};
+const removeRow = (e) => {
+    e.preventDefault();
+    if (row > 0) {
+        setRow(row - 1);
+
+    }
+
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -598,6 +669,72 @@ const Agent = () => {
             />
           </div>
         </div>
+         {/* commission-ov-in table */}
+         <div class="row">
+                    <div class="col-10">
+                        <h5>commission OV IN</h5>
+                    </div>
+                    <div class="col">
+                        <button onClick={newRow} >add</button>
+                    </div>
+                    <div class="col">
+                        <button onClick={removeRow} >Remove</button>
+                    </div>
+
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>InsureType</th>
+                            <th>บริษัทรับประกัน</th>
+                            {/* <th>class</th>
+                            <th>subclass</th> */}
+                            <th>% commmission</th>
+                            <th>จำนวนเงิน</th>
+                            <th>% OV</th>
+                            <th>จำนวนเงิน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <>
+                            {/* <form
+                                method="POST"
+                                id={"policyadd"}
+                            //   onSubmit={(e) => handleCreate(e)}
+                            ></form> */}
+
+                            {Array.from({ length: row+1 }, (_, index) => (
+                                <tr>
+                                    <td>
+                                        <select  name="insureID" onChange={changeComOv } key = {index}>
+                                            {insureTypeDD}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="insurerCode" onChange={changeComOv } key = {index}>
+                                            {/* {insurerDD} */}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text"  name="rateComIn" onChange={changeComOv } key = {index} />
+                                    </td>
+                                    <td>
+                                    <input type="text"  name="amountComIn" onChange={changeComOv } key = {index}/>
+                                    </td>
+                                    <td>
+                                    <input type="text"  name="rateOVIn_1" onChange={changeComOv } key = {index}/>
+                                    </td>
+                                    <td>
+                                        <input type="text"  name="amountOVIn_1" onChange={changeComOv } key = {index}/>
+                                    </td>
+
+
+                                </tr>
+                            ))}
+
+                        </>
+                    </tbody>
+                </table>
 
         <LoginBtn type="submit">Submit</LoginBtn>
       </form>
