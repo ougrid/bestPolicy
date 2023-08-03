@@ -39,6 +39,8 @@ module.exports = (sequelize, DataTypes) => {
     // level for MLM
     level:  DataTypes.INTEGER,
     dueDate: DataTypes.DATEONLY,
+    groupSatmentID: DataTypes.INTEGER,
+    
   }, {
     sequelize,
     modelName: 'Transaction',

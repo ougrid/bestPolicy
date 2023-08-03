@@ -13,6 +13,7 @@ import Agent from "./Agent";
 import CommOv from "./CommOv"
 import Policy from "./Policy";
 import ExportFile from "./ExportFile"
+import Payment from "./Payment";
 
 
 const Static = () => {
@@ -39,7 +40,9 @@ const Static = () => {
           setPage(<Policy />)
       }else if (name === 'report'){
           setPage(<ExportFile />)
-      }
+      }else if (name === 'payment'){
+        setPage(<Payment />)
+    }
     },[name]);
   if (localStorage.getItem("jwt") !== null) {
     const decoded = jwt_decode(localStorage.getItem("jwt"));

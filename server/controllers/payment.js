@@ -2,7 +2,6 @@ const Policy = require("../models").Policy;
 const Transaction = require("../models").Transaction;
 const CommOVIn = require("../models").CommOVIn; //imported fruits array
 const CommOVOut = require("../models").CommOVOut;
-const Insuree = require("../models").Insuree;
 const process = require('process');
 require('dotenv').config();
 // const Package = require("../models").Package;
@@ -29,7 +28,26 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
   },
 });
 
-const createTransection = async (req) => {
+const findTransaction = async (req) => {
+    let transac1 = null
+    let transac2 = null
+    if (req.body.payType === 'amity') {
+        if (req.body.repType === 'insuerName') {
+            transac1 = ['Prem','I']
+        }else if(req.body.repType === 'agentCode'){
+            transac1 = ['Com/OV','O']
+        }
+    }else if (req.body.payType === 'insuerName' && req.body.repType === 'amity'){
+        transac1 = ['Com/OV','I']
+    }else if (req.body.payType === 'agentCode'){
+        transac1 = ['Prem','I']
+        if (req.body.repType === 'insuerName') {
+            transac2 = ['Prem','O']
+        }else if(req.body.repType === 'amity'){
+            transac2 = ['Com/OV','O']
+        }
+    }
+
   await sequelize.query(
     'select * FROM static_data."CommOVOuts" comout ' +
     'JOIN static_data."CommOVIns" comin ' +
@@ -59,17 +77,15 @@ const createTransection = async (req) => {
 
     for (let i = 0; i < setupcom.length; i++) {
       if (records[0][setupcom[i][0]] != null || records[0][setupcom[i][1]] != null) {
-        let subType = 1
-        if(setupcom[i][3] === 'O'){subType = -1}
+
         sequelize.query(
           'INSERT INTO static_data."Transactions" ' +
           '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
-          'VALUES (:type, :status, :subType,:insurerCode ,:agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
+          'VALUES (:type, :status, 1,:insurerCode ,:agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
           {
             replacements: {
               type: setupcom[i][2],
               status: setupcom[i][3],
-              subType:subType,
               insurerCode: req.body.policy.insurerCode,
               agentGroupCode: records[0]["AgentGroupCode"],
               agentCode: req.body.policy.agentCode,
@@ -91,37 +107,8 @@ const createTransection = async (req) => {
   })
 }
 
-const getPolicy = (req, res) => {
-  Policy.findOne({
-    where: {
-      policyNo: req.body.policyNo
-    }
-  }).then((policy) => {
-    res.json(policy);
-  });
-};
 
-const newPolicy = async (req, res) => {
-  createTransection(req)
-  await Policy.create(req.body.policy);
-  await res.json({ status: 'success' })
-};
 
-const getTransactionByid = (req, res) => {
-  Transaction.findOne({
-    where: {
-      id: req.params.id
-    }
-  }).then((transection) => {
-    res.json(transection);
-  });
-};
-
-const newTransaction = async (req, res) => {
-  Transaction.create(req).then((transection) => {
-    res.json(transection);
-  });
-};
 
 const newPolicyList = async (req, res) => {
 
@@ -298,26 +285,21 @@ const newPolicyList = async (req, res) => {
         ["rateOVIn_2", "amountOVIn_2", 'OV', 'I'],
         ["rateOVIn_3", "amountOVIn_3", 'OV', 'I'],
         ["rateOVIn_4", "amountOVIn_4", 'OV', 'I'],
-        ["rateOVIn_5", "amountOVIn_5", 'OV', 'I'],
-        [null , null, 'Prem', 'I'],
-        [null , null, 'Prem', 'O'],
-      ]
+        ["rateOVIn_5", "amountOVIn_5", 'OV', 'I']]
 
         for (let j = 0; j < setupcom.length; j++) {
           if (records[0][setupcom[j][0]] != null || records[0][setupcom[j][1]] != null) {
-            let subType = 1
-            if(setupcom[j][3] === 'O'){subType = -1}
+
             sequelize.query(
               'INSERT INTO static_data."Transactions" ' +
               '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
-              'VALUES (:type, :status, :subType, ' +
+              'VALUES (:type, :status, 1, ' +
               '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
               ':agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
               {
                 replacements: {
                   type: setupcom[j][2],
                   status: setupcom[j][3],
-                  subType : subType,
                   insurername: req.body[i].insurerName,
                   agentGroupCode: records[0]["AgentGroupCode"],
                   agentCode: req.body[i].agentCode,
@@ -327,35 +309,6 @@ const newPolicyList = async (req, res) => {
                   duty: null,
                   stamp: null,
                   total: null,
-                  duedate: '2022-05-01'
-                },
-                type: QueryTypes.INSERT
-              }
-            );
-
-          }else if (setupcom[j][2] === 'Prem'){
-            let subType = 1
-            if(setupcom[j][3] === 'O'){subType = -1}
-            sequelize.query(
-              'INSERT INTO static_data."Transactions" ' +
-              '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
-              'VALUES (:type, :status, :subType, ' +
-              '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
-              ':agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
-              {
-                replacements: {
-                  type: 'Prem',
-                  status: setupcom[j][3],
-                  subType : subType,
-                  insurername: req.body[i].insurerName,
-                  agentGroupCode: records[0]["AgentGroupCode"],
-                  agentCode: req.body[i].agentCode,
-                  policyNo: req.body[i].policyNo,
-                  rate:null,
-                  amount:  req.body[i].prem,
-                  duty: req.body[i].duty,
-                  stamp: req.body[i].stamp,
-                  total: req.body[i].total,
                   duedate: '2022-05-01'
                 },
                 type: QueryTypes.INSERT
@@ -381,12 +334,10 @@ const newPolicyList = async (req, res) => {
 
 module.exports = {
 
-  getPolicy,
-  newPolicy,
-  getTransactionByid,
-  newTransaction,
+
+
   newPolicyList,
-  // postCar,
+  findTransaction,
   // removeCar,
   // editCar,
 };

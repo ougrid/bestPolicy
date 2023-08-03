@@ -102,10 +102,10 @@ const Agent = () => {
 
             });
 
-             // get all insuretype
+    // get all insurer
     axios
-    .get(url + "/insures/insuretypeall")
-    .then((province) => {
+    .get(url + "/insurers/insurerall")
+    .then((insurer) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
         // navigate("/");
@@ -113,8 +113,8 @@ const Agent = () => {
         // localStorage.setItem("jwt", token);
 
         const array = []
-        province.data.forEach(ele => {
-            array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+        insurer.data.forEach(ele => {
+            array.push(<option key={ele.id} value={ele.insurerCode}>{ele.t_ogName}</option>)
         });
         setInsureTypeDD(array)
 

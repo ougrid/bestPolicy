@@ -5,8 +5,22 @@ const Agent = require("../models").Agent;
 const User = require("../models").User;
 const Location = require("../models").Location;
 const AgentGroup = require("../models").AgentGroup;
+const process = require('process');
+require('dotenv').config();
 
-const { Op } = require("sequelize");
+const { Op, QueryTypes, Sequelize } = require("sequelize");
+
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: process.env.DB_DIALECT,
+  port: process.env.DB_PORT,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    },
+  },
+});
 //handle index request
 // const showAll = (req,res) =>{
 //     Location.findAll({
@@ -65,6 +79,16 @@ const newInsuree = (req, res) => {
     res.json(insuree);
   });
 };
+
+const getInsurerAll =  (req, res) => {
+   sequelize.query(
+    'select * FROM static_data."Insurers" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id";',
+    {type: QueryTypes.SELECT}).then((insurer) => {
+  res.json(insurer);
+});
+};
+
+
 
 const newInsurer = (req, res) => {
   Entity.create(req.body.entity).then((entity) => {
@@ -152,5 +176,6 @@ module.exports = {
   newUser,
   getAgentGroupByid,
   newAgentGroup,
+  getInsurerAll,
   // removeCar,AgentditCar,
 };

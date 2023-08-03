@@ -57,6 +57,9 @@ function NavStatic() {
           <NavList>
             <NavLink to="/static/report">report</NavLink>
           </NavList>
+          <NavList>
+            <NavLink to="/static/payment">payment</NavLink>
+          </NavList>
    
           </NavMenu>
         </NavBar>

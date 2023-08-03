@@ -8,6 +8,7 @@ router.get('/entityget/:id', ctrl.persons.getEntityByid);
 router.post('/insureenew', ctrl.persons.newInsuree);
 router.get('/insureeget/:id', ctrl.persons.getInsureeByid);
 router.post('/insurernew', ctrl.persons.newInsurer);
+router.get('/insurerall', ctrl.persons.getInsurerAll);
 router.get('/insurerget/:id', ctrl.persons.getInsurerByid);
 router.post('/agentnew', ctrl.persons.newAgent);
 router.get('/agentget/:id', ctrl.persons.getAgentByid);

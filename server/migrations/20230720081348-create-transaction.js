@@ -77,6 +77,9 @@ module.exports = {
         allowNull:false,
         type: Sequelize.DATEONLY
       },
+      groupSatmentID:{
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,
