@@ -51,6 +51,7 @@ app.use("/v1/persons", routes.persons);
 app.use("/v1/auth", routes.auth);
 app.use("/v1/insures", routes.insures);
 app.use("/v1/policies", routes.policies);
+app.use("/v1/payments", routes.payments);
 // app.use("/v1/reports", routes.reports);
 
 // app.use("/v1/insures", routes.insures);

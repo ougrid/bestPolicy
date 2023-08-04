@@ -812,7 +812,7 @@ const UserCarList = (props) => {
                 />
               </div>
               <div class="col-1">
-                <h6>รหัสนายหน้า</h6>
+                <h6>รหัสผู้แนะนำ</h6>
               </div>
               <div class="col-2">
                 <input
@@ -825,7 +825,7 @@ const UserCarList = (props) => {
               </div>
 
               <div class="col-1">
-                <h6>ประเภทประกัน</h6>
+                <h6>Class</h6>
               </div>
               <div class="col-2">
                 <select
@@ -841,7 +841,7 @@ const UserCarList = (props) => {
                 </select>
               </div>
               <div class="col-1">
-                <h6>แผนประกัน</h6>
+                <h6>Subclass</h6>
               </div>
               <div class="col-2">
                 <input
@@ -912,7 +912,7 @@ const UserCarList = (props) => {
 
             <div class="row">
               <div class="col-1">
-                <h6>คอมมิสชั่น ขาเข้า%</h6>
+                <h6>comm_in%</h6>
               </div>
               <div class="col-2">
                 <input
@@ -938,7 +938,7 @@ const UserCarList = (props) => {
                 />
               </div>
               <div class="col-1">
-                <h6>OV ขาเข้า %</h6>
+                <h6>OV_in %</h6>
               </div>
               <div class="col-2">
                 <input
@@ -967,7 +967,7 @@ const UserCarList = (props) => {
             <div className="row">
               
             <div class="col-1">
-                <h6>คอมมิสชั่น ขาออก%</h6>
+                <h6>comm_out%</h6>
               </div>
               <div class="col-2">
                 <input
@@ -993,7 +993,7 @@ const UserCarList = (props) => {
                 />
               </div>
               <div class="col-1">
-                <h6>OV ขาออก %</h6>
+                <h6>OV_out %</h6>
               </div>
               <div class="col-2">
                 <input

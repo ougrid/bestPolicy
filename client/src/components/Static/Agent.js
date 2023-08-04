@@ -459,7 +459,7 @@ const removeRow = (e) => {
             />
           </div>
           <div class="col">
-            <h6>เพศโดยกำเนิด</h6>
+            <h6>เพศ</h6>
           </div>
           <div class="col">
             {/* <InputBtn
@@ -473,7 +473,7 @@ const removeRow = (e) => {
               name="gender"
               onChange={changeEntity}
             >
-              <option value="" selected disabled hidden>XX or XY ?</option>
+              <option value="" selected disabled hidden>?</option>
               <option value="M">ชาย</option>
               <option value="F">หญิง</option>
             </select>

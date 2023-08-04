@@ -126,7 +126,7 @@ const newTransaction = async (req, res) => {
 const newPolicyList = async (req, res) => {
 
   //create entity 
-  for (let i = 0; i < req.body.length; i++) {
+   for (let i = 0; i < req.body.length;  i++) {
     await sequelize.query(
       'insert into static_data."Entities" ("personType","titleID","t_ogName","t_firstName","t_lastName","idCardType","idCardNo","taxNo") ' +
       'values (:personType, (select "TITLEID" from static_data."Titles" where "TITLEABTHAIBEGIN" = :title), :t_ogName, :t_firstName, :t_lastName,:idCardType,:idCardNo,:taxNo) ' +
@@ -218,15 +218,15 @@ const newPolicyList = async (req, res) => {
           {
             replacements: {
               entityID: entity[0][0].id,
-              t_location_1: req.body[i].t_location_1,
-              t_location_2: req.body[i].t_location_2,
-              t_location_3: req.body[i].t_location_3,
-              t_location_4: req.body[i].t_location_4,
-              t_location_5: req.body[i].t_location_5,
+              t_location_1: req.body[i].t_location_1.toString(),
+              t_location_2: req.body[i].t_location_2.toString(),
+              t_location_3: req.body[i].t_location_3.toString(),
+              t_location_4: req.body[i].t_location_4.toString(),
+              t_location_5: req.body[i].t_location_5.toString(),
               province: req.body[i].province,
               district: req.body[i].distric,
               tambon: req.body[i].subdistric,
-              zipcode: req.body[i].zipcode,
+              zipcode: req.body[i].zipcode.toString(),
               tel_1: req.body[i].telNum_1,
               locationType: 'A'
             },
@@ -272,7 +272,7 @@ const newPolicyList = async (req, res) => {
 
 
       // edit transection
-      sequelize.query(
+      await sequelize.query(
         'select * FROM static_data."CommOVOuts" comout ' +
         'JOIN static_data."CommOVIns" comin ' +
         'ON comin."insurerCode" = comout."insurerCode" and comin."insureID" = comout."insureID" ' +

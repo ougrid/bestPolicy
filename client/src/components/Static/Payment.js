@@ -30,6 +30,7 @@ const Payment = () => {
   const [paymentData, setPaymentData] = useState({});
   const [filterData, setFilterData] = useState({});
   const [transactionData, setTransactionData] = useState([]);
+  const [transacList, setTransacList] = useState([]);
   const [commOutData, setCommOutData] = useState({});
 
   const changePayment = (e) => {
@@ -45,10 +46,11 @@ const Payment = () => {
       [e.target.name]: e.target.value,
     }));
   };
-  const filterSubmit = (e) => {
+  const filterSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post(url + "/insures/commovnew", filterData)
+    console.log({...filterData, ...paymentData});
+    await axios
+      .post(url + "/payments/findtransac", {...filterData, ...paymentData})
       .then((res) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -57,11 +59,39 @@ const Payment = () => {
         // localStorage.setItem("jwt", token);
         console.log(res.data);
         setTransactionData(res.data)
+        const array = []
+        res.data.forEach((ele,index)=>{
+          array.push(<tr>
+            <td>
+                <input type="text"  name="policyNo"  disabled key = {index} value={ele.policyNo}/>
+            </td>
+            <td>
+                <input type="text"  name="insurerName"  disabled key = {index} value={ele.insurerName} />
+            </td>
+            <td>
+            <input type="text"  name="agentCode" disabled  key = {index} value={ele.agentCode}/>
+            </td>
+            <td>
+            <input type="text"  name="transType"  disabled  key = {index} value={ele.transType}/>
+            </td>
+            <td>
+                <input type="text"  name="amount" disabled  key = {index} value={ele.amount}/>
+            </td>
+            <td>
+                <input type="text"  name="transStatus" disabled  key = {index} value={ele.transStatus}/>
+            </td>
+            <td>
+                <input type="checkbox"  name="selected" key = {index} />
+            </td>
+        </tr>)
+          
+      })
+        setTransacList(array)
         
     })
     .catch((err) => {
       
-            alert("fuck off filter");
+            alert("fail filter");
         
     });
   };
@@ -175,7 +205,7 @@ const Payment = () => {
                 >
                   <option value={null} disabled selected hidden>เลือก</option>
                   <option value="insuerName">บริษัทรับประกัน</option>
-                  <option value="AgentCode">ตัวแทนนายหน้า</option>
+                  <option value="agentCode">ตัวแทนนายหน้า</option>
                   <option value="amity">อะมิตี้</option>
             
                 </select>
@@ -260,32 +290,12 @@ const Payment = () => {
                             <th>AgentCode</th>
                             <th>ประเภท</th>
                             <th>จำนวนเงิน</th>
+                            <th>status</th>
+                            <th>selected</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <>
-                            {transactionData.forEach((ele,index)=>{
-                                <tr>
-                                <td>
-                                    <input type="text"  name="policyNo"  disabled key = {index} value={ele.policyNo}/>
-                                </td>
-                                <td>
-                                    <input type="text"  name="insurerName"  disabled key = {index} value={ele.insurerName} />
-                                </td>
-                                <td>
-                                <input type="text"  name="agentCode" disabled  key = {index} value={ele.agentCode}/>
-                                </td>
-                                <td>
-                                <input type="text"  name="transType"  disabled  key = {index} value={ele.transType}/>
-                                </td>
-                                <td>
-                                    <input type="text"  name="amount" disabled  key = {index} value={ele.amount}/>
-                                </td>
-
-
-                            </tr>
-                            })}
-                        </>
+                        {transacList}
                     </tbody>
                 </table>
 
