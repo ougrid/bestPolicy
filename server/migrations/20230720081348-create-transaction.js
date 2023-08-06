@@ -34,9 +34,6 @@ module.exports = {
       agentCode: {
         type: Sequelize.STRING
       },
-      rate: {
-        type: Sequelize.FLOAT
-      },
       amount: {
         type: Sequelize.FLOAT
       },
@@ -80,6 +77,45 @@ module.exports = {
       groupSatmentID:{
         type: Sequelize.INTEGER
       },
+      totalamt:{
+        type: Sequelize.FLOAT
+      },
+      paidamt:{
+        type: Sequelize.FLOAT,
+        defaultValue: 0,
+      },
+      remainamt:{
+        type: Sequelize.FLOAT
+      },
+      status:{
+        type: Sequelize.STRING
+      },
+      seqno:{
+        defaultValue: 1,
+        type: Sequelize.INTEGER
+      },
+      commamt:{
+        type: Sequelize.FLOAT
+      },
+      commtaxamt:{
+        type: Sequelize.FLOAT
+      },
+      ovamt:{
+        type: Sequelize.FLOAT
+      },
+      ovtaxamt:{
+        type: Sequelize.FLOAT
+      },
+      rprefdate: {
+        type: Sequelize.DATEONLY
+      },
+      "premin-rprefdate": {
+        type: Sequelize.DATEONLY
+      },
+      "premout-rprefdate": {
+        type: Sequelize.DATEONLY
+      },
+      
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

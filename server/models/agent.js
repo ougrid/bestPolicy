@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.CHAR,
     note:  DataTypes.STRING,
     entityID: DataTypes.INTEGER,
+    stamentType: DataTypes.STRING,
     
   }, {
     sequelize,

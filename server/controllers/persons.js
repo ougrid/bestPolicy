@@ -5,6 +5,8 @@ const Agent = require("../models").Agent;
 const User = require("../models").User;
 const Location = require("../models").Location;
 const AgentGroup = require("../models").AgentGroup;
+const CommOVIn =require("../models").CommOVIn;
+const CommOVOut =require("../models").CommOVOut;
 const process = require('process');
 require('dotenv').config();
 
@@ -90,20 +92,19 @@ const getInsurerAll =  (req, res) => {
 
 
 
-const newInsurer = (req, res) => {
-  Entity.create(req.body.entity).then((entity) => {
-    req.body.insurer.entityID = entity.id
-    req.body.location.entityID = entity.id
-    Insurer.create(req.body.insurer).then((insurer) => {
-      Location.create(req.body.location).then((location) => {
-        res.json({...insurer, ...entity,...location});
-    });
-    
-      // res.json(location);
-    });
-    // res.json({});
-  });
-   
+const newInsurer = async (req, res) => {
+    const entity = await Entity.create(req.body.entity)
+      req.body.insurer.entityID = entity.id
+      req.body.location.entityID = entity.id
+    const insurer = await Insurer.create(req.body.insurer)
+    const location = await Location.create(req.body.location)
+  // console.log(req.body);
+    req.body.commOVIn.forEach(async ele => {
+      ele.insurerCode = req.body.insurer.insurerCode
+      const commovin = await CommOVIn.create (ele)
+    }); 
+  res.json({...insurer, ...entity,...location});
+  
   };
 
   const getAgentByid = (req, res) => {
@@ -116,19 +117,19 @@ const newInsurer = (req, res) => {
   });
 };
 
-const newAgent = (req, res) => {
-  Entity.create(req.body.entity).then((entity) => {
-    req.body.agent.entityID = entity.id
-    req.body.location.entityID = entity.id
-    Agent.create(req.body.agent).then((agent) => {
-      Location.create(req.body.location).then((location) => {
-        res.json({...agent, ...entity,...location});
-    });
-    
-      // res.json(location);
-    });
-    // res.json({});
-  });
+const newAgent = async (req, res) => {
+  const entity = await Entity.create(req.body.entity)
+  req.body.agent.entityID = entity.id
+  req.body.location.entityID = entity.id
+const agent = await Agent.create(req.body.agent)
+const location = await Location.create(req.body.location)
+// console.log(req.body);
+req.body.commOVOut.forEach(async ele => {
+  ele.AgentGroupCode = req.body.agent.agentCode
+  const commovout = await CommOVOut.create (ele)
+}); 
+res.json({...agent, ...entity,...location});
+  
   };
 
 const getUserByid = (req, res) => {

@@ -15,6 +15,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       agentGroupCode: {
+        defaultValue: 'Amity',
         type: Sequelize.STRING
       },
       // พนงประจำ พนงขาย พนงอิสระ
@@ -49,6 +50,10 @@ module.exports = {
       entityID: {
         allowNull: false,
         type: Sequelize.INTEGER
+      },
+      stamentType: {
+        defaultValue:"Gross",
+        type: Sequelize.STRING
       },
       createdAt: {
         defaultValue: new Date(),

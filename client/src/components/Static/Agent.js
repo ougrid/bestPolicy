@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { CenterPage } from "../StylesPages/AdminStyles";
 import {
   BrowserRouter,
   Routes,
@@ -31,7 +32,7 @@ const Agent = () => {
   const [entityData, setEntityData] = useState({ personType: "P" });
   const [locationData, setLocationData] = useState({ entityID: null, locationType: 'A' });
   const [row, setRow] = useState(0);
-  const [comOvInData, setComOvInData] = useState([]);
+  const [comOvOutData, setComOvOutData] = useState([]);
   // dropdown
   const [provinceDD, setProvinceDD] = useState([])
   const [districDD, setDistricDD] = useState([])
@@ -39,6 +40,7 @@ const Agent = () => {
   const [zipcodeDD, setZipCodeDD] = useState([])
   const [titleDD, setTitleDD] = useState([])
   const [insureTypeDD, setInsureTypeDD] = useState([])
+  const [insurerDD, setInsurerDD] = useState([]);
 
   useEffect(() => {
     //get province
@@ -68,13 +70,13 @@ const Agent = () => {
           })
           .catch((err) => {
 
-            alert("cant get company");
+            // alert("cant get company");
 
           });
       })
       .catch((err) => {
 
-        alert("cant get province");
+        // alert("cant get province");
 
       });
     // get title all of company type
@@ -98,13 +100,13 @@ const Agent = () => {
             })
             .catch((err) => {
 
-                alert("cant get province");
+                // alert("cant get province");
 
             });
 
     // get all insurer
     axios
-    .get(url + "/insurers/insurerall")
+    .get(url + "/persons/insurerall")
     .then((insurer) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -116,12 +118,12 @@ const Agent = () => {
         insurer.data.forEach(ele => {
             array.push(<option key={ele.id} value={ele.insurerCode}>{ele.t_ogName}</option>)
         });
-        setInsureTypeDD(array)
+        setInsurerDD(array)
 
     })
     .catch((err) => {
 
-        alert("cant get province");
+        // alert("cant get province");
 
     });
 
@@ -129,10 +131,11 @@ const Agent = () => {
 
   const changeComOv = (e) => {
     // console.log(entityData);
-    const index = e.target.key
-    const data = {...comOvInData[index], [e.target.name] : e.target.value }
-    comOvInData[index]= data
-    setComOvInData (comOvInData);
+    const index = e.target.name.split('-')[1];
+    const name = e.target.name.split('-')[0];
+    const data = {...comOvOutData[index], [name] : e.target.value }
+    comOvOutData[index]= data
+    setComOvOutData (comOvOutData);
 };
 
   const changeAgent = (e) => {
@@ -174,7 +177,7 @@ const Agent = () => {
       })
       .catch((err) => {
 
-        alert("cant get aumphur");
+        // alert("cant get aumphur");
 
       });
   }
@@ -200,7 +203,7 @@ const Agent = () => {
       })
       .catch((err) => {
 
-        alert("cant get tambons");
+        // alert("cant get tambons");
 
       });
   }
@@ -226,6 +229,7 @@ const removeRow = (e) => {
         agent: agentData,
         entity: entityData,
         location: locationData,
+        commOVOut:comOvOutData
       })
       .then((res) => {
         // let token = res.data.jwt;
@@ -244,18 +248,16 @@ const removeRow = (e) => {
   };
 
   return (
-    <>
+    <CenterPage>
       {/* <BackdropBox1> */}
-      <form className="container text-center" onSubmit={handleSubmit}>
+      <form  onSubmit={handleSubmit}>
         {/* insurer table */}
-        <h1>ตัวแทนนายหน้า</h1>
-        <div class="row">
-          <div class="col">
-            <h6>AgentCode</h6>
-          </div>
-          <div class="col">
+        <h1>ผู้แนะนำ</h1>
+        <div class="row form-group form-inline">
+          <div class="col-2">
+                <label class="form-label ">AgentCode<span class="text-danger"> *</span></label>
             <InputBtn
-              className="col-md-4"
+                className="form-control"
               type="text"
               required
               // placeholder="InsurerCode"
@@ -263,236 +265,62 @@ const removeRow = (e) => {
               onChange={changeAgent}
             />
           </div>
-          <div class="col">
-            <h6>Master Agent Code</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="agentGroupCode"
-              onChange={changeAgent}
-            />
-          </div>
-          <div class="col">
-            <h6>เลขที่ใบอนุญาติ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              required
-              // placeholder="Password"
-              name="licentNo"
-              onChange={changeAgent}
-            />
-          </div>
-          <div class="col">
-            <h6>วันหมดอายุ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="date"
-              required
-              // placeholder="Password"
-              name="licentExp"
-              onChange={changeAgent}
-            />
-          </div>
+          <div class="col-2">
+                <label class="form-label ">Stament type<span class="text-danger"> *</span></label>
+                <select
+                  className="form-control"
+                  name={`stamentType`}
+                  onChange={changeAgent}
+                >
+                  <option selected value="Net">Net</option>
+                  <option value="Gross">Gross</option>
+                </select>
+              </div>
+        
         </div>
 
-        <div class="row">
-          <div class="col">
-            <h6>เลขที่ใบอนุญาติประกันชีวิต</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="licentLifeNo"
-              onChange={changeAgent}
-            />
-          </div>
-          <div class="col">
-            <h6>วันหมดอายุ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="date"
-              // placeholder="Password"
-              name="licentLifeExp"
-              onChange={changeAgent}
-            />
-          </div>
-          {/* <div class="col">
-            <h6>สถานะ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="status"
-              onChange={changeAgent}
-            />
-          </div> */}
-          <div class="col">
-            <h6>note</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="note"
-              onChange={changeAgent}
-            />
-          </div>
-        </div>
         {/* entity table */}
         <div class="row">
-          <div class="col">
-            <h6>คำนำหน้า</h6>
-          </div>
-          <div class="col">
-            {/* <InputBtn
-              type="number"
-              // placeholder="Password"
-              name="titleID"
-              onChange={changeEntity}
-            /> */}
-
-            <select className="col" name="titleID" onChange={changeEntity}>
-              <option value="" selected disabled hidden>เลือกคำนำหน้า</option>
+          
+        <div class="col-1">
+              <label class="form-label ">type<span class="text-danger"> *</span></label>
+                <select
+                  className="form-control"
+                  name={`personType`}
+                  onChange={changeEntity}
+                >
+                  <option selected value="P">บุคคล</option>
+                  <option value="C">นิติบุคคล</option>
+                </select>
+              </div>
+          <div class="col-1">
+                <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
+            <select 
+                className="form-control" name="titleID" onChange={changeEntity}>
+              <option value="" selected disabled hidden> </option>
               {titleDD}
             </select>
           </div>
-          <div class="col">
-            <h6>ชื่อ</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_firstName"
               onChange={changeEntity}
             />
           </div>
-          <div class="col">
-            <h6>นามสกุล</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">นามสกุล<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_lastName"
               onChange={changeEntity}
             />
           </div>
-          <div class="col">
-            <h6>Email</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="email"
-              onChange={changeEntity}
-            />
-          </div>
         </div>
 
-        <div class="row">
-          <div class="col">
-            <h6>ประเภทบัตร</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="idCardType"
-              onChange={changeEntity}
-            />
-          </div>
-          <div class="col">
-            <h6>เลขที่บัตร</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="idCardNo"
-              onChange={changeEntity}
-            />
-          </div>
-          <div class="col">
-            <h6>วันเริ่มต้น</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="date"
-              // placeholder="Password"
-              name="idCardActDate"
-              onChange={changeEntity}
-            />
-          </div>
-          <div class="col">
-            <h6>วันหมดอายุ</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="date"
-              // placeholder="Password"
-              name="idCardExpDate"
-              onChange={changeEntity}
-            />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <h6>วันเกิด</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="date"
-              // placeholder="Password"
-              name="dateOfBirth"
-              onChange={changeEntity}
-            />
-          </div>
-          <div class="col">
-            <h6>เพศ</h6>
-          </div>
-          <div class="col">
-            {/* <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="gender"
-              onChange={changeEntity}
-            /> */}
-            <select
-              className="col"
-              name="gender"
-              onChange={changeEntity}
-            >
-              <option value="" selected disabled hidden>?</option>
-              <option value="M">ชาย</option>
-              <option value="F">หญิง</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <h6>note</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="note"
-              onChange={changeEntity}
-            />
-          </div>
-        </div>
 
         {/* location table */}
         <div class="row">
@@ -500,46 +328,38 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
-          <div class="col">
-            <h6>บ้านเลขที่</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">บ้านเลขที่<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_location_1"
               onChange={changeLocation}
             />
           </div>
-          <div class="col">
-            <h6>หมู่บ้านอาคาร</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">หมู่บ้านอาคาร<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_location_2"
               onChange={changeLocation}
             />
           </div>
-          <div class="col">
-            <h6>หมู่</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">หมู่<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_location_3"
               onChange={changeLocation}
             />
           </div>
-          <div class="col">
-            <h6>ซอย</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">ซอย<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_location_4"
               onChange={changeLocation}
             />
@@ -547,58 +367,33 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
-          <div class="col">
-            <h6>ถนน</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">ถนน<span class="text-danger"> *</span></label>
             <InputBtn
+                className="form-control"
               type="text"
-              // placeholder="Password"
               name="t_location_5"
               onChange={changeLocation}
             />
           </div>
-          <div class="col">
-            <h6>จังหวัด</h6>
-          </div>
-          <div class="col">
-            {/* <InputBtn
-              type="number"
-              // placeholder="Password"
-              name="provinceID"
-              onChange={changeLocation}
-            /> */}
-            <select className="col" name="provinceID" onChange={changeLocation}>
+          <div class="col-2">
+                <label class="form-label ">จังหวัด<span class="text-danger"> *</span></label>
+            <select 
+                className="form-control" name="provinceID" onChange={changeLocation}>
               <option value="" selected disabled hidden>เลือกจังหวัด</option>
               {provinceDD}
             </select>
           </div>
-          <div class="col">
-            <h6>อำเภอ</h6>
-          </div>
-          <div class="col">
-            {/* <InputBtn
-              type="number"
-              // placeholder="Password"
-              name="districtID"
-              onChange={changeLocation}
-            /> */}
-            <select className="col" name="districtID" onChange={changeLocation}>
+          <div class="col-2">
+                <label class="form-label ">อำเภอ<span class="text-danger"> *</span></label>
+            <select className="form-control" name="districtID" onChange={changeLocation}>
               <option value="" selected disabled hidden>เลือกอำเภอ</option>
               {districDD}
             </select>
           </div>
-          <div class="col">
-            <h6>ตำบล</h6>
-          </div>
-          <div class="col">
-            {/* <InputBtn
-              type="number"
-              // placeholder="Password"
-              name="subDistrictID"
-              onChange={changeLocation}
-            /> */}
-            <select className="col" name="subDistrictID" onChange={changeLocation}>
+          <div class="col-2">
+                <label class="form-label ">ตำบล<span class="text-danger"> *</span></label>
+            <select className="form-control" name="subDistrictID" onChange={changeLocation}>
               <option value="" selected disabled hidden>เลือกตำบล</option>
               {subDistricDD}
             </select>
@@ -606,78 +401,61 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
-          <div class="col">
-            <h6>รหัสไปรษณีย์</h6>
-          </div>
-          <div class="col">
-            {/* <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="zipcode"
-              onChange={changeLocation}
-            /> */}
-            <select className="col" name="zipcode" onChange={changeLocation}>
+          <div class="col-2">
+                <label class="form-label ">รหัสไปรษณีย์<span class="text-danger"> *</span></label>
+            <select className="form-control" name="zipcode" onChange={changeLocation}>
               <option value="" selected disabled hidden>เลือกรหัสไปรษณีย์</option>
               {zipcodeDD}
             </select>
           </div>
-          <div class="col">
-            <h6>เบอร์โทรศัพท์</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">Email<span class="text-danger"> *</span></label>
             <InputBtn
-              type="number"
-              // placeholder="Password"
-              name="telNum_1"
-              onChange={changeLocation}
+            className="form-control"
+              type="text"
+              name="email"
+              onChange={changeEntity}
             />
           </div>
-          <div class="col">
-            <h6>เบอร์มือถือ</h6>
-          </div>
-          <div class="col">
+          <div class="col-2">
+                <label class="form-label ">เบอร์มือถือ<span class="text-danger"> *</span></label>
             <InputBtn
+            className="form-control"
               type="number"
-              // placeholder="Password"
               name="telNum_2"
               onChange={changeLocation}
             />
           </div>
-          <div class="col">
-            <h6>เบอร์โทรสาร</h6>
-          </div>
-          <div class="col">
+         
+          <div class="col-2">
+                <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
             <InputBtn
+            className="form-control"
               type="number"
-              // placeholder="Password"
+              name="telNum_1"
+              onChange={changeLocation}
+            />
+          </div>
+          <div class="col-2">
+                <label class="form-label ">เบอร์โทรสาร<span class="text-danger"> *</span></label>
+            <InputBtn
+            className="form-control"
+              type="number"
               name="telNum_3"
               onChange={changeLocation}
             />
           </div>
         </div>
 
-        <div class="row">
-          <div class="col">
-            <h6>note</h6>
-          </div>
-          <div class="col">
-            <InputBtn
-              type="text"
-              // placeholder="Password"
-              name="note"
-              onChange={changeLocation}
-            />
-          </div>
-        </div>
          {/* commission-ov-in table */}
          <div class="row">
-                    <div class="col-10">
+                    <div class="col-2">
                         <h5>commission OV IN</h5>
                     </div>
-                    <div class="col">
+                    <div class="col-2">
                         <button onClick={newRow} >add</button>
                     </div>
-                    <div class="col">
+                    <div class="col-2">
                         <button onClick={removeRow} >Remove</button>
                     </div>
 
@@ -690,9 +468,7 @@ const removeRow = (e) => {
                             {/* <th>class</th>
                             <th>subclass</th> */}
                             <th>% commmission</th>
-                            <th>จำนวนเงิน</th>
                             <th>% OV</th>
-                            <th>จำนวนเงิน</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -706,26 +482,22 @@ const removeRow = (e) => {
                             {Array.from({ length: row+1 }, (_, index) => (
                                 <tr>
                                     <td>
-                                        <select  name="insureID" onChange={changeComOv } key = {index}>
+                                        <select  name={`insureID-${index}`} onChange={changeComOv } key = {index}>
+                                        <option disabled selected hidden>class:subclass</option>
                                             {insureTypeDD}
                                         </select>
                                     </td>
                                     <td>
-                                        <select name="insurerCode" onChange={changeComOv } key = {index}>
-                                            {/* {insurerDD} */}
+                                        <select name={`insurerCode-${index}`}onChange={changeComOv } key = {index}>
+                                        <option disabled selected hidden>บริษัทรับประกัน</option>
+                                            {insurerDD}
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text"  name="rateComIn" onChange={changeComOv } key = {index} />
+                                        <input type="text"  name={`rateComIn-${index}`} onChange={changeComOv } key = {index} />
                                     </td>
                                     <td>
-                                    <input type="text"  name="amountComIn" onChange={changeComOv } key = {index}/>
-                                    </td>
-                                    <td>
-                                    <input type="text"  name="rateOVIn_1" onChange={changeComOv } key = {index}/>
-                                    </td>
-                                    <td>
-                                        <input type="text"  name="amountOVIn_1" onChange={changeComOv } key = {index}/>
+                                    <input type="text"  name={`rateOVIn_1-${index}`} onChange={changeComOv } key = {index}/>
                                     </td>
 
 
@@ -743,7 +515,7 @@ const removeRow = (e) => {
           First time here ? Let's sign up
         </Link> */}
       {/* </BackdropBox1> */}
-    </>
+    </CenterPage>
   );
 };
 

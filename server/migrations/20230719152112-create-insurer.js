@@ -43,6 +43,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      stamentType: {
+        defaultValue:"Gross",
+        type: Sequelize.STRING
+      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

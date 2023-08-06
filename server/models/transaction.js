@@ -24,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     insurerCode: DataTypes.STRING,
     agentGroupCode: DataTypes.STRING,
     agentCode:  DataTypes.STRING,
-    rate:  DataTypes.FLOAT,
     amount: DataTypes.FLOAT,
     duty:  DataTypes.FLOAT,
     stamp:  DataTypes.FLOAT,
@@ -39,7 +38,19 @@ module.exports = (sequelize, DataTypes) => {
     // level for MLM
     level:  DataTypes.INTEGER,
     dueDate: DataTypes.DATEONLY,
-    groupSatmentID: DataTypes.INTEGER,
+    groupSatmentID: DataTypes.INTEGER, 
+    totalamt: DataTypes.FLOAT,
+    paidamt:  DataTypes.FLOAT,
+    remainamt:  DataTypes.FLOAT,
+    status:  DataTypes.STRING,
+    seqno:  DataTypes.INTEGER,
+    commamt: DataTypes.FLOAT,
+    commtaxamt:  DataTypes.FLOAT,
+    ovamt:  DataTypes.FLOAT,
+    ovtaxamt: DataTypes.FLOAT,
+    rprefdate:   DataTypes.DATEONLY,
+    "premin-rprefdate":  DataTypes.DATEONLY,
+    "premout-rprefdate":   DataTypes.DATEONLY,
     
   }, {
     sequelize,

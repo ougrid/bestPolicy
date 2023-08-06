@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     commCreditT:  DataTypes.INTEGER,
     ovCreditT: DataTypes.INTEGER,
     entityID:  DataTypes.INTEGER,
+    stamentType: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Insurer',

@@ -47,15 +47,7 @@ const UserCarList = (props) => {
     telNum_1: null,
   }]);
 
-  // const [cars, setCars] = useState([]);
-  // const [carTypes, setCarType] = useState(config.carType);
-  // const [carTypeList, setCarTypeList] =useState([])
-
-  // useEffect(() => {
-  //   axios.get(url + "/cars").then((res) => {
-  //     setCars(res.data);
-  //   });
-  // }, []);
+  
 
   // const carList = carTypes.map((item) => {
   //   return <option value={item}>{item}</option>;
@@ -349,16 +341,15 @@ const UserCarList = (props) => {
     <CenterPage>
       <button onClick={newRow} >add</button>
       <button onClick={removeRow} >Remove</button>
-      {/* <input type="text" form={"policyadd"} name="brand" />
-      <button onClick={removeRow} >import EXCEL</button> */}
 
       <input type="file" id="fileInput" onChange={(e) => handleFileChange(e)} />
      
       
-      <form className="container-fluid" method="POST"
+      {/* <form className="container-fluid form-group text-left" */}
+      <form
+       method="POST"
         id="policyList">
-        {/* onSubmit={(e) => handleCreate(e)}> */}
-        {/* <h1>กรมธรรม์ฉบับที่ 1</h1> */}
+       
         <>
         {/* policy table 
         <div class="row ">
@@ -757,36 +748,34 @@ const UserCarList = (props) => {
           <>
             <h1>กรมธรรม์ฉบับที่ {index + 1}</h1>
             {/* policy table */}
-            <div class="row justify-content-start">
-              <div class="col-1 ">
-                <h6>เลขที่กรมธรรม์</h6>
-              </div>
-              <div class="col-2">
+            <div className="row form-group form-inline ">
+              
+              <div className="col-2 form-group  ">
+              <label class="form-label ">เลขที่กรมธรรม์<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                   className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ?formData[index].policyNo :null }
                   name={`policyNo_${index}`}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>วันที่เริ่มคุ้มครอง</h6>
-              </div>
-              <div class="col-2">
+             
+              <div class="col-2 form-group ">
+              <label class="form-label">วันที่เริ่มคุ้มครอง<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                   className="form-control"
                   type="date"
                   defaultValue={formData[index] !== undefined ? formData[index].actDate: null}
                   name={`actDate_${index}`}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>วันที่สิ้นสุด</h6>
-              </div>
-              <div class="col-2">
+              
+              <div class="col-2 form-group ">
+              <label class="form-label ">วันที่สิ้นสุด<span class="text-danger"> *</span></label>
                 <input
+                 className="form-control"
                   type="date"
                   defaultValue={formData[index] !== undefined ? formData[index].expDate :null}
                   name={`expDate_${index}`}
@@ -800,23 +789,22 @@ const UserCarList = (props) => {
             </div>
 
             <div class="row">
-              <div class="col-1">
-                <h6>บริษัทรับประกัน</h6>
-              </div>
-              <div class="col-2">
+             
+              <div class="col-2 form-group " >
+              <label class="form-label px-3">บริษัทรับประกัน<span class="text-danger"> *</span></label>
                 <input
+                 className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined? formData[index].insurerName:null}
                   name={`insurerName_${index}`}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>รหัสผู้แนะนำ</h6>
-              </div>
-              <div class="col-2">
+             
+              <div class="col-2 form-group ">
+              <label class="form-label px-3">รหัสผู้แนะนำ<span class="text-danger"> *</span></label>
                 <input
-                  className="col-md-4"
+                  className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ? formData[index].agentCode :null}
                   name={`agentCode_${index}`}
@@ -824,12 +812,11 @@ const UserCarList = (props) => {
                 />
               </div>
 
-              <div class="col-1">
-                <h6>Class</h6>
-              </div>
-              <div class="col-2">
+            
+              <div class="col-2 form-group ">
+              <label class="form-label ">Class<span class="text-danger"> *</span></label>
                 <select
-                  className="col-md-8"
+                  className="form-control"
                   name={`insureType_${index}`}
                   onChange={handleChange}
 
@@ -840,11 +827,11 @@ const UserCarList = (props) => {
                   <option value="FR">FR</option>
                 </select>
               </div>
-              <div class="col-1">
-                <h6>Subclass</h6>
-              </div>
+              
               <div class="col-2">
+              <label class="form-label ">Subclass<span class="text-danger"> *</span></label>
                 <input
+                 className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ? formData[index].insureName: null}
                   name={`insureName_${index}`}
@@ -857,12 +844,11 @@ const UserCarList = (props) => {
 
 
             <div class="row">
-              <div class="col-1">
-                <h6>ค่าเบี้ย</h6>
-              </div>
+              
               <div class="col-2">
+              <label class="form-label ">ค่าเบี้ย<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                  className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].prem : null}
@@ -871,23 +857,11 @@ const UserCarList = (props) => {
 
                 />
               </div>
-              <div class="col-1">
-                <h6>ภาษี</h6>
-              </div>
+              
               <div class="col-2">
+              <label class="form-label ">ค่าแสตมอากรณ์<span class="text-danger"> *</span></label>
                 <input
-                  type="number"
-                  step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
-                  name={`duty_${index}`}
-                  onChange={handleChange}
-                />
-              </div>
-              <div class="col-1">
-                <h6>ค่าแสตมอากรณ์</h6>
-              </div>
-              <div class="col-2">
-                <input
+                className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
@@ -895,12 +869,23 @@ const UserCarList = (props) => {
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>ค่าเบี้ยรวม</h6>
-              </div>
+              
               <div class="col-2">
+              <label class="form-label ">ภาษี<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                className="form-control"
+                  type="number"
+                  step={0.1}
+                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
+                  name={`duty_${index}`}
+                  onChange={handleChange}
+                />
+              </div>
+            
+              <div class="col-2">
+              <label class="form-label ">ค่าเบี้ยรวม<span class="text-danger"> *</span></label>
+                <input
+                  className="form-control"
                   type="number"
                   step={0.1}
                   name={`total_${index}`}
@@ -911,12 +896,11 @@ const UserCarList = (props) => {
             </div>
 
             <div class="row">
-              <div class="col-1">
-                <h6>comm_in%</h6>
-              </div>
+              
               <div class="col-2">
+                <label class="form-label ">comm_in%<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                   className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].prem : null}
@@ -925,11 +909,10 @@ const UserCarList = (props) => {
 
                 />
               </div>
-              <div class="col-1">
-                <h6>จำนวนเงิน</h6>
-              </div>
               <div class="col-2">
+                <label class="form-label ">จำนวนเงิน<span class="text-danger"> *</span></label>
                 <input
+                   className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].duty : null}
@@ -937,11 +920,11 @@ const UserCarList = (props) => {
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>OV_in %</h6>
-              </div>
+              
               <div class="col-2">
+                <label class="form-label ">OV_in %<span class="text-danger"> *</span></label>
                 <input
+                   className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
@@ -949,12 +932,11 @@ const UserCarList = (props) => {
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>จำนวนเงิน</h6>
-              </div>
+             
               <div class="col-2">
+                <label class="form-label ">จำนวนเงิน<span class="text-danger"> *</span></label>
                 <input
-                  // className="col-2"
+                   className="form-control"
                   type="number"
                   step={0.1}
                   name={`total_${index}`}
@@ -965,13 +947,11 @@ const UserCarList = (props) => {
             </div>
 
             <div className="row">
-              
-            <div class="col-1">
-                <h6>comm_out%</h6>
-              </div>
+           
               <div class="col-2">
+                <label class="form-label ">comm_out%<span class="text-danger"> *</span></label>
                 <input
-                  // className="col-2"
+                   className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].prem : null}
@@ -980,11 +960,11 @@ const UserCarList = (props) => {
 
                 />
               </div>
-              <div class="col-1">
-                <h6>จำนวนเงิน</h6>
-              </div>
+             
               <div class="col-2">
+                <label class="form-label ">จำนวนเงิน<span class="text-danger"> *</span></label>
                 <input
+                   className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].duty : null}
@@ -992,11 +972,10 @@ const UserCarList = (props) => {
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>OV_out %</h6>
-              </div>
               <div class="col-2">
+                <label class="form-label ">OV_out %<span class="text-danger"> *</span></label>
                 <input
+                 className="form-control"
                   type="number"
                   step={0.1}
                   defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
@@ -1004,12 +983,10 @@ const UserCarList = (props) => {
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>จำนวนเงิน</h6>
-              </div>
               <div class="col-2">
+              <label class="form-label ">จำนวนเงิน<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                  className="form-control"
                   type="number"
                   step={0.1}
                   name={`total_${index}`}
@@ -1021,8 +998,9 @@ const UserCarList = (props) => {
             {/* entity table */}
             <div class="row">
               <div class="col-1">
+              <label class="form-label ">type<span class="text-danger"> *</span></label>
                 <select
-                  className="col-md-8"
+                  className="form-control"
                   name={`personType_${index}`}
                   onChange={handleChange}
                 >
@@ -1031,12 +1009,11 @@ const UserCarList = (props) => {
                   <option value="C">นิติบุคคล</option>
                 </select>
               </div>
+             
               <div class="col-1">
-                <h6>คำนำหน้า</h6>
-              </div>
-              <div class="col-1">
+              <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
                 <input
-                  className="col-md-8"
+                  className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ? formData[index].title : null}
                   name={`title_${index}`}
@@ -1044,33 +1021,32 @@ const UserCarList = (props) => {
                 />
               </div>
 
-              <div class="col-1">
-                <h6>ชื่อ</h6>
-              </div>
+             
               <div class="col-2">
+              <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
                 <input
+                className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ? formData[index].t_fn : null}
                   name={`t_fn_${index}`}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>นามสกุล</h6>
-              </div>
+             
               <div class="col-2">
+              <label class="form-label ">นามสกุล<span class="text-danger"> *</span></label>
                 <input
+                className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined? formData[index].t_ln : null}
                   name={`t_ln_${index}`}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>เลขประจำตัว</h6>
-              </div>
               <div class="col-2">
+              <label class="form-label ">เลขประจำตัว<span class="text-danger"> *</span></label>
                 <input
+                className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ? formData[index].regisNo : null}
                   name={`regisNo_${index}`}
@@ -1080,59 +1056,50 @@ const UserCarList = (props) => {
             </div>
             {/* location table */}
             <div class="row">
-              <div class="col-1">
-                <h6>บ้านเลขที่</h6>
-              </div>
-              <div class="col-1">
+              <div class="col-2">
+              <label class="form-label ">บ้านเลขที่<span class="text-danger"> *</span></label>
                 <input
-                  className="col-md-10"
+                className="form-control"
                   type="text"
                   name={`t_location_1_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].t_location_1 : null}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>หมู่บ้าน/อาคาร</h6>
-              </div>
-              <div class="col-1">
+              <div class="col-2">
+                <label class="form-label ">หมู่บ้าน/อาคาร<span class="text-danger"> *</span></label>
                 <input
-                  className="col-md-10"
+                className="form-control"
                   type="text"
                   name={`t_location_2_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].t_location_2 : null}
                   onChange={handleChange}
                 />
               </div>
-
-              <div class="col-1">
-                <h6>หมู่</h6>
-              </div>
-              <div class="col-1">
+              <div class="col-2">
+                <label class="form-label ">หมู่<span class="text-danger"> *</span></label>
                 <input
                   type="text"
-                  className="col-md-10"
+                  className="form-control"
                   name={`t_location_3_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].t_location_3 : null}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>ซอย</h6>
-              </div>
               <div class="col-2">
+                <label class="form-label ">ซอย<span class="text-danger"> *</span></label>
                 <input
+                  className="form-control"
                   type="text"
                   name={`t_location_4_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].t_location_4 : null}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>ถนน</h6>
-              </div>
               <div class="col-2">
+                <label class="form-label ">ถนน<span class="text-danger"> *</span></label>
                 <input
+                  className="form-control"
                   type="text"
                   name={`t_location_5_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].t_location_5 : null}
@@ -1141,48 +1108,40 @@ const UserCarList = (props) => {
               </div>
             </div>
             <div class="row">
-              <div class="col-1">
-                <h6>จังหวัด</h6>
-              </div>
               <div class="col-2">
+                <label class="form-label ">จังหวัด<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                  className="form-control"
                   type="text"
                   name={`province_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].province : null}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>อำเภอ</h6>
-              </div>
               <div class="col-2">
+                <label class="form-label ">อำเภอ<span class="text-danger"> *</span></label>
                 <input
-                  className="col"
+                   className="form-control"
                   type="text"
                   name={`distric_${index}`}
                   defaultValue={formData[index] !== undefined? formData[index].distric : null}
                   onChange={handleChange}
                 />
               </div>
-
-              <div class="col-1">
-                <h6>ตำบล</h6>
-              </div>
               <div class="col-2">
+              <label class="form-label ">ตำบล<span class="text-danger"> *</span></label>
                 <input
+                  className="form-control"
                   type="text"
-                  className="col"
                   name={`subdistric_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].subdistric : null}
                   onChange={handleChange}
                 />
               </div>
-              <div class="col-1">
-                <h6>รหัสไปรษณี</h6>
-              </div>
               <div class="col-2">
+              <label class="form-label ">รหัสไปรษณี<span class="text-danger"> *</span></label>
                 <input
+                  className="form-control"
                   type="text"
                   name={`zipcode_${index}`}
                   defaultValue={formData[index] !== undefined ? formData[index].zipcode : null}
@@ -1195,59 +1154,50 @@ const UserCarList = (props) => {
             {"Motor" === "Motor" ? (
               <>
                 <div class="row">
-                  <div class="col-1">
-                    <h6>เลขทะเบียนรถ</h6>
-                  </div>
-                  <div class="col-1">
+                  <div class="col-2">
+              <label class="form-label ">เลขทะเบียนรถ<span class="text-danger"> *</span></label>
                     <input
+                  className="form-control"
                       type="text"
-                      class="col-md-10"
                       name={`carRegisNo_${index}`}
                       defaultValue={formData[index] !== undefined ? formData[index].carRegisNo : null}
                       onChange={handleChange}
                     />
                   </div>
-                  <div class="col-1">
-                    <h6>ยี่ห้อรถยนต์</h6>
-                  </div>
-                  <div class="col-1">
+                  <div class="col-2">
+              <label class="form-label ">ยี่ห้อรถยนต์<span class="text-danger"> *</span></label>
                     <input
-                      className="col-md-10"
+                  className="form-control"
                       type="text"
                       name={`brandID_${index}`}
                       defaultValue={formData[index] !== undefined? formData[index].brandID : null}
                       onChange={handleChange}
                     />
                   </div>
-                  <div class="col-1">
-                    <h6>รุ่น</h6>
-                  </div>
-                  <div class="col-1">
+                  <div class="col-2">
+              <label class="form-label ">รุ่น<span class="text-danger"> *</span></label>
                     <input
+                  className="form-control"
                       type="text"
-                      className="col-md-10"
                       name={`modelID_${index}`}
                       defaultValue={formData[index] !== undefined ? formData[index].modelID : null}
                       onChange={handleChange}
                     />
                   </div>
-                  <div class="col-1">
-                    <h6>เลขตัวถังรถ</h6>
-                  </div>
                   <div class="col-2">
+              <label class="form-label ">เลขตัวถังรถ<span class="text-danger"> *</span></label>
                     <input
+                  className="form-control"
                       type="text"
-                      className="col"
                       name={`chassisNo_${index}`}
                       defaultValue={formData[index] !== undefined ? formData[index].chassisNo : null}
                       onChange={handleChange}
                     />
                   </div>
-                  <div class="col-1">
-                    <h6>ปีที่จดทะเบียน</h6>
-                  </div>
                   <div class="col-2">
+              <label class="form-label ">ปีที่จดทะเบียน<span class="text-danger"> *</span></label>
                     <input
+                  className="form-control"
                       type="text"
                       name={`carRegisYear_${index}`}
                       defaultValue={formData[index] !== undefined ? formData[index].carRegisYear : null}
@@ -1261,15 +1211,23 @@ const UserCarList = (props) => {
               </>
             ) : null}
             <div class="row">
-              <div class="col-1">
-                <h6>เบอร์โทรศัพท์</h6>
-              </div>
               <div class="col-2">
+              <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
                 <input
+                  className="form-control"
                   type="text"
-                  class="col-md-10"
                   defaultValue={formData[index] !== undefined ? formData[index].telNum_1 : null}
                   name={`telNum_1_${index}`}
+                  onChange={handleChange}
+                />
+              </div>
+              <div class="col-2">
+              <label class="form-label ">Email<span class="text-danger"> *</span></label>
+                <input
+                  className="form-control"
+                  type="text"
+                  defaultValue={formData[index] !== undefined ? formData[index].Email : null}
+                  name={`Email_${index}`}
                   onChange={handleChange}
                 />
               </div>
@@ -1277,93 +1235,6 @@ const UserCarList = (props) => {
           </>
 
         ))}
-
-
-        {/* commov in */}
-        {/* <h3>commision ov in</h3>
-        <div class="row">
-          <div class="col">
-            <h6>ค่าคอมมิสชั่น</h6>
-          </div>
-          <div class="col">
-            <input
-              className="col-md-4"
-              type="number"
-              step={0.1}
-              // placeholder="insurerName"
-              name="amountComIn"
-             
-            />
-          </div>
-          <div class="col">
-            <h6>ภาษี</h6>
-          </div>
-          <div class="col">
-            <input
-              type="number"
-              step={0.1}
-              // placeholder="Password"
-              name="duty"
-             
-            />
-          </div>
-          <div class="col">
-            <h6>ค่าแสตมอากรณ์</h6>
-          </div>
-          <div class="col">
-            <input
-              type="number"
-              step={0.1}
-              // placeholder="Password"
-              name="stamp"
-             
-            />
-          </div>
-        </div> */}
-
-
-        {/* commov out */}
-        {/* <h3>commision ov in</h3>
-        <div class="row">
-          <div class="col">
-            <h6>ค่าคอมมิสชั่น</h6>
-          </div>
-          <div class="col">
-            <input
-              className="col-md-4"
-              type="number"
-              step={0.1}
-              // placeholder="insurerName"
-              name="prem"
-             
-            />
-          </div>
-          <div class="col">
-            <h6>ภาษี</h6>
-          </div>
-          <div class="col">
-            <input
-              type="number"
-              step={0.1}
-              // placeholder="Password"
-              name="duty"
-             
-            />
-          </div>
-          <div class="col">
-            <h6>ค่าแสตมอากรณ์</h6>
-          </div>
-          <div class="col">
-            <input
-              type="number"
-              step={0.1}
-              // placeholder="Password"
-              name="stamp"
-             
-            />
-          </div>
-        </div> */}
-
 
         <input type="submit" value="create" onClick={(e)=>handleSubmit(e)} />
       </form>
