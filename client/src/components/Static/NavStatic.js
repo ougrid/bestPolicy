@@ -36,6 +36,7 @@ function NavStatic() {
           
           <NavMenu showToggle={showToggle}>
             {/* {decoded.is_admin ? admin : null} */}
+            
             <NavList>
               <NavLink to="/static/insurer">insurer</NavLink>
             </NavList>

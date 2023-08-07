@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   InsureType.init({
     // insureID:  DataTypes.INTEGER,      
     // Motor, PA, FR
-    insureType:  DataTypes.STRING,
+   
     class:  DataTypes.STRING,
     subClass: DataTypes.STRING,
     planCode: DataTypes.STRING,

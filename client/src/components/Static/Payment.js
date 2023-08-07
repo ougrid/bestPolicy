@@ -75,7 +75,7 @@ const Payment = () => {
             <input type="text"  name="transType"  disabled  key = {index} value={ele.transType}/>
             </td>
             <td>
-                <input type="text"  name="amount" disabled  key = {index} value={ele.amount}/>
+                <input type="text"  name="amount" disabled  key = {index} value={ele.transType === 'Prem'? ele.amount :ele.transType === 'OV'?ele.ovamt:ele.commamt}/>
             </td>
             <td>
                 <input type="text"  name="transStatus" disabled  key = {index} value={ele.transStatus}/>
@@ -197,9 +197,10 @@ const Payment = () => {
           <div class="col">
             <h6>ผุ้จ่ายเงิน</h6>
           </div>
-          <div class="col">
+          <div class="col ">
+          <div class="input-group mb-3">
           <select
-                  className="col-md-8"
+                  className="form-control"
                   name={`payType`}
                   onChange={changePayment}
                 >
@@ -209,6 +210,18 @@ const Payment = () => {
                   <option value="amity">อะมิตี้</option>
             
                 </select>
+                            <div class="input-group-append">
+                                <div class="input-group-text ">
+                                    <div class="form-check checkbox-xl">
+                                        <input class="form-check-input" type="checkbox" value="" />
+                                        <label class="form-check-label" >All</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+          
           </div>
           <div class="col">
           <InputBtn

@@ -125,7 +125,7 @@ const agent = await Agent.create(req.body.agent)
 const location = await Location.create(req.body.location)
 // console.log(req.body);
 req.body.commOVOut.forEach(async ele => {
-  ele.AgentGroupCode = req.body.agent.agentCode
+  ele.agentCode = req.body.agent.agentCode
   const commovout = await CommOVOut.create (ele)
 }); 
 res.json({...agent, ...entity,...location});

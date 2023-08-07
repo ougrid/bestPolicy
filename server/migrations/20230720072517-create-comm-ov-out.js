@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      AgentGroupCode: {
+      agentCode: {
         allowNull: false,
         type: Sequelize.STRING
       },

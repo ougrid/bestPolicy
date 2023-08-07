@@ -28,7 +28,7 @@ module.exports = {
       insurerCode: {
         type: Sequelize.STRING
       },
-      agentGroupCode: {
+      agentCode: {
         type: Sequelize.STRING
       },
       agentCode: {

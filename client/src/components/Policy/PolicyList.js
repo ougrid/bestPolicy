@@ -219,72 +219,72 @@ const UserCarList = (props) => {
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
 }
-  const handleCreate = (e) => {
-    e.preventDefault();
-    const array = []
-    for (let i = 0; i <= row; i++) {
-      let t_og = null
-      let t_fn = null
-      let t_ln = null
-      let idCardNo = null
-      let idCardType = null
-      let taxNo = null
-      if (e.target.elements[`personType_${i}`].value === 'C') {
-        t_og = e.target.elements[`t_fn_${i}`].value
-        taxNo = e.target.elements[`regisNo_${i}`].value.toString()
-      } else {
-        idCardType = 'idcard'
-        idCardNo = e.target.elements[`regisNo_${i}`].value.toString()
-        t_fn = e.target.elements[`t_fn_${i}`].value
-        t_ln = e.target.elements[`t_ln_${i}`].value
-      }
+  // const handleCreate = (e) => {
+  //   e.preventDefault();
+  //   const array = []
+  //   for (let i = 0; i <= row; i++) {
+  //     let t_og = null
+  //     let t_fn = null
+  //     let t_ln = null
+  //     let idCardNo = null
+  //     let idCardType = null
+  //     let taxNo = null
+  //     if (e.target.elements[`personType_${i}`].value === 'C') {
+  //       t_og = e.target.elements[`t_fn_${i}`].value
+  //       taxNo = e.target.elements[`regisNo_${i}`].value.toString()
+  //     } else {
+  //       idCardType = 'idcard'
+  //       idCardNo = e.target.elements[`regisNo_${i}`].value.toString()
+  //       t_fn = e.target.elements[`t_fn_${i}`].value
+  //       t_ln = e.target.elements[`t_ln_${i}`].value
+  //     }
 
-      const data = {
-        policyNo: e.target.elements[`policyNo_${i}`].value.toString(),
-        actDate: e.target.elements[`actDate_${i}`].value,
-        expDate: e.target.elements[`expDate_${i}`].value,
-        insurerName: e.target.elements[`insurerName_${i}`].value,
-        agentCode: e.target.elements[`agentCode_${i}`].value,
-        insureType: e.target.elements[`insureType_${i}`].value,
-        insureName: e.target.elements[`insureName_${i}`].value,
-        prem: e.target.elements[`prem_${i}`].value,
-        duty: e.target.elements[`duty_${i}`].value,
-        stamp: e.target.elements[`stamp_${i}`].value,
-        total: e.target.elements[`total_${i}`].value,
-        personType: e.target.elements[`personType_${i}`].value,
-        title: e.target.elements[`title_${i}`].value,
-        t_ogName: t_og,
-        t_firstName: t_fn,
-        t_lastName: t_ln,
-        idCardType: idCardType,
-        idCardNo: idCardNo,
-        taxNo: taxNo,
-        t_location_1: e.target.elements[`t_location_1_${i}`].value,
-        t_location_2: e.target.elements[`t_location_2_${i}`].value,
-        t_location_3: e.target.elements[`t_location_3_${i}`].value,
-        t_location_4: e.target.elements[`t_location_4_${i}`].value,
-        t_location_5: e.target.elements[`t_location_5_${i}`].value,
+  //     const data = {
+  //       policyNo: e.target.elements[`policyNo_${i}`].value.toString(),
+  //       actDate: e.target.elements[`actDate_${i}`].value,
+  //       expDate: e.target.elements[`expDate_${i}`].value,
+  //       insurerName: e.target.elements[`insurerName_${i}`].value,
+  //       agentCode: e.target.elements[`agentCode_${i}`].value,
+  //       insureType: e.target.elements[`insureType_${i}`].value,
+  //       insureName: e.target.elements[`insureName_${i}`].value,
+  //       prem: e.target.elements[`prem_${i}`].value,
+  //       duty: e.target.elements[`duty_${i}`].value,
+  //       stamp: e.target.elements[`stamp_${i}`].value,
+  //       total: e.target.elements[`total_${i}`].value,
+  //       personType: e.target.elements[`personType_${i}`].value,
+  //       title: e.target.elements[`title_${i}`].value,
+  //       t_ogName: t_og,
+  //       t_firstName: t_fn,
+  //       t_lastName: t_ln,
+  //       idCardType: idCardType,
+  //       idCardNo: idCardNo,
+  //       taxNo: taxNo,
+  //       t_location_1: e.target.elements[`t_location_1_${i}`].value,
+  //       t_location_2: e.target.elements[`t_location_2_${i}`].value,
+  //       t_location_3: e.target.elements[`t_location_3_${i}`].value,
+  //       t_location_4: e.target.elements[`t_location_4_${i}`].value,
+  //       t_location_5: e.target.elements[`t_location_5_${i}`].value,
 
-        province: e.target.elements[`province_${i}`].value,
-        distric: e.target.elements[`distric_${i}`].value,
-        subdistric: e.target.elements[`subdistric_${i}`].value,
-        zipcode: e.target.elements[`zipcode_${i}`].value.toString(),
-        carRegisNo: e.target.elements[`carRegisNo_${i}`].value,
-        brandID: e.target.elements[`brandID_${i}`].value,
-        modelID: e.target.elements[`modelID_${i}`].value,
-        chassisNo: e.target.elements[`chassisNo_${i}`].value,
-        carRegisYear: e.target.elements[`carRegisYear_${i}`].value,
-        telNum_1: e.target.elements[`telNum_1_${i}`].value,
+  //       province: e.target.elements[`province_${i}`].value,
+  //       distric: e.target.elements[`distric_${i}`].value,
+  //       subdistric: e.target.elements[`subdistric_${i}`].value,
+  //       zipcode: e.target.elements[`zipcode_${i}`].value.toString(),
+  //       carRegisNo: e.target.elements[`carRegisNo_${i}`].value,
+  //       brandID: e.target.elements[`brandID_${i}`].value,
+  //       modelID: e.target.elements[`modelID_${i}`].value,
+  //       chassisNo: e.target.elements[`chassisNo_${i}`].value,
+  //       carRegisYear: e.target.elements[`carRegisYear_${i}`].value,
+  //       telNum_1: e.target.elements[`telNum_1_${i}`].value,
 
 
-      };
-      array.push(data)
-    }
-    console.log(array);
+  //     };
+  //     array.push(data)
+  //   }
+  //   console.log(array);
 
-    // exportToJsonFile(array)
-    setFormData(array)
-  };
+  //   // exportToJsonFile(array)
+  //   setFormData(array)
+  // };
 
   const newRow = (e) => {
     e.preventDefault();
@@ -817,11 +817,11 @@ const UserCarList = (props) => {
               <label class="form-label ">Class<span class="text-danger"> *</span></label>
                 <select
                   className="form-control"
-                  name={`insureType_${index}`}
+                  name={`class_${index}`}
                   onChange={handleChange}
 
                 > 
-                <option value={formData[index] !== undefined ? formData[index].insureType: null} selected disabled hidden>{formData[index] !== undefined ? formData[index].insureType: null}</option>
+                <option value={formData[index] !== undefined ? formData[index].class: null} selected disabled hidden>{formData[index] !== undefined ? formData[index].class: null}</option>
                   <option value="Motor">Motor</option>
                   <option value="PA">PA</option>
                   <option value="FR">FR</option>
@@ -833,8 +833,8 @@ const UserCarList = (props) => {
                 <input
                  className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].insureName: null}
-                  name={`insureName_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].subClass: null}
+                  name={`subClass_${index}`}
                   onChange={handleChange}
 
                 />
@@ -903,8 +903,8 @@ const UserCarList = (props) => {
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].prem : null}
-                  name={`prem_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index][`commIn%`] : null}
+                  name={`commIn%_${index}`}
                   onChange={handleChange}
 
                 />
@@ -915,8 +915,8 @@ const UserCarList = (props) => {
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
-                  name={`duty_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].commInamt : null}
+                  name={`commInamt_${index}`}
                   onChange={handleChange}
                 />
               </div>
@@ -927,8 +927,8 @@ const UserCarList = (props) => {
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
-                  name={`stamp_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index][`ovIn%`]  : null}
+                  name={`ovIn%_${index}`}
                   onChange={handleChange}
                 />
               </div>
@@ -939,8 +939,8 @@ const UserCarList = (props) => {
                    className="form-control"
                   type="number"
                   step={0.1}
-                  name={`total_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].total : null}
+                  name={`ovInamt_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].ovInamt : null}
                   onChange={handleChange}
                 />
               </div>
@@ -954,8 +954,8 @@ const UserCarList = (props) => {
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].prem : null}
-                  name={`prem_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index][`commOut%`] : null}
+                  name={`commOut%_${index}`}
                   onChange={handleChange}
 
                 />
@@ -967,8 +967,8 @@ const UserCarList = (props) => {
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
-                  name={`duty_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].commOutamt : null}
+                  name={`commOutamt_${index}`}
                   onChange={handleChange}
                 />
               </div>
@@ -978,8 +978,8 @@ const UserCarList = (props) => {
                  className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
-                  name={`stamp_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index][`ovOut%`] : null}
+                  name={`ovOut%_${index}`}
                   onChange={handleChange}
                 />
               </div>
@@ -989,8 +989,8 @@ const UserCarList = (props) => {
                   className="form-control"
                   type="number"
                   step={0.1}
-                  name={`total_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].total : null}
+                  name={`ovOutamt_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].ovOutamt : null}
                   onChange={handleChange}
                 />
               </div>

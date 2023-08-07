@@ -182,7 +182,7 @@ const Insurer = () => {
         province.data.forEach((ele) => {
           array.push(
             <option key={ele.id} value={ele.id}>
-              {ele.insureType} : {ele.class}
+              {ele.class} : {ele.subClass}
             </option>
           );
         });
@@ -249,8 +249,8 @@ const Insurer = () => {
       <form className="container-fluid text-left" onSubmit={handleSubmit}>
         {/* insurer table */}
         <h1>บริษัทรับประกัน</h1>
-        <div class="row">
-          <div class="col-2">
+        <div class="row ">
+          <div class="col-2 ">
             <label class="form-label ">
               InsurerCode<span class="text-danger"> *</span>
             </label>

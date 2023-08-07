@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { FaBars } from "react-icons/fa";
 
 export const NavBar = styled.nav `
-    background: #0f0e9f;
+    background: #299AE5;
     height: ${props => props.showToggle ? 'auto' : '85px'}
     width: 100%;
     display: flex;

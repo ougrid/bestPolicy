@@ -14,7 +14,7 @@ import {
 import { InputBtn } from "../StylesPages/LoginStyles";
 const config = require("../../config.json");
 
-const Profile = () => {
+const PolicyExcel = () => {
   const url = config.url;
   const [profile, setProfile] = useState({});
   // var decoded = jwt_decode(localStorage.getItem("jwt"));
@@ -135,4 +135,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default PolicyExcel;

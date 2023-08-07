@@ -10,10 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },      
       // Motor, PA, FR
-      insureType: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
+      
       class: {
         allowNull: false,
         type: Sequelize.STRING

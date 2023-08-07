@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     // 1  , -1
     subType:  DataTypes.INTEGER,
     insurerCode: DataTypes.STRING,
-    agentGroupCode: DataTypes.STRING,
+    agentCode: DataTypes.STRING,
     agentCode:  DataTypes.STRING,
     amount: DataTypes.FLOAT,
     duty:  DataTypes.FLOAT,

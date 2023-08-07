@@ -9,9 +9,14 @@ import React from "react";
 import Admin from "./components/Admin/Admin";
 import SignUp from "./components/SignUp/SignUp";
 import Packages from "./components/Packages/Packages";
-import Profile from "./components/Profile/Profile";
+import PolicyExcel from "./components/Policy/PolicyExcel";
 import Footer from "./components/Footer/Footer";
 import Static from "./components/Static/Static";
+import Payment from "./components/Static/Payment";
+import Insurer from "./components/Static/Insurer";
+import InsureType from "./components/Static/insureType";
+import Agent from "./components/Static/Agent";
+import FindPolicy from "./components/Policy/FindPolicy";
 function App() {
   return (
     <div className="App">
@@ -24,10 +29,15 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/insurer" element={<Insurer />} />
+          <Route path="/insuretype" element={<InsureType />} />
+          <Route path="/agent" element={<Agent />} />
+          <Route path="/findpolicy" element={<FindPolicy />} />
           <Route path="/static" element={<Static />} />
           <Route path="/static/:name" element={<Static />} />
           <Route path="/packages/:id" element={<Packages />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/policyexcel" element={<PolicyExcel />} />
         </Routes>
       </main>
       {/* <footer>
