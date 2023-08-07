@@ -254,6 +254,7 @@ const removeRow = (e) => {
         {/* insurer table */}
         <h1>ผู้แนะนำ</h1>
         <div class="row form-group form-inline">
+        <div class="col-2 "></div>
           <div class="col-2">
                 <label class="form-label ">AgentCode<span class="text-danger"> *</span></label>
             <InputBtn
@@ -281,7 +282,7 @@ const removeRow = (e) => {
 
         {/* entity table */}
         <div class="row">
-          
+        <div class="col-2 "></div>
         <div class="col-1">
               <label class="form-label ">type<span class="text-danger"> *</span></label>
                 <select
@@ -328,6 +329,7 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
+        <div class="col-2 "></div>
           <div class="col-2">
                 <label class="form-label ">บ้านเลขที่<span class="text-danger"> *</span></label>
             <InputBtn
@@ -367,6 +369,7 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
+        <div class="col-2 "></div>
           <div class="col-2">
                 <label class="form-label ">ถนน<span class="text-danger"> *</span></label>
             <InputBtn
@@ -401,6 +404,7 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
+        <div class="col-2 "></div>
           <div class="col-2">
                 <label class="form-label ">รหัสไปรษณีย์<span class="text-danger"> *</span></label>
             <select className="form-control" name="zipcode" onChange={changeLocation}>
@@ -448,31 +452,33 @@ const removeRow = (e) => {
         </div>
 
          {/* commission-ov-in table */}
-         <div class="row">
-                    <div class="col-2">
-                        <h5>commission OV IN</h5>
-                    </div>
-                    <div class="col-2">
-                        <button onClick={newRow} >add</button>
-                    </div>
-                    <div class="col-2">
-                        <button onClick={removeRow} >Remove</button>
-                    </div>
+         <div class="d-flex  justify-content-center">
+          <div class="col-3">
+            <h3>commission OV OUT</h3>
+          </div>
+          <div class="col-2">
+            <button onClick={newRow}>add</button>
 
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>InsureType</th>
-                            <th>บริษัทรับประกัน</th>
-                            {/* <th>class</th>
-                            <th>subclass</th> */}
-                            <th>% commmission</th>
-                            <th>% OV</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <>
+            <button onClick={removeRow}>Remove</button>
+          </div>
+        </div>
+
+        <div class="row">
+        <div class="col-2"></div> 
+          <div class="col-2">
+            <label class="col-form-label">InsureType</label>
+          </div>
+          <div class="col-2">
+            <label class="col-form-label">บริษัทรับประกัน</label>
+          </div>
+          <div class="col-2">
+            <label class="col-form-label">Comm-out %</label>
+          </div>
+          <div class="col-2">
+            <label class="col-form-label">OV-out %</label>
+          </div>
+        </div>
+                
                             {/* <form
                                 method="POST"
                                 id={"policyadd"}
@@ -480,33 +486,32 @@ const removeRow = (e) => {
                             ></form> */}
 
                             {Array.from({ length: row+1 }, (_, index) => (
-                                <tr>
-                                    <td>
-                                        <select  name={`insureID-${index}`} onChange={changeComOv } key = {index}>
+                                <div class="row">
+                                <div class="col-2"></div> 
+                                <div class="col-2">
+                                        <select   class="form-control" name={`insureID-${index}`} onChange={changeComOv } key = {index}>
                                         <option disabled selected hidden>class:subclass</option>
                                             {insureTypeDD}
                                         </select>
-                                    </td>
-                                    <td>
-                                        <select name={`insurerCode-${index}`}onChange={changeComOv } key = {index}>
+                                        </div>
+                                        <div class="col-2">
+                                        <select  class="form-control" name={`insurerCode-${index}`}onChange={changeComOv } key = {index}>
                                         <option disabled selected hidden>บริษัทรับประกัน</option>
                                             {insurerDD}
                                         </select>
-                                    </td>
-                                    <td>
-                                        <input type="text"  name={`rateComIn-${index}`} onChange={changeComOv } key = {index} />
-                                    </td>
-                                    <td>
-                                    <input type="text"  name={`rateOVIn_1-${index}`} onChange={changeComOv } key = {index}/>
-                                    </td>
+                                        </div>
+                                    <div class="col-2">
+                                        <input  class="form-control" type="text"  name={`rateComIn-${index}`} onChange={changeComOv } key = {index} />
+                                        </div>
+                                    <div class="col-2">
+                                    <input  class="form-control" type="text"  name={`rateOVIn_1-${index}`} onChange={changeComOv } key = {index}/>
+                                    </div>
 
 
-                                </tr>
+                                </div>
                             ))}
 
-                        </>
-                    </tbody>
-                </table>
+                      
 
         <LoginBtn type="submit">Submit</LoginBtn>
       </form>

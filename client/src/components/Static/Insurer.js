@@ -28,7 +28,10 @@ const NormalText = {
 const Insurer = () => {
   const url = config.url;
   const navigate = useNavigate();
-  const [insurerData, setInsurerData] = useState({ entityID: null ,deductTaxRate : 3});
+  const [insurerData, setInsurerData] = useState({
+    entityID: null,
+    deductTaxRate: 3,
+  });
   const [entityData, setEntityData] = useState({
     personType: "C",
     ogType: "ประกันภัย",
@@ -65,8 +68,8 @@ const Insurer = () => {
   const changeComOv = (e) => {
     // console.log(entityData);
     // console.log(e.target.value);
-    const index = e.target.name.split('-')[1];
-    const name = e.target.name.split('-')[0];
+    const index = e.target.name.split("-")[1];
+    const name = e.target.name.split("-")[0];
     const data = { ...comOvInData[index], [name]: e.target.value };
     comOvInData[index] = data;
     setComOvInData(comOvInData);
@@ -189,8 +192,6 @@ const Insurer = () => {
         setInsureTypeDD(array);
       })
       .catch((err) => {});
-     
-
   }, []);
 
   const handleSubmit = (e) => {
@@ -200,8 +201,7 @@ const Insurer = () => {
         insurer: insurerData,
         entity: entityData,
         location: locationData,
-        commOVIn:comOvInData
-
+        commOVIn: comOvInData,
       })
       .then((res) => {
         // let token = res.data.jwt;
@@ -250,6 +250,7 @@ const Insurer = () => {
         {/* insurer table */}
         <h1>บริษัทรับประกัน</h1>
         <div class="row ">
+          <div class="col-2 "></div>
           <div class="col-2 ">
             <label class="form-label ">
               InsurerCode<span class="text-danger"> *</span>
@@ -304,6 +305,7 @@ const Insurer = () => {
         </div>
 
         <div class="row">
+          <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
               Stament type<span class="text-danger"> *</span>
@@ -357,6 +359,7 @@ const Insurer = () => {
 
         {/* entity table */}
         <div class="row">
+          <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
               คำนำหน้า<span class="text-danger"> *</span>
@@ -398,8 +401,8 @@ const Insurer = () => {
           </div>
         </div>
 
-
         <div class="row">
+          <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
               จดทะเบียน vat<span class="text-danger"> *</span>
@@ -441,6 +444,7 @@ const Insurer = () => {
           <h5>Location</h5>
         </div>
         <div class="row">
+          <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
               บ้านเลขที่<span class="text-danger"> *</span>
@@ -489,6 +493,7 @@ const Insurer = () => {
         </div>
 
         <div class="row">
+          <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
               ถนน<span class="text-danger"> *</span>
@@ -548,6 +553,7 @@ const Insurer = () => {
         </div>
 
         <div class="row">
+          <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
               รหัสไปรษณีย์<span class="text-danger"> *</span>
@@ -611,71 +617,73 @@ const Insurer = () => {
         </div>
 
         {/* commission-ov-in table */}
-        <div class="row">
+
+        <div class="d-flex  justify-content-center">
           <div class="col-2">
-            <h5>commission OV IN</h5>
+            <h3>commission OV IN</h3>
           </div>
           <div class="col-2">
             <button onClick={newRow}>add</button>
-          </div>
-          <div class="col-2">
+
             <button onClick={removeRow}>Remove</button>
           </div>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>InsureType</th>
-              {/* <th>class</th>
-                            <th>subclass</th> */}
-              <th>% commmission</th>
 
-              <th>% OV</th>
-            </tr>
-          </thead>
-          <tbody>
-            <>
-              {/* <form
-                                method="POST"
-                                id={"policyadd"}
-                            //   onSubmit={(e) => handleCreate(e)}
-                            ></form> */}
-
+        <div class="row">
+        <div class="col-3"></div> 
+          <div class="col-2">
+            <label class="col-form-label">InsureType</label>
+          </div>
+          <div class="col-2">
+            <label class="col-form-label">Comm-in %</label>
+          </div>
+          <div class="col-2">
+            <label class="col-form-label">OV-in %</label>
+          </div>
+        </div>
               {Array.from({ length: row + 1 }, (_, index) => (
-                <tr>
-                  <td>
-                    <select name={`insureID-${index}`} onChange={changeComOv} key={index}>
-                    <option disabled selected hidden>class:subclass</option>
+                <div class="row">
+                  <div class="col-3"></div>
+                  <div class="col-2">
+                    <select
+                      name={`insureID-${index}`}
+                      onChange={changeComOv}
+                      class="form-control"
+                      key={index}
+                    >
+                      <option disabled selected hidden>
+                        class:subclass
+                      </option>
                       {insureTypeDD}
                     </select>
-                  </td>
-                
-                  <td>
+                    </div>
+
+                    <div class="col-2">
                     <input
-                       type="number"
-                       step={0.1}
+                    class="form-control"
+                      type="number"
+                      step={0.1}
                       name={`rateComIn-${index}`}
                       onChange={changeComOv}
                       key={index}
                     />
-                  </td>
+                  </div>
 
-                  <td>
+                  <div class="col-2">
                     <input
-                       type="number"
-                       step={0.1}
-                       name={`rateOVIn_1-${index}`}
+                    class="form-control"
+                      type="number"
+                      step={0.1}
+                      name={`rateOVIn_1-${index}`}
                       onChange={changeComOv}
                       key={index}
                     />
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </>
-          </tbody>
-        </table>
-
-        <LoginBtn type="submit">Submit</LoginBtn>
+            
+            
+            <LoginBtn type="submit">Submit</LoginBtn>
       </form>
 
       {/* <Link to="/signup" style={NormalText}>

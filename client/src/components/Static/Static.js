@@ -51,7 +51,7 @@ const Static = () => {
       <div>
         <div>
           <NavStatic/>
-          <main>{page}</main>
+          <>{page}</>
           {/* {main} */}
         </div>
       </div>

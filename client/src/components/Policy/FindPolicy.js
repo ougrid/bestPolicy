@@ -281,35 +281,7 @@ const FindPolicy = () => {
 
 
                     </div>
-                    <div class="col-1">
-                        <label class="col-form-label">เลขทะเบียนรถ</label>
-                    </div>
-                    <div class="col-2 ">
-                        <input type="text" class="form-control" placeholder="เลขทะเบียนรถ" name="carRegisNo" onChange={handleChange} />
-                    </div>
-                    <div class="col-1">
-                        <label class="col-form-label">จังหวัดจดทะเบียนรถ</label>
-                    </div>
-                    <div class="col-2 ">
-                        <div class="input-group mb-3">
-                            <select class="form-control" name="provinceID" onChange={handleChange}>
-                                <option value="" selected disabled hidden>เลือกจังหวัด</option>
-                                {provinceDD}
-                            </select>
-                            <div class="input-group-append">
-                                <div class="input-group-text ">
-                                    <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="provinceID-check" onChange={handleChange} />
-                                        <label class="form-check-label" >All</label>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-
-                    </div>
+                    
 
 
                 </div>
@@ -345,23 +317,8 @@ const FindPolicy = () => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-1">
-                        <label class="col-form-label">เลขคัสซี</label>
-                    </div>
-
-                    <div class="col-2 ">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Chassis Number" name="chassisNo" onChange={handleChange} />
-                            <div class="input-group-append">
-                                <div class="input-group-text ">
-                                    <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="chassisNo-check" />
-                                        <label class="form-check-label" >All</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
+                    
                 </div>
 
                 <div class="row">
@@ -424,6 +381,36 @@ const FindPolicy = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-1">
+                        <label class="col-form-label">เลขทะเบียนรถ</label>
+                    </div>
+                    <div class="col-2 ">
+                        <input type="text" class="form-control" placeholder="เลขทะเบียนรถ" name="carRegisNo" onChange={handleChange} />
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">จังหวัดจดทะเบียนรถ</label>
+                    </div>
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <select class="form-control" name="provinceID" onChange={handleChange}>
+                                <option value="" selected disabled hidden>เลือกจังหวัด</option>
+                                {provinceDD}
+                            </select>
+                            <div class="input-group-append">
+                                <div class="input-group-text ">
+                                    <div class="form-check checkbox-xl">
+                                        <input class="form-check-input" type="checkbox" name="provinceID-check" onChange={handleChange} />
+                                        <label class="form-check-label" >All</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
                 </div>
 
                 <div class="row">
@@ -450,6 +437,23 @@ const FindPolicy = () => {
                         </div>
 
 
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">เลขคัสซี</label>
+                    </div>
+
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Chassis Number" name="chassisNo" onChange={handleChange} />
+                            <div class="input-group-append">
+                                <div class="input-group-text ">
+                                    <div class="form-check checkbox-xl">
+                                        <input class="form-check-input" type="checkbox" name="chassisNo-check" />
+                                        <label class="form-check-label" >All</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
 

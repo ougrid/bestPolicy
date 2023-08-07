@@ -134,24 +134,25 @@ const Payment = () => {
         <h1>Payment</h1>
 
         <div class="row">
-          <div class="col">
-            <h6>Payment No</h6>
-          </div>
-          <div class="col">
-            <InputBtn
+          <div class="col-2">
+                        <label class="col-form-label">Payment No</label>
+
+                    </div>
+          <div class="col-2">
+          <div class="input-group mb-3">
+            <input
               type="text"
               required
-              // placeholder="Password"
+              class="form-control"
               name="paymentNo"
               onChange={changePayment}
             />
+            </div>
           </div>
-          {/* <div class="col">
-            <h6>ประเภทการชำระเงิน</h6>
-          </div> */}
-          <div class="col">
+        
+          <div class="col-2">
           <select
-                  className="col-md-8"
+                 class="form-control"
                   name={`type`}
                   onChange={changePayment}
                 >
@@ -162,42 +163,44 @@ const Payment = () => {
                   <option value="banking">โอนเงินผ่านธนาคาร</option>
                 </select>
           </div>
-          {/* <div class="col">
-            <h6>จำนวนเงิน</h6>
-          </div> */}
+        
           
-          <div class="col">
-            <h6>จำนวนเงิน</h6>
+          <div class="col-1">
+          <label class="col-form-label">จำนวนเงิน</label>
           </div>
-          <div class="col">
-            <InputBtn
+          <div class="col-2">
+            <input
               type="number"
               required
               step={0.1}
-              // placeholder="Password"
+              class="form-control"
               name="amount"
               onChange={changePayment}
             />
           </div>
-          <div class="col">
-            <h6>เลขอ้างอิงการชำระเงิน</h6>
+        </div>
+        <div className="row">
+        <div class="col-2">
+        <label class="col-form-label">เลขอ้างอิงการชำระเงิน</label>
           </div>
-          <div class="col">
-            <InputBtn
+          <div class="col-2">
+          <div class="input-group mb-3">
+            <input
               type="text"
               required
-              // placeholder="Password"
+              class="form-control"
               name="refNo"
               onChange={changePayment}
             />
+            </div>
           </div>
         </div>
 
         <div class="row">
-          <div class="col">
-            <h6>ผุ้จ่ายเงิน</h6>
+          <div class="col-2">
+          <label class="col-form-label">ผุ้จ่ายเงิน</label>
           </div>
-          <div class="col ">
+          <div class="col-2 ">
           <div class="input-group mb-3">
           <select
                   className="form-control"
@@ -210,34 +213,28 @@ const Payment = () => {
                   <option value="amity">อะมิตี้</option>
             
                 </select>
-                            <div class="input-group-append">
-                                <div class="input-group-text ">
-                                    <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" value="" />
-                                        <label class="form-check-label" >All</label>
-                                    </div>
-                                </div>
-                            </div>
+                            
 
 
                         </div>
           
           </div>
-          <div class="col">
-          <InputBtn
+          <div class="col-2">
+          <input
               type="text"
               required
-              // placeholder="Password"
+              className="form-control"
               name="payID"
               onChange={changePayment}
               />
               </div>
-              <div class="col">
-            <h6>ผุ้รับเงิน</h6>
+              <div class="col-1">
+              <label class="col-form-label">ผุ้รับเงิน</label>
+          
           </div>
-          <div class="col">
+          <div class="col-2">
           <select
-                  className="col-md-8"
+                 className="form-control"
                   name={`repType`}
                   onChange={changePayment}
                 >
@@ -248,11 +245,11 @@ const Payment = () => {
             
                 </select>
           </div>
-          <div class="col">
-          <InputBtn
+          <div class="col-2">
+          <input
               type="text"
               required
-              // placeholder="Password"
+              className="form-control"
               name="repID"
               onChange={changePayment}
               />
@@ -262,12 +259,13 @@ const Payment = () => {
         {/* policy table */}
         <h1>ค้นหารายการ</h1>
         <div class="row">
-          <div class="col">
-            <h6>ประเภทการค้นหา</h6>
+        <div class="col-2"></div>
+          <div class="col-2">
+          <label class="col-form-label">ประเภทการค้นหา</label>
           </div>
-          <div class="col">
+          <div class="col-2">
           <select
-                  className="col-md-8"
+                   className="form-control"
                   name="filterName"
                   onChange={changeFilterTransaction}
                 >
@@ -279,17 +277,19 @@ const Payment = () => {
                 </select>
           </div>
           
-          <div class="col">
-            <InputBtn
+          <div class="col-2">
+            <input
               type="text"
               step={0.1}
-              // placeholder="Password"
+              className="form-control"
               name="value"
               onChange={changeFilterTransaction}
             />
           </div>
-          <div class="col">
-          <button onClick={filterSubmit} >ค้นหา</button>
+          <div class="col-2">
+          <div class="input-group mb-3">
+          <button type="button" class="btn btn-primary" onClick={filterSubmit} >ค้นหา</button>
+          </div>
           </div>
           
         </div>

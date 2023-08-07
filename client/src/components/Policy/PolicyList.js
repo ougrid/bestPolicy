@@ -749,7 +749,7 @@ const UserCarList = (props) => {
             <h1>กรมธรรม์ฉบับที่ {index + 1}</h1>
             {/* policy table */}
             <div className="row form-group form-inline ">
-              
+            <div className="col-1"></div>
               <div className="col-2 form-group  ">
               <label class="form-label ">เลขที่กรมธรรม์<span class="text-danger"> *</span></label>
                 <input
@@ -789,7 +789,7 @@ const UserCarList = (props) => {
             </div>
 
             <div class="row">
-             
+            <div className="col-1"></div>
               <div class="col-2 form-group " >
               <label class="form-label px-3">บริษัทรับประกัน<span class="text-danger"> *</span></label>
                 <input
@@ -844,7 +844,7 @@ const UserCarList = (props) => {
 
 
             <div class="row">
-              
+            <div className="col-1"></div>
               <div class="col-2">
               <label class="form-label ">ค่าเบี้ย<span class="text-danger"> *</span></label>
                 <input
@@ -896,7 +896,7 @@ const UserCarList = (props) => {
             </div>
 
             <div class="row">
-              
+            <div className="col-1"></div>
               <div class="col-2">
                 <label class="form-label ">comm_in%<span class="text-danger"> *</span></label>
                 <input
@@ -947,7 +947,7 @@ const UserCarList = (props) => {
             </div>
 
             <div className="row">
-           
+            <div className="col-1"></div>
               <div class="col-2">
                 <label class="form-label ">comm_out%<span class="text-danger"> *</span></label>
                 <input
@@ -997,6 +997,7 @@ const UserCarList = (props) => {
             </div>
             {/* entity table */}
             <div class="row">
+            <div className="col-1"></div>
               <div class="col-1">
               <label class="form-label ">type<span class="text-danger"> *</span></label>
                 <select
@@ -1056,6 +1057,7 @@ const UserCarList = (props) => {
             </div>
             {/* location table */}
             <div class="row">
+            <div className="col-1"></div>
               <div class="col-2">
               <label class="form-label ">บ้านเลขที่<span class="text-danger"> *</span></label>
                 <input
@@ -1108,6 +1110,7 @@ const UserCarList = (props) => {
               </div>
             </div>
             <div class="row">
+            <div className="col-1"></div>
               <div class="col-2">
                 <label class="form-label ">จังหวัด<span class="text-danger"> *</span></label>
                 <input
@@ -1154,6 +1157,7 @@ const UserCarList = (props) => {
             {"Motor" === "Motor" ? (
               <>
                 <div class="row">
+                <div className="col-1"></div>
                   <div class="col-2">
               <label class="form-label ">เลขทะเบียนรถ<span class="text-danger"> *</span></label>
                     <input
@@ -1211,6 +1215,7 @@ const UserCarList = (props) => {
               </>
             ) : null}
             <div class="row">
+            <div className="col-1"></div>
               <div class="col-2">
               <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
                 <input
@@ -1236,7 +1241,7 @@ const UserCarList = (props) => {
 
         ))}
 
-        <input type="submit" value="create" onClick={(e)=>handleSubmit(e)} />
+        <button type="button" class="btn btn-primary" onClick={(e)=>handleSubmit(e)} >Create</button>
       </form>
       <div></div>
     </CenterPage>
