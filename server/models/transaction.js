@@ -14,43 +14,45 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Transaction.init({
-    
+    polid:  DataTypes.INTEGER,
+    billadvisor:  DataTypes.STRING,
+    netflag:  DataTypes.STRING,
     // prem comm ov1 ov2 ov3 disc
     transType:  DataTypes.STRING,
     // i = in or o = out
     transStatus:  DataTypes.CHAR,
+    txtype2:  DataTypes.INTEGER,
     // 1  , -1
     subType:  DataTypes.INTEGER,
-    insurerCode: DataTypes.STRING,
-    agentCode: DataTypes.STRING,
-    agentCode:  DataTypes.STRING,
-    amount: DataTypes.FLOAT,
-    duty:  DataTypes.FLOAT,
-    stamp:  DataTypes.FLOAT,
-    total:  DataTypes.FLOAT,
-    payDate: DataTypes.DATE,
-    // payNo or recipe NO
-    payNo:  DataTypes.STRING,
-    invoiceDate: DataTypes.DATE,
-    invoiceNo: DataTypes.STRING,
-    policyNo:  DataTypes.STRING,
-    endoseNo:  DataTypes.STRING,
-    // level for MLM
-    level:  DataTypes.INTEGER,
-    dueDate: DataTypes.DATEONLY,
-    groupSatmentID: DataTypes.INTEGER, 
     totalamt: DataTypes.FLOAT,
     paidamt:  DataTypes.FLOAT,
     remainamt:  DataTypes.FLOAT,
     status:  DataTypes.STRING,
+    mainaccountcode: DataTypes.STRING,
+    agentCode: DataTypes.STRING,
+    insurerCode: DataTypes.STRING,
+    policyNo:  DataTypes.STRING,
+    endoseNo:  DataTypes.STRING,
+    recieptno:  DataTypes.STRING,
     seqno:  DataTypes.INTEGER,
+    amount: DataTypes.FLOAT,
+    duty:  DataTypes.FLOAT,
+    stamp:  DataTypes.FLOAT,
+    total:  DataTypes.FLOAT,
     commamt: DataTypes.FLOAT,
     commtaxamt:  DataTypes.FLOAT,
     ovamt:  DataTypes.FLOAT,
     ovtaxamt: DataTypes.FLOAT,
     rprefdate:   DataTypes.DATEONLY,
+    dfrpreferno: DataTypes.STRING,
     "premin-rprefdate":  DataTypes.DATEONLY,
+    "premin-rprefdate-dfrpreferno": DataTypes.STRING,
     "premout-rprefdate":   DataTypes.DATEONLY,
+    "premout-rprefdate-dfrpreferno": DataTypes.STRING,
+    dueDate: DataTypes.DATEONLY,
+    groupStamentID: DataTypes.INTEGER, 
+    
+    
     
   }, {
     sequelize,

@@ -9,6 +9,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      polid: {
+        type: Sequelize.INTEGER
+      },
+      billadvisor: {
+        type: Sequelize.STRING
+      },
+      netflag: {
+        type: Sequelize.STRING
+      },
       // prem comm ov1 ov2 ov3 disc
       transType: {
         allowNull: false,
@@ -19,62 +28,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.CHAR
       },
+      txtype2: {
+        type: Sequelize.STRING
+      },
       // 1  , -1
       subType: {
         defaultValue: 1,
         allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      insurerCode: {
-        type: Sequelize.STRING
-      },
-      agentCode: {
-        type: Sequelize.STRING
-      },
-      agentCode: {
-        type: Sequelize.STRING
-      },
-      amount: {
-        type: Sequelize.FLOAT
-      },
-      duty: {
-        type: Sequelize.FLOAT
-      },
-      stamp: {
-        type: Sequelize.FLOAT
-      },
-      total: {
-        type: Sequelize.FLOAT
-      },
-      payDate: {
-        type: Sequelize.DATE
-      },
-      // payNo or recipe NO
-      payNo: {
-        type: Sequelize.STRING
-      },
-      invoiceDate: {
-        type: Sequelize.DATE
-      },
-      invoiceNo: {
-        type: Sequelize.STRING
-      },
-      policyNo: {
-        allowNull:false,
-        type: Sequelize.STRING
-      },
-      endoseNo: {
-        type: Sequelize.STRING
-      },
-      // level for MLM
-      level: {
-        type: Sequelize.INTEGER
-      },
-      dueDate:{
-        allowNull:false,
-        type: Sequelize.DATEONLY
-      },
-      groupSatmentID:{
         type: Sequelize.INTEGER
       },
       totalamt:{
@@ -90,9 +50,40 @@ module.exports = {
       status:{
         type: Sequelize.STRING
       },
+      mainaccountcode:{
+        type: Sequelize.STRING
+      },
+      agentCode: {
+        type: Sequelize.STRING
+      },
+      insurerCode: {
+        type: Sequelize.STRING
+      },
+      policyNo: {
+        allowNull:false,
+        type: Sequelize.STRING
+      },
+      endoseNo: {
+        type: Sequelize.STRING
+      },
+      receiptno: {
+        type: Sequelize.STRING
+      },
       seqno:{
         defaultValue: 1,
         type: Sequelize.INTEGER
+      },
+      amount: {
+        type: Sequelize.FLOAT
+      },
+      duty: {
+        type: Sequelize.FLOAT
+      },
+      stamp: {
+        type: Sequelize.FLOAT
+      },
+      total: {
+        type: Sequelize.FLOAT
       },
       commamt:{
         type: Sequelize.FLOAT
@@ -109,13 +100,28 @@ module.exports = {
       rprefdate: {
         type: Sequelize.DATEONLY
       },
+      dfrpreferno: {
+        type: Sequelize.STRING
+      },
       "premin-rprefdate": {
         type: Sequelize.DATEONLY
+      },
+      "premin-rprefdate-dfrpreferno": {
+        type: Sequelize.STRING
       },
       "premout-rprefdate": {
         type: Sequelize.DATEONLY
       },
-      
+      "premout-rprefdate-dfrpreferno": {
+        type: Sequelize.STRING
+      },
+      dueDate:{
+        allowNull:false,
+        type: Sequelize.DATEONLY
+      },
+      groupStamentID:{
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

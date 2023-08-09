@@ -15,6 +15,7 @@ internal class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddScoped<IDbService, DbService>();
         builder.Services.AddScoped<ITransactionService, TransactionService>();
+        builder.Services.AddScoped<IPolicyService , PolicyService>();
 
         var app = builder.Build();
 

@@ -116,12 +116,12 @@ const newPayment = async (req, res) => {
         const insuree = await Insuree.create({ entityID: entity[0][0].id, insureeCode: 'A' + entity[0][0].id }, { returning: ['insureeCode'] })
         console.log({ true: insuree });
         await sequelize.query(
-          'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
+          'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem) ' +
           // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
           'values (:policyNo, :insureeCode, ' +
           '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
           ':agentCode, (select "id" from static_data."InsureTypes" where "insureName" = :insureName), ' +
-          ':actDate, :expDate, :prem, :duty, :stamp, :total) ',
+          ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem) ',
           {
             replacements: {
               policyNo: req.body[i].policyNo,
@@ -132,10 +132,10 @@ const newPayment = async (req, res) => {
               insureName: req.body[i].insureName,
               actDate: req.body[i].actDate,
               expDate: req.body[i].expDate,
-              prem: req.body[i].prem,
+              grossprem: req.body[i].grossprem,
               duty: req.body[i].duty,
-              stamp: req.body[i].stamp,
-              total: req.body[i].total
+              tax: req.body[i].tax,
+              totalprem: req.body[i].totalprem
             },
             type: QueryTypes.INSERT
           }
@@ -203,12 +203,12 @@ const newPayment = async (req, res) => {
           { replacements: { idNo: req.body[i].personType === "P" ? req.body[i].idCardNo : req.body[i].taxNo }, type: QueryTypes.SELECT })
         console.log({ false: insuree });
         await sequelize.query(
-          'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
+          'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem) ' +
           // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
           'values (:policyNo, :insureeCode, ' +
           '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
           ':agentCode, (select "id" from static_data."InsureTypes" where "insureName" = :insureName), ' +
-          ':actDate, :expDate, :prem, :duty, :stamp, :total) ',
+          ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem) ',
           {
             replacements: {
               policyNo: req.body[i].policyNo,
@@ -219,10 +219,10 @@ const newPayment = async (req, res) => {
               insureName: req.body[i].insureName,
               actDate: req.body[i].actDate,
               expDate: req.body[i].expDate,
-              prem: req.body[i].prem,
+              grossprem: req.body[i].grossprem,
               duty: req.body[i].duty,
-              stamp: req.body[i].stamp,
-              total: req.body[i].total
+              tax: req.body[i].tax,
+              totalprem: req.body[i].totalprem
             },
             type: QueryTypes.INSERT
           }
@@ -268,10 +268,10 @@ const newPayment = async (req, res) => {
 
           sequelize.query(
             'INSERT INTO static_data."Transactions" ' +
-            '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
+            '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","tax", "totalprem","dueDate" ) ' +
             'VALUES (:type, :status, 1, ' +
             '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
-            ':agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
+            ':agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:tax,:totalprem,:duedate) ',
             {
               replacements: {
                 type: setupcom[j][2],
@@ -283,8 +283,8 @@ const newPayment = async (req, res) => {
                 rate: records[0][setupcom[j][0]],
                 amount: records[0][setupcom[j][1]],
                 duty: null,
-                stamp: null,
-                total: null,
+                tax: null,
+                totalprem: null,
                 duedate: '2022-05-01'
               },
               type: QueryTypes.INSERT

@@ -61,8 +61,8 @@ const createTransection = async (req) => {
         if(setupcom[i][3] === 'O'){subType = -1}
         sequelize.query(
           'INSERT INTO static_data."Transactions" ' +
-          '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","stamp", "total","dueDate" ) ' +
-          'VALUES (:type, :status, :subType,:insurerCode ,:agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:stamp,:total,:duedate) ',
+          '("transType", "transStatus", "subType", "insurerCode", "agentGroupCode", "agentCode", "policyNo", "rate","amount", "duty","tax", "totalprem","dueDate" ) ' +
+          'VALUES (:type, :status, :subType,:insurerCode ,:agentGroupCode ,:agentCode, :policyNo, :rate ,:amount ,:duty ,:tax,:totalprem,:duedate) ',
           {
             replacements: {
               type: setupcom[i][2],
@@ -75,8 +75,8 @@ const createTransection = async (req) => {
               rate: records[0][setupcom[i][0]],
               amount: records[0][setupcom[i][1]],
               duty: null,
-              stamp: null,
-              total: null,
+              tax: null,
+              totalprem: null,
               duedate: '2022-05-01'
             },
             type: QueryTypes.INSERT
@@ -180,12 +180,12 @@ const newPolicyList = async (req, res) => {
              console.log({true:insuree});
              //insert policy
             await  sequelize.query(
-                'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
+                'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem) ' +
                 // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
                 'values (:policyNo, :insureeCode, ' +
                 '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
                 ':agentCode, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
-                ':actDate, :expDate, :prem, :duty, :stamp, :total) ',
+                ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem) ',
                 {
                   replacements: {
                     policyNo: req.body[i].policyNo,
@@ -197,10 +197,10 @@ const newPolicyList = async (req, res) => {
                     agentCode: req.body[i].agentCode,
                     actDate: req.body[i].actDate,
                     expDate: req.body[i].expDate,
-                    prem: req.body[i].prem,
+                    grossprem: req.body[i].grossprem,
                     duty: req.body[i].duty,
-                    stamp: req.body[i].stamp,
-                    total: req.body[i].total
+                    tax: req.body[i].tax,
+                    totalprem: req.body[i].totalprem
                   },
                   type: QueryTypes.INSERT
                 }
@@ -241,12 +241,12 @@ const newPolicyList = async (req, res) => {
         console.log({false:insuree});
         //insert policy
         await  sequelize.query(
-            'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,prem, duty, stamp, total) ' +
+            'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem) ' +
             // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
             'values (:policyNo, :insureeCode, ' +
             '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
             ':agentCode, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
-            ':actDate, :expDate, :prem, :duty, :stamp, :total) ',
+            ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem) ',
             {
               replacements: {
                 policyNo: req.body[i].policyNo,
@@ -258,10 +258,10 @@ const newPolicyList = async (req, res) => {
                 agentCode: req.body[i].agentCode,
                 actDate: req.body[i].actDate,
                 expDate: req.body[i].expDate,
-                prem: req.body[i].prem,
+                grossprem: req.body[i].grossprem,
                 duty: req.body[i].duty,
-                stamp: req.body[i].stamp,
-                total: req.body[i].total
+                tax: req.body[i].tax,
+                totalprem: req.body[i].totalprem
               },
               type: QueryTypes.INSERT
             }
@@ -362,10 +362,10 @@ const newPolicyList = async (req, res) => {
             if(setupcom[j][3] === 'O'){subType = -1}
             sequelize.query(
               'INSERT INTO static_data."Transactions" ' +
-              '("transType", "transStatus", "subType", "insurerCode", "agentCode", "policyNo", "amount", "duty","stamp", "total",totalamt,remainamt,"dueDate" ) ' +
+              '("transType", "transStatus", "subType", "insurerCode", "agentCode", "policyNo", "amount", "duty","tax", "totalprem",totalamt,remainamt,"dueDate" ) ' +
               'VALUES (:type, :status, :subType, ' +
               '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
-              ':agentCode, :policyNo,:amount ,:duty ,:stamp,:total,:total,:total,:duedate) ',
+              ':agentCode, :policyNo,:amount ,:duty ,:tax,:totalprem,:totalprem,:totalprem,:duedate) ',
               {
                 replacements: {
                   type: 'Prem',
@@ -374,10 +374,10 @@ const newPolicyList = async (req, res) => {
                   insurername: req.body[i].insurerName,
                   agentCode: req.body[i].agentCode,
                   policyNo: req.body[i].policyNo,
-                  amount:  req.body[i].prem,
+                  amount:  req.body[i].grossprem,
                   duty: req.body[i].duty,
-                  stamp: req.body[i].stamp,
-                  total: req.body[i].total,
+                  tax: req.body[i].tax,
+                  totalprem: req.body[i].totalprem,
                   duedate: '2022-05-01'
                 },
                 type: QueryTypes.INSERT

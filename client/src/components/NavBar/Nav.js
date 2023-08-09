@@ -54,6 +54,29 @@ function Nav() {
               <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่</a></li>
             </ul>
           </div>
+          
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Bill Advisor
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/bill/findbill">ค้นหารายการ</a></li>
+              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/policyexcel">แก้ไขรายการ</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              Cashier Receive
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/findpolicy">ค้นหารายการ</a></li>
+              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/policyexcel">แก้ไขรายการ</a></li>
+            </ul>
+          </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
               ข้อมูลทั่วไป
@@ -65,7 +88,6 @@ function Nav() {
               <li><a class="dropdown-item" href="/agent">สร้างผู้แนะนำ</a></li>
             </ul>
           </div>
-            
             {/* <NavList>
               <NavLink to="/static">Static-data</NavLink>  
               </NavList> */}

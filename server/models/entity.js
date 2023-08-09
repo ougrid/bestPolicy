@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     personType: DataTypes.CHAR,
     titleID:  DataTypes.INTEGER,
     t_ogName: DataTypes.STRING,
+    t_suffixName: DataTypes.STRING,
     e_ogName:  DataTypes.STRING,
     t_firstName: DataTypes.STRING,
     t_lastName: DataTypes.STRING,

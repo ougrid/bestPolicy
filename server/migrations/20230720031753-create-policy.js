@@ -9,45 +9,66 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      policyNo: {
+      insureID: {
         allowNull: false,
-        type: Sequelize.STRING
-      },
-      insureeCode: {
-        allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       insurerCode: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      agentCode: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      // itemlistID or motorID
-      itemList: {
-        type: Sequelize.INTEGER
-      },
-      insureID: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      // Y = lastversion N = old version
-      lastVersion: {
-        defaultValue: 'Y',
-        allowNull: false,
-        type: Sequelize.CHAR
-      },
       actDate: {
         allowNull: false,
         type: Sequelize.DATEONLY
+      },
+      actTime: {
+        type: Sequelize.STRING
       },
       expDate: {
         allowNull: false,
         type: Sequelize.DATEONLY
       },
-      prem: {
+      expTime: {
+        type: Sequelize.STRING
+      },
+      policyDate: {
+        allowNull: false,
+        type: Sequelize.DATEONLY
+      },
+      policyTime: {
+        type: Sequelize.STRING
+      },
+      policyNo: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      endorseNo: {
+        type: Sequelize.STRING
+      },
+      invioceNo: {
+        type: Sequelize.STRING
+      },
+      taxInvioceNo: {
+        type: Sequelize.STRING
+      },
+      seqNo: {
+        defaultValue : 1,
+        type: Sequelize.INTEGER
+      },
+     
+      insureeCode: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      //itemList = motorID
+      itemList: {
+        type: Sequelize.INTEGER
+      },
+      grossprem: {
+        allowNull: false,
+        type: Sequelize.FLOAT
+      },
+      tax: {
         allowNull: false,
         type: Sequelize.FLOAT
       },
@@ -55,18 +76,54 @@ module.exports = {
         allowNull: false,
         type: Sequelize.FLOAT
       },
-      stamp: {
+      totalprem: {
         allowNull: false,
         type: Sequelize.FLOAT
       },
-      total: {
-        allowNull: false,
+      commin_rate: {
         type: Sequelize.FLOAT
       },
-      detail: {
-     
+      commin_amt: {
+        type: Sequelize.FLOAT
+      },
+      ovin_rate: {
+        type: Sequelize.FLOAT
+      },
+      ovin_amt: {
+        type: Sequelize.FLOAT
+      },
+      commin_taxamt: {
+        type: Sequelize.FLOAT
+      },
+      ovin_taxamt: {
+        type: Sequelize.FLOAT
+      },
+      agentCode: {
+        allowNull: false,
         type: Sequelize.STRING
       },
+      commout_rate: {
+        type: Sequelize.FLOAT
+      },
+      commout_amt: {
+        type: Sequelize.FLOAT
+      },
+      ovout_rate: {
+        type: Sequelize.FLOAT
+      },
+      ovout_amt: {
+        type: Sequelize.FLOAT
+      },
+      createusercode:{
+        type:Sequelize.STRING
+      },
+      // Y = lastversion N = old version
+      lastVersion: {
+        defaultValue: 'Y',
+        allowNull: false,
+        type: Sequelize.CHAR
+      },
+      
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

@@ -17,6 +17,7 @@ import Insurer from "./components/Static/Insurer";
 import InsureType from "./components/Static/insureType";
 import Agent from "./components/Static/Agent";
 import FindPolicy from "./components/Policy/FindPolicy";
+import FindBillAdvisor from "./components/ฺBillAdvisor/FindBillAdvisor";
 function App() {
   return (
     <div className="App">
@@ -38,6 +39,7 @@ function App() {
           <Route path="/static/:name" element={<Static />} />
           <Route path="/packages/:id" element={<Packages />} />
           <Route path="/policyexcel" element={<PolicyExcel />} />
+          <Route path="bill/findbill" element={<FindBillAdvisor />} />
         </Routes>
       </main>
       {/* <footer>

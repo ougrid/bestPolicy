@@ -1,42 +1,39 @@
 'use strict';
+
+const { flush } = require('elastic-apm-node');
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Motors', {
+    await queryInterface.createTable('Endorses', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      voluntarycode: {
+      endorseNo: {
+        unique:true,
+        type: Sequelize.STRING
+      },
+      edeffdate: {
         allowNull: false,
+        type: Sequelize.DATEONLY
+      },
+      edefftime: {
         type: Sequelize.STRING
       },
-      brandID: {
+      edexpdate: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.DATEONLY
       },
-      modelID: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      specname: {
+      edexptime: {
         type: Sequelize.STRING
       },
-      motorprovinceID: {
-        type: Sequelize.INTEGER
-      },
-      chassisNo: {
+      edtype: {
+        allowNull:false,
         type: Sequelize.STRING
       },
-      licenseNo: {
-        type: Sequelize.STRING
-      },
-      modelYear: {
-        type: Sequelize.INTEGER
-      },
-
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,
@@ -50,6 +47,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Motors',{ schema: 'static_data'});
+    await queryInterface.dropTable('Endorses',{ schema: 'static_data'});
   }
 };

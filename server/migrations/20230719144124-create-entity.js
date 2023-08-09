@@ -20,6 +20,9 @@ module.exports = {
       t_ogName: {
         type: Sequelize.STRING
       },
+      t_suffixName: {
+        type: Sequelize.STRING
+      },
       e_ogName: {
         type: Sequelize.STRING
       },
