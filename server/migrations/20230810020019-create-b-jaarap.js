@@ -1,37 +1,50 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('b_jabilladvisors', {
+    await queryInterface.createTable('b_jaaraps', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      insurerno: {
-        type: Sequelize.STRING
-      },
-      advisorno: {
-        type: Sequelize.STRING
-      },
       billadvisorno: {
         type: Sequelize.STRING
       },
-      billdate: {
-        type: Sequelize.DATEONLY
-      },
-      createusercode: {
+      cashierreceiveno: {
         type: Sequelize.STRING
       },
-      amt: {
+      cashieramt: {
         type: Sequelize.FLOAT
       },
-      cashierreceiptno: {
+      insurercode: {
         type: Sequelize.STRING
       },
-      active: {
+      advisorcode: {
         type: Sequelize.STRING
+      },
+      type: {
+        type: Sequelize.STRING
+      },
+      transactiontype: {
+        type: Sequelize.STRING
+      },
+      actualvalue: {
+        type: Sequelize.FLOAT
+      },
+      diffamt: {
+        type: Sequelize.FLOAT
+      },
+      status: {
+        type: Sequelize.STRING
+      },
+      createusercode:{
+        type :Sequelize.STRING
+      },
+      updateusercode:{
+        type:Sequelize.STRING
       },
       createdAt: {
         defaultValue: new Date(),
@@ -46,6 +59,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_jabilladvisors',{ schema: 'static_data'});
+    await queryInterface.dropTable('b_jaaraps',{ schema: 'static_data'});
   }
 };

@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Motor.init({
-    id: DataTypes.INTEGER,
     voluntaryCode: DataTypes.STRING,
     brandID: DataTypes.INTEGER,
     modelID: DataTypes.INTEGER,

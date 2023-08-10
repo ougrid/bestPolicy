@@ -2,36 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('b_jabilladvisors', {
+    await queryInterface.createTable('b_jaarapds', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      insurerno: {
+      keyidm: {
+        allowNull:false,
+        type: Sequelize.INTEGER
+      },
+      polid: {
+        allowNull:false,
+        type: Sequelize.INTEGER
+      },
+      customerid: {
+        type: Sequelize.INTEGER
+      },
+      netflag: {
         type: Sequelize.STRING
       },
-      advisorno: {
-        type: Sequelize.STRING
-      },
-      billadvisorno: {
-        type: Sequelize.STRING
-      },
-      billdate: {
-        type: Sequelize.DATEONLY
-      },
-      createusercode: {
-        type: Sequelize.STRING
-      },
-      amt: {
+      billpremium: {
         type: Sequelize.FLOAT
-      },
-      cashierreceiptno: {
-        type: Sequelize.STRING
-      },
-      active: {
-        type: Sequelize.STRING
       },
       createdAt: {
         defaultValue: new Date(),
@@ -46,6 +39,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_jabilladvisors',{ schema: 'static_data'});
+    await queryInterface.dropTable('b_jaarapds',{ schema: 'static_data'});
   }
 };

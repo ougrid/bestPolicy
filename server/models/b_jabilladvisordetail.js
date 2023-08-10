@@ -14,12 +14,31 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   b_jabilladvisordetail.init({
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    email: DataTypes.STRING
+  //(เก็บ keyid ของแม่) 
+  keyidm:  DataTypes.INTEGER,
+  //(เก็บ keyind ของ b_jupc)
+  polid: DataTypes.INTEGER,
+  customerid: DataTypes.INTEGER,
+  licenseno:  DataTypes.STRING,
+  chassisno: DataTypes.STRING,
+  grossprem: DataTypes.FLOAT,
+  duty: DataTypes.FLOAT,
+  tax:  DataTypes.FLOAT,
+  totalprem:  DataTypes.FLOAT,
+  "comm-out%":  DataTypes.FLOAT,
+  "comm-out-amt":  DataTypes.FLOAT,
+  "ov-out%":  DataTypes.FLOAT,
+  "ov-out-amt":  DataTypes.FLOAT,
+  netflag:  DataTypes.STRING,
+  billpremium:  DataTypes.FLOAT,
+  updateusercode:  DataTypes.STRING,
+  createdAt:  DataTypes.DATE,
+  updatedAt:  DataTypes.DATE
+   
   }, {
     sequelize,
     modelName: 'b_jabilladvisordetail',
+    schema: 'static_data'
   });
   return b_jabilladvisordetail;
 };

@@ -24,10 +24,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       // i = in or o = out
-      transStatus: {
-        allowNull: false,
-        type: Sequelize.CHAR
-      },
+    
       txtype2: {
         type: Sequelize.STRING
       },
@@ -73,16 +70,16 @@ module.exports = {
         defaultValue: 1,
         type: Sequelize.INTEGER
       },
-      amount: {
+      grossprem: {
         type: Sequelize.FLOAT
       },
       duty: {
         type: Sequelize.FLOAT
       },
-      stamp: {
+      tax: {
         type: Sequelize.FLOAT
       },
-      total: {
+      totalprem: {
         type: Sequelize.FLOAT
       },
       commamt:{

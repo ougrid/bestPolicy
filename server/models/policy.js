@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     itemList:  DataTypes.INTEGER,
     grossprem:  DataTypes.FLOAT,
     duty: DataTypes.FLOAT,
-    stamp:  DataTypes.FLOAT,
+    tax:  DataTypes.FLOAT,
     totalprem:  DataTypes.FLOAT,
     commin_rate:  DataTypes.FLOAT,
     commin_amt: DataTypes.FLOAT,

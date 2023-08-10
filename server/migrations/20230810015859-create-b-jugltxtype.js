@@ -2,35 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('b_jabilladvisors', {
+    await queryInterface.createTable('b_jugltxtypes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      insurerno: {
+      ttype: {
         type: Sequelize.STRING
       },
-      advisorno: {
+      seqno: {
+        type: Sequelize.INTEGER
+      },
+      accountno: {
         type: Sequelize.STRING
       },
-      billadvisorno: {
+      gltype: {
         type: Sequelize.STRING
       },
-      billdate: {
-        type: Sequelize.DATEONLY
-      },
-      createusercode: {
-        type: Sequelize.STRING
-      },
-      amt: {
-        type: Sequelize.FLOAT
-      },
-      cashierreceiptno: {
-        type: Sequelize.STRING
-      },
-      active: {
+      command: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -46,6 +37,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_jabilladvisors',{ schema: 'static_data'});
+    await queryInterface.dropTable('b_jugltxtypes',{ schema: 'static_data'});
   }
 };

@@ -2,36 +2,48 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('b_jabilladvisors', {
+    await queryInterface.createTable('b_jugltxes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      insurerno: {
+      ttype: {
         type: Sequelize.STRING
       },
-      advisorno: {
+      seqno: {
+        type: Sequelize.INTEGER
+      },
+      accountno: {
         type: Sequelize.STRING
       },
-      billadvisorno: {
+      gltype: {
         type: Sequelize.STRING
       },
-      billdate: {
-        type: Sequelize.DATEONLY
-      },
-      createusercode: {
+      class: {
         type: Sequelize.STRING
+      },
+      subclass: {
+        type: Sequelize.STRING
+      },
+      policyno: {
+        type: Sequelize.STRING
+      },
+      endorseno: {
+        type: Sequelize.STRING
+      },
+      invoiceno: {
+        type: Sequelize.STRING
+      },
+      taxinvoiceno: {
+        type: Sequelize.STRING
+      },
+      polikeyid: {
+        type: Sequelize.INTEGER
       },
       amt: {
         type: Sequelize.FLOAT
-      },
-      cashierreceiptno: {
-        type: Sequelize.STRING
-      },
-      active: {
-        type: Sequelize.STRING
       },
       createdAt: {
         defaultValue: new Date(),
@@ -46,6 +58,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_jabilladvisors',{ schema: 'static_data'});
+    await queryInterface.dropTable('b_jugltxes',{ schema: 'static_data'});
   }
 };

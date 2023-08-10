@@ -19,8 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     netflag:  DataTypes.STRING,
     // prem comm ov1 ov2 ov3 disc
     transType:  DataTypes.STRING,
-    // i = in or o = out
-    transStatus:  DataTypes.CHAR,
     txtype2:  DataTypes.INTEGER,
     // 1  , -1
     subType:  DataTypes.INTEGER,
@@ -35,10 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     endoseNo:  DataTypes.STRING,
     recieptno:  DataTypes.STRING,
     seqno:  DataTypes.INTEGER,
-    amount: DataTypes.FLOAT,
+    grossprem: DataTypes.FLOAT,
     duty:  DataTypes.FLOAT,
-    stamp:  DataTypes.FLOAT,
-    total:  DataTypes.FLOAT,
+    tax:  DataTypes.FLOAT,
+    totalprem:  DataTypes.FLOAT,
     commamt: DataTypes.FLOAT,
     commtaxamt:  DataTypes.FLOAT,
     ovamt:  DataTypes.FLOAT,

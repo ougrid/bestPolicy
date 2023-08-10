@@ -18,10 +18,10 @@ const UserCarList = (props) => {
     agentCode: null,
     insureType: null,
     insureName: null,
-    prem: null,
+    grossprem: null,
     duty: null,
-    stamp: null,
-    total: null,
+    tax: null,
+    totalprem: null,
     personType: null,
     title: null,
     t_ogName: null,
@@ -274,8 +274,8 @@ const UserCarList = (props) => {
                   className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].prem : null}
-                  name={`prem_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].grossprem : null}
+                  name={`grossprem_${index}`}
                   onChange={e=>handleChange(e)}
 
                 />
@@ -287,8 +287,8 @@ const UserCarList = (props) => {
                 className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].stamp : null}
-                  name={`stamp_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].tax : null}
+                  name={`tax_${index}`}
                   onChange={handleChange}
                 />
               </div>
@@ -311,8 +311,8 @@ const UserCarList = (props) => {
                   className="form-control"
                   type="number"
                   step={0.1}
-                  name={`total_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].total : null}
+                  name={`totalprem_${index}`}
+                  defaultValue={formData[index] !== undefined ? formData[index].totalprem : null}
                   onChange={handleChange}
                 />
               </div>
@@ -339,7 +339,8 @@ const UserCarList = (props) => {
                   type="number"
                   disabled
                   step={0.1}
-                  value={formData[index][`commIn%`] * formData[index][`prem`]/100 || ''}
+                  defaultValue={formData[index] !== undefined ? formData[index][`commInamt`] : null}
+                  // value={formData[index][`commIn%`] * formData[index][`grossprem`]/100 || ''}
                   name={`commInamt_${index}`}
                   onChange={e=>handleChange(e)}
                 />
@@ -365,7 +366,8 @@ const UserCarList = (props) => {
                   disabled
                   step={0.1}
                   name={`ovInamt_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index][`ovIn%`] * formData[index][`prem`]/100: null}
+                  defaultValue={formData[index] !== undefined ? formData[index][`ovInamt`] : null}
+                  // defaultValue={formData[index] !== undefined ? formData[index][`ovIn%`] * formData[index][`grossprem`]/100: null}
                   onChange={handleChange}
                 />
               </div>
@@ -393,7 +395,8 @@ const UserCarList = (props) => {
                   type="number"
                   disabled
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`commOut%`] * formData[index][`prem`] /100: null}
+                  defaultValue={formData[index] !== undefined ? formData[index][`commOutamt`] : null}
+                  // defaultValue={formData[index] !== undefined ? formData[index][`commOut%`] * formData[index][`grossprem`] /100: null}
                   name={`commOutamt_${index}`}
                   onChange={handleChange}
                 />
@@ -417,7 +420,8 @@ const UserCarList = (props) => {
                   disabled
                   step={0.1}
                   name={`ovOutamt_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index][`ovOut%`]* formData[index][`prem`] /100: null}
+                  defaultValue={formData[index] !== undefined ? formData[index][`ovOutamt`] : null}
+                  // defaultValue={formData[index] !== undefined ? formData[index][`ovOut%`]* formData[index][`grossprem`] /100: null}
                   onChange={handleChange}
                 />
               </div>

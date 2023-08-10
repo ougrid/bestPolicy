@@ -9,26 +9,69 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
+      //(เก็บ keyid ของแม่) 
+      keyidm: {
+        type: Sequelize.INTEGER
+      },
+      //(เก็บ keyind ของ b_jupc)
+      polid: {
+        type: Sequelize.INTEGER
+      },
+      customerid: {
+        type: Sequelize.INTEGER
+      },
+      licenseno: {
         type: Sequelize.STRING
       },
-      lastName: {
+      chassisno: {
         type: Sequelize.STRING
       },
-      email: {
+      grossprem: {
+        type: Sequelize.FLOAT
+      },
+      duty: {
+        type: Sequelize.FLOAT
+      },
+      tax: {
+        type: Sequelize.FLOAT
+      },
+      totalprem: {
+        type: Sequelize.FLOAT
+      },
+      "comm-out%": {
+        type: Sequelize.FLOAT
+      },
+      "comm-out-amt": {
+        type: Sequelize.FLOAT
+      },
+      "ov-out%": {
+        type: Sequelize.FLOAT
+      },
+      "ov-out-amt": {
+        type: Sequelize.FLOAT
+      },
+      netflag: {
+        type: Sequelize.STRING
+      },
+      billpremium: {
+        type: Sequelize.FLOAT
+      },
+      updateusercode: {
         type: Sequelize.STRING
       },
       createdAt: {
+        defaultValue: new Date(),
         allowNull: false,
         type: Sequelize.DATE
       },
       updatedAt: {
+        defaultValue: new Date(),
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_jabilladvisordetails');
+    await queryInterface.dropTable('b_jabilladvisordetails',{ schema: 'static_data'});
   }
 };

@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Endorse extends Model {
+  class b_tagla extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,19 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Endorse.init({
-    endorseNo:  DataTypes.STRING,
-    edeffdate: DataTypes.DATEONLY,
-    edefftime:  DataTypes.STRING,
-    edexpdate:DataTypes.DATEONLY,
-    edexptime: DataTypes.STRING,
-    edtype: DataTypes.STRING,
-    createdAt:  DataTypes.DATE,
-    updatedAt:  DataTypes.DATE,
+  b_tagla.init({
+    glaccountcode: DataTypes.STRING,
+    description: DataTypes.STRING,
+    glclass: DataTypes.STRING,
+    glsubclass: DataTypes.STRING,
+    
   }, {
     sequelize,
-    modelName: 'Endorse',
+    modelName: 'b_tagla',
     schema: 'static_data'
   });
-  return Endorse;
+  return b_tagla;
 };
