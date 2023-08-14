@@ -108,11 +108,7 @@ const Agent = () => {
     axios
     .get(url + "/persons/insurerall")
     .then((insurer) => {
-        // let token = res.data.jwt;
-        // let decode = jwt_decode(token);
-        // navigate("/");
-        // window.location.reload();
-        // localStorage.setItem("jwt", token);
+        
 
         const array = []
         insurer.data.forEach(ele => {
@@ -146,6 +142,34 @@ const Agent = () => {
   };
 
   const changeEntity = (e) => {
+    if (e.target.name === 'personType') {
+      if (e.target.value === 'P') {
+        axios
+          .get(url + "/static/titles/person/all")
+          .then((title) => {
+            const array2 = []
+            title.data.forEach(ele => {
+              array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
+            });
+            setTitleDD(array2)
+          })
+          .catch((err) => {
+          });
+      }else{
+        axios
+        .get(url + "/static/titles/company/all")
+        .then((title) => {
+          const array2 = []
+          title.data.forEach(ele => {
+            array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
+          });
+          setTitleDD(array2)
+        })
+        .catch((err) => {
+        });
+      }
+     
+    }
     setEntityData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -277,7 +301,28 @@ const removeRow = (e) => {
                   <option value="Gross">Gross</option>
                 </select>
               </div>
-        
+              <div class="col-2">
+                <label class="form-label ">เครดิตเทอมค่าเบี้ย <span class="text-danger"> *</span></label>
+            <InputBtn
+                className="form-control"
+              type="text"
+              required
+              // placeholder="InsurerCode"
+              name="premCreditT"
+              onChange={changeAgent}
+            />
+          </div>
+          <div class="col-2">
+                <label class="form-label ">เครดิตเทอมค่าcomm/ov <span class="text-danger"> *</span></label>
+            <InputBtn
+                className="form-control"
+              type="text"
+              required
+              // placeholder="InsurerCode"
+              name="commCreditT"
+              onChange={changeAgent}
+            />
+          </div>
         </div>
 
         {/* entity table */}
@@ -286,7 +331,7 @@ const removeRow = (e) => {
         <div class="col-1">
               <label class="form-label ">type<span class="text-danger"> *</span></label>
                 <select
-                  className="form-control"
+                  className="form-control "
                   name={`personType`}
                   onChange={changeEntity}
                 >
@@ -294,32 +339,58 @@ const removeRow = (e) => {
                   <option value="C">นิติบุคคล</option>
                 </select>
               </div>
-          <div class="col-1">
-                <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
-            <select 
-                className="form-control" name="titleID" onChange={changeEntity}>
-              <option value="" selected disabled hidden> </option>
-              {titleDD}
-            </select>
-          </div>
-          <div class="col-2">
-                <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
-            <InputBtn
-                className="form-control"
-              type="text"
-              name="t_firstName"
-              onChange={changeEntity}
-            />
-          </div>
-          <div class="col-2">
-                <label class="form-label ">นามสกุล<span class="text-danger"> *</span></label>
-            <InputBtn
-                className="form-control"
-              type="text"
-              name="t_lastName"
-              onChange={changeEntity}
-            />
-          </div>
+              <div class="col-1"></div>
+              {entityData.personType === 'P'?
+               <>
+               <div class="col-2">
+                     <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
+                 <select 
+                     className="form-control" name="titleID" onChange={changeEntity}>
+                   <option value="" selected disabled hidden> </option>
+                   {titleDD}
+                 </select>
+               </div>
+               <div class="col-2">
+                     <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
+                 <InputBtn
+                     className="form-control"
+                   type="text"
+                   name="t_firstName"
+                   onChange={changeEntity}
+                 />
+               </div>
+               <div class="col-2">
+                     <label class="form-label ">นามสกุล<span class="text-danger"> *</span></label>
+                 <InputBtn
+                     className="form-control"
+                   type="text"
+                   name="t_lastName"
+                   onChange={changeEntity}
+                 />
+               </div>
+               </> 
+               :<>
+               <div class="col-2">
+                     <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
+                 <select 
+                     className="form-control" name="titleID" onChange={changeEntity}>
+                   <option value="" selected disabled hidden> </option>
+                   {titleDD}
+                 </select>
+               </div>
+               <div class="col-2">
+                     <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
+                 <InputBtn
+                     className="form-control"
+                   type="text"
+                   name="t_ogName"
+                   onChange={changeEntity}
+                 />
+               </div>
+               
+               </> }
+         
+          
         </div>
 
 

@@ -1,16 +1,26 @@
 const CommOVIn = require("../models").CommOVIn; //imported fruits array
 const InsureType = require("../models").InsureType;
 const CommOVOut = require("../models").CommOVOut;
+const process = require('process');
+require('dotenv').config();
 
-
-const { Op } = require("sequelize");
+const { Op, QueryTypes, Sequelize } = require("sequelize");
 //handle index request
-// const showAll = (req,res) =>{
-//     Location.findAll({
-//     }).then((locations)=>{
-//         res.json(locations);
-//     })
-// }
+
+// Replace 'your_database', 'your_username', 'your_password', and 'your_host' with your database credentials
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: process.env.DB_DIALECT,
+  port: process.env.DB_PORT,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    },
+  },
+});
+
+
 
 const getInsureTypeByid = (req, res) => {
     InsureType.findOne ({
@@ -76,7 +86,27 @@ const newCommOVIn = (req, res) => {
     });
    
   };
+  const getCommOV = async (req, res) => {
+    const records = await sequelize.query(
+      'select * FROM static_data."CommOVOuts" comout ' +
+      'JOIN static_data."CommOVIns" comin ' +
+      'ON comin."insurerCode" = comout."insurerCode" and comin."insureID" = comout."insureID" ' +
+      'where comout."agentCode" = :agentcode ' +
+      'and comout."insureID" = (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass) '+
+      'and comout."insurerCode" = :insurerName',
+      {
+        replacements: {
+          agentcode: req.body.agentCode,
+          class: req.body.class,
+          subClass: req.body.subClass,
+          insurerName:req.body.insurerName
+        },
+        type: QueryTypes.SELECT
+      }
+    )
+    res.json(records);
 
+};
 
 module.exports = {
 //   showAll,
@@ -87,7 +117,8 @@ module.exports = {
   newCommOVOut,
   getCommOVInByid,
   newCommOVIn,  
-  newCommOV
+  newCommOV,
+  getCommOV
 
   // removeCar,AgentditCar,
 };

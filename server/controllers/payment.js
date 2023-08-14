@@ -85,25 +85,22 @@ const findTransaction = async (req,res) => {
 
 const findPolicyByPreminDue = async (req,res) => {
 
-    const data = await sequelize.query(
-          'select (select ent."t_ogName" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ins."insurerCode" = tran."insurerCode" ) as "insurerName",* from static_data."Transactions" tran  where '+
-          'CASE WHEN :filter = \'policyNo\'  THEN tran."policyNo" = :value '+
-          'WHEN :filter = \'agentCode\' then tran."agentCode" = :value '+
-          'else tran."insurerCode" = (select "insurerCode" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ent."t_ogName" = :value ) '+
-          'END and tran."payNo" is null and tran."transType" = :transType  ',
+    const records = await sequelize.query(
+      'select * from static_data."Transactions" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
+      'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode '+
+      'and "dueDate"<=:dueDate  and case when :policyNoAll = true then true else tran."policyNo" between :policyNoStart and :policyNoStart end',
           {
             replacements: {
-              filter:req.body.filterName,
-              value:req.body.value,
-              transType: transac[i][0],
-              //status: transac[i][1]
+              agentCode:req.body.agentCode,
+              insurerCode:req.body.insurerCode,
+              dueDate: req.body.dueDate,
+              policyNoStart: req.body.policyNoStart,
+              policyNoEnd: req.body.policyNoEnd,
+              policyNoAll:req.body.policyNoAll,
             },
             type: QueryTypes.SELECT
           }
         );
-        records.push(...data)
-
-    
     await res.json(records)
   
 }

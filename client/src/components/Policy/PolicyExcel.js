@@ -129,7 +129,7 @@ const PolicyExcel = () => {
         </form>
       </Border> */}
 
-      <h2>Add New Policy</h2>
+      <h2 className="text-center">Add New Policy</h2>
       <PolicyList userId={profile.id} />
     </>
   );

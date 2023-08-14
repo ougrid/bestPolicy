@@ -188,7 +188,7 @@ const FindPolicy = () => {
             {/* <BackdropBox1> */}
             <form className="container-fluid text-left" onSubmit={handleSubmit}>
                 {/* insurer table */}
-                <h1>ค้นหารายการ</h1>
+                <h1 className="text-center">ค้นหารายการ</h1>
                 <div class="row">
                     <div class="col-1">
 
@@ -487,9 +487,10 @@ const FindPolicy = () => {
                     </tbody>
                 </table>
 
+                                    <div className="d-flex justify-content-center">
+                <LoginBtn  type="submit">Submit</LoginBtn>
 
-
-                <LoginBtn type="submit">Submit</LoginBtn>
+                                    </div>
             </form>
 
 

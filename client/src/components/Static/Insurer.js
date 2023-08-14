@@ -280,13 +280,18 @@ const Insurer = () => {
             <label class="form-label ">
               รูปแบบการหักภาษี<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <select
               className="form-control"
-              type="text"
               required
-              name="deductTaxType"
+              name={`deductTaxType`}
               onChange={changeInsurer}
-            />
+            >
+              <option value="หักภาษี ณ ที่จ่าย">หักภาษี ณ ที่จ่าย</option>
+              <option selected value="หักภาษี ณ ที่จ่ายค่านายหน้า">
+              หักภาษี ณ ที่จ่ายค่านายหน้า
+              </option>
+            </select>
+            
           </div>
           <div class="col-2">
             <label class="form-label ">
@@ -323,38 +328,41 @@ const Insurer = () => {
           </div>
           <div class="col-2">
             <label class="form-label ">
-              เครดิตเทอมค่าเบี้ย<span class="text-danger"> *</span>
+            เลขที่ทะเบียน<span class="text-danger"> *</span>
             </label>
             <InputBtn
               className="form-control"
-              type="number"
-              name="premCreditT"
-              onChange={changeInsurer}
-            />
-          </div>
-
-          <div class="col-2">
-            <label class="form-label ">
-              เครดิตเทอมค่าคอมมิสชั่น<span class="text-danger"> *</span>
-            </label>
-            <InputBtn
-              className="form-control"
-              type="number"
-              name="commCreditT"
-              onChange={changeInsurer}
+              type="text"
+              required
+              name="taxNo"
+              onChange={changeEntity}
             />
           </div>
           <div class="col-2">
             <label class="form-label ">
-              เครดิตเทอมค่าOV<span class="text-danger"> *</span>
+            วันที่จดทะเบียน<span class="text-danger"> *</span>
             </label>
             <InputBtn
               className="form-control"
-              type="number"
-              name="ovCreditT"
-              onChange={changeInsurer}
+              type="date"
+              required
+              name="taxActDate"
+              onChange={changeEntity}
             />
           </div>
+          <div class="col-2">
+            <label class="form-label ">
+            วันที่จดทะเบียนหมดอายุ<span class="text-danger"> *</span>
+            </label>
+            <InputBtn
+              className="form-control"
+              type="date"
+              required
+              name="taxExpDate"
+              onChange={changeEntity}
+            />
+          </div>
+          
         </div>
 
         {/* entity table */}
@@ -389,16 +397,29 @@ const Insurer = () => {
           </div>
           <div class="col-2">
             <label class="form-label ">
-              เลขเสียภาษี<span class="text-danger"> *</span>
+              เครดิตเทอมค่าเบี้ย<span class="text-danger"> *</span>
             </label>
             <InputBtn
               className="form-control"
-              type="string"
-              required
-              name="taxNo"
-              onChange={changeEntity}
+              type="number"
+              name="premCreditT"
+              onChange={changeInsurer}
             />
           </div>
+
+          <div class="col-2">
+            <label class="form-label ">
+              เครดิตเทอมค่าcomm/ov<span class="text-danger"> *</span>
+            </label>
+            <InputBtn
+              className="form-control"
+              type="number"
+              name="commCreditT"
+              onChange={changeInsurer}
+            />
+          </div>
+         
+
         </div>
 
         <div class="row">

@@ -29,9 +29,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_taglas');
+    await queryInterface.dropTable('b_taglas',{ schema: 'static_data'});
   }
 };

@@ -3,12 +3,16 @@ import * as XLSX from 'xlsx';
 import { useEffect, useState } from "react";
 import { CenterPage } from "../StylesPages/AdminStyles";
 import { Container } from "../StylesPages/PagesLayout";
+import PolicyCard from "./PolicyCard";
+import Modal from 'react-bootstrap/Modal';
 import { async } from "q";
+import Pagination from "./Pagination";
 const config = require("../../config.json");
 
 const UserCarList = (props) => {
   const url = config.url;
   const [row, setRow] = useState(0);
+  const [hidecard, setHidecard] = useState([false,0]);
   //import excel
   const [formData, setFormData] = useState([{
     policyNo: null,
@@ -47,6 +51,16 @@ const UserCarList = (props) => {
     telNum_1: null,
   }]);
 
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(5);
+  // Get current posts
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentForm = formData.slice(indexOfFirstPost, indexOfLastPost);
+
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
 
   const handleChange = async (e) => {
     e.preventDefault();
@@ -57,7 +71,17 @@ const UserCarList = (props) => {
   setFormData(formData)
     console.log(formData);
   };
- 
+
+  const handleChangeCard = async (e,index,data) => {
+    e.preventDefault();
+    setHidecard([false,0])
+    if (e.target.name === 'saveChange') {
+      const array =    data
+      formData[index] = array
+      setFormData(formData)
+      console.log(formData);
+    }
+  };
 
   const handleSubmit = async (e) => {
     const data = []
@@ -103,6 +127,9 @@ const UserCarList = (props) => {
   const newRow = (e) => {
     e.preventDefault();
     setRow(row + 1);
+    const array = formData
+    array.push(...formData)
+    setFormData(array);
     
   };
   const removeRow = (e) => {
@@ -114,8 +141,13 @@ const UserCarList = (props) => {
     }
 
   };
-
-
+  const editCard =(e) =>{
+    setHidecard([true,e.target.id])
+   
+  };
+const handleClose = (e) =>{
+  setHidecard([false,0])
+}
   //import excel
   const handleFileChange = (e) => {
 
@@ -153,10 +185,13 @@ const UserCarList = (props) => {
 
   return (
     <CenterPage>
-      <button onClick={newRow} >add</button>
-      <button onClick={removeRow} >Remove</button>
+      <div className="d-flex justify-content-center">
 
-      <input type="file" id="fileInput" onChange={(e) => handleFileChange(e)} />
+      <button type="button" class="btn btn-primary " onClick={newRow} >add</button>
+      <button type="button" class="btn btn-danger " onClick={removeRow} >Remove</button>
+
+      <input type="file" class="btn btn-secondary " id="fileInput" onChange={(e) => handleFileChange(e)} />
+      </div>
      
       
       {/* <form className="container-fluid form-group text-left" */}
@@ -165,17 +200,40 @@ const UserCarList = (props) => {
         id="policyList">
        
         {/* loop new row */}
-        {Array.from({ length: row+1 }, (_, index) => (
-          
+        {/* {Array.from({ length: row+1 }, (_, index) => ( */}
+          {currentForm.map((_, index) => (
            
-           (<>
-            <h1>กรมธรรม์ฉบับที่ {index + 1}</h1>
+             
+            
+          (<>
+          <Modal  size="xl" show={hidecard[0]} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title >แก้ไขกรมธรรม์</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {<PolicyCard index={hidecard[1]} formData={formData[hidecard[1]]} setFormData ={handleChangeCard}/>}
+        </Modal.Body>
+       
+      </Modal>
+          <div className="d-flex align-items-center justify-content-center">
+            
+<div className="col-2">
+            <h1 className="text-center">กรมธรรม์ฉบับที่ {index + 1}</h1>
+
+</div>
+            <div className="col-2">
+            
+
+            <button type="button" class="btn btn-secondary " id={index} onClick={(e)=>editCard(e)} >Edit</button>
+            </div>
+           </div>
             {/* policy table */}
             <div className="row form-group form-inline ">
             <div className="col-1"></div>
               <div className="col-2 form-group  ">
               <label class="form-label ">เลขที่กรมธรรม์<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="text"
                   defaultValue={formData[index] !== undefined ?formData[index].policyNo :null }
@@ -669,12 +727,20 @@ const UserCarList = (props) => {
               </div>
             </div>
           </>)
-
+        
         ))}
+       
+       <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={formData.length}
+        paginate={paginate}
+      />
+<div className="d-flex justify-content-center">
 
-        <button type="button" class="btn btn-primary" onClick={(e)=>handleSubmit(e)} >Create</button>
+        <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button>
+</div>
       </form>
-      <div></div>
+      
     </CenterPage>
   );
 };

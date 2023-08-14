@@ -107,12 +107,8 @@ const newInsurer = async (req, res) => {
   
   };
 
-  const getAgentByid = (req, res) => {
-    Agent.findOne ({
-    where: {
-        agentCode: req.params.id
-    }
-  }).then((agent) => {
+  const getAgentAll = (req, res) => {
+    Agent.findAll ().then((agent) => {
     res.json(agent);
   });
 };
@@ -171,7 +167,7 @@ module.exports = {
   newInsuree,
   getInsurerByid,
   newInsurer,  
-  getAgentByid,
+  getAgentAll,
   newAgent,
   getUserByid,
   newUser,

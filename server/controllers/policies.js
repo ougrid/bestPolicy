@@ -281,7 +281,7 @@ const newPolicyList = async (req, res) => {
         '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
         ':agentCode, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
         ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem, ' +
-        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)',
+        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode )',
         {
           replacements: {
             policyNo: req.body[i].policyNo,
@@ -308,6 +308,7 @@ const newPolicyList = async (req, res) => {
             ovout_rate: req.body[i][`ovOut%`],
             ovout_amt: req.body[i][`ovOutamt`],
             createusercode: "kwanjai",
+            
           },
           type: QueryTypes.INSERT
         }
@@ -390,10 +391,10 @@ const newPolicyList = async (req, res) => {
       console.log({ commamt: commamt, ovamt: ovamt });
       await sequelize.query(
         'INSERT INTO static_data."Transactions" ' +
-        '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,ovamt,ovtaxamt,totalamt,remainamt,"dueDate",grossprem,duty,tax,totalprem ) ' +
+        '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,ovamt,ovtaxamt,totalamt,remainamt,"dueDate",grossprem,duty,tax,totalprem,txtype2  ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
-        ':agentCode, :policyNo, :commamt , :commtaxamt, :ovamt, :ovtaxamt,:totalamt,:totalamt, :duedate, :grossprem, :duty,:tax,:totalprem) ',
+        ':agentCode, :policyNo, :commamt , :commtaxamt, :ovamt, :ovtaxamt,:totalamt,:totalamt, :duedate, :grossprem, :duty,:tax,:totalprem, :txtype2 ) ',
         {
           replacements: {
             type: setupcom[j][1],
@@ -411,6 +412,7 @@ const newPolicyList = async (req, res) => {
             duty: req.body[i].duty,
             tax: req.body[i].tax,
             totalprem: req.body[i].totalprem,
+            txtype2 :1,
 
           },
           type: QueryTypes.INSERT

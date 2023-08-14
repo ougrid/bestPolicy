@@ -11,7 +11,7 @@ router.post('/insurernew', ctrl.persons.newInsurer);
 router.get('/insurerall', ctrl.persons.getInsurerAll);
 router.get('/insurerget/:id', ctrl.persons.getInsurerByid);
 router.post('/agentnew', ctrl.persons.newAgent);
-router.get('/agentget/:id', ctrl.persons.getAgentByid);
+router.get('/agentall', ctrl.persons.getAgentAll);
 router.post('/usernew', ctrl.persons.newUser);
 router.get('/userget/:id', ctrl.persons.getUserByid);
 router.post('/agentgroupnew', ctrl.persons.newAgentGroup);

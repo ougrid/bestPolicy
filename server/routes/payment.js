@@ -4,7 +4,7 @@ const ctrl = require("../controllers");
 
 // router.get("path", fucntion);
 router.post('/findtransac', ctrl.payments.findTransaction);
-// router.get('/get/:id', ctrl.locations.getByid);
+router.post('/findbilladvisor', ctrl.payments.findPolicyByPreminDue);// router.get('/get/:id', ctrl.locations.getByid);
 
 // router.post('/', ctrl.cars.postCar);
 // router.delete('/:index', ctrl.cars.removeCar);
