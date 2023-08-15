@@ -52,15 +52,27 @@ const UserCarList = (props) => {
   }]);
 
   //pagination
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage] = useState(5);
   // Get current posts
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentForm = formData.slice(indexOfFirstPost, indexOfLastPost);
+  // const indexOfLastPost = currentPage * postsPerPage;
+  // const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const [currentForm, setCurrentForm] = useState(formData.slice(0, 5))
 
   // Change page
   const paginate = pageNumber => setCurrentPage(pageNumber);
+
+  const changePage = (e) => {
+    // e.preventDefault();
+    const pageNumber = e.target.name
+    const indexOfLastPost = pageNumber * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    setCurrentPage(indexOfFirstPost)
+    setCurrentForm(formData.slice(indexOfFirstPost, indexOfLastPost ))
+    console.log(formData.slice(indexOfFirstPost, indexOfLastPost ));
+    
+  };
 
   const handleChange = async (e) => {
     e.preventDefault();
@@ -78,7 +90,9 @@ const UserCarList = (props) => {
     if (e.target.name === 'saveChange') {
       const array =    data
       formData[index] = array
+      
       setFormData(formData)
+      // setCurrentForm(formData.slice(currentPage, currentPage + postsPerPage ))
       console.log(formData);
     }
   };
@@ -112,24 +126,14 @@ const UserCarList = (props) => {
     });
   };
 
-  function exportToJsonFile(jsonData) {
-    let dataStr = JSON.stringify(jsonData);
-    let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-
-    let exportFileDefaultName = 'data.json';
-
-    let linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-}
 
   const newRow = (e) => {
     e.preventDefault();
     setRow(row + 1);
     const array = formData
-    array.push(...formData)
+    array.push(formData[0])
     setFormData(array);
+    setCurrentForm(formData.slice(0, 5))
     
   };
   const removeRow = (e) => {
@@ -211,20 +215,20 @@ const handleClose = (e) =>{
           <Modal.Title >แก้ไขกรมธรรม์</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        {<PolicyCard index={hidecard[1]} formData={formData[hidecard[1]]} setFormData ={handleChangeCard}/>}
+        {<PolicyCard index ={hidecard[1]} formData={formData[hidecard[1]]} setFormData ={handleChangeCard}/>}
         </Modal.Body>
        
       </Modal>
           <div className="d-flex align-items-center justify-content-center">
             
 <div className="col-2">
-            <h1 className="text-center">กรมธรรม์ฉบับที่ {index + 1}</h1>
+            <h1 className="text-center">กรมธรรม์ฉบับที่ {index + currentPage + 1}</h1>
 
 </div>
             <div className="col-2">
             
 
-            <button type="button" class="btn btn-secondary " id={index} onClick={(e)=>editCard(e)} >Edit</button>
+            <button type="button" class="btn btn-secondary " id={index + currentPage} onClick={(e)=>editCard(e)} >Edit</button>
             </div>
            </div>
             {/* policy table */}
@@ -236,8 +240,8 @@ const handleClose = (e) =>{
                 disabled
                    className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ?formData[index].policyNo :null }
-                  name={`policyNo_${index}`}
+                  value={formData[index + currentPage] !== undefined ?formData[index + currentPage].policyNo :null }
+                  name={`policyNo_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -245,10 +249,11 @@ const handleClose = (e) =>{
               <div class="col-2 form-group ">
               <label class="form-label">วันที่เริ่มคุ้มครอง<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="date"
-                  defaultValue={formData[index] !== undefined ? formData[index].actDate: null}
-                  name={`actDate_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].actDate: null}
+                  name={`actDate_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -256,10 +261,11 @@ const handleClose = (e) =>{
               <div class="col-2 form-group ">
               <label class="form-label ">วันที่สิ้นสุด<span class="text-danger"> *</span></label>
                 <input
+                disabled
                  className="form-control"
                   type="date"
-                  defaultValue={formData[index] !== undefined ? formData[index].expDate :null}
-                  name={`expDate_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].expDate :null}
+                  name={`expDate_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -274,10 +280,11 @@ const handleClose = (e) =>{
               <div class="col-2 form-group " >
               <label class="form-label px-3">บริษัทรับประกัน<span class="text-danger"> *</span></label>
                 <input
+                disabled
                  className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined? formData[index].insurerName:null}
-                  name={`insurerName_${index}`}
+                  value={formData[index + currentPage] !== undefined? formData[index + currentPage].insurerName:null}
+                  name={`insurerName_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -285,10 +292,11 @@ const handleClose = (e) =>{
               <div class="col-2 form-group ">
               <label class="form-label px-3">รหัสผู้แนะนำ<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].agentCode :null}
-                  name={`agentCode_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].agentCode :null}
+                  name={`agentCode_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -297,12 +305,13 @@ const handleClose = (e) =>{
               <div class="col-2 form-group ">
               <label class="form-label ">Class<span class="text-danger"> *</span></label>
                 <select
+                disabled
                   className="form-control"
-                  name={`class_${index}`}
+                  name={`class_${index + currentPage}`}
                   onChange={handleChange}
 
                 > 
-                <option value={formData[index] !== undefined ? formData[index].class: null} selected disabled hidden>{formData[index] !== undefined ? formData[index].class: null}</option>
+                <option value={formData[index + currentPage] !== undefined ? formData[index + currentPage].class: null} selected disabled hidden>{formData[index + currentPage] !== undefined ? formData[index + currentPage].class: null}</option>
                   <option value="Motor">Motor</option>
                   <option value="PA">PA</option>
                   <option value="FR">FR</option>
@@ -312,10 +321,11 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">Subclass<span class="text-danger"> *</span></label>
                 <input
+                disabled
                  className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].subClass: null}
-                  name={`subClass_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].subClass: null}
+                  name={`subClass_${index + currentPage}`}
                   onChange={handleChange}
 
                 />
@@ -329,11 +339,12 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">ค่าเบี้ย<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].grossprem : null}
-                  name={`grossprem_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].grossprem : null}
+                  name={`grossprem_${index + currentPage}`}
                   onChange={e=>handleChange(e)}
 
                 />
@@ -342,11 +353,12 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">ค่าแสตมอากรณ์<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].tax : null}
-                  name={`tax_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].tax : null}
+                  name={`tax_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -354,11 +366,12 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">ภาษี<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index].duty : null}
-                  name={`duty_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].duty : null}
+                  name={`duty_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -366,11 +379,12 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">ค่าเบี้ยรวม<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="number"
                   step={0.1}
-                  name={`totalprem_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].totalprem : null}
+                  name={`totalprem_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].totalprem : null}
                   onChange={handleChange}
                 />
               </div>
@@ -381,11 +395,12 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">comm_in%<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`commIn%`] : null}
-                  name={`commIn%_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`commIn%`] : null}
+                  name={`commIn%_${index + currentPage}`}
                   onChange={e=>handleChange(e)}
 
                 />
@@ -393,13 +408,14 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">จำนวนเงิน<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="number"
                   disabled
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`commInamt`] : null}
-                  // value={formData[index][`commIn%`] * formData[index][`grossprem`]/100 || ''}
-                  name={`commInamt_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`commInamt`] : null}
+                  // value={formData[index + currentPage][`commIn%`] * formData[index + currentPage][`grossprem`]/100 || ''}
+                  name={`commInamt_${index + currentPage}`}
                   onChange={e=>handleChange(e)}
                 />
               </div>
@@ -407,11 +423,12 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">OV_in %<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`ovIn%`]  : null}
-                  name={`ovIn%_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovIn%`]  : null}
+                  name={`ovIn%_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -419,13 +436,14 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">จำนวนเงิน<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="number"
                   disabled
                   step={0.1}
-                  name={`ovInamt_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index][`ovInamt`] : null}
-                  // defaultValue={formData[index] !== undefined ? formData[index][`ovIn%`] * formData[index][`grossprem`]/100: null}
+                  name={`ovInamt_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovInamt`] : null}
+                  // value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovIn%`] * formData[index + currentPage][`grossprem`]/100: null}
                   onChange={handleChange}
                 />
               </div>
@@ -436,11 +454,12 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">comm_out%<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`commOut%`] : null}
-                  name={`commOut%_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`commOut%`] : null}
+                  name={`commOut%_${index + currentPage}`}
                   onChange={handleChange}
 
                 />
@@ -449,37 +468,39 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">จำนวนเงิน</label>
                 <input
+                disabled
                    className="form-control"
                   type="number"
-                  disabled
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`commOutamt`] : null}
-                  // defaultValue={formData[index] !== undefined ? formData[index][`commOut%`] * formData[index][`grossprem`] /100: null}
-                  name={`commOutamt_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`commOutamt`] : null}
+                  // value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`commOut%`] * formData[index + currentPage][`grossprem`] /100: null}
+                  name={`commOutamt_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
                 <label class="form-label ">OV_out %<span class="text-danger"> *</span></label>
                 <input
+                disabled
                  className="form-control"
                   type="number"
                   step={0.1}
-                  defaultValue={formData[index] !== undefined ? formData[index][`ovOut%`] : null}
-                  name={`ovOut%_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovOut%`] : null}
+                  name={`ovOut%_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
               <label class="form-label ">จำนวนเงิน</label>
                 <input
+                disabled
                   className="form-control"
                   type="number"
                   disabled
                   step={0.1}
-                  name={`ovOutamt_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index][`ovOutamt`] : null}
-                  // defaultValue={formData[index] !== undefined ? formData[index][`ovOut%`]* formData[index][`grossprem`] /100: null}
+                  name={`ovOutamt_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovOutamt`] : null}
+                  // value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovOut%`]* formData[index + currentPage][`grossprem`] /100: null}
                   onChange={handleChange}
                 />
               </div>
@@ -490,11 +511,12 @@ const handleClose = (e) =>{
               <div class="col-1">
               <label class="form-label ">type<span class="text-danger"> *</span></label>
                 <select
+                disabled
                   className="form-control"
-                  name={`personType_${index}`}
+                  name={`personType_${index + currentPage}`}
                   onChange={handleChange}
                 >
-                  <option value={formData[index] !== undefined ? formData[index].personType : null} disabled selected hidden>{formData[index] !== undefined ? formData[index].personType : null}</option>
+                  <option value={formData[index + currentPage] !== undefined ? formData[index + currentPage].personType : null} disabled selected hidden>{formData[index + currentPage] !== undefined ? formData[index + currentPage].personType : null}</option>
                   <option value="P">บุคคล</option>
                   <option value="C">นิติบุคคล</option>
                 </select>
@@ -503,10 +525,11 @@ const handleClose = (e) =>{
               <div class="col-1">
               <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].title : null}
-                  name={`title_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].title : null}
+                  name={`title_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -515,10 +538,11 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].t_fn : null}
-                  name={`t_fn_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].t_fn : null}
+                  name={`t_fn_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -526,20 +550,22 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">นามสกุล<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined? formData[index].t_ln : null}
-                  name={`t_ln_${index}`}
+                  value={formData[index + currentPage] !== undefined? formData[index + currentPage].t_ln : null}
+                  name={`t_ln_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
               <label class="form-label ">เลขประจำตัว<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].regisNo : null}
-                  name={`regisNo_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].regisNo : null}
+                  name={`regisNo_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -550,50 +576,55 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">บ้านเลขที่<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="text"
-                  name={`t_location_1_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].t_location_1 : null}
+                  name={`t_location_1_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].t_location_1 : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
                 <label class="form-label ">หมู่บ้าน/อาคาร<span class="text-danger"> *</span></label>
                 <input
+                disabled
                 className="form-control"
                   type="text"
-                  name={`t_location_2_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].t_location_2 : null}
+                  name={`t_location_2_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].t_location_2 : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
                 <label class="form-label ">หมู่<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   type="text"
                   className="form-control"
-                  name={`t_location_3_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].t_location_3 : null}
+                  name={`t_location_3_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].t_location_3 : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
                 <label class="form-label ">ซอย<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  name={`t_location_4_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].t_location_4 : null}
+                  name={`t_location_4_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].t_location_4 : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
                 <label class="form-label ">ถนน<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  name={`t_location_5_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].t_location_5 : null}
+                  name={`t_location_5_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].t_location_5 : null}
                   onChange={handleChange}
                 />
               </div>
@@ -603,40 +634,44 @@ const handleClose = (e) =>{
               <div class="col-2">
                 <label class="form-label ">จังหวัด<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  name={`province_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].province : null}
+                  name={`province_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].province : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
                 <label class="form-label ">อำเภอ<span class="text-danger"> *</span></label>
                 <input
+                disabled
                    className="form-control"
                   type="text"
-                  name={`distric_${index}`}
-                  defaultValue={formData[index] !== undefined? formData[index].distric : null}
+                  name={`distric_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined? formData[index + currentPage].distric : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
               <label class="form-label ">ตำบล<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  name={`subdistric_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].subdistric : null}
+                  name={`subdistric_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].subdistric : null}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
               <label class="form-label ">รหัสไปรษณี<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  name={`zipcode_${index}`}
-                  defaultValue={formData[index] !== undefined ? formData[index].zipcode : null}
+                  name={`zipcode_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].zipcode : null}
                   onChange={handleChange}
                 />
               </div>
@@ -650,50 +685,55 @@ const handleClose = (e) =>{
                   <div class="col-2">
               <label class="form-label ">เลขทะเบียนรถ<span class="text-danger"> *</span></label>
                     <input
+                    disabled
                   className="form-control"
                       type="text"
-                      name={`carRegisNo_${index}`}
-                      defaultValue={formData[index] !== undefined ? formData[index].carRegisNo : null}
+                      name={`carRegisNo_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].carRegisNo : null}
                       onChange={handleChange}
                     />
                   </div>
                   <div class="col-2">
               <label class="form-label ">ยี่ห้อรถยนต์<span class="text-danger"> *</span></label>
                     <input
+                    disabled
                   className="form-control"
                       type="text"
-                      name={`brandID_${index}`}
-                      defaultValue={formData[index] !== undefined? formData[index].brandID : null}
+                      name={`brandID_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined? formData[index + currentPage].brandID : null}
                       onChange={handleChange}
                     />
                   </div>
                   <div class="col-2">
               <label class="form-label ">รุ่น<span class="text-danger"> *</span></label>
                     <input
+                    disabled
                   className="form-control"
                       type="text"
-                      name={`modelID_${index}`}
-                      defaultValue={formData[index] !== undefined ? formData[index].modelID : null}
+                      name={`modelID_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].modelID : null}
                       onChange={handleChange}
                     />
                   </div>
                   <div class="col-2">
               <label class="form-label ">เลขตัวถังรถ<span class="text-danger"> *</span></label>
                     <input
+                    disabled
                   className="form-control"
                       type="text"
-                      name={`chassisNo_${index}`}
-                      defaultValue={formData[index] !== undefined ? formData[index].chassisNo : null}
+                      name={`chassisNo_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].chassisNo : null}
                       onChange={handleChange}
                     />
                   </div>
                   <div class="col-2">
               <label class="form-label ">ปีที่จดทะเบียน<span class="text-danger"> *</span></label>
                     <input
+                    disabled
                   className="form-control"
                       type="text"
-                      name={`carRegisYear_${index}`}
-                      defaultValue={formData[index] !== undefined ? formData[index].carRegisYear : null}
+                      name={`carRegisYear_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].carRegisYear : null}
                       onChange={handleChange}
                     
                     />
@@ -708,20 +748,22 @@ const handleClose = (e) =>{
               <div class="col-2">
               <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].telNum_1 : null}
-                  name={`telNum_1_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].telNum_1 : null}
+                  name={`telNum_1_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
               <div class="col-2">
               <label class="form-label ">Email<span class="text-danger"> *</span></label>
                 <input
+                disabled
                   className="form-control"
                   type="text"
-                  defaultValue={formData[index] !== undefined ? formData[index].Email : null}
-                  name={`Email_${index}`}
+                  value={formData[index + currentPage] !== undefined ? formData[index + currentPage].Email : null}
+                  name={`Email_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -734,6 +776,7 @@ const handleClose = (e) =>{
         postsPerPage={postsPerPage}
         totalPosts={formData.length}
         paginate={paginate}
+        changePage={changePage}
       />
 <div className="d-flex justify-content-center">
 

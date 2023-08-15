@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Pagination = ({ postsPerPage, totalPosts, paginate }) => {
+const Pagination = ({ postsPerPage, totalPosts, paginate,changePage }) => {
   const pageNumbers = [];
 
   for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
@@ -12,9 +12,12 @@ const Pagination = ({ postsPerPage, totalPosts, paginate }) => {
       <ul className='pagination'>
         {pageNumbers.map(number => (
           <li key={number} className='page-item'>
-            <a onClick={() => paginate(number)}  href='/policyexcel' className='page-link'>
+            <button type="button" className="btn btn-secondary page-link" name={number} onClick={(e)=>changePage(e)} >
               {number}
-            </a>
+              </button>
+            {/* <a onClick={() => paginate(number)}  href='/policyexcel' className='page-link'>
+              {number}
+            </a> */}
           </li>
         ))}
       </ul>

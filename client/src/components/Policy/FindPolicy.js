@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import * as XLSX from 'xlsx';
 import {
     BrowserRouter,
     Routes,
@@ -45,7 +46,17 @@ const FindPolicy = () => {
         })
     const [policiesData, setPoliciesData] = useState([])
     const [insureTypeDD, setInsureTypeDD] = useState([]);
+    const [exportPolicyData, setExportPolicyData] = useState([])
     const [insurerDD, setInsurerDD] = useState([]);
+
+    const ExportData = () => {
+        const filename = 'reports-policy.xlsx';
+
+        var ws = XLSX.utils.json_to_sheet(exportPolicyData);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Policy");
+        XLSX.writeFile(wb, filename);
+    }
 
     useEffect(() => {
         //get province
@@ -93,7 +104,7 @@ const FindPolicy = () => {
                 setInsurerDD(array);
             })
             .catch((err) => { });
-            
+
 
     }, []);
 
@@ -118,7 +129,7 @@ const FindPolicy = () => {
         }));
     };
 
-    const submitFilter =(e) => {
+    const submitFilter = (e) => {
         // e.preventDefault();
         console.log(filterData);
         axios
@@ -132,9 +143,10 @@ const FindPolicy = () => {
                 console.log(res.data);
                 alert("create new insuree success")
                 const array = []
+                setExportPolicyData(res.data)
                 for (let i = 0; i < res.data.length; i++) {
                     array.push(<tr>
-                        <th scope="row">{i+1}</th>
+                        <th scope="row">{i + 1}</th>
                         <td>{res.data[i].insurerCode}</td>
                         <td>{res.data[i].policyNo}</td>
                         <td>{res.data[i].createdAt}</td>
@@ -281,7 +293,7 @@ const FindPolicy = () => {
 
 
                     </div>
-                    
+
 
 
                 </div>
@@ -317,8 +329,8 @@ const FindPolicy = () => {
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                 </div>
 
                 <div class="row">
@@ -483,14 +495,16 @@ const FindPolicy = () => {
                     </thead>
                     <tbody>
                         {policiesData}
-                       
+
                     </tbody>
                 </table>
 
-                                    <div className="d-flex justify-content-center">
-                <LoginBtn  type="submit">Submit</LoginBtn>
+                <div className="d-flex justify-content-center">
 
-                                    </div>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>export to excel</button>
+
+
+                </div>
             </form>
 
 
