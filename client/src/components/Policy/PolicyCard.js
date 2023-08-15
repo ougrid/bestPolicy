@@ -843,7 +843,7 @@ const PolicyCard = (props) => {
         </div>
       </div>
       {/* motor table */}
-      {"Motor" === "Motor" ? (
+      {formData.class === "Motor" ? (
         <>
           <div class="row">
             <div className="col-1"></div>

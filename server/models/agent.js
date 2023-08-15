@@ -24,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       // ใบอนุญาติชีวิต
     licentLifeNo: DataTypes.STRING,
     licentLifeExp:  DataTypes.DATEONLY,
+    premCreditT:  DataTypes.INTEGER,
+    commovCreditT:  DataTypes.INTEGER,
     // A = active I = inactive
     status: DataTypes.CHAR,
     note:  DataTypes.STRING,

@@ -22,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     // อัตราภาษี
     deductTaxRate:  DataTypes.FLOAT,
     premCreditT:  DataTypes.INTEGER,
-    commCreditT:  DataTypes.INTEGER,
-    ovCreditT: DataTypes.INTEGER,
+    commovCreditT:  DataTypes.INTEGER,
     entityID:  DataTypes.INTEGER,
     stamentType: DataTypes.STRING,
   }, {

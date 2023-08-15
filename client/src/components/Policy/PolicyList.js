@@ -179,6 +179,7 @@ const handleClose = (e) =>{
         console.log(excelData.slice(2));
         if (excelData.length > 2) {
           setFormData(excelData.slice(2));
+          setCurrentForm(excelData.slice(2, 7))
           setRow(excelData.length-3)
         }
       };
@@ -411,7 +412,7 @@ const handleClose = (e) =>{
                 disabled
                    className="form-control"
                   type="number"
-                  disabled
+                  
                   step={0.1}
                   value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`commInamt`] : null}
                   // value={formData[index + currentPage][`commIn%`] * formData[index + currentPage][`grossprem`]/100 || ''}
@@ -439,7 +440,7 @@ const handleClose = (e) =>{
                 disabled
                    className="form-control"
                   type="number"
-                  disabled
+                 
                   step={0.1}
                   name={`ovInamt_${index + currentPage}`}
                   value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovInamt`] : null}
@@ -496,7 +497,7 @@ const handleClose = (e) =>{
                 disabled
                   className="form-control"
                   type="number"
-                  disabled
+                 
                   step={0.1}
                   name={`ovOutamt_${index + currentPage}`}
                   value={formData[index + currentPage] !== undefined ? formData[index + currentPage][`ovOutamt`] : null}

@@ -414,7 +414,7 @@ const Insurer = () => {
             <InputBtn
               className="form-control"
               type="number"
-              name="commCreditT"
+              name="commovCreditT"
               onChange={changeInsurer}
             />
           </div>

@@ -151,8 +151,8 @@ const newTransaction = async (req, res) => {
 
 const newPolicyList = async (req, res) => {
 
-  //create entity 
   for (let i = 0; i < req.body.length; i++) {
+    //create entity 
     await sequelize.query(
       'insert into static_data."Entities" ("personType","titleID","t_ogName","t_firstName","t_lastName","idCardType","idCardNo","taxNo") ' +
       'values (:personType, (select "TITLEID" from static_data."Titles" where "TITLEABTHAIBEGIN" = :title), :t_ogName, :t_firstName, :t_lastName,:idCardType,:idCardNo,:taxNo) ' +
@@ -272,16 +272,39 @@ const newPolicyList = async (req, res) => {
         //   )
 
       }
+
+      //insert new car or select
+    const cars = await sequelize.query(
+      'WITH inserted AS ( '+
+      'INSERT INTO static_data."Motors" ("brandID", "voluntaryCode", "modelID", "specname", "licenseNo", "motorprovinceID", "chassisNo", "modelYear") '+
+      'VALUES (:brandID, :voluntaryCode , :modelID, :specname, :licenseNo, :motorprovinceID, :chassisNo, :modelYear) ON CONFLICT ("chassisNo") DO NOTHING RETURNING * ) '+
+      'SELECT * FROM inserted UNION ALL SELECT * FROM static_data."Motors" WHERE "chassisNo" = :chassisNo ',
+      {
+        replacements: {
+          licenseNo: req.body[i].licenseNo,
+          chassisNo: req.body[i].chassisNo,
+          brandID: req.body[i].brandID,
+          voluntaryCode: req.body[i].voluntaryCode|| null,
+          modelID: req.body[i].modelID|| null,
+          specname: req.body[i].specname|| null,
+          licenseNo:req.body[i].licenseNo,
+          motorprovinceID: req.body[i].motorprovinceID,
+          modelYear: req.body[i].modelYear,
+        },
+        type: QueryTypes.SELECT
+      }
+    )
+
       //insert policy
       await sequelize.query(
         'insert into static_data."Policies" ("policyNo","insureeCode","insurerCode","agentCode","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem, ' +
-        'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode  ) ' +
+        'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode, itemList  ) ' +
         // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
         'values (:policyNo, :insureeCode, ' +
         '(select "insurerCode" from static_data."Insurers" where "entityID" = (select id from static_data."Entities" where "t_ogName" = :insurername)), ' +
         ':agentCode, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
         ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem, ' +
-        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode )',
+        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList )',
         {
           replacements: {
             policyNo: req.body[i].policyNo,
@@ -308,6 +331,7 @@ const newPolicyList = async (req, res) => {
             ovout_rate: req.body[i][`ovOut%`],
             ovout_amt: req.body[i][`ovOutamt`],
             createusercode: "kwanjai",
+            itemList: cars[0].id
             
           },
           type: QueryTypes.INSERT
@@ -317,7 +341,8 @@ const newPolicyList = async (req, res) => {
 
     })
 
-
+    
+    
     // find comm ov defualt
     const records = await sequelize.query(
       'select * FROM static_data."CommOVOuts" comout ' +
@@ -449,11 +474,6 @@ const newPolicyList = async (req, res) => {
       // }
 
     }
-
-
-
-
-
 
   }
 

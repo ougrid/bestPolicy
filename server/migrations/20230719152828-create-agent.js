@@ -38,6 +38,12 @@ module.exports = {
       licentLifeExp: {
         type: Sequelize.DATEONLY
       },
+      premCreditT: {
+        type: Sequelize.INTEGER
+      },
+      commovCreditT: {
+        type: Sequelize.INTEGER
+      },
       // A = active I = inactive
       status: {
         defaultValue: 'A',

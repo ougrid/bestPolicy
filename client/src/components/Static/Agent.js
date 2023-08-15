@@ -319,10 +319,22 @@ const removeRow = (e) => {
               type="text"
               required
               // placeholder="InsurerCode"
-              name="commCreditT"
+              name="commovCreditT"
               onChange={changeAgent}
             />
           </div>
+          <div class="col-2">
+                <label class="form-label ">licentNo subBroker <span class="text-danger"> *</span></label>
+            <InputBtn
+                className="form-control"
+              type="text"
+              required
+              // placeholder="InsurerCode"
+              name="licentNo"
+              onChange={changeAgent}
+            />
+          </div>
+         
         </div>
 
         {/* entity table */}
