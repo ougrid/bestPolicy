@@ -36,11 +36,11 @@ const FindBillAdvisor = () => {
 
     const [filterData, setFilterData] = useState(
         {
-            "insurerCode": null,
+            "insurerID": null,
             "policyNoAll": true,
             "policyNoStart": '000000',
             "policyNoEnd": '0000000',
-            "agentCode": null,
+            "agentID": null,
 
         })
     const [policiesData, setPoliciesData] = useState([])
@@ -69,7 +69,7 @@ const FindBillAdvisor = () => {
                 const array = [];
                 agent.data.forEach((ele) => {
                     array.push(
-                        <option key={ele.id} value={ele.agentCode}>
+                        <option key={ele.id} value={ele.id}>
                             {ele.agentCode}
                         </option>
                     );
@@ -85,7 +85,7 @@ const FindBillAdvisor = () => {
                 const array = [];
                 insurer.data.forEach((ele) => {
                     array.push(
-                        <option key={ele.id} value={ele.insurerCode}>
+                        <option key={ele.id} value={ele.id}>
                             {ele.insurerCode}
                         </option>
                     );
@@ -220,7 +220,7 @@ const FindBillAdvisor = () => {
                     <div class="col-2 ">
                         <div class="input-group mb-3">
                             {/* <input type="text" class="form-control" placeholder="รหัสบริษัทประกัน" name="insurerCode" onChange={handleChange} /> */}
-                            <select required name="insurerCode" class="form-control"  onChange={handleChange} >
+                            <select required name="insurerID" class="form-control"  onChange={handleChange} >
                                 <option value="" disabled selected hidden>รหัสบริษัทประกัน</option>
                                 {insurerDD}
                             </select>
@@ -256,7 +256,7 @@ const FindBillAdvisor = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <select required name="agentCode" class="form-control" onChange={handleChange} >
+                            <select required name="agentID" class="form-control" onChange={handleChange} >
                                 <option value="" disabled selected hidden>รหัสผู้แนะนำ</option>
                                 {agentDD}
                             </select>
