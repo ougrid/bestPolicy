@@ -30,37 +30,24 @@ const CreateBillAdvisor = () => {
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
     const [locationData, setLocationData] = useState({ entityID: null, locationType: 'A' });
-    // dropdown
-    const [provinceDD, setProvinceDD] = useState([])
-    const [stamenttypeData, setStamenttypeData] = useState([]);
+
+    const [billpremiumData, setBillpremiumData] = useState([]);
 
     const [filterData, setFilterData] = useState(
         {
-            "insurerID": null,
+            "insurerCode": null,
             "policyNoAll": true,
             "policyNoStart": '000000',
             "policyNoEnd": '0000000',
-            "agentID": null,
+            "agentCode": null,
 
         })
     const [policiesData, setPoliciesData] = useState([])
+    const [policiesRender, setPoliciesRender] = useState([])
     const [insurerDD, setInsurerDD] = useState([]);
     const [agentDD, setAgentDD] = useState([]);
 
     useEffect(() => {
-        //get province
-        axios
-            .get(url + "/static/provinces/all")
-            .then((province) => {
-                const array = []
-                province.data.forEach(ele => {
-                    array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
-                });
-                setProvinceDD(array)
-            })
-            .catch((err) => {
-                // alert("cant get province");
-            });
 
         // get agent all
         axios
@@ -69,7 +56,7 @@ const CreateBillAdvisor = () => {
                 const array = [];
                 agent.data.forEach((ele) => {
                     array.push(
-                        <option key={ele.id} value={ele.id}>
+                        <option key={ele.id} value={ele.agentCode}>
                             {ele.agentCode}
                         </option>
                     );
@@ -85,7 +72,7 @@ const CreateBillAdvisor = () => {
                 const array = [];
                 insurer.data.forEach((ele) => {
                     array.push(
-                        <option key={ele.id} value={ele.id}>
+                        <option key={ele.id} value={ele.insurerCode}>
                             {ele.insurerCode}
                         </option>
                     );
@@ -98,7 +85,7 @@ const CreateBillAdvisor = () => {
     }, []);
 
 
-    
+
     const handleChange = (e) => {
         setFilterData((prevState) => ({
             ...prevState,
@@ -106,22 +93,32 @@ const CreateBillAdvisor = () => {
         }));
     };
 
-    const changeStamenttype = (e) => {
+    const changestatementtype = (e) => {
         // e.preventDefault();
         const array = policiesData
-  console.log(e.target.id);
-       
-        array[e.target.id] ={...policiesData[e.target.id],[e.target.name]:e.target.checked}
- 
-      
+        array[e.target.id] = { ...policiesData[e.target.id], [e.target.name]: e.target.checked }
         setPoliciesData(array)
-    };
-    const selectAll = (e) => {
-      
-        const array =[]
-      console.log(e.target.name);
-            policiesData.forEach(ele=>array.push({...ele,[e.target.name]:e.target.checked}))
+        const array2 = billpremiumData
+        if (e.target.checked) {
+            array2[e.target.id] =  array[e.target.id].totalprem - array[e.target.id].commout_amt - array[e.target.id].ovout_amt
+            
+        }else{
+            array2[e.target.id] =  array[e.target.id].totalprem
+        }
+        setBillpremiumData(array2)
+        console.log(array2);
         
+    };
+
+
+
+
+    const selectAll = (e) => {
+
+        const array = []
+        console.log(e.target.name);
+        policiesData.forEach(ele => array.push({ ...ele, [e.target.name]: e.target.checked }))
+
         setPoliciesData(array)
         console.log(array);
     };
@@ -132,47 +129,24 @@ const CreateBillAdvisor = () => {
         axios
             .post(url + "/payments/findpolicyinDue", filterData)
             .then((res) => {
-                // let token = res.data.jwt;
-                // let decode = jwt_decode(token);
-                // navigate("/");
-                // window.location.reload();
-                // localStorage.setItem("jwt", token);
-                console.log(res.data);
-                // alert("create new insuree success")
-                const array = []
-                //  for (let i = 0; i < res.data.length; i++) {
-                //        // console.log(stamenttypeData[i].stamenttype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                //     array.push(<tr>
-                //         <th scope="row">{i + 1}</th>
-                //         <td>{res.data[i].insurerCode}</td>
-                //         <td>{res.data[i].agentCode}</td>
-                //         <td>{res.data[i].dueDate}</td>
-                //         <td>{res.data[i].policyNo}</td>
-                //         <td>{res.data[i].endorseNo}</td>
-                //         <td>{res.data[i].invoiceNo}</td>
-                //         <td>{res.data[i].seqno}</td>
-                //         <td>{res.data[i].insureeCode}</td>
-                //         <td>{res.data[i].insureeName}</td>
-                //         <td>{res.data[i].licenseNo}</td>
-                //         <td>{res.data[i].motorprovinceID}</td>
-                //         <td>{res.data[i].chassisNo}</td>
-                //         <td>{res.data[i].grossprem}</td>
-                //         <td>{res.data[i].duty}</td>
-                //         <td>{res.data[i].tax}</td>
-                //         <td>{res.data[i].totalprem}</td>
-                //         <td>{res.data[i].commout_rate}</td>
-                //         <td>{res.data[i].commout_amt}</td>
-                //         <td>{res.data[i].ovout_rate}</td>
-                //         <td>{res.data[i].ovout_amt}</td>
-                //         <td><input type="checkbox" name="stamenttype" id={i}  onChange={(e)=>changeStamenttype(e)}/></td>
-                //         {/* <td>{stamenttypeData[i].stamenttype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem}</td> */}
-                //     </tr>)
+                if (res.status === 201) {
+                    console.log(res.data);
+                    alert("not found policy")
 
-                // }
-                console.log(array);
-                setPoliciesData(res.data)
-                // setPoliciesData(array)
-                // alert("create new insuree success")
+                } else {
+
+
+                    const array = []
+                     for (let i = 0; i < res.data.length; i++) {
+                           // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                        array.push(res.data[i].totalprem)
+
+                    }
+                    console.log(array);
+                    setPoliciesData(res.data)
+                    setBillpremiumData(array)
+                    alert("create new insuree success")
+                }
             })
             .catch((err) => {
 
@@ -182,7 +156,7 @@ const CreateBillAdvisor = () => {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        const array = policiesData.filter((ele) => ele.select )
+        const array = policiesData.filter((ele) => ele.select)
         console.log(array);
         // axios
         //     .post(url + "/persons/insureenew", { policy:policiesData })
@@ -220,7 +194,7 @@ const CreateBillAdvisor = () => {
                     <div class="col-2 ">
                         <div class="input-group mb-3">
                             {/* <input type="text" class="form-control" placeholder="รหัสบริษัทประกัน" name="insurerCode" onChange={handleChange} /> */}
-                            <select required name="insurerID" class="form-control"  onChange={handleChange} >
+                            <select required name="insurerCode" class="form-control" onChange={handleChange} >
                                 <option value="" disabled selected hidden>รหัสบริษัทประกัน</option>
                                 {insurerDD}
                             </select>
@@ -256,7 +230,7 @@ const CreateBillAdvisor = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <select required name="agentID" class="form-control" onChange={handleChange} >
+                            <select required name="agentCode" class="form-control" onChange={handleChange} >
                                 <option value="" disabled selected hidden>รหัสผู้แนะนำ</option>
                                 {agentDD}
                             </select>
@@ -285,8 +259,8 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-2 ">
-                        
-                    <div class="input-group mb-3">
+
+                        <div class="input-group mb-3">
                             <input required type="date" class="form-control " name="dueDate" onChange={handleChange} />
 
                         </div>
@@ -323,7 +297,12 @@ const CreateBillAdvisor = () => {
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="policyNoAll" onChange={handleChange} />
+                                        <input class="form-check-input" type="checkbox" name="policyNoAll" onClick={(e) => {
+                                            setFilterData((prevState) => ({
+                                                ...prevState,
+                                                policyNoAll: e.target.checked,
+                                            }))
+                                        }} />
                                         <label class="form-check-label" >All</label>
                                     </div>
                                 </div>
@@ -333,13 +312,13 @@ const CreateBillAdvisor = () => {
 
 
                 </div>
-</form>
-                <form className="container-fluid " onSubmit={handleSubmit}>
+            </form>
+            <form className="container-fluid " onSubmit={handleSubmit}>
 
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col"><input type="checkbox" name="select" onClick={selectAll}/>select</th>
+                            <th scope="col"><input type="checkbox" name="select" onClick={selectAll} />select</th>
                             <th scope="col">InsurerCode</th>
                             <th scope="col">AdvisorCode</th>
                             <th scope="col">Duedate</th>
@@ -360,48 +339,48 @@ const CreateBillAdvisor = () => {
                             <th scope="col">comm-out-amt</th>
                             <th scope="col">ov-out%</th>
                             <th scope="col">ov-out-amt</th>
-                            <th scope="col"><input type="checkbox" name="statmenttype" onClick={selectAll}/>net</th>
+                            <th scope="col"><input type="checkbox" name="statementtype" onClick={selectAll} />net</th>
                             <th scope="col">billpremium</th>
 
                         </tr>
                     </thead>
                     <tbody>
-                    {policiesData.map ((ele,i) => {
-                       // console.log(stamenttypeData[i].stamenttype == null? ele.totalprem -ele.commout_amt-ele.ovout_amt: ele.totalprem);
-                    return(<tr>
-                        <th scope="row"><input type="checkbox" name="select" id={i}  onClick={changeStamenttype}/>{i + 1}</th>
-                        <td>{ele.insurerCode}</td>
-                        <td>{ele.agentCode}</td>
-                        <td>{ele.dueDate}</td>
-                        <td>{ele.policyNo}</td>
-                        <td>{ele.endorseNo}</td>
-                        <td>{ele.invoiceNo}</td>
-                        <td>{ele.seqno}</td>
-                        <td>{ele.insureeCode}</td>
-                        <td>{ele.insureeName}</td>
-                        <td>{ele.licenseNo}</td>
-                        <td>{ele.motorprovinceID}</td>
-                        <td>{ele.chassisNo}</td>
-                        <td>{ele.grossprem}</td>
-                        <td>{ele.duty}</td>
-                        <td>{ele.tax}</td>
-                        <td>{ele.totalprem}</td>
-                        <td>{ele.commout_rate}</td>
-                        <td>{ele.commout_amt}</td>
-                        <td>{ele.ovout_rate}</td>
-                        <td>{ele.ovout_amt}</td>
-                        <td><input type="checkbox" name="stamenttype" id={i}  onClick={changeStamenttype}/></td>
-                        <td>{ele.stamenttype  ? ele.totalprem-ele.ovout_amt-ele.commout_amt  : ele.totalprem}</td>
-                    </tr>)
+                        {policiesData.map((ele, i) => {
+                            return (<tr>
+                                <th scope="row"><input type="checkbox" name="select" id={i} onClick={changestatementtype} />{i + 1}</th>
+                                <td>{ele.insurerCode}</td>
+                                <td>{ele.agentCode}</td>
+                                <td>{ele.dueDate}</td>
+                                <td>{ele.policyNo}</td>
+                                <td>{ele.endorseNo}</td>
+                                <td>{ele.invoiceNo}</td>
+                                <td>{ele.seqno}</td>
+                                <td>{ele.insureeCode}</td>
+                                <td>{ele.insureeName}</td>
+                                <td>{ele.licenseNo}</td>
+                                <td>{ele.motorprovinceID}</td>
+                                <td>{ele.chassisNo}</td>
+                                <td>{ele.grossprem}</td>
+                                <td>{ele.duty}</td>
+                                <td>{ele.tax}</td>
+                                <td>{ele.totalprem}</td>
+                                <td>{ele.commout_rate}</td>
+                                <td>{ele.commout_amt}</td>
+                                <td>{ele.ovout_rate}</td>
+                                <td>{ele.ovout_amt}</td>
+                                <td><input type="checkbox" name="statementtype" id={i} onClick={changestatementtype} /></td>
+                                <td><input type="number" disabled   value={billpremiumData[i]} /></td>
+                            </tr>)
 
-                }) }
+                        })}
+
 
                     </tbody>
                 </table>
 
 
                 <div className="d-flex justify-content-center">
-                <LoginBtn type="submit">confirm</LoginBtn>
+                    <LoginBtn type="submit">confirm</LoginBtn>
                 </div>
             </form>
 

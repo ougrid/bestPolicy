@@ -89,12 +89,12 @@ const findPolicyByPreminDue = async (req,res) => {
 
     const records = await sequelize.query(
       'select * from static_data."Transactions" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
-      'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = (select "agentCode" from static_data."Agents" where id = :agentID) and tran."insurerCode" = (select "insurerCode" from static_data."Insurers" where id = :insurerID ) '+
-      'and "dueDate"<=:dueDate  and case when :policyNoAll = true then true else tran."policyNo" between :policyNoStart and :policyNoStart end',
+      'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode '+
+      'and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)',
           {
             replacements: {
-              agentID:req.body.agentID,
-              insurerID:req.body.insurerID,
+              agentCode:req.body.agentCode,
+              insurerCode:req.body.insurerCode,
               dueDate: req.body.dueDate,
               policyNoStart: req.body.policyNoStart,
               policyNoEnd: req.body.policyNoEnd,
@@ -103,7 +103,12 @@ const findPolicyByPreminDue = async (req,res) => {
             type: QueryTypes.SELECT
           }
         );
-    await res.json(records)
+        if (records.length === 0) {
+          await res.status(201).json({msg:"not found policy"})
+        }else{
+
+          await res.json(records)
+        }
   
 }
 
