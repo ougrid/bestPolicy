@@ -14,14 +14,17 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   b_jabilladvisor.init({
-    insurerno: DataTypes.STRING,
-    advisorno:  DataTypes.STRING,
+    old_keyid: DataTypes.INTEGER,
+    insurerno: DataTypes.INTEGER,
+    advisorno:  DataTypes.INTEGER,
     billadvisorno:  DataTypes.STRING,
     billdate:  DataTypes.DATEONLY,
     createusercode:  DataTypes.STRING,
     amt:  DataTypes.FLOAT,
     cashierreceiptno: DataTypes.STRING,
     active:  DataTypes.STRING,
+    inactivedate:  DataTypes.DATEONLY,
+    inactiveusercode: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'b_jabilladvisor',

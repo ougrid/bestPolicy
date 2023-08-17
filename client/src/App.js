@@ -10,6 +10,7 @@ import Admin from "./components/Admin/Admin";
 import SignUp from "./components/SignUp/SignUp";
 import Packages from "./components/Packages/Packages";
 import PolicyExcel from "./components/Policy/PolicyExcel";
+import PolicyScreen from "./components/Policy/PolicyScreen";
 import Footer from "./components/Footer/Footer";
 import Static from "./components/Static/Static";
 import Payment from "./components/Static/Payment";
@@ -18,6 +19,7 @@ import InsureType from "./components/Static/insureType";
 import Agent from "./components/Static/Agent";
 import FindPolicy from "./components/Policy/FindPolicy";
 import FindBillAdvisor from "./components/ฺBillAdvisor/FindBillAdvisor";
+import CreateBillAdvisor from "./components/ฺBillAdvisor/CreateBillAdvisor";
 function App() {
   return (
     <div className="App">
@@ -34,12 +36,14 @@ function App() {
           <Route path="/insurer" element={<Insurer />} />
           <Route path="/insuretype" element={<InsureType />} />
           <Route path="/agent" element={<Agent />} />
-          <Route path="/findpolicy" element={<FindPolicy />} />
           <Route path="/static" element={<Static />} />
           <Route path="/static/:name" element={<Static />} />
           <Route path="/packages/:id" element={<Packages />} />
+          <Route path="/findpolicy" element={<FindPolicy />} />
           <Route path="/policyexcel" element={<PolicyExcel />} />
+          <Route path="/policyscreen" element={<PolicyScreen />} />
           <Route path="bill/findbill" element={<FindBillAdvisor />} />
+          <Route path="bill/createbill" element={<CreateBillAdvisor />} />
         </Routes>
       </main>
       {/* <footer>

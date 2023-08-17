@@ -19,9 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   //(เก็บ keyind ของ b_jupc)
   polid: DataTypes.INTEGER,
   customerid: DataTypes.INTEGER,
-  licenseno:  DataTypes.STRING,
-  chassisno: DataTypes.STRING,
-  grossprem: DataTypes.FLOAT,
+  motorid: DataTypes.INTEGER,
   duty: DataTypes.FLOAT,
   tax:  DataTypes.FLOAT,
   totalprem:  DataTypes.FLOAT,

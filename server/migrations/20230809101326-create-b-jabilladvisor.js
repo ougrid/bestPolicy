@@ -9,11 +9,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      old_keyid: {
+        type: Sequelize.INTEGER
+      },
       insurerno: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       advisorno: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       billadvisorno: {
         type: Sequelize.STRING
@@ -31,6 +34,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       active: {
+        type: Sequelize.STRING
+      },
+      inactivedate: {
+        type: Sequelize.DATEONLY
+      },
+      inactiveusercode: {
         type: Sequelize.STRING
       },
       createdAt: {

@@ -276,7 +276,7 @@ const removeRow = (e) => {
       {/* <BackdropBox1> */}
       <form  onSubmit={handleSubmit}>
         {/* insurer table */}
-        <h1>ผู้แนะนำ</h1>
+        <h1 className="text-center" >ผู้แนะนำ</h1>
         <div class="row form-group form-inline">
         <div class="col-2 "></div>
           <div class="col-2">
@@ -408,7 +408,7 @@ const removeRow = (e) => {
 
         {/* location table */}
         <div class="row">
-          <h5>Location</h5>
+          <h5 className="text-center" >Location</h5>
         </div>
 
         <div class="row">
@@ -584,19 +584,20 @@ const removeRow = (e) => {
                                         </select>
                                         </div>
                                     <div class="col-2">
-                                        <input  class="form-control" type="text"  name={`rateComIn-${index}`} onChange={changeComOv } key = {index} />
+                                        <input  class="form-control" type="text"  name={`rateComOut-${index}`} onChange={changeComOv } key = {index} />
                                         </div>
                                     <div class="col-2">
-                                    <input  class="form-control" type="text"  name={`rateOVIn_1-${index}`} onChange={changeComOv } key = {index}/>
+                                    <input  class="form-control" type="text"  name={`rateOVOut_1-${index}`} onChange={changeComOv } key = {index}/>
                                     </div>
 
 
                                 </div>
                             ))}
 
-                      
+<div className="d-flex justify-content-center">
+        <LoginBtn className="text-center" type="submit">Submit</LoginBtn>
+  </div>       
 
-        <LoginBtn type="submit">Submit</LoginBtn>
       </form>
 
       {/* <Link to="/signup" style={NormalText}>

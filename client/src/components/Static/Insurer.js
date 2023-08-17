@@ -248,7 +248,7 @@ const Insurer = () => {
       {/* <BackdropBox1> */}
       <form className="container-fluid text-left" onSubmit={handleSubmit}>
         {/* insurer table */}
-        <h1>บริษัทรับประกัน</h1>
+        <h1 className="text-center">บริษัทรับประกัน</h1>
         <div class="row ">
           <div class="col-2 "></div>
           <div class="col-2 ">
@@ -462,7 +462,7 @@ const Insurer = () => {
 
         {/* location table */}
         <div class="row">
-          <h5>Location</h5>
+          <h5 className="text-center">Location</h5>
         </div>
         <div class="row">
           <div class="col-2 "></div>
@@ -703,8 +703,9 @@ const Insurer = () => {
                 </div>
               ))}
             
-            
+            <div className="d-flex justify-content-center">
             <LoginBtn type="submit">Submit</LoginBtn>
+            </div>
       </form>
 
       {/* <Link to="/signup" style={NormalText}>

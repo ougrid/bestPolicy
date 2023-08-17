@@ -4,7 +4,7 @@ const ctrl = require("../../controllers");
 
 // router.get("path", fucntion);
 router.get('/all', ctrl.tambons.showAll);
-router.get('/search/:index/:para/:value', ctrl.tambons.searchByinAmphur);
+router.post('/search', ctrl.tambons.showAllinAmphurname);
 router.get('/zip/:index', ctrl.tambons.showZipinTambon);
 router.get('/:index', ctrl.tambons.showAllinAmphur);
 

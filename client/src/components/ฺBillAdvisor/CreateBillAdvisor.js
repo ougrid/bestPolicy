@@ -24,7 +24,7 @@ const NormalText = {
 };
 /* eslint-disable react-hooks/exhaustive-deps */
 
-const FindBillAdvisor = () => {
+const CreateBillAdvisor = () => {
     const url = config.url;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -208,7 +208,7 @@ const FindBillAdvisor = () => {
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
                 {/* insurer table */}
-                <h1 className="text-center">ค้นหา billadvisor</h1>
+                <h1 className="text-center">ค้นหารายการเบี้ยค้างที่กำหนดชำระแล้ว</h1>
                 <div class="row">
                     <div class="col-1">
 
@@ -334,7 +334,7 @@ const FindBillAdvisor = () => {
 
                 </div>
 </form>
-                <form className="container-fluid " onSubmit={submitFilter}>
+                <form className="container-fluid " onSubmit={handleSubmit}>
 
                 <table class="table table-hover">
                     <thead>
@@ -414,4 +414,4 @@ const FindBillAdvisor = () => {
     );
 };
 
-export default FindBillAdvisor;
+export default CreateBillAdvisor;

@@ -93,19 +93,19 @@ const newCommOVIn = (req, res) => {
       'ON comin."insurerCode" = comout."insurerCode" and comin."insureID" = comout."insureID" ' +
       'where comout."agentCode" = :agentcode ' +
       'and comout."insureID" = (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass) '+
-      'and comout."insurerCode" = :insurerName',
+      'and comout."insurerCode" = :insurerCode',
       {
         replacements: {
           agentcode: req.body.agentCode,
           class: req.body.class,
           subClass: req.body.subClass,
-          insurerName:req.body.insurerName
+          insurerCode:req.body.insurerCode
         },
         type: QueryTypes.SELECT
       }
     )
     res.json(records);
-
+      
 };
 
 module.exports = {

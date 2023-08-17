@@ -44,8 +44,8 @@ const UserCarList = (props) => {
     subdistric: null,
     zipcode: null,
     carRegisNo: null,
-    brandID: null,
-    modelID: null,
+    brandname: null,
+    modelname: null,
     chassisNo: null,
     carRegisYear: null,
     telNum_1: null,
@@ -172,7 +172,10 @@ const handleClose = (e) =>{
         // Assuming the first row in the Excel sheet contains the field names (header row)
         // Update the state to populate the form data with the Excel data
         const element = []
-        for (let i = 2; i <= excelData.length; i++) {
+        for (let i = 2; i < excelData.length; i++) {
+          excelData[i].policyNo = excelData[i].policyNo.toString()
+          if ('chassisNo' in excelData[i]) {excelData[i].chassisNo = excelData[i].chassisNo.toString()}
+          if ('licenseNo' in excelData[i]) {excelData[i].licenseNo = excelData[i].licenseNo.toString()}
           element.push(excelData[i])
         }
         
@@ -284,8 +287,8 @@ const handleClose = (e) =>{
                 disabled
                  className="form-control"
                   type="text"
-                  value={formData[index + currentPage] !== undefined? formData[index + currentPage].insurerName:null}
-                  name={`insurerName_${index + currentPage}`}
+                  value={formData[index + currentPage] !== undefined? formData[index + currentPage].insurerCode:null}
+                  name={`insurerCode_${index + currentPage}`}
                   onChange={handleChange}
                 />
               </div>
@@ -689,8 +692,8 @@ const handleClose = (e) =>{
                     disabled
                   className="form-control"
                       type="text"
-                      name={`carRegisNo_${index + currentPage}`}
-                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].carRegisNo : null}
+                      name={`licenseNo_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].licenseNo : null}
                       onChange={handleChange}
                     />
                   </div>
@@ -699,9 +702,9 @@ const handleClose = (e) =>{
                     <input
                     disabled
                   className="form-control"
-                      type="text"
-                      name={`brandID_${index + currentPage}`}
-                      value={formData[index + currentPage] !== undefined? formData[index + currentPage].brandID : null}
+                      type="number"
+                      name={`brandname_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined? formData[index + currentPage].brandname : null}
                       onChange={handleChange}
                     />
                   </div>
@@ -710,9 +713,9 @@ const handleClose = (e) =>{
                     <input
                     disabled
                   className="form-control"
-                      type="text"
-                      name={`modelID_${index + currentPage}`}
-                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].modelID : null}
+                      type="number"
+                      name={`modelname_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].modelname : null}
                       onChange={handleChange}
                     />
                   </div>
@@ -733,8 +736,8 @@ const handleClose = (e) =>{
                     disabled
                   className="form-control"
                       type="text"
-                      name={`carRegisYear_${index + currentPage}`}
-                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].carRegisYear : null}
+                      name={`modelYear_${index + currentPage}`}
+                      value={formData[index + currentPage] !== undefined ? formData[index + currentPage].modelYear : null}
                       onChange={handleChange}
                     
                     />

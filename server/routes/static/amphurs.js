@@ -4,7 +4,7 @@ const ctrl = require("../../controllers");
 
 // router.get("path", fucntion);
 router.get('/all', ctrl.amphurs.showAll);
-router.get('/search/:index/:para/:value', ctrl.amphurs.searchByinProvince);
+router.post('/search', ctrl.amphurs.showAllinProvincename);
 router.get('/:index', ctrl.amphurs.showAllinProvince);
 // router.post('/', ctrl.cars.postCar);
 // router.delete('/:index', ctrl.cars.removeCar);

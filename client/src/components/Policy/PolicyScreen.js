@@ -6,12 +6,12 @@ import { Container } from "../StylesPages/PagesLayout";
 import { async } from "q";
 const config = require("../../config.json");
 
-const PolicyCard = (props) => {
-  const index = props.index;
+const PolicyScreen = (props) => {
+ 
   const url = config.url;
 
   //import excel
-  const [formData, setFormData] = useState(props.formData);
+  const [formData, setFormData] = useState({});
   const [provinceDD, setProvinceDD] = useState([]);
   const [districDD, setDistricDD] = useState([]);
   const [subDistricDD, setSubDistricDD] = useState([]);
@@ -253,49 +253,26 @@ const PolicyCard = (props) => {
   };
 
   const handleSubmit = async (e) => {
-    const data = [];
-    for (let i = 0; i < formData.length; i++) {
-      let t_ogName = null;
-      let t_firstName = null;
-      let t_lastName = null;
-      let idCardType = "idcard";
-      let idCardNo = null;
-      let taxNo = null;
-      const totalprem = parseFloat(formData[i].grossprem) -
-        parseFloat(formData[i].duty) -
-        parseFloat(formData[i].tax);
-
-
-      if (formData[i].personType === "P") {
-        t_firstName = formData[i].t_fn;
-        t_lastName = formData[i].t_ln;
-        idCardNo = formData[i].regisNo.toString();
-        data.push({
-          ...formData[i],
-          t_firstName: t_firstName,
-          t_lastName: t_lastName,
-          totalprem: totalprem,
-          idCardNo: idCardNo,
-          idCardType: idCardType,
-          t_ogName: t_ogName,
-          taxNo: taxNo,
-        });
-      } else {
-        t_ogName = formData[i].t_fn;
-
-        taxNo = formData[i].regisNo.toString();
-        data.push({
-          ...formData[i],
-          t_ogName: t_ogName,
-          taxNo: taxNo,
-          t_firstName: t_firstName,
-          t_lastName: t_lastName,
-          totalprem: totalprem,
-          idCardNo: idCardNo,
-          idCardType: idCardType,
-        });
+    const data = []
+     
+      let t_ogName =null
+      let t_firstName = null
+      let t_lastName = null
+      let idCardType = "idcard"
+      let idCardNo =  null
+      let taxNo = null
+      if (formData.personType === 'P'){
+        t_firstName = formData.t_fn
+        t_lastName = formData.t_ln
+        idCardNo = formData.regisNo.toString()
+        data.push({...formData, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType, t_ogName:t_ogName , taxNo:taxNo})
+      }else{
+        t_ogName = formData.t_fn
+        
+        taxNo = formData.regisNo.toString()
+        data.push({...formData, t_ogName:t_ogName , taxNo:taxNo, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType})
       }
-    }
+    
     console.log(data);
     e.preventDefault();
     await axios.post(url + "/policies/policynew/batch", data).then((res) => {
@@ -303,6 +280,8 @@ const PolicyCard = (props) => {
       window.location.reload(false);
     });
   };
+
+  
   useEffect(() => {
     //get province
     axios
@@ -330,7 +309,7 @@ const PolicyCard = (props) => {
             const array2 = [];
             title.data.forEach((ele) => {
               array2.push(
-                <option key={ele.TITLEID} value={ele.TITLEID}>
+                <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
                   {ele.TITLETHAIBEGIN}
                 </option>
               );
@@ -415,7 +394,7 @@ const PolicyCard = (props) => {
 
   return (
     <div>
-      <h1 className="text-center">กรมธรรม์ฉบับที่ {parseInt(index) + 1}</h1>
+      <h1 className="text-center">สร้างรายการกรมธรรม์</h1>
       {/* policy table */}
       <div className="row form-group form-inline ">
         <div className="col-1"></div>
@@ -1029,15 +1008,13 @@ const PolicyCard = (props) => {
       </div>
       <div class="d-flex justify-content-center">
 
-        <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, formData)}>
-          Save Changes
+        <button className="p-2 btn btn-primary" name="saveChange" onClick={handleSubmit}>
+          submit
         </button>
-        <button className="p-2 btn btn-secondary " name="closed" onClick={e => props.setFormData(e)}>
-          Close
-        </button>
+        
       </div>
     </div>
   );
 };
 
-export default PolicyCard;
+export default PolicyScreen;

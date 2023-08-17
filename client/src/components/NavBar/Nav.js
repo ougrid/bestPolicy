@@ -51,7 +51,8 @@ function Nav() {
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/findpolicy">ค้นหากรมธรรม์</a></li>
-              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่ (excel)</a></li>
+              <li><a class="dropdown-item" href="/policyscreen">สร้างรายการใหม่ (screen)</a></li>
             </ul>
           </div>
           
@@ -62,7 +63,7 @@ function Nav() {
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/bill/findbill">ค้นหารายการ</a></li>
-              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/bill/createbill">สร้างรายการใหม่</a></li>
               <li><a class="dropdown-item" href="/policyexcel">แก้ไขรายการ</a></li>
             </ul>
           </div>

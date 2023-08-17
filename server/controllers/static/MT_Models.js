@@ -1,7 +1,20 @@
 // const Amphur = require("../../models").Amphur; //imported fruits array
 const MT_Model = require("../../models").MT_Model
-const { Op } = require("sequelize");
+const { Op, QueryTypes, Sequelize } = require("sequelize");
 //handle index request
+
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: process.env.DB_DIALECT,
+  port: process.env.DB_PORT,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    },
+  },
+});
+
 const showAll = (req,res) =>{
     MT_Model.findAll({
       attributes: ['MODELCODE','BRANDCODE','MARKETTHAINAME','MARKETENGNAME']
@@ -11,14 +24,19 @@ const showAll = (req,res) =>{
 }
 
 const showAllinBrand = (req, res) => {
-    MT_Model.findAll({
-        attributes: ['MODELCODE','BRANDCODE','MARKETTHAINAME','MARKETENGNAME'],
-    where: {
-        BRANDCODE: req.params.index
-    }
-  }).then((models) => {
-    res.json(models);
+
+  sequelize.query(
+    'select * from static_data."MT_Models" m join static_data."MT_Brands" b on b."BRANDCODE" = m."BRANDCODE" where b."BRANDNAME" = :brandname ',
+    {
+          replacements: {
+            brandname:req.body.brandname,
+          },
+          type: QueryTypes.SELECT
+        }
+      ).then((tambon) => {
+    res.json(tambon);
   });
+   
 };
 
 const searchByinModel = (req,res)=>{

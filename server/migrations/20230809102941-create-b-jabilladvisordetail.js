@@ -20,11 +20,8 @@ module.exports = {
       customerid: {
         type: Sequelize.INTEGER
       },
-      licenseno: {
-        type: Sequelize.STRING
-      },
-      chassisno: {
-        type: Sequelize.STRING
+      motorid: {
+        type: Sequelize.INTEGER
       },
       grossprem: {
         type: Sequelize.FLOAT

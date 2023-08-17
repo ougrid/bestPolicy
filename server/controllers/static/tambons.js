@@ -1,8 +1,24 @@
 const Tambon = require("../../models").Tambon; //imported fruits array
 // const Package = require("../models").Package;
 // const User = require("../models").User;
-const { Op } = require("sequelize");
+const { Op, QueryTypes, Sequelize   } = require("sequelize");
 //handle index request
+
+
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: process.env.DB_DIALECT,
+  port: process.env.DB_PORT,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    },
+  },
+});
+
+
+
 const showAll = (req,res) =>{
     Tambon.findAll({
       attributes: ['tambonid','t_tambonname','e_tambonname','amphurid','postcodeall']
@@ -22,16 +38,16 @@ const showAllinAmphur = (req, res) => {
   });
 };
 
-const searchByinAmphur = (req,res)=>{
-  Tambon.findAll({
-    attributes: ['tambonid','t_tambonname','e_tambonname','amphurid'],
-    where: {
-        amphurid: req.params.index,
-      [req.params.para] :{
-        [Op.like]:'%'+ req.params.value +'%'
-      }
-    }
-  }).then((tambon) => {
+const showAllinAmphurname = (req,res)=>{
+  sequelize.query(
+    'select * from static_data."Tambons" t join static_data."Amphurs" a on a.amphurid = t.amphurid where a.t_amphurname = :amphurname',
+        {
+          replacements: {
+            amphurname:req.body.amphurname,
+          },
+          type: QueryTypes.SELECT
+        }
+      ).then((tambon) => {
     res.json(tambon);
   });
 }
@@ -53,7 +69,7 @@ const showZipinTambon = (req, res) => {
 module.exports = {
   showAll,
   showAllinAmphur,
-  searchByinAmphur,
+  showAllinAmphurname,
   showZipinTambon
   // postCar,
   // removeCar,

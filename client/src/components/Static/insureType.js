@@ -61,19 +61,19 @@ const InsureType = () => {
       {/* <BackdropBox1> */}
       <form className="container-fluid text-left" onSubmit={handleSubmit}>
         {/* insurer table */}
-        <h1>แผนประกัน</h1>
+        <h1 className="text-center">แผนประกัน</h1>
         <div class="row">
-          <div class="col-1"></div>
+          <div class="col-3"></div>
           <div class="col-1">
-          <div class="input-group mb-3">
-            <label class="col-form-label">ประเภทประกัน</label>
-          </div>
+            <div class="input-group mb-3">
+              <label class="col-form-label">Class</label>
+            </div>
 
           </div>
           <div class="col-2 ">
             <select
               class="form-control"
-              name="insureType"
+              name="class"
               onChange={(e) =>
                 setInsureData({ ...insureData, insureType: e.target.value })
               }
@@ -84,22 +84,10 @@ const InsureType = () => {
             </select>
           </div>
           <div class="col-1">
-            <label class="col-form-label">class</label>
-          </div>
-          <div class="col-2 ">
-          <input
-              type="text"
-              required
-              class="form-control"
-              name="class"
-              onChange={changeInsurer}
-            />
-          </div>
-          <div class="col-1">
             <label class="col-form-label">subclass</label>
           </div>
           <div class="col-2 ">
-          <input
+            <input
               type="text"
               required
               class="form-control"
@@ -109,12 +97,12 @@ const InsureType = () => {
           </div>
         </div>
 
-        
+
 
         <div class="row">
-        <div class="col-1"></div>
+          <div class="col-3"></div>
           <div class="col-1">
-          <label class="col-form-label">plancode</label>
+            <label class="col-form-label">plancode</label>
           </div>
           <div class="col-2">
             <input
@@ -125,7 +113,7 @@ const InsureType = () => {
             />
           </div>
           <div class="col-1">
-          <label class="col-form-label">ชื่อประกัน</label>
+            <label class="col-form-label">ชื่อประกัน</label>
           </div>
           <div class="col-2">
             <input
@@ -137,8 +125,9 @@ const InsureType = () => {
             />
           </div>
         </div>
-
-        <LoginBtn type="submit">Submit</LoginBtn>
+        <div className="d-flex justify-content-center">
+          <LoginBtn type="submit">Submit</LoginBtn>
+        </div>
       </form>
 
       {/* <Link to="/signup" style={NormalText}>

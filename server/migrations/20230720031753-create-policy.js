@@ -55,7 +55,6 @@ module.exports = {
         defaultValue : 1,
         type: Sequelize.INTEGER
       },
-     
       insureeCode: {
         allowNull: false,
         type: Sequelize.STRING

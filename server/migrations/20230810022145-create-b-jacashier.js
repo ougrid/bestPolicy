@@ -51,6 +51,15 @@ module.exports = {
       partnerAccountno: {
         type: Sequelize.STRING
       },
+      amityBank: {
+        type: Sequelize.STRING
+      },
+      amityBankbranch: {
+        type: Sequelize.STRING
+      },
+      amityAccountno: {
+        type: Sequelize.STRING
+      },
       amt: {
         type: Sequelize.FLOAT
       },
