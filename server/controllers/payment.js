@@ -115,16 +115,21 @@ const findPolicyByPreminDue = async (req,res) => {
 
 const createbilladvisor = async (req,res) =>{
       //insert to master jabilladvisor
+      const billdate = new Date().toISOString().split('T')[0]
+      const billno = 'B' +  Date.now()
+
       const billadvisors = await sequelize.query(
         'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active ) ' +
-        'VALUES (:insurerID, :agentID, '+
+        'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode limit 1), '+
+        '(select id from static_data."Agents" where "agentCode" = :agentCode limit 1), '+
         ':billadvisorno, :billdate, :createusercode, :amt, :cashierreceiptno, \'Y\') RETURNING "id"',
             {
               replacements: {
-                insurerID:req.body.bill.insurerID,
-                agentID:req.body.bill.agentID,
-                billadvisorno: req.body.bill.billadvisorno,
-                billdate: Date.now(),
+                insurerCode:req.body.bill.insurerCode,
+                agentCode:req.body.bill.agentCode,
+                // billadvisorno: req.body.bill.billadvisorno,
+                billadvisorno: billno,
+                billdate: billdate,
                 createusercode: "kewn",
                 amt:req.body.bill.amt,
                 cashierreceiptno:null,
@@ -137,14 +142,14 @@ const createbilladvisor = async (req,res) =>{
           sequelize.query(
             'insert into static_data.b_jabilladvisordetails (keyidm, polid, customerid, motorid, grossprem, duty, tax, totalprem, "comm-out%", "comm-out-amt", '+
             ' "ov-out%", "ov-out-amt", netflag, billpremium,updateusercode) '+
-            'values (:keyidm, (select id from static_data."Policies" where "policyNo" = :policyNo), (select id from static_data."Insurees" where "insureeCode" = :insureeCode), :motorid, '+
+            'values (:keyidm, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), (select id from static_data."Insurees" where "insureeCode" = :insureeCode limit 1), :motorid, '+
             ':grossprem, :duty, :tax, :totalprem, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :netflag, :billpremium, :updateusercode) ',
                 {
                   replacements: {
                     keyidm: billadvisors[0][0].id,
                     policyNo: req.body.detail[i].policyNo,
                     insureeCode: req.body.detail[i].insureeCode,
-                    motorid: req.body.detail[i].itemlist,
+                    motorid: req.body.detail[i].itemList || null,
                     grossprem: req.body.detail[i].grossprem,
                     duty: req.body.detail[i].duty,
                     tax: req.body.detail[i].tax,
@@ -168,7 +173,8 @@ const createbilladvisor = async (req,res) =>{
                 'DECLARE a_polid int; a_billadvisorno text; a_netflag text; '+
                 'BEGIN FOR a_polid,a_billadvisorno,a_netflag IN '+
                     'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id = :keyidm'+
-                'LOOP UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
+                'LOOP  '+
+                'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
                 'END LOOP; '+
               'END $$;',
                { replacements: {

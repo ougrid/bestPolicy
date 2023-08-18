@@ -141,6 +141,7 @@ const UserCarList = (props) => {
     if (row > 0) {
       setRow(row - 1);
       setFormData(formData.slice(0,row));
+      setCurrentForm(formData.slice(0, 5))
      
     }
 
@@ -702,7 +703,7 @@ const handleClose = (e) =>{
                     <input
                     disabled
                   className="form-control"
-                      type="number"
+                      type="text"
                       name={`brandname_${index + currentPage}`}
                       value={formData[index + currentPage] !== undefined? formData[index + currentPage].brandname : null}
                       onChange={handleChange}
@@ -713,7 +714,7 @@ const handleClose = (e) =>{
                     <input
                     disabled
                   className="form-control"
-                      type="number"
+                      type="text"
                       name={`modelname_${index + currentPage}`}
                       value={formData[index + currentPage] !== undefined ? formData[index + currentPage].modelname : null}
                       onChange={handleChange}
