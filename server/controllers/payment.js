@@ -167,18 +167,19 @@ const createbilladvisor = async (req,res) =>{
               );
 
             }
+            console.log(billadvisors[0][0].id);
             //update ARAP table
-            sequelize.query(
+            await sequelize.query(
               'DO $$ '+
                 'DECLARE a_polid int; a_billadvisorno text; a_netflag text; '+
                 'BEGIN FOR a_polid,a_billadvisorno,a_netflag IN '+
-                    'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id = :keyidm'+
+                    'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id = :keyidm '+
                 'LOOP  '+
                 'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
                 'END LOOP; '+
               'END $$;',
                { replacements: {
-                keyidm:billadvisors[0][0].id,
+                keyidm : billadvisors[0][0].id,
               },
               raw: true }
             )
