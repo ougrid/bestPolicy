@@ -20,6 +20,7 @@ import Agent from "./components/Static/Agent";
 import FindPolicy from "./components/Policy/FindPolicy";
 import FindBillAdvisor from "./components/ฺBillAdvisor/FindBillAdvisor";
 import CreateBillAdvisor from "./components/ฺBillAdvisor/CreateBillAdvisor";
+import EditBillAdvisor from "./components/ฺBillAdvisor/EditBillAdvisor";
 function App() {
   return (
     <div className="App">
@@ -44,6 +45,7 @@ function App() {
           <Route path="/policyscreen" element={<PolicyScreen />} />
           <Route path="bill/findbill" element={<FindBillAdvisor />} />
           <Route path="bill/createbill" element={<CreateBillAdvisor />} />
+          <Route path="bill/editbill/:billno" element={<EditBillAdvisor />} />
         </Routes>
       </main>
       {/* <footer>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Modal from 'react-bootstrap/Modal';
@@ -25,7 +25,8 @@ const NormalText = {
 };
 /* eslint-disable react-hooks/exhaustive-deps */
 
-const CreateBillAdvisor = () => {
+const EditBillAdvisor = (props) => {
+    const params = useParams()
     const url = config.url;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -53,6 +54,31 @@ const CreateBillAdvisor = () => {
     const [agentDD, setAgentDD] = useState([]);
 
     useEffect(() => {
+        console.log(params.billno);
+        // get pol in billno
+        axios
+        .post(url + "/payments/findpolicybyBill",{billadvisor: params.billno})
+        .then((res) => {
+            console.log(res.data);
+            if (res.status === 201) {
+                alert("not found policy inbill")
+
+            } else {
+
+
+                const array = []
+                for (let i = 0; i < res.data.length; i++) {
+                    // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                    array.push(res.data[i].totalprem)
+
+                }
+                setPoliciesData(res.data)
+                setFilterData({...filterData, insurerCode:res.data[0].insurerCode, agentCode:res.data[0].agentCode })
+                setBillpremiumData(array)
+                alert("create new insuree success") 
+            }
+        })
+        .catch((err) => { });
 
         // get agent all
         axios
@@ -184,7 +210,7 @@ const CreateBillAdvisor = () => {
 
                     }
                     console.log(array);
-                    setPoliciesData(res.data)
+                    setPoliciesData(...res.data, ...policiesData)
                     setBillpremiumData(array)
                     alert("create new insuree success")
                 }
@@ -201,7 +227,7 @@ const CreateBillAdvisor = () => {
         for (let i = 0; i < array.length; i++) {
             if (array[i].statementtype ) {
                 array[i].statementtype = 'N'
-                array[i].billpremium = array[i].totalprem - array[i].commout_amt - array[i].ovout_amt
+                array[i].billpremium = array[i].totalprem - array[i].duty - array[i].tax
             }else{
                 array[i].statementtype = 'G'
                 array[i].billpremium = array[i].totalprem 
@@ -246,8 +272,8 @@ const CreateBillAdvisor = () => {
                     <div class="col-2 ">
                         <div class="input-group mb-3">
                             {/* <input type="text" class="form-control" placeholder="รหัสบริษัทประกัน" name="insurerCode" onChange={handleChange} /> */}
-                            <select required name="insurerCode" class="form-control" onChange={handleChange} >
-                                <option value="" disabled selected hidden>รหัสบริษัทประกัน</option>
+                            <select required disabled name="insurerCode" class="form-control" onChange={handleChange} >
+                                <option value="" disabled selected hidden>{filterData.insurerCode}</option>
                                 {insurerDD}
                             </select>
 
@@ -267,7 +293,7 @@ const CreateBillAdvisor = () => {
                     </div>
                     <div class="col align-self-end ">
                         <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg" >Search</button>
+                            <button type="submit" class="btn btn-primary btn-lg" >ADD new</button>
                         </div>
                     </div>
 
@@ -282,8 +308,8 @@ const CreateBillAdvisor = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <select required name="agentCode" class="form-control" onChange={handleChange} >
-                                <option value="" disabled selected hidden>รหัสผู้แนะนำ</option>
+                            <select required disabled name="agentCode" class="form-control" onChange={handleChange} >
+                                <option value="" disabled selected hidden>{filterData.agentCode}</option>
                                 {agentDD}
                             </select>
                             <div class="input-group-append">
@@ -391,7 +417,7 @@ const CreateBillAdvisor = () => {
                             <th scope="col">comm-out-amt</th>
                             <th scope="col">ov-out%</th>
                             <th scope="col">ov-out-amt</th>
-                            <th scope="col"><input type="checkbox" name="statementtype"  onClick={selectAll} />net</th>
+                            <th scope="col"><input type="checkbox" name="statementtype" onClick={selectAll} />net</th>
                             {/* <th scope="col">billpremium</th> */}
 
                         </tr>
@@ -399,7 +425,7 @@ const CreateBillAdvisor = () => {
                     <tbody>
                         {policiesData.map((ele, i) => {
                             return (<tr>
-                                <th scope="row"><input type="checkbox" name="select" id={i} onClick={changestatementtype} />{i + 1}</th>
+                                <th scope="row"><input type="checkbox" name="select" defaultChecked={true} id={i} onClick={changestatementtype} />{i + 1}</th>
                                 <td>{ele.insurerCode}</td>
                                 <td>{ele.agentCode}</td>
                                 <td>{ele.dueDate}</td>
@@ -420,7 +446,7 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.commout_amt}</td>
                                 <td>{ele.ovout_rate}</td>
                                 <td>{ele.ovout_amt}</td>
-                                <td><input type="checkbox" name="statementtype" id={i} onClick={changestatementtype} /></td>
+                                <td><input type="checkbox" name="statementtype" defaultChecked={ele.netflag === 'N'? true:false} id={i} onClick={changestatementtype} /></td>
                                 {/* <td><input type="number" disabled value={billpremiumData[i]} /></td> */}
                             </tr>)
 
@@ -470,44 +496,7 @@ const CreateBillAdvisor = () => {
                             <label class="col-form-label">Kwanmhn</label>
                         </div>
                     </div>
-                    {/* <div class="row">
-                        <div class="col-1">
-                            <label class="col-form-label">ชำระแบบ net </label>
-                        </div>
-                        <div class="col-1">
-                            <label class="col-form-label">{} รายการ</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} จำนวนเงินค่าเบี้ย</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}comm-out</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} WHT 3%</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}ov-out</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} WHT 3%</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                    </div> */}
+                    
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -552,58 +541,7 @@ const CreateBillAdvisor = () => {
                             </tr>
                         </tbody>
                     </table>
-                    {/* <div class="row">
-                        <div class="col-1">
-                            <label class="col-form-label">ชำระแบบ gross </label>
-                        </div>
-                        <div class="col-1">
-                            <label class="col-form-label">{} รายการ</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} จำนวนเงินค่าเบี้ย</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}</label>
-                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-1">
-                            <label class="col-form-label">รวมทั้งสิ้น </label>
-                        </div>
-                        <div class="col-1">
-                           
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} จำนวนเงินค่าเบี้ย</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}comm-out</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} WHT 3%</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}ov-out</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} WHT 3%</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                    </div> */}
+                    
 
                 </Modal.Body>
                 <Modal.Footer>
@@ -616,4 +554,4 @@ const CreateBillAdvisor = () => {
     );
 };
 
-export default CreateBillAdvisor;
+export default EditBillAdvisor;

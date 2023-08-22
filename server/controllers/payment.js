@@ -112,7 +112,25 @@ const findPolicyByPreminDue = async (req,res) => {
   
 }
 
+const findPolicyByBillno = async (req,res) => {
 
+  const records = await sequelize.query(
+    'select * from  static_data."Policies" pol  join static_data."Transactions" tran  on tran."policyNo" = pol."policyNo" where tran.billadvisor = :billadvisor  and "transType" = \'PREM-IN\'',
+        {
+          replacements: {
+            billadvisor: req.body.billadvisor
+          },
+          type: QueryTypes.SELECT
+        }
+      );
+      if (records.length === 0) {
+        await res.status(201).json({msg:"not found policy in bill"})
+      }else{
+
+        await res.json(records)
+      }
+
+}
 const createbilladvisor = async (req,res) =>{
       //insert to master jabilladvisor
       const billdate = new Date().toISOString().split('T')[0]
@@ -158,7 +176,7 @@ const createbilladvisor = async (req,res) =>{
                     commout_amt: req.body.detail[i].commout_amt,
                     ovout_rate: req.body.detail[i].ovout_rate,
                     ovout_amt: req.body.detail[i].ovout_amt,
-                    netflag: req.body.detail[i].netflag,
+                    netflag: req.body.detail[i].statementtype,
                     billpremium: req.body.detail[i].billpremium,
                     updateusercode: "kewn",
                   },
@@ -173,15 +191,12 @@ const createbilladvisor = async (req,res) =>{
               'DO $$ '+
                 'DECLARE a_polid int; a_billadvisorno text; a_netflag text; '+
                 'BEGIN FOR a_polid,a_billadvisorno,a_netflag IN '+
-                    'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id = :keyidm '+
-                'LOOP  '+
+                    'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id =  '+ billadvisors[0][0].id +
+                ' LOOP  '+
                 'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
                 'END LOOP; '+
               'END $$;',
-               { replacements: {
-                keyidm : billadvisors[0][0].id,
-              },
-              raw: true }
+              
             )
         
         await res.json({msg:"success!!"})
@@ -196,8 +211,8 @@ const findbilladvisor =async (req,res) =>{
     'and active =\'Y\' '+
     'and (case when :insurerid is null then true else insurerno = :insurerid end) '+ 
     'and (case when :agentid is null then true else advisorno = :agentid end) '+
-    'and (case when :billadvisorno is null then true else advisorno = :billadvisorno end) '+
-    'and (case when :billdate is null then true else billdate = :billdate end) ',
+    'and (case when :billadvisorno is null then true else billadvisorno = :billadvisorno end) '+
+    'and (case when :billdate is null then true else billdate <= :billdate end) ',
         {
           replacements: {
             insurerid: req.body.insurerid,
@@ -341,6 +356,7 @@ module.exports = {
 
   findTransaction,
   findPolicyByPreminDue,
+  findPolicyByBillno,
   createbilladvisor,
   findbilladvisor,
   getbilladvisordetail,
