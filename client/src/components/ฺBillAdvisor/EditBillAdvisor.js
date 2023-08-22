@@ -260,7 +260,7 @@ const EditBillAdvisor = (props) => {
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
                 {/* insurer table */}
-                <h1 className="text-center">ค้นหารายการเบี้ยค้างที่กำหนดชำระแล้ว</h1>
+                <h1 className="text-center">แก้ไขรายการ billadvisor</h1>
                 <div class="row">
                     <div class="col-1">
 

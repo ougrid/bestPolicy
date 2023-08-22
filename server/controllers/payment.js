@@ -202,6 +202,7 @@ const createbilladvisor = async (req,res) =>{
         await res.json({msg:"success!!"})
 }
 
+
 const findbilladvisor =async (req,res) =>{
   
   const records = await sequelize.query(
