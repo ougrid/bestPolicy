@@ -53,6 +53,9 @@ module.exports = {
       agentCode: {
         type: Sequelize.STRING
       },
+      agentCode2: {
+        type: Sequelize.STRING
+      },
       insurerCode: {
         type: Sequelize.STRING
       },
@@ -66,11 +69,11 @@ module.exports = {
       receiptno: {
         type: Sequelize.STRING
       },
-      seqno:{
+      seqNo:{
         defaultValue: 1,
         type: Sequelize.INTEGER
       },
-      grossprem: {
+      netgrossprem: {
         type: Sequelize.FLOAT
       },
       duty: {
