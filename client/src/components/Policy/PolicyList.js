@@ -805,7 +805,7 @@ const handleClose = (e) =>{
         
         ))} */}
        
-       <Pagination postsPerPage={postsPerPage} totalPosts={formData.length} paginate={paginate} changePage={changePage} />
+       {/* <Pagination postsPerPage={postsPerPage} totalPosts={formData.length} paginate={paginate} changePage={changePage} /> */}
        
 <div className="d-flex justify-content-center">
 

@@ -145,8 +145,8 @@ const createbilladvisor = async (req,res) =>{
               replacements: {
                 insurerCode:req.body.bill.insurerCode,
                 agentCode:req.body.bill.agentCode,
-                // billadvisorno: req.body.bill.billadvisorno,
-                billadvisorno: billno,
+                 billadvisorno: req.body.bill.billadvisorno,
+               
                 billdate: billdate,
                 createusercode: "kewn",
                 amt:req.body.bill.amt,

@@ -2,41 +2,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Policies', {
+    await queryInterface.createTable('b_jupgrs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
-      },
-      insureID: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      insurerCode: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      actDate: {
-        allowNull: false,
-        type: Sequelize.DATEONLY
-      },
-      actTime: {
-        type: Sequelize.STRING
-      },
-      expDate: {
-        allowNull: false,
-        type: Sequelize.DATEONLY
-      },
-      expTime: {
-        type: Sequelize.STRING
-      },
-      policyDate: {
-        allowNull: false,
-        type: Sequelize.DATEONLY
-      },
-      policyTime: {
-        type: Sequelize.STRING
       },
       policyNo: {
         allowNull: false,
@@ -51,20 +22,13 @@ module.exports = {
       taxInvioceNo: {
         type: Sequelize.STRING
       },
-      seqNoins: {
-        defaultValue : 1,
-        type: Sequelize.INTEGER
-      },
-      seqNoagt: {
-        defaultValue : 1,
-        type: Sequelize.INTEGER
-      },
-      insureeCode: {
+      // 'I' = insurer , 'A' = advisor 
+      installmenttype:{
         allowNull: false,
         type: Sequelize.STRING
       },
-      //itemList = motorID
-      itemList: {
+      seqNo :{
+        defaultValue : 1,
         type: Sequelize.INTEGER
       },
       grossprem: {
@@ -160,27 +124,7 @@ module.exports = {
       createusercode:{
         type:Sequelize.STRING
       },
-      // Y = lastversion N = old version
-      lastVersion: {
-        defaultValue: 'Y',
-        allowNull: false,
-        type: Sequelize.CHAR
-      },
-      applicationNo: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      status: {
-        defaultValue: 'I',
-        allowNull: false,
-        type: Sequelize.CHAR
-      },
-      issueDate :{
-        type: Sequelize.DATE
-      },
-      policyType:{
-        type: Sequelize.STRING
-      },
+    
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,
@@ -194,6 +138,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Policies',{ schema: 'static_data'});
+    await queryInterface.dropTable('b_jupgrs',{ schema: 'static_data'});
   }
 };
