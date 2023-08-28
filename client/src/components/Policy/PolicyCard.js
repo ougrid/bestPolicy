@@ -57,29 +57,29 @@ const PolicyCard = (props) => {
         totalprem: newTotalPrem,
       }));
     } else {
-      if (e.target.name === 'commIn%') {
+      if (e.target.name === 'commin_rate') {
         setFormData((prevState) => ({
           ...prevState,
           [e.target.name]: e.target.value,
-          commInamt: (formData[`commIn%`] * formData[`grossprem`]) / 100
+          commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
         }));
-      } else if (e.target.name === 'ovIn%') {
+      } else if (e.target.name === 'ovin_rate') {
         setFormData((prevState) => ({
           ...prevState,
           [e.target.name]: e.target.value,
-          ovInamt: (formData[`ovIn%`] * formData[`grossprem`]) / 100
+          ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
         }));
-      } else if (e.target.name === 'commOut%') {
+      } else if (e.target.name === 'commout_rate') {
         setFormData((prevState) => ({
           ...prevState,
           [e.target.name]: e.target.value,
-          commOutamt: (formData[`commOut%`] * formData[`grossprem`]) / 100
+          commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
         }));
-      } else if (e.target.name === 'ovOut%') {
+      } else if (e.target.name === 'ovout_rate') {
         setFormData((prevState) => ({
           ...prevState,
           [e.target.name]: e.target.value,
-          ovOutamt: (formData[`ovOut%`] * formData[`grossprem`]) / 100
+          ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
         }));
       }
       setFormData((prevState) => ({
@@ -187,14 +187,14 @@ const PolicyCard = (props) => {
         console.log(res.data);
         setFormData((prevState) => ({
           ...prevState,
-          [`commIn%`]: res.data[0].rateComIn,
-          [`ovIn%`]: res.data[0].rateOVIn_1,
-          [`commOut%`]: res.data[0].rateComOut,
-          [`ovOut%`]: res.data[0].rateOVOut_1,
-          [`commInamt`]: res.data[0].rateComIn * formData[`grossprem`] / 100,
-          [`ovInamt`]: res.data[0].rateOVIn_1 * formData[`grossprem`] / 100,
-          [`commOutamt`]: res.data[0].rateComOut * formData[`grossprem`] / 100,
-          [`ovOutamt`]: res.data[0].rateOVOut_1 * formData[`grossprem`] / 100,
+          [`commin_rate`]: res.data[0].rateComIn,
+          [`ovin_rate`]: res.data[0].rateOVIn_1,
+          [`commout_rate`]: res.data[0].rateComOut,
+          [`ovout_rate`]: res.data[0].rateOVOut_1,
+          [`commin_amt`]: res.data[0].rateComIn * formData[`grossprem`] / 100,
+          [`ovin_amt`]: res.data[0].rateOVIn_1 * formData[`grossprem`] / 100,
+          [`commout_amt`]: res.data[0].rateComOut * formData[`grossprem`] / 100,
+          [`ovout_amt`]: res.data[0].rateOVOut_1 * formData[`grossprem`] / 100,
 
         }));
       })
@@ -202,19 +202,19 @@ const PolicyCard = (props) => {
         // alert("cant get aumphur");
       });
 
-    // if (formData[`commIn%`] == null && formData[`ovIn%`] == null ) {
+    // if (formData[`commin_rate`] == null && formData[`ovin_rate`] == null ) {
     //   setFormData((prevState) => ({
     //     ...prevState,
-    //     [`commIn%`]: 10,
-    //     [`ovIn%`]: 15,
+    //     [`commin_rate`]: 10,
+    //     [`ovin_rate`]: 15,
     //   }));
 
     // }
-    //  if (formData[`commOut%`] == null && formData[`ovOut%`] == null){
+    //  if (formData[`commout_rate`] == null && formData[`ovout_rate`] == null){
     //   setFormData((prevState) => ({
     //     ...prevState,
-    //     [`commOut%`]: 10,
-    //     [`ovOut%`]: 15,
+    //     [`commout_rate`]: 10,
+    //     [`ovout_rate`]: 15,
     //   }));
     // }
 
@@ -437,6 +437,7 @@ const PolicyCard = (props) => {
             วันที่เริ่มคุ้มครอง<span class="text-danger"> *</span>
           </label>
           <input
+            disabled
             className="form-control"
             type="date"
             defaultValue={formData.actDate}
@@ -450,6 +451,7 @@ const PolicyCard = (props) => {
             วันที่สิ้นสุด<span class="text-danger"> *</span>
           </label>
           <input
+          disabled
             className="form-control"
             type="date"
             defaultValue={formData.expDate}
@@ -467,6 +469,7 @@ const PolicyCard = (props) => {
             บริษัทรับประกัน<span class="text-danger"> *</span>
           </label>
           <select
+          disabled
             className="form-control"
             name={`insurerCode`}
             onChange={handleChange}
@@ -483,6 +486,7 @@ const PolicyCard = (props) => {
             รหัสผู้แนะนำ<span class="text-danger"> *</span>
           </label>
           <input
+          disabled
             className="form-control"
             type="text"
             defaultValue={formData.agentCode}
@@ -496,6 +500,7 @@ const PolicyCard = (props) => {
             Class<span class="text-danger"> *</span>
           </label>
           <select
+          disabled
             className="form-control"
             name={`class`}
             onChange={handleChange}
@@ -512,6 +517,7 @@ const PolicyCard = (props) => {
             Subclass<span class="text-danger"> *</span>
           </label>
           <select
+          disabled
             className="form-control"
             name={`subClass`}
             onChange={handleChange}
@@ -597,8 +603,8 @@ const PolicyCard = (props) => {
             className="form-control"
             type="number"
             step={0.1}
-            value={formData[`commIn%`]}
-            name={`commIn%`}
+            value={formData[`commin_rate`]}
+            name={`commin_rate`}
             onChange={(e) => handleChange(e)}
           />
         </div>
@@ -611,8 +617,8 @@ const PolicyCard = (props) => {
             type="number"
             disabled
             step={0.1}
-            value={(formData[`commIn%`] * formData[`grossprem`]) / 100 || ""}
-            name={`commInamt`}
+            value={(formData[`commin_rate`] * formData[`grossprem`]) / 100 || ""}
+            name={`commin_amt`}
             onChange={(e) => handleChange(e)}
           />
         </div>
@@ -625,8 +631,8 @@ const PolicyCard = (props) => {
             className="form-control"
             type="number"
             step={0.1}
-            value={formData[`ovIn%`]}
-            name={`ovIn%`}
+            value={formData[`ovin_rate`]}
+            name={`ovin_rate`}
             onChange={handleChange}
           />
         </div>
@@ -640,8 +646,8 @@ const PolicyCard = (props) => {
             type="number"
             disabled
             step={0.1}
-            name={`ovInamt`}
-            value={(formData[`ovIn%`] * formData[`grossprem`]) / 100 || ""}
+            name={`ovin_amt`}
+            value={(formData[`ovin_rate`] * formData[`grossprem`]) / 100 || ""}
             onChange={handleChange}
           />
         </div>
@@ -658,8 +664,8 @@ const PolicyCard = (props) => {
             className="form-control"
             type="number"
             step={0.1}
-            value={formData[`commOut%`]}
-            name={`commOut%`}
+            value={formData[`commout_rate`]}
+            name={`commout_rate`}
             onChange={handleChange}
           />
         </div>
@@ -671,8 +677,8 @@ const PolicyCard = (props) => {
             type="number"
             disabled
             step={0.1}
-            value={(formData[`commOut%`] * formData[`grossprem`]) / 100 || ""}
-            name={`commOutamt`}
+            value={(formData[`commout_rate`] * formData[`grossprem`]) / 100 || ""}
+            name={`commout_amt`}
             onChange={handleChange}
           />
         </div>
@@ -684,8 +690,8 @@ const PolicyCard = (props) => {
             className="form-control"
             type="number"
             step={0.1}
-            value={formData[`ovOut%`]}
-            name={`ovOut%`}
+            value={formData[`ovout_rate`]}
+            name={`ovout_rate`}
             onChange={handleChange}
           />
         </div>
@@ -696,8 +702,8 @@ const PolicyCard = (props) => {
             type="number"
             disabled
             step={0.1}
-            name={`ovOutamt`}
-            value={(formData[`ovOut%`] * formData[`grossprem`]) / 100 || ""}
+            name={`ovout_amt`}
+            value={(formData[`ovout_rate`] * formData[`grossprem`]) / 100 || ""}
             onChange={handleChange}
           />
         </div>
@@ -708,7 +714,7 @@ const PolicyCard = (props) => {
         </div>
       </div>
       {/* entity table */}
-      <div class="row">
+      {/* <div class="row">
         <div className="col-1"></div>
         <div class="col-1">
           <label class="form-label ">
@@ -797,7 +803,7 @@ const PolicyCard = (props) => {
           />
         </div>
       </div>
-      {/* location table */}
+      // location table 
       <div class="row">
         <div className="col-1"></div>
         <div class="col-2">
@@ -924,7 +930,7 @@ const PolicyCard = (props) => {
           </select>
         </div>
       </div>
-      {/* motor table */}
+      // motor table 
       {formData.class === "Motor" ? (
         <>
           <div class="row">
@@ -1026,7 +1032,7 @@ const PolicyCard = (props) => {
             onChange={handleChange}
           />
         </div>
-      </div>
+      </div> */}
       <div class="d-flex justify-content-center">
 
         <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, formData)}>

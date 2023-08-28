@@ -126,6 +126,34 @@ const UserCarList = (props) => {
     });
   };
 
+  const handleDraft = async (e) => {
+    const data = []
+     for (let i = 0; i < formData.length; i++) {
+      let t_ogName =null
+      let t_firstName = null
+      let t_lastName = null
+      let idCardType = "idcard"
+      let idCardNo =  null
+      let taxNo = null
+      if (formData[i].personType === 'P'){
+        t_firstName = formData[i].t_fn
+        t_lastName = formData[i].t_ln
+        idCardNo = formData[i].regisNo.toString()
+        data.push({...formData[i], t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType, t_ogName:t_ogName , taxNo:taxNo})
+      }else{
+        t_ogName = formData[i].t_fn
+        
+        taxNo = formData[i].regisNo.toString()
+        data.push({...formData[i], t_ogName:t_ogName , taxNo:taxNo, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType})
+      }
+    }
+    console.log(data);
+    e.preventDefault();
+    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
+      alert("policy batch Created");
+      window.location.reload(false);
+    });
+  };
 
   const newRow = (e) => {
     e.preventDefault();
@@ -174,7 +202,7 @@ const handleClose = (e) =>{
         // Update the state to populate the form data with the Excel data
         const element = []
         for (let i = 2; i < excelData.length; i++) {
-          excelData[i].policyNo = excelData[i].policyNo.toString()
+          if ('policyNo' in excelData[i]) {excelData[i].policyNo = excelData[i].policyNo.toString()}
           if ('chassisNo' in excelData[i]) {excelData[i].chassisNo = excelData[i].chassisNo.toString()}
           if ('licenseNo' in excelData[i]) {excelData[i].licenseNo = excelData[i].licenseNo.toString()}
           element.push(excelData[i])
@@ -210,7 +238,7 @@ const handleClose = (e) =>{
        
         {/* loop new row */}
         {/* {Array.from({ length: row+1 }, (_, index) => ( */}
-          {currentForm.map((_, index) => (
+          {/* {currentForm.map((_, index) => (
            
              
             
@@ -236,7 +264,7 @@ const handleClose = (e) =>{
             <button type="button" class="btn btn-secondary " id={index + currentPage} onClick={(e)=>editCard(e)} >Edit</button>
             </div>
            </div>
-            {/* policy table */}
+            // policy table 
             <div className="row form-group form-inline ">
             <div className="col-1"></div>
               <div className="col-2 form-group  ">
@@ -275,7 +303,7 @@ const handleClose = (e) =>{
                 />
               </div>
               <div class="col-3">
-                {/* null */}
+                // null
               </div>
 
             </div>
@@ -336,7 +364,7 @@ const handleClose = (e) =>{
                 />
               </div>
             </div>
-            {/* policy table */}
+            // policy table 
 
 
             <div class="row">
@@ -510,7 +538,7 @@ const handleClose = (e) =>{
                 />
               </div>
             </div>
-            {/* entity table */}
+             // entity table 
             <div class="row">
             <div className="col-1"></div>
               <div class="col-1">
@@ -575,7 +603,7 @@ const handleClose = (e) =>{
                 />
               </div>
             </div>
-            {/* location table */}
+            // location table 
             <div class="row">
             <div className="col-1"></div>
               <div class="col-2">
@@ -682,7 +710,7 @@ const handleClose = (e) =>{
               </div>
 
             </div>
-            {/* motor table */}
+            // motor table 
             {"Motor" === "Motor" ? (
               <>
                 <div class="row">
@@ -775,17 +803,14 @@ const handleClose = (e) =>{
             </div>
           </>)
         
-        ))}
+        ))} */}
        
-       <Pagination
-        postsPerPage={postsPerPage}
-        totalPosts={formData.length}
-        paginate={paginate}
-        changePage={changePage}
-      />
+       <Pagination postsPerPage={postsPerPage} totalPosts={formData.length} paginate={paginate} changePage={changePage} />
+       
 <div className="d-flex justify-content-center">
 
         <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button>
+        <button type="button" class="btn btn-primary " onClick={(e)=>handleDraft(e)} >Draft</button>
 </div>
       </form>
       

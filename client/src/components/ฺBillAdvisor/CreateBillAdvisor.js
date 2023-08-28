@@ -406,7 +406,7 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.policyNo}</td>
                                 <td>{ele.endorseNo}</td>
                                 <td>{ele.invoiceNo}</td>
-                                <td>{ele.seqno}</td>
+                                <td>{ele.seqNo}</td>
                                 <td>{ele.insureeCode}</td>
                                 <td>{ele.insureeName}</td>
                                 <td>{ele.licenseNo}</td>

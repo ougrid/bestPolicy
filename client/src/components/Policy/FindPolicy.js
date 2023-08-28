@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import PolicyCard from "./PolicyCard";
+import Modal from 'react-bootstrap/Modal';
 import * as XLSX from 'xlsx';
 import {
     BrowserRouter,
@@ -41,13 +43,15 @@ const FindPolicy = () => {
             "createdAt": null,
             "actDate": null,
             "agentCode": null,
-            "itemList": null
+            "itemList": null,
+            "status" : 'A',
 
         })
     const [policiesData, setPoliciesData] = useState([])
     const [insureTypeDD, setInsureTypeDD] = useState([]);
     const [exportPolicyData, setExportPolicyData] = useState([])
     const [insurerDD, setInsurerDD] = useState([]);
+    const [hidecard, setHidecard] = useState([false,0]);
 
     const ExportData = () => {
         const filename = 'reports-policy.xlsx';
@@ -109,11 +113,12 @@ const FindPolicy = () => {
     }, []);
 
 
-    const changeInsuree = (e) => {
-        setinsureeData((prevState) => ({
-            ...prevState,
-            [e.target.name]: e.target.value,
-        }));
+    const changestatus = (e) => {
+        // e.preventDefault();
+        const array = policiesData
+        array[e.target.id] = { ...policiesData[e.target.id], [e.target.name]: e.target.checked }
+        setPoliciesData(array)
+
     };
     const handleChange = (e) => {
         setFilterData((prevState) => ({
@@ -121,13 +126,19 @@ const FindPolicy = () => {
             [e.target.name]: e.target.value,
         }));
     };
-
-    const changeEntity = (e) => {
-        setEntityData((prevState) => ({
-            ...prevState,
-            [e.target.name]: e.target.value,
-        }));
-    };
+    const handleChangeCard = async (e,index,data) => {
+        e.preventDefault();
+        setHidecard([false,0])
+        if (e.target.name === 'saveChange') {
+          const array =    data
+          policiesData[index] = array
+          
+          setPoliciesData(policiesData)
+          // setCurrentForm(formData.slice(currentPage, currentPage + postsPerPage ))
+          console.log(policiesData);
+        }
+      };
+    
 
     const submitFilter = (e) => {
         // e.preventDefault();
@@ -144,29 +155,46 @@ const FindPolicy = () => {
                 alert("create new insuree success")
                 const array = []
                 setExportPolicyData(res.data)
-                for (let i = 0; i < res.data.length; i++) {
-                    array.push(<tr>
-                        <th scope="row">{i + 1}</th>
-                        <td>{res.data[i].insurerCode}</td>
-                        <td>{res.data[i].policyNo}</td>
-                        <td>{res.data[i].createdAt}</td>
-                        <td>{res.data[i].actDate} - {res.data[i].expDate}</td>
-                        <td>{res.data[i].insureeCode}</td>
-                        <td>{res.data[i].endorseNo}</td>
-                        <td>{res.data[i].invioceNo}</td>
-                        <td>{res.data[i].prem}</td>
-                        <td>{res.data[i].duty}</td>
-                        <td>{res.data[i].stamp}</td>
-                        <td>{res.data[i].total}</td>
-                        <td>{res.data[i].comminamt}</td>
-                        <td>{res.data[i].ovinamt}</td>
-                        <td>{res.data[i].commoutamt}</td>
-                        <td>{res.data[i].ovoutamt}</td>
-                    </tr>)
+                // for (let i = 0; i < res.data.length; i++) {
+                //     array.push(<tr>
+                //         <th scope="row">{i + 1}</th>
+                //         {res.data[i].status === 'I'?
+                //         <>
+                //         <td scope="row"><input type="checkbox" name="select" id={i} onClick={changestatus} /></td>
+                //         <td scope="row"><button type="button" class="btn btn-secondary " id={i} onClick={(e)=>editCard(e)} >Edit</button></td>
+                //         </>
+                //         : <><td></td> <td></td></>}
 
-                }
-                console.log(array);
-                setPoliciesData(array)
+                //         <td>{res.data[i].insurerCode}</td>
+                //         <td>{res.data[i].applicationNo}</td>
+                //         <td>{res.data[i].policyNo}</td>
+                //         <td>{res.data[i].agentCode}</td>
+                //         <td>{res.data[i].agentCode2}</td>
+                //         <td>{res.data[i].class}</td>
+                //         <td>{res.data[i].subclass}</td>
+                //         <td>{res.data[i].createdAt}</td>
+                //         <td>{res.data[i].actDate} - {res.data[i].expDate}</td>
+                //         <td>{res.data[i].insureeCode}</td>
+                //         <td>{res.data[i].licenseNo}</td>
+                //         <td>{res.data[i].chassisNo}</td>
+                //         <td>{res.data[i].endorseNo}</td>
+                //         <td>{res.data[i].seqNo}</td>
+                //         <td>{res.data[i].invioceNo}</td>
+                //         <td>{res.data[i].taxInvioceNo}</td>
+                //         <td>{res.data[i].netgrossprem}</td>
+                //         <td>{res.data[i].duty}</td>
+                //         <td>{res.data[i].stamp}</td>
+                //         <td>{res.data[i].totalprem}</td>
+                //         <td>{res.data[i].commin_amt}</td>
+                //         <td>{res.data[i].ovin_amt}</td>
+                //         <td>{res.data[i].commout_amt}</td>
+                //         <td>{res.data[i].ovout_amt}</td>
+                //     </tr>)
+
+                // }
+                //setPoliciesData(array)
+                //console.log(array);
+                setPoliciesData(res.data)
             })
             .catch((err) => {
 
@@ -174,31 +202,38 @@ const FindPolicy = () => {
 
             });
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        const data = policiesData.filter((ele) => ele.select)
+       
+        console.log(data);
         e.preventDefault();
-        axios
-            .post(url + "/persons/insureenew", { insuree: insureeData, entity: entityData, location: locationData })
-            .then((res) => {
-                // let token = res.data.jwt;
-                // let decode = jwt_decode(token);
-                // navigate("/");
-                // window.location.reload();
-                // localStorage.setItem("jwt", token);
-                console.log(res.data);
-                alert("create new insuree success")
-            })
-            .catch((err) => {
-
-                alert("create new insuree fail");
-
-            });
-    };
+        await axios.post(url + "/policies/policyedit/batch", data).then((res) => {
+          alert("policy batch updated");
+          window.location.reload(false);
+        });
+      };
+      const editCard =(e) =>{
+        console.log(policiesData[e.target.id]);
+        setHidecard([true,e.target.id])
+       
+      };
+    const handleClose = (e) =>{
+      setHidecard([false,0])
+    }
 
     return (
         <>
-
+<Modal  size="xl" show={hidecard[0]} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title >แก้ไขกรมธรรม์</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {<PolicyCard index ={hidecard[1]} formData={policiesData[hidecard[1]]} setFormData ={handleChangeCard}/>}
+        </Modal.Body>
+       
+      </Modal>
             {/* <BackdropBox1> */}
-            <form className="container-fluid text-left" onSubmit={handleSubmit}>
+            <form className="container-fluid text-left" >
                 {/* insurer table */}
                 <h1 className="text-center">ค้นหารายการ</h1>
                 <div class="row">
@@ -258,6 +293,22 @@ const FindPolicy = () => {
                                 </div>
                             </div>
 
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">PolicyStaus</label>
+
+                    </div>
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <select  class="form-control"  name="status" onChange={handleChange} >
+                            <option selected value='A'>Active</option>
+                            <option value='I'>Inactive</option>
+                            </select>
+                            
 
                         </div>
 
@@ -471,17 +522,30 @@ const FindPolicy = () => {
 
                 </div>
 
-                <table class="table table-hover">
+
+                <div className="table-responsive overflow-scroll"  >
+                <table class="table  table-striped " >
                     <thead>
                         <tr>
                             <th scope="col">ลำดับ</th>
+                            <th scope="col">selected</th>
+                            <th scope="col">edit</th>
                             <th scope="col">บริษัทรับประกัน</th>
+                            <th scope="col">เลขที่ใบคำขอ</th>
                             <th scope="col">เลขที่กรมธรรม์</th>
+                            <th scope="col">ผู้แนะนำ 1</th>
+                            <th scope="col">ผู้แนะนำ 2</th>
+                            <th scope="col">class</th>
+                            <th scope="col">subclass</th>
                             <th scope="col">วันที่สร้าง</th>
                             <th scope="col">วันที่คุ้มครอง-สิ้นสุด</th>
                             <th scope="col">ชื่อผู้เอาประกัน</th>
+                            <th scope="col">เลขทะเบียนรถ</th>
+                            <th scope="col">เลขตัวถังรถ</th>
                             <th scope="col">เลขที่สลักหลัง</th>
+                            <th scope="col">seqno</th>
                             <th scope="col">เลขที่ใบแจ้งหนี้</th>
+                            <th scope="col">เลขที่ใบกำกับภาษี</th>
                             <th scope="col">เบี้ย</th>
                             <th scope="col">อากร</th>
                             <th scope="col">ภาษี</th>
@@ -494,14 +558,51 @@ const FindPolicy = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {policiesData}
+                    {policiesData.map((ele, i) => {
+                            return (<tr>
+                                <th scope="row">{i + 1}</th>
+                                {ele.status === 'I'?
+                                <>
+                                <td scope="row"><input type="checkbox" name="select" id={i} onClick={changestatus} /></td>
+                                <td scope="row"><button type="button" class="btn btn-secondary " id={i} onClick={(e)=>editCard(e)} >Edit</button></td>
+                                </>
+                                : <><td></td> <td></td></>}
+        
+                                <td>{ele.insurerCode}</td>
+                                <td>{ele.applicationNo}</td>
+                                <td>{ele.policyNo}</td>
+                                <td>{ele.agentCode}</td>
+                                <td>{ele.agentCode2}</td>
+                                <td>{ele.class}</td>
+                                <td>{ele.subClass}</td>
+                                <td>{ele.createdAt}</td>
+                                <td>{ele.actDate} - {ele.expDate}</td>
+                                <td>{ele.insureeCode}</td>
+                                <td>{ele.licenseNo}</td>
+                                <td>{ele.chassisNo}</td>
+                                <td>{ele.endorseNo}</td>
+                                <td>{ele.seqNo}</td>
+                                <td>{ele.invioceNo}</td>
+                                <td>{ele.taxInvioceNo}</td>
+                                <td>{ele.netgrossprem}</td>
+                                <td>{ele.duty}</td>
+                                <td>{ele.stamp}</td>
+                                <td>{ele.totalprem}</td>
+                                <td>{ele.commin_amt}</td>
+                                <td>{ele.ovin_amt}</td>
+                                <td>{ele.commout_amt}</td>
+                                <td>{ele.ovout_amt}</td>
+                            </tr>)
+
+                        })}
 
                     </tbody>
                 </table>
-
+                </div>
                 <div className="d-flex justify-content-center">
 
                     <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>export to excel</button>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={handleSubmit}>save Policy</button>
 
 
                 </div>
