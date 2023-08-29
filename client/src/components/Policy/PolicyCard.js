@@ -9,6 +9,8 @@ const config = require("../../config.json");
 const PolicyCard = (props) => {
   const index = props.index;
   const url = config.url;
+  const tax = config.tax
+  const duty = config.duty
 
   //import excel
   const [formData, setFormData] = useState(props.formData);
@@ -23,7 +25,8 @@ const PolicyCard = (props) => {
   const [insurerDD, setInsurerDD] = useState([]);
   const [motorbrandDD, setMotorbrandDD] = useState([]);
   const [motormodelDD, setMotormodelDD] = useState([]);
-
+  const [installment, setInstallment] = useState({insurer : [], advisor : []})
+  
   const handleChange = async (e) => {
     e.preventDefault();
 
@@ -81,10 +84,12 @@ const PolicyCard = (props) => {
           [e.target.name]: e.target.value,
           ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
         }));
-      }
+      }else if (e.target.name === 'grossprem')
       setFormData((prevState) => ({
         ...prevState,
         [e.target.name]: e.target.value,
+        duty: (duty * formData[`grossprem`]) / 100,
+        tax : (tax * formData[`grossprem`]) / 100
       }));
     }
 
@@ -410,9 +415,124 @@ const PolicyCard = (props) => {
         setMotorbrandDD(array);
       })
       .catch((err) => { });
-
+      //get installment
+      if (props.formData.installment) {
+        setInstallment(props.formData.installment)
+      }
   }, []);
 
+  const calinstallment = (e) => {
+    e.preventDefault();
+    // set installment data
+    const installI = document.getElementsByName("installmentInsurer")[0].checked
+    const seqNoins = parseInt(document.getElementsByName("seqNoins")[0].value)
+    const seqNoinstime = parseInt(document.getElementsByName("seqNoinstime")[0].value)
+    const seqNoinstype = document.getElementsByName("seqNoinstype")[0].value
+    const flagallowduty = document.getElementsByName("flagallowduty")[0].checked
+
+    const installA = document.getElementsByName("installmentAdvisor")[0].checked
+    const seqNoagt = parseInt(document.getElementsByName("seqNoagt")[0].value)
+    const seqNoagttime = parseInt(document.getElementsByName("seqNoagttime")[0].value)
+    const seqNoagttype = document.getElementsByName("seqNoagttype")[0].value
+
+    const arrI = []
+    if (installI){
+      let premperseq = parseFloat((formData.netgrossprem / seqNoins ).toFixed(2))
+      console.log(formData.netgrossprem - premperseq * (seqNoins-1));
+      let dueDate = new Date()
+      for (let i = 1; i <= seqNoins; i++) {
+        let dutyseq = 0
+      
+        // cal prem
+        if (i===1) {
+          premperseq = parseFloat((formData.netgrossprem - premperseq*(seqNoins-1)).toFixed(2))
+        
+        }
+        else{premperseq = parseFloat((formData.netgrossprem / seqNoins ).toFixed(2))}
+        //cal tax
+        let taxseq = parseFloat((tax * premperseq).toFixed(2))
+
+        //cal duty
+        if(flagallowduty){dutyseq = parseFloat((premperseq *duty).toFixed(2))}
+        else{
+          if (i===1) {
+            dutyseq = parseFloat((formData.netgrossprem *duty).toFixed(2))
+          }else {dutyseq = 0}
+        }
+        // cal duedate
+        if (seqNoinstype === 'M') {
+          dueDate.setMonth(dueDate.getMonth() + seqNoinstime)
+        }else {dueDate.setDate (dueDate.getDate() + seqNoinstime)}
+
+        //cal comm-ov in
+        let comminseq = parseFloat((formData.commin_rate* premperseq/100).toFixed(2))
+        let ovinseq = parseFloat((formData.ovin_rate* premperseq/100).toFixed(2))
+        arrI.push({grossprem :premperseq,
+                    tax : taxseq,
+                  duty : dutyseq,
+                  totalprem : parseFloat((premperseq + taxseq + dutyseq).toFixed(2)),
+                dueDate :dueDate.toISOString().split('T')[0],
+              commin_amt : comminseq,
+              commin_taxamt : parseFloat((comminseq *tax).toFixed(2)),
+            ovin_amt : ovinseq,
+            ovin_taxamt : parseFloat((ovinseq *tax).toFixed(2)),})
+       
+      }
+      console.log(arrI);
+    }
+    
+    const arrA = []
+    if (installA){
+      let premperseq = parseFloat((formData.netgrossprem / seqNoagt ).toFixed(2))
+      console.log(formData.netgrossprem - premperseq * (seqNoagt-1));
+      let dueDate = new Date()
+      for (let i = 1; i <= seqNoagt; i++) {
+        let dutyseq = 0
+      
+        // cal prem
+        if (i===1) {
+          premperseq = parseFloat((formData.netgrossprem - premperseq*(seqNoagt-1)).toFixed(2))
+        
+        }
+        else{premperseq = parseFloat((formData.netgrossprem / seqNoagt ).toFixed(2))}
+        //cal tax
+        let taxseq = parseFloat((tax * premperseq).toFixed(2))
+
+        //cal duty
+        if(flagallowduty){dutyseq = parseFloat((premperseq *duty).toFixed(2))}
+        else{
+          if (i===1) {
+            dutyseq = parseFloat((formData.netgrossprem *duty).toFixed(2))
+          }else {dutyseq = 0}
+        }
+        // cal duedate
+        if (seqNoagttype === 'M') {
+          dueDate.setMonth(dueDate.getMonth() + seqNoagttime)
+        }else {dueDate.setDate (dueDate.getDate() + seqNoagttime)}
+
+        //cal comm-ov in
+        let comminseq = parseFloat((formData.commin_rate* premperseq/100).toFixed(2))
+        let ovinseq = parseFloat((formData.ovin_rate* premperseq/100).toFixed(2))
+        //cal comm-ov out
+        let commoutseq = parseFloat((formData.commout1_rate* premperseq/100).toFixed(2))
+        let ovoutseq = parseFloat((formData.ovout1_rate* premperseq/100).toFixed(2))
+        arrA.push({grossprem :premperseq,
+                    tax : taxseq,
+                  duty : dutyseq,
+                  totalprem : premperseq + taxseq + dutyseq,
+                dueDate :dueDate.toISOString().split('T')[0],
+                commin_amt : comminseq,
+                commin_taxamt : comminseq *tax,
+                ovin_amt : ovinseq,
+                ovin_taxamt : ovinseq *tax,
+                commout1_amt : commoutseq,
+                ovout1_amt : ovoutseq})
+       
+      }
+      console.log(arrI);
+    }
+    setInstallment({insurer:arrI, advisor:arrA})
+  }
   return (
     <div>
       <h1 className="text-center">กรมธรรม์ฉบับที่ {parseInt(index) + 1}</h1>
@@ -456,6 +576,18 @@ const PolicyCard = (props) => {
             type="date"
             defaultValue={formData.expDate}
             name={`expDate`}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="col-2 form-group  ">
+          <label class="form-label ">
+            issueDate<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="date"
+            value={formData.issueDate || ''}
+            name={`issueDate`}
             onChange={handleChange}
           />
         </div>
@@ -713,6 +845,208 @@ const PolicyCard = (props) => {
           <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
         </div>
       </div>
+      <div class="row">
+        <div className="col-1"></div> 
+        <div className="col-2">
+          
+        <h4 class="form-label ">
+          installment 
+          </h4>
+          </div> 
+        </div>
+      
+      <div class="row">
+        <div className="col-1"></div>
+        <div className="col-1">
+
+        <div class="form-check ">
+          <input class="form-check-input" type="checkbox" name="installmentInsurer" id="flexCheckDefault"/>
+        <label class="form-check-label" for="flexCheckChecked">
+          insurer
+          </label>
+        </div>
+        </div>
+
+        <div class="col-1">
+          <label class="form-label ">
+            จำนวนงวด<span class="text-danger"> </span>
+          </label>
+          </div>
+          <div class="col-1">
+            
+          <input
+            className="form-control"
+            type="number"
+            defaultValue={formData.t_fn}
+            name={`seqNoins`}
+            onChange={handleChange}
+            />
+        </div>
+
+        <div class="col-1">
+
+          <label class="form-label ">
+            เวลา/งวด
+          </label>
+        </div>
+        <div class="col-1">
+          <input
+            className="form-control"
+            type="number"
+            defaultValue={formData.t_fn}
+            name={`seqNoinstime`}
+            onChange={handleChange}
+            />
+            </div>
+            <div className="col-1">
+
+          <select
+            className="form-control"
+            name={`seqNoinstype`}
+            onChange={handleChange}
+            >
+            <option value={formData.personType} disabled selected hidden>
+              {formData.personType}
+            </option>
+            <option value="D">วัน</option>
+            <option value="M">เดือน</option>
+          </select>
+              </div>
+            
+        
+        
+        
+          <div class="col-2">
+           
+            <div class="form-check ">
+          <input class="form-check-input" type="checkbox" name="flagallowduty" id="flexCheckDefault"/>
+        <label class="form-check-label" for="flexCheckChecked">
+        allowcate duty
+          </label>
+        </div>
+        
+          </div>
+          <div class="col-2 align-bottom">
+
+<button type="button" class="btn btn-primary align-bottom" onClick={calinstallment} >calculate installment</button>
+</div>
+
+      </div>
+
+      <div class="row">
+        <div className="col-1"></div>
+        <div className="col-1">
+
+        <div class="form-check ">
+          <input class="form-check-input" type="checkbox" name="installmentAdvisor" id="flexCheckDefault"/>
+        <label class="form-check-label" for="flexCheckChecked">
+          Advisor
+          </label>
+        </div>
+        </div>
+
+        <div class="col-1">
+          <label class="form-label ">
+            จำนวนงวด<span class="text-danger"> </span>
+          </label>
+          </div>
+          <div class="col-1">
+            
+          <input
+            className="form-control"
+            type="number"
+            defaultValue={formData.t_fn}
+            name={`seqNoagt`}
+            onChange={handleChange}
+            />
+        </div>
+
+        <div class="col-1">
+
+          <label class="form-label ">
+            เวลา/งวด
+          </label>
+        </div>
+        <div class="col-1">
+          <input
+            className="form-control"
+            type="number"
+            defaultValue={formData.t_fn}
+            name={`seqNoagttime`}
+            onChange={handleChange}
+            />
+            </div>
+            <div className="col-1">
+
+          <select
+            className="form-control"
+            name={`seqNoagttype`}
+            onChange={handleChange}
+            >
+            <option value={formData.personType} disabled selected hidden>
+              {formData.personType}
+            </option>
+            <option value="D">วัน</option>
+            <option value="M">เดือน</option>
+          </select>
+              </div>
+              <div className="col-2"></div>
+              
+            
+        
+        
+        
+        
+
+      </div>
+
+      <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">instype</th>
+      <th scope="col">seqNo</th>
+      <th scope="col">dueDate</th>
+      <th scope="col">prem</th>
+      <th scope="col">duty</th>
+      <th scope="col">tax</th>
+      <th scope="col">commin</th>
+      <th scope="col">ovin</th>
+      <th scope="col">commout</th>
+      <th scope="col">ovout</th>
+    </tr>
+  </thead>
+  <tbody>
+    {installment.insurer.map((ele,i) =>{
+      return(<tr>
+      <th scope="row">insurer</th>
+      <td>{i+1}</td>
+      <td>{ele.dueDate}</td>
+      <td>{ele.premperseq}</td>
+      <td>{ele.dutyseq}</td>
+      <td>{ele.taxseq}</td>
+      <td>{ele.commin_amt}</td>
+      <td>{ele.ovin_amt}</td>
+      <td></td>
+      <td></td>
+    </tr>)
+    })}
+    {installment.advisor.map((ele,i) =>{
+      return(<tr>
+        <th scope="row">advisor</th>
+        <td>{i+1}</td>
+        <td>{ele.dueDate}</td>
+        <td>{ele.premperseq}</td>
+        <td>{ele.dutyseq}</td>
+        <td>{ele.taxseq}</td>
+        <td>{ele.commin_amt}</td>
+        <td>{ele.ovin_amt}</td>
+        <td>{ele.commout_amt}</td>
+        <td>{ele.ovout_amt}</td>
+      </tr>)
+    })}
+   
+  </tbody>
+</table>
       {/* entity table */}
       {/* <div class="row">
         <div className="col-1"></div>
@@ -1035,7 +1369,7 @@ const PolicyCard = (props) => {
       </div> */}
       <div class="d-flex justify-content-center">
 
-        <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, formData)}>
+        <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, {...formData, installment:installment})}>
           Save Changes
         </button>
         <button className="p-2 btn btn-secondary " name="closed" onClick={e => props.setFormData(e)}>

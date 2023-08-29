@@ -209,7 +209,7 @@ const FindPolicy = () => {
         e.preventDefault();
         await axios.post(url + "/policies/policyedit/batch", data).then((res) => {
           alert("policy batch updated");
-          window.location.reload(false);
+          //window.location.reload(false);
         });
       };
       const editCard =(e) =>{

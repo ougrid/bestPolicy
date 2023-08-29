@@ -3,6 +3,7 @@ const Transaction = require("../models").Transaction;
 const CommOVIn = require("../models").CommOVIn; //imported fruits array
 const CommOVOut = require("../models").CommOVOut;
 const Insuree = require("../models").Insuree;
+const { throws } = require("assert");
 const process = require('process');
 require('dotenv').config();
 // const Package = require("../models").Package;
@@ -29,7 +30,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
   },
 });
 
-const createTransection = async (policy) => {
+const createTransection = async (policy,t) => {
      
   //find credit term 
      const insurer = await sequelize.query(
@@ -38,6 +39,7 @@ const createTransection = async (policy) => {
         replacements: {
           insurerCode: policy.insurerCode,
         },
+        transaction: t ,
         type: QueryTypes.SELECT
       }
     )
@@ -48,6 +50,7 @@ const createTransection = async (policy) => {
         replacements: {
           agentcode: policy.agentCode,
         },
+        transaction: t ,
         type: QueryTypes.SELECT
       }
     )
@@ -68,6 +71,7 @@ const createTransection = async (policy) => {
           subClass: policy.subClass,
           insurerCode: policy.insurerCode,
         },
+        transaction: t ,
         type: QueryTypes.SELECT
       }
     )
@@ -106,6 +110,7 @@ const createTransection = async (policy) => {
                 mainaccountcode: policy.insurerCode,
     
               },
+              transaction: t ,
               type: QueryTypes.INSERT
             }
           );
@@ -209,6 +214,7 @@ const createTransection = async (policy) => {
 
     
               },
+              transaction: t ,
               type: QueryTypes.INSERT
             }
           );
@@ -290,6 +296,7 @@ const createTransection = async (policy) => {
            replacements: {
              agentcode: policy.agentCode2,
            },
+           transaction: t ,
            type: QueryTypes.SELECT
          }
        )
@@ -325,6 +332,7 @@ const createTransection = async (policy) => {
     
 
           },
+          transaction: t ,
           type: QueryTypes.INSERT
         }
       );
@@ -359,6 +367,7 @@ const createTransection = async (policy) => {
             mainaccountcode: policy.agentCode2,
     
           },
+          transaction: t ,
           type: QueryTypes.INSERT
         }
       );
@@ -1128,8 +1137,14 @@ const draftPolicyList = async (req, res) => {
 const editPolicyList = async (req, res) => {
 
   for (let i = 0; i < req.body.length; i++) {
+    const t = await sequelize.transaction();
 
+    try {
     
+     if(req.body[i].installment.advisor.length === 0 && req.body[i].installment.insurer.length)
+     {
+      req.body[i].policyType = 'F'
+     }else{req.body[i].policyType = 'S'}
       //update policy
       await sequelize.query(
        `update static_data."Policies" 
@@ -1138,7 +1153,7 @@ const editPolicyList = async (req, res) => {
        ovin_taxamt = :ovin_taxamt, commout_rate = :commout_rate, commout_amt = :commout_amt, ovout_rate = :ovout_rate, ovout_amt = :ovout_amt, 
       "policyDate" = :policyDate, "status" = 'A', commout1_rate = :commout1_rate, commout1_amt = :commout1_amt, ovout1_rate = :ovout1_rate, 
       ovout1_amt = :ovout1_amt, commout2_rate = :commout2_rate, commout2_amt = :commout2_amt, ovout2_rate = :ovout2_rate, ovout2_amt = :ovout2_amt,
-      "seqNoins" = :seqNoins, "seqNoagt" = :seqNoagt
+      "seqNoins" = :seqNoins, "seqNoagt" = :seqNoagt, "issueDate" = :issueDate , "policyType" = :policyType
       WHERE "applicationNo" = :applicationNo and "status" = 'I' `,
         {
           replacements: {
@@ -1168,16 +1183,32 @@ const editPolicyList = async (req, res) => {
             commout2_amt: req.body[i][`commout2_amt`],
             ovout2_rate: req.body[i][`ovout2_rate`],
             ovout2_amt: req.body[i][`ovout2_amt`],
+            issueDate:  req.body[i][`issueDate`],
+            policyType:  req.body[i][`policyType`],
             policyDate:  new Date().toJSON().slice(0, 10),
             
           },
-          type: QueryTypes.INSERT
+          transaction: t ,
+          type: QueryTypes.UPDATE
         }
       )
-
-      //insert transaction 
-      createTransection(req.body[i])
+    
+    //insert jupgr
+    await createjupgr(req.body[i],t)
+    
+    //insert transaction 
+    await createTransection(req.body[i],t)
+    
+    await t.commit();
+    // If the execution reaches this line, an error was thrown.
+    // We rollback the transaction.
+    } catch (error) {
+      console.log(error);
+      await t.rollback();
+      }
+    
     }
+    
 
 
   
@@ -1186,6 +1217,166 @@ const editPolicyList = async (req, res) => {
   await res.json({ status: 'success' })
 };
 
+const createjupgr = async (policy,t) => {
+
+  const advisor =  policy.installment.advisor
+  const insurer =  policy.installment.insurer 
+if (policy.installment.advisor.length === 0 ) {
+  
+}
+    //console.log(policy);
+     // installment advisor 
+     for (let i = 0; i < advisor.length; i++) {
+     //insert jupgr
+    await sequelize.query(
+      `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+      specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
+      "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout_rate, 
+      commout_amt, ovout_rate, ovout_amt, createusercode)
+      values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
+      :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
+      :ovout1_rate, :ovout1_amt,  :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+      {
+        replacements: {
+          policyNo: policy.policyNo,
+          endorseNo: policy.endorseNo,
+          invoiceNo: policy.invoiceNo,
+          taxInvoiceNo: policy.taxInvoiceNo,
+          installmenttype: 'A',
+          seqNo: i +1,
+          grossprem: advisor[i].grossprem,
+          specdiscrate: 0,
+          specdiscamt: 0,
+          netgrossprem: advisor[i].grossprem,
+          duty: advisor[i].duty,
+          tax: advisor[i].tax,
+          totalprem: advisor[i].totalprem,
+          commin_rate: policy[`commin_rate`],
+          commin_amt: advisor[i][`commin_amt`],
+          commin_taxamt: advisor[i][`commin_taxamt`], 
+          ovin_rate: policy[`ovin_rate`],
+          ovin_amt: advisor[i][`ovin_amt`],
+          ovin_taxamt: advisor[i][`ovin_taxamt`],
+          agentCode: policy.agentCode,
+          agentCode2: policy.agentCode2,
+          commout1_rate: policy[`commout1_rate`],
+          commout1_amt: advisor[i][`commout1_amt`],
+          ovout1_rate: policy[`ovout1_rate`],
+          ovout1_amt: advisor[i][`ovout1_amt`],
+          commout_rate: policy[`commout_rate`],
+          commout_amt: parseFloat((advisor[i].grossprem *policy[`commout_rate`]/100).toFixed(2)),
+          ovout_rate: policy[`ovout_rate`],
+          ovout_amt: parseFloat((advisor[i].grossprem *policy[`ovout_rate`]/100).toFixed(2)),
+          createusercode: "kwanjai",
+          
+        },
+        
+        transaction: t ,
+        type: QueryTypes.INSERT
+      }
+    )
+     }
+
+     // installment insurer
+     for (let i = 0; i < insurer.length; i++) {
+      //insert jupgr
+     await sequelize.query(
+       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+       specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
+       "agentCode", "agentCode2", createusercode)
+       values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
+       :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :createusercode)`,
+       {
+         replacements: {
+           policyNo: policy.policyNo,
+           endorseNo: policy.endorseNo,
+           invoiceNo: policy.invoiceNo,
+           taxInvoiceNo: policy.taxInvoiceNo,
+           installmenttype: 'I',
+           seqNo: i +1,
+           grossprem: insurer[i].grossprem,
+           specdiscrate: 0,
+           specdiscamt: 0,
+           netgrossprem: insurer[i].grossprem,
+           duty: insurer[i].duty,
+           tax: insurer[i].tax,
+           totalprem: insurer[i].totalprem,
+           commin_rate: policy[`commin_rate`],
+           commin_amt: insurer[i][`commin_amt`],
+           commin_taxamt: insurer[i][`commin_taxamt`], 
+           ovin_rate: policy[`ovin_rate`],
+           ovin_amt: insurer[i][`ovin_amt`],
+           ovin_taxamt: insurer[i][`ovin_taxamt`],
+           agentCode: policy.agentCode,
+           agentCode2: policy.agentCode2,
+           createusercode: "kwanjai",
+          
+         },
+         
+         transaction: t ,
+         type: QueryTypes.INSERT
+       }
+     )
+      }
+
+      // installment advisor2 
+   if (policy.agentCode2) {
+    
+   
+     await sequelize.query(
+       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+       specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
+       "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
+       commout_amt, ovout_rate, ovout_amt, createusercode)
+       values(:policyNo, :endorseNo, :invoiceNo, :taxInvioceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
+       :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
+       :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+       {
+         replacements: {
+           policyNo: policy.policyNo,
+           endorseNo: policy.endorseNo,
+           invoiceNo: policy.invoiceNo,
+           taxInvoiceNo: policy.taxInvoiceNo,
+           installmenttype: 'A',
+           seqNo: 1,
+           grossprem: policy[`grossprem`],
+           specdiscrate: 0,
+           specdiscamt: 0,
+           netgrossprem: policy[`netgrossprem`],
+           duty: policy[`duty`],
+           tax: policy[`tax`],
+           totalprem: policy[`totalprem`],
+           commin_rate: policy[`commin_rate`],
+           commin_amt: policy[`commin_amt`],
+           commin_taxamt: policy[`commin_taxamt`], 
+           ovin_rate: policy[`ovin_rate`],
+           ovin_amt: policy[`ovin_amt`],
+           ovin_taxamt: policy[`ovin_taxamt`],
+           agentCode: policy.agentCode,
+           agentCode2: policy.agentCode2,
+           commout1_rate: policy[`commout1_rate`],
+           commout1_amt: policy[`commout1_amt`],
+           ovout1_rate: policy[`ovout1_rate`],
+           ovout1_amt: policy[`ovout1_amt`],
+           commout2_rate: policy[`commout2_rate`],
+           commout2_amt: policy[`commout2_amt`],
+           ovout2_rate: policy[`ovout2_rate`],
+           ovout2_amt: policy[`ovout2_amt`],
+           commout_rate: policy[`commout_rate`],
+          commout_amt: policy[`commout_amt`],
+          ovout_rate: policy[`ovout_rate`],
+          ovout_amt: policy[`ovout_amt`],
+          createusercode: "kwanjai",
+         },
+         
+         transaction: t ,
+         type: QueryTypes.INSERT
+       }
+     )
+    } 
+
+ 
+}
 
 module.exports = {
 
