@@ -1,7 +1,9 @@
-const TURUN = require("../models").TURUN;
+const TURUN = require("../../models").TURUN;
 
 const process = require('process');
 require('dotenv').config();
+const { throws } = require("assert");
+
 // const Package = require("../models").Package;
 // const User = require("../models").User;
 const { Op, QueryTypes, Sequelize } = require("sequelize");
@@ -25,36 +27,37 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
         },
     },
 });
-
-const getRunNo = async (BrCode, RunType, ParamClass, SubClass, OutletCode, UpdateUserCode, EffectiveDate) => {
+// getRunNo ลอกมาจาก iia
+// brCode = ยังไม่ใช้
+//RunType = บอกว่าเป็น runno ของค่าอะไร ,
+// Paramclass, subclass -> ในกรณีที่เลข runno แบ่งย่อยตาม class/subclass ประกัน 
+// outletcode -> ยังไม่ใช้
+const getRunNo = async (req,res) => {
 
     //public static long GetRunNo(string BrCode, string RunType, string ParamClass, string SubClass, string OutletCode, string UpdateUserCode, DateTime EffectiveDate)
-
+ 
     let RunNo = 0;
-    BrCode = BrCode.Trim();
-    RunType = RunType.Trim();
-    ParamClass = ParamClass.Trim();
-    SubClass = SubClass.Trim();
-    OutletCode = OutletCode.Trim();
-    UpdateUserCode = UpdateUserCode.Trim();
-
+    let RunType = req.runtype
+    let ParamClass = req.paramclass
+    let SubClass = req.subclass
+    let UpdateUserCode = req.usercode
+    let EffectiveDate = req.effdate
 
     try {
 
         await sequelize.authenticate();
-        await sequelize.query('SET lock mode to wait 5');
-        await sequelize.query('SET isolation to repeatable read');
+        await sequelize.query('set lock_timeout = 5000');
+        await sequelize.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
         const transaction = await sequelize.transaction();
 
         //table TURUNT
-          const basisResult = await sequelize.query(`SELECT PeriodBasis FROM TURUNT WHERE RunType = '${RunType}'`, { type: sequelize.QueryTypes.SELECT });
+          const basisResult = await sequelize.query(`SELECT "PeriodBasis" FROM static_data."TURUNT" WHERE "RunType" = '${RunType}'`, { type: sequelize.QueryTypes.SELECT });
     if (basisResult.length === 0) {
       throw new Error(`RunType: ${RunType} not found in TURUNT !`);
     }
     const basis = basisResult[0].PeriodBasis.trim();
 
     const condition = {
-        BrCode,
         RunType,
       };
       if (ParamClass === '') {
@@ -67,11 +70,7 @@ const getRunNo = async (BrCode, RunType, ParamClass, SubClass, OutletCode, Updat
       } else {
         condition.SubClass = SubClass;
       }
-      if (OutletCode === '') {
-        condition.Outlet = null;
-      } else {
-        condition.Outlet = OutletCode;
-      }
+      
       if (basis !== '') {
         if (basis === 'D') {
           condition.EffectiveDate = EffectiveDate;
@@ -91,31 +90,30 @@ const getRunNo = async (BrCode, RunType, ParamClass, SubClass, OutletCode, Updat
     } else {
       RunID = turunResult.RunID;
       try {
-        await TURUN.update({ xlock: 'A' }, { where: { BrCode, RunID: RunID.toString() }, transaction });
+        await TURUN.update({ xlock: 'A' }, { where: {  RunID: RunID.toString() }, transaction });
       } catch (error) {
         RunNo = -999;
         throw new Error('TURUN: Record is Locked!!');
       }
     }
 
-    const updatedTurunResult = await TURUN.findOne({ where: { BrCode, RunID: RunID.toString() }, transaction });
+    const updatedTurunResult = await TURUN.findOne({ where: {  RunID: RunID.toString() }, transaction });
     if (updatedTurunResult) {
       RunNo = updatedTurunResult.LastNo + 1;
       await TURUN.update({
         LastNo: RunNo,
         UpdateDate: sequelize.fn('current'),
         UpdateUserCode,
-        UpdateBrCode: BrCode,
       }, {
-        where: { BrCode, RunID: RunID.toString() },
+        where: {  RunID: RunID.toString() },
         transaction,
       });
     } else {
-      const maxRunIDResult = await sequelize.query(`SELECT MAX(RunID) FROM TURUN WHERE BrCode = '${BrCode}'`, { type: sequelize.QueryTypes.SELECT, transaction });
-      if (maxRunIDResult[0]['MAX(RunID)'] === null) {
+      const maxRunIDResult = await sequelize.query(`SELECT MAX("RunID") FROM static_data."TURUN" `, { type: sequelize.QueryTypes.SELECT, transaction });
+      if (maxRunIDResult[0]['max'] === null) {
         RunID = 1;
       } else {
-        RunID = maxRunIDResult[0]['MAX(RunID)'] + 1;
+        RunID = maxRunIDResult[0]['max'] + 1;
       }
       RunNo = 1;
 
@@ -135,7 +133,6 @@ const getRunNo = async (BrCode, RunType, ParamClass, SubClass, OutletCode, Updat
 
       await TURUN.create({
         RunID,
-        BrCode,
         RunType,
         Class: pClass,
         SubClass: pSubClass,
@@ -143,8 +140,6 @@ const getRunNo = async (BrCode, RunType, ParamClass, SubClass, OutletCode, Updat
         LastNo: RunNo,
         UpdateDate: sequelize.fn('current'),
         UpdateUserCode,
-        UpdateBrCode: BrCode,
-        Outlet: OutletCode,
       }, { transaction });
     }
     await transaction.commit();
@@ -159,11 +154,14 @@ const getRunNo = async (BrCode, RunType, ParamClass, SubClass, OutletCode, Updat
 
 }
 
+const testRunno =  async (req,res) =>{
 
-
+  //deaw ma tum tor
+    const result = await getRunNo(req.body,{})
+   await res.json({result: result})
+}
 module.exports = {
 
-
-    getRunNo,
+testRunno
 
 };

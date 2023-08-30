@@ -31,13 +31,14 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
 });
 
 const createTransection = async (policy,t) => {
-     
+     const jupgr = policy.installment
   //find credit term 
      const insurer = await sequelize.query(
       'select * FROM static_data."Insurers" where "insurerCode" = :insurerCode',
       {
         replacements: {
           insurerCode: policy.insurerCode,
+          
         },
         transaction: t ,
         type: QueryTypes.SELECT
@@ -76,16 +77,31 @@ const createTransection = async (policy,t) => {
       }
     )
 
-     
-      
+    if (jupgr.insurer.length === 0 ) {
+      jupgr.insurer.push(policy)
+      const dueDate = new Date()
+      dueDate.setDate(dueDate.getDate() + insurer[0].premCreditT);
+      jupgr.insurer[0].dueDate = dueDate
+    }
+
+    if (jupgr.advisor.length === 0 ) {
+      jupgr.advisor.push(policy)
+      const dueDate = new Date()
+      dueDate.setDate(dueDate.getDate() + agent[0].premCreditT);
+      jupgr.advisor[0].dueDate = dueDate
+    }
+
+
      // amity -> insurer (prem-out) && insurer -> amity (comm/ov-in)
      // seqnoins >1
      let date = new Date()
-     for (let i = 1; i <= policy.seqNoins; i++) {
+    //  for (let i = 1; i <= policy.seqNoins; i++) {
+      for (let i = 0; i < jupgr.insurer.length; i++) {
       //prem-out
-          let totalamt = policy.totalprem/ policy.seqNoins
-          const dueDate = new Date()
-          dueDate.setDate(date.getDate() + i*insurer[0].premCreditT);
+      
+          //let totalamt = policy.totalprem/ policy.seqNoins
+          //const dueDate = new Date()
+          //dueDate.setDate(date.getDate() + i*insurer[0].premCreditT);
           await sequelize.query(
             'INSERT INTO static_data."Transactions" ' +
             '("transType", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
@@ -99,14 +115,21 @@ const createTransection = async (policy,t) => {
                 insurerCode: policy.insurerCode,
                 agentCode: policy.agentCode,
                 policyNo: policy.policyNo,
-                totalamt: totalamt,
-                duedate: dueDate,
-                netgrossprem: policy.netgrossprem,
-                duty: policy.duty,
-                tax: policy.tax,
-                totalprem: policy.totalprem,
+                //totalamt: totalamt,
+                totalamt: jupgr.insurer[i].totalprem,
+                // duedate: dueDate,
+                duedate: jupgr.insurer[i].dueDate,
+                // netgrossprem: policy.netgrossprem,
+                // duty: policy.duty,
+                // tax: policy.tax,
+                // totalprem: policy.totalprem,
+                netgrossprem: jupgr.insurer[i].netgrossprem,
+                duty: jupgr.insurer[i].duty,
+                tax: jupgr.insurer[i].tax,
+                totalprem: jupgr.insurer[i].totalprem,
                 txtype2 :1,
-                seqno:i,
+                //seqno:i,
+                seqno:i +1,
                 mainaccountcode: policy.insurerCode,
     
               },
@@ -116,8 +139,8 @@ const createTransection = async (policy,t) => {
           );
       
       //comm-in
-      totalamt = policy.commin_amt/ policy.seqNoins
-      dueDate.setDate(dueDate.getDate() + insurer[0].commovCreditT);
+      //totalamt = policy.commin_amt/ policy.seqNoins
+      //dueDate.setDate(dueDate.getDate() + insurer[0].commovCreditT);
       await sequelize.query(
         'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode ) ' +
@@ -131,16 +154,25 @@ const createTransection = async (policy,t) => {
             insurerCode: policy.insurerCode,
             agentCode: policy.agentCode,
             policyNo: policy.policyNo,
-            commamt: policy.commin_amt,
-            commtaxamt: policy.commin_taxamt,
-            totalamt: totalamt,
-            duedate: dueDate,
-            netgrossprem: policy.netgrossprem,
-            duty: policy.duty,
-            tax: policy.tax,
-            totalprem: policy.totalprem,
+            // commamt: policy.commin_amt,
+            // commtaxamt: policy.commin_taxamt,
+            // totalamt: totalamt,
+            // duedate: dueDate,
+            // netgrossprem: policy.netgrossprem,
+            // duty: policy.duty,
+            // tax: policy.tax,
+            // totalprem: policy.totalprem,
+            commamt: jupgr.insurer[i].commin_amt,
+            commtaxamt: jupgr.insurer[i].commin_taxamt,
+            totalamt: jupgr.insurer[i].totalprem,
+            duedate: jupgr.insurer[i].dueDate,
+            netgrossprem: jupgr.insurer[i].netgrossprem,
+            duty: jupgr.insurer[i].duty,
+            tax: jupgr.insurer[i].tax,
+            totalprem: jupgr.insurer[i].totalprem,
             txtype2 :1,
-            seqno:i,
+            // seqno:i,
+            seqno:i +1 ,
             mainaccountcode: 'Amity',
     
 
@@ -149,7 +181,7 @@ const createTransection = async (policy,t) => {
         }
       );
         //ov-in
-        totalamt = policy.ovin_amt/ policy.seqNoins
+        //totalamt = policy.ovin_amt/ policy.seqNoins
       await sequelize.query(
         'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode ) ' +
@@ -163,16 +195,25 @@ const createTransection = async (policy,t) => {
             insurerCode: policy.insurerCode,
             agentCode: policy.agentCode,
             policyNo: policy.policyNo,
-            ovamt: policy.ovin_amt,
-            ovtaxamt: policy.ovin_taxamt,
-            totalamt: totalamt,
-            duedate: dueDate,
-            netgrossprem: policy.netgrossprem,
-            duty: policy.duty,
-            tax: policy.tax,
-            totalprem: policy.totalprem,
+            // ovamt: policy.ovin_amt,
+            // ovtaxamt: policy.ovin_taxamt,
+            // totalamt: totalamt,
+            // duedate: dueDate,
+            // netgrossprem: policy.netgrossprem,
+            // duty: policy.duty,
+            // tax: policy.tax,
+            // totalprem: policy.totalprem,
+            ovamt: jupgr.insurer[i].ovin_amt,
+            ovtaxamt: jupgr.insurer[i].ovin_taxamt,
+            totalamt: jupgr.insurer[i].ovin_amt,
+            duedate: jupgr.insurer[i].dueDate,
+            netgrossprem: jupgr.insurer[i].netgrossprem,
+            duty: jupgr.insurer[i].duty,
+            tax: jupgr.insurer[i].tax,
+            totalprem: jupgr.insurer[i].totalprem,
             txtype2 :1,
-            seqno:i,
+            // seqno:i,
+            seqno:i +1 ,
             mainaccountcode: 'Amity',
     
           },
@@ -184,11 +225,12 @@ const createTransection = async (policy,t) => {
      // amity -> advisor1 (comm/ov-out) &&  advisor1  -> amity (prem-in)
      // seqnoagt >1
      date = new Date()
-     for (let i = 1; i <= policy.seqNoagt; i++) {
+    //  for (let i = 1; i <= policy.seqNoagt; i++) {
+      for (let i = 0; i < jupgr.advisor.length; i++) {
       //prem-in
-          let totalamt = policy.totalprem/ policy.seqNoagt
-          const dueDate = new Date()
-          dueDate.setDate(date.getDate() + i*agent[0].premCreditT);
+          //let totalamt = policy.totalprem/ policy.seqNoagt
+          //const dueDate = new Date()
+          //dueDate.setDate(date.getDate() + i*agent[0].premCreditT);
           await sequelize.query(
             'INSERT INTO static_data."Transactions" ' +
             '("transType", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" , mainaccountcode ) ' +
@@ -202,14 +244,21 @@ const createTransection = async (policy,t) => {
                 insurerCode: policy.insurerCode,
                 agentCode: policy.agentCode,
                 policyNo: policy.policyNo,
-                totalamt: totalamt,
-                duedate: dueDate,
-                netgrossprem: policy.netgrossprem,
-                duty: policy.duty,
-                tax: policy.tax,
-                totalprem: policy.totalprem,
+                // totalamt: totalamt,
+                // duedate: dueDate,
+                // netgrossprem: policy.netgrossprem,
+                // duty: policy.duty,
+                // tax: policy.tax,
+                // totalprem: policy.totalprem,
+                totalamt: jupgr.advisor[i].totalprem,
+                duedate: jupgr.advisor[i].dueDate,
+                netgrossprem: jupgr.advisor[i].netgrossprem,
+                duty: jupgr.advisor[i].duty,
+                tax: jupgr.advisor[i].tax,
+                totalprem: jupgr.advisor[i].totalprem,
                 txtype2 :1,
-                seqno:i,
+                // seqno:i,
+                seqno:i +1 ,
                 mainaccountcode:policy.agentCode,
 
     
@@ -220,8 +269,8 @@ const createTransection = async (policy,t) => {
           );
       
       //comm-out
-      totalamt = policy.commout1_amt/ policy.seqNoagt
-      dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
+      // totalamt = policy.commout1_amt/ policy.seqNoagt
+      // dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
       await sequelize.query(
         'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode ) ' +
@@ -235,16 +284,25 @@ const createTransection = async (policy,t) => {
             insurerCode: policy.insurerCode,
             agentCode: policy.agentCode,
             policyNo: policy.policyNo,
-            commamt: policy.commout_amt,
+            // commamt: policy.commout_amt,
+            // commtaxamt: null,
+            // totalamt: totalamt,
+            // duedate: dueDate,
+            // netgrossprem: policy.netgrossprem,
+            // duty: policy.duty,
+            // tax: policy.tax,
+            // totalprem: policy.totalprem,
+            commamt: jupgr.advisor[i].commout_amt,
             commtaxamt: null,
-            totalamt: totalamt,
-            duedate: dueDate,
-            netgrossprem: policy.netgrossprem,
-            duty: policy.duty,
-            tax: policy.tax,
-            totalprem: policy.totalprem,
+            totalamt: jupgr.advisor[i].commout1_amt,
+            duedate: jupgr.advisor[i].dueDate,
+            netgrossprem: jupgr.advisor[i].netgrossprem,
+            duty: jupgr.advisor[i].duty,
+            tax: jupgr.advisor[i].tax,
+            totalprem: jupgr.advisor[i].totalprem,
             txtype2 :1,
-            seqno:i,
+            // seqno:i,
+            seqno:i +1 ,
             mainaccountcode: policy.agentCode,
     
 
@@ -253,7 +311,7 @@ const createTransection = async (policy,t) => {
         }
       );
         //ov-out
-        totalamt = policy.ovout1_amt/ policy.seqNoagt
+        //totalamt = policy.ovout1_amt/ policy.seqNoagt
       await sequelize.query(
         'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode ) ' +
@@ -267,16 +325,25 @@ const createTransection = async (policy,t) => {
             insurerCode: policy.insurerCode,
             agentCode: policy.agentCode,
             policyNo: policy.policyNo,
-            ovamt: policy.ovout_amt,
+            // ovamt: policy.ovout_amt,
+            // ovtaxamt: null,
+            // totalamt: totalamt,
+            // duedate: dueDate,
+            // netgrossprem: policy.netgrossprem,
+            // duty: policy.duty,
+            // tax: policy.tax,
+            // totalprem: policy.totalprem,
+            ovamt: jupgr.advisor[i].ovout_amt,
             ovtaxamt: null,
-            totalamt: totalamt,
-            duedate: dueDate,
-            netgrossprem: policy.netgrossprem,
-            duty: policy.duty,
-            tax: policy.tax,
-            totalprem: policy.totalprem,
+            totalamt: jupgr.advisor[i].ovout1_amt,
+            duedate: jupgr.advisor[i].dueDate,
+            netgrossprem: jupgr.advisor[i].netgrossprem,
+            duty: jupgr.advisor[i].duty,
+            tax: jupgr.advisor[i].tax,
+            totalprem: jupgr.advisor[i].totalprem,
             txtype2 :1,
-            seqno:i,
+            // seqno:i,
+            seqno:i +1 ,
             mainaccountcode: policy.agentCode,
     
           },
@@ -1197,8 +1264,9 @@ const editPolicyList = async (req, res) => {
     await createjupgr(req.body[i],t)
     
     //insert transaction 
+    //await createTransection(req.body[i],t)
     await createTransection(req.body[i],t)
-    
+
     await t.commit();
     // If the execution reaches this line, an error was thrown.
     // We rollback the transaction.
@@ -1221,14 +1289,119 @@ const createjupgr = async (policy,t) => {
 
   const advisor =  policy.installment.advisor
   const insurer =  policy.installment.insurer 
+  const arrIns =[]
+  const arrAds = []
 if (policy.installment.advisor.length === 0 ) {
-  
+  const ads = await sequelize.query(
+    `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+    specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
+    "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
+    commout_amt, ovout_rate, ovout_amt, createusercode)
+    values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
+    :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
+    :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+    {
+      replacements: {
+        policyNo: policy.policyNo,
+        endorseNo: policy.endorseNo,
+        invoiceNo: policy.invoiceNo,
+        taxInvoiceNo: policy.taxInvoiceNo,
+        installmenttype: 'A',
+        seqNo: null,
+        grossprem: policy[`grossprem`],
+        specdiscrate: 0,
+        specdiscamt: 0,
+        netgrossprem: policy[`netgrossprem`],
+        duty: policy[`duty`],
+        tax: policy[`tax`],
+        totalprem: policy[`totalprem`],
+        commin_rate: policy[`commin_rate`],
+        commin_amt: policy[`commin_amt`],
+        commin_taxamt: policy[`commin_taxamt`], 
+        ovin_rate: policy[`ovin_rate`],
+        ovin_amt: policy[`ovin_amt`],
+        ovin_taxamt: policy[`ovin_taxamt`],
+        agentCode: policy.agentCode,
+        agentCode2: policy.agentCode2,
+        commout1_rate: policy[`commout1_rate`],
+        commout1_amt: policy[`commout1_amt`],
+        ovout1_rate: policy[`ovout1_rate`],
+        ovout1_amt: policy[`ovout1_amt`],
+        commout2_rate: policy[`commout2_rate`],
+        commout2_amt: policy[`commout2_amt`],
+        ovout2_rate: policy[`ovout2_rate`],
+        ovout2_amt: policy[`ovout2_amt`],
+        commout_rate: policy[`commout_rate`],
+       commout_amt: policy[`commout_amt`],
+       ovout_rate: policy[`ovout_rate`],
+       ovout_amt: policy[`ovout_amt`],
+       createusercode: "kwanjai",
+      },
+      
+      transaction: t ,
+      type: QueryTypes.INSERT
+    }
+  )
+  arrAds.push[ads]
+}
+if (policy.installment.insurer.length === 0 ) {
+ const ins = await sequelize.query(
+    `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+    specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
+    "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
+    commout_amt, ovout_rate, ovout_amt, createusercode)
+    values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
+    :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
+    :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+    {
+      replacements: {
+        policyNo: policy.policyNo,
+        endorseNo: policy.endorseNo,
+        invoiceNo: policy.invoiceNo,
+        taxInvoiceNo: policy.taxInvoiceNo,
+        installmenttype: 'I',
+        seqNo: null,
+        grossprem: policy[`grossprem`],
+        specdiscrate: 0,
+        specdiscamt: 0,
+        netgrossprem: policy[`netgrossprem`],
+        duty: policy[`duty`],
+        tax: policy[`tax`],
+        totalprem: policy[`totalprem`],
+        commin_rate: policy[`commin_rate`],
+        commin_amt: policy[`commin_amt`],
+        commin_taxamt: policy[`commin_taxamt`], 
+        ovin_rate: policy[`ovin_rate`],
+        ovin_amt: policy[`ovin_amt`],
+        ovin_taxamt: policy[`ovin_taxamt`],
+        agentCode: policy.agentCode,
+        agentCode2: policy.agentCode2,
+        commout1_rate: policy[`commout1_rate`],
+        commout1_amt: policy[`commout1_amt`],
+        ovout1_rate: policy[`ovout1_rate`],
+        ovout1_amt: policy[`ovout1_amt`],
+        commout2_rate: policy[`commout2_rate`],
+        commout2_amt: policy[`commout2_amt`],
+        ovout2_rate: policy[`ovout2_rate`],
+        ovout2_amt: policy[`ovout2_amt`],
+        commout_rate: policy[`commout_rate`],
+       commout_amt: policy[`commout_amt`],
+       ovout_rate: policy[`ovout_rate`],
+       ovout_amt: policy[`ovout_amt`],
+       createusercode: "kwanjai",
+      },
+      
+      transaction: t ,
+      type: QueryTypes.INSERT
+    }
+  )
+  arrIns.push(ins)
 }
     //console.log(policy);
      // installment advisor 
      for (let i = 0; i < advisor.length; i++) {
      //insert jupgr
-    await sequelize.query(
+    const ads = await sequelize.query(
       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
       specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
       "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout_rate, 
@@ -1275,12 +1448,13 @@ if (policy.installment.advisor.length === 0 ) {
         type: QueryTypes.INSERT
       }
     )
+    arrAds.push[ads]
      }
 
      // installment insurer
      for (let i = 0; i < insurer.length; i++) {
       //insert jupgr
-     await sequelize.query(
+      const ins =  await sequelize.query(
        `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
        "agentCode", "agentCode2", createusercode)
@@ -1317,8 +1491,8 @@ if (policy.installment.advisor.length === 0 ) {
          type: QueryTypes.INSERT
        }
      )
+     arrIns.push(ins)
       }
-
       // installment advisor2 
    if (policy.agentCode2) {
     
@@ -1338,7 +1512,7 @@ if (policy.installment.advisor.length === 0 ) {
            invoiceNo: policy.invoiceNo,
            taxInvoiceNo: policy.taxInvoiceNo,
            installmenttype: 'A',
-           seqNo: 1,
+           seqNo: null,
            grossprem: policy[`grossprem`],
            specdiscrate: 0,
            specdiscamt: 0,
@@ -1373,8 +1547,10 @@ if (policy.installment.advisor.length === 0 ) {
          type: QueryTypes.INSERT
        }
      )
-    } 
 
+    
+    } 
+ return {insurer :arrIns , advisor:arrAds}
  
 }
 

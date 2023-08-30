@@ -626,10 +626,25 @@ const PolicyCard = (props) => {
             onChange={handleChange}
           />
         </div>
-
         <div class="col-2 form-group ">
+          <label class="form-label px-3">
+            รหัสผู้แนะนำ 2<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            disabled
+            defaultValue={formData.agentCode2}
+            name={`agentCode2`}
+            onChange={handleChange}
+          />
+        </div>
+        <div class="col-2 form-group ">
+          <div className="row">
+            
+          <div className="col form-group">
           <label class="form-label ">
-            Class<span class="text-danger"> *</span>
+            Class
           </label>
           <select
           disabled
@@ -642,11 +657,10 @@ const PolicyCard = (props) => {
             </option>
             {insureClassDD}
           </select>
-        </div>
-
-        <div class="col-2">
+          </div>
+          <div className="col form-group">
           <label class="form-label ">
-            Subclass<span class="text-danger"> *</span>
+            Subclass
           </label>
           <select
           disabled
@@ -659,7 +673,12 @@ const PolicyCard = (props) => {
             </option>
             {insureSubClassDD}
           </select>
+          </div>
+          
+          </div>
+         
         </div>
+
       </div>
       {/* policy table */}
 
@@ -681,30 +700,71 @@ const PolicyCard = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            ภาษี<span class="text-danger"> *</span>
+            ส่วนลด % 
           </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData.tax}
-            name={`tax`}
-            onChange={handleChange}
-          />
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`specdiscrate`]}
+                name={`specdiscrate`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || ""}
+                name={`specdiscamt`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+
         </div>
 
         <div class="col-2">
-          <label class="form-label ">
-            ค่าแสตมอากรณ์<span class="text-danger"> *</span>
+          <div className="row">
+            <div className="col">
+            <label class="form-label ">
+            duty
           </label>
           <input
             className="form-control"
             type="number"
             step={0.1}
-            value={formData.duty}
+            disabled
+            // netgrossprem * tax 
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
+            //value={formData.duty}
             name={`duty`}
             onChange={handleChange}
           />
+            </div>
+            <div className="col">
+            <label class="form-label ">
+            tax
+          </label>
+          <input
+            className="form-control"
+            type="number"
+            step={0.1}
+            disabled
+            // netgrossprem * tax 
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * tax).toFixed(2)) || ""}
+            //value={formData.tax}
+            name={`tax`}
+            onChange={handleChange}
+          />
+            </div>
+            
+          </div>
+          
         </div>
 
         <div class="col-2">
@@ -715,9 +775,8 @@ const PolicyCard = (props) => {
             type="number" // Use an input element for displaying numbers
             className="form-control"
             // value={formData.totalprem} // Display the totalprem value from the state
-            value={parseFloat(formData.grossprem) -
-              parseFloat(formData.duty) -
-              parseFloat(formData.tax)}
+            // value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
             step={0.1}
             name={`totalprem`}
             readOnly
@@ -725,7 +784,7 @@ const PolicyCard = (props) => {
         </div>
       </div>
 
-      <div class="row">
+      {/* <div class="row">
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
@@ -784,9 +843,139 @@ const PolicyCard = (props) => {
           />
         </div>
 
-      </div>
+      </div> */}
+      
+      <div class="row">
+        <div className="col-1"></div>
+        <div class="col-2">
+          <label class="form-label ">
+            comm_in% <span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commin_rate`]}
+                name={`commin_rate`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={parseFloat((formData[`commin_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2))|| ""}
+                name={`commin_amt`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
 
-      <div className="row">
+        </div>
+
+
+        <div class="col-2">
+          <label class="form-label ">
+            OV_in % <span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovin_rate`]}
+                name={`ovin_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovin_amt`}
+                value={parseFloat((formData[`ovin_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-2">
+          <label class="form-label ">
+            comm_out% (1)<span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commout1_rate`]}
+                name={`commout1_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={(formData[`commout1_rate`] * formData[`grossprem`]) / 100 || ""}
+                name={`commout1_amt`}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
+        </div>
+        <div class="col-2">
+          <label class="form-label ">
+            OV_out % (1)<span class="text-danger"> *</span>
+          </label>
+
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovout1_rate`]}
+                name={`ovout1_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout1_amt`}
+                //value={(formData[`ovout1_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`ovout1_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
+        </div>
+        {/* <div class="col-1 align-bottom">
+        
+          <button type="button" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
+        </div> */}
+
+
+      </div>
+      {/* <div className="row">
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
@@ -844,7 +1033,143 @@ const PolicyCard = (props) => {
 
           <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
         </div>
+      </div> */}
+
+<div class="row">
+        <div className="col-1"></div>
+        
+
+        <div class="col-2">
+          <label class="form-label ">
+            comm_out% (2)<span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commout2_rate`]}
+                name={`commout2_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={parseFloat((formData[`commout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                //value={(formData[`commout2_rate`] * formData[`grossprem`]) / 100 || ""}
+                name={`commout2_amt`}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
+        </div>
+        <div class="col-2">
+          <label class="form-label ">
+            OV_out % (2)<span class="text-danger"> *</span>
+          </label>
+
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovout2_rate`]}
+                name={`ovout2_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout2_amt`}
+                //value={(formData[`ovout2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`ovout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
+        </div>
+        <div class="col-2">
+          <label class="form-label ">
+            comm_out% (sum)
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commout_rate`]}
+                name={`commout_rate`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                //value={(formData[`commin2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`commout_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                name={`commout_amt`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="col-2">
+          <label class="form-label ">
+            OV_out % (sum)
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovout_rate`]}
+                name={`ovout_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout_amt`}
+                //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`ovout_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+        </div>
+        {/* <div class="col-1 align-bottom">
+
+          <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
+        </div> */}
+
+
       </div>
+
       <div class="row">
         <div className="col-1"></div> 
         <div className="col-2">
@@ -1021,9 +1346,9 @@ const PolicyCard = (props) => {
       <th scope="row">insurer</th>
       <td>{i+1}</td>
       <td>{ele.dueDate}</td>
-      <td>{ele.premperseq}</td>
-      <td>{ele.dutyseq}</td>
-      <td>{ele.taxseq}</td>
+      <td>{ele.grossprem}</td>
+      <td>{ele.duty}</td>
+      <td>{ele.tax}</td>
       <td>{ele.commin_amt}</td>
       <td>{ele.ovin_amt}</td>
       <td></td>
@@ -1035,13 +1360,13 @@ const PolicyCard = (props) => {
         <th scope="row">advisor</th>
         <td>{i+1}</td>
         <td>{ele.dueDate}</td>
-        <td>{ele.premperseq}</td>
-        <td>{ele.dutyseq}</td>
-        <td>{ele.taxseq}</td>
+        <td>{ele.grossprem}</td>
+        <td>{ele.duty}</td>
+        <td>{ele.tax}</td>
         <td>{ele.commin_amt}</td>
         <td>{ele.ovin_amt}</td>
-        <td>{ele.commout_amt}</td>
-        <td>{ele.ovout_amt}</td>
+        <td>{ele.commout1_amt}</td>
+        <td>{ele.ovout1_amt}</td>
       </tr>)
     })}
    
