@@ -57,23 +57,27 @@ const getRunNo = async (req,res) => {
     }
     const basis = basisResult[0].PeriodBasis.trim();
 
-    const condition = {
-        RunType,
-      };
+    let condition = `"RunType" = '${RunType}'`
+    // {
+    //     RunType,
+    //   };
       if (ParamClass === '') {
-        condition.Class = null;
+        //condition.Class = null;
       } else {
-        condition.Class = ParamClass;
+        //condition.Class = ParamClass;
+        condition = condition + ` and "Class" = '${ParamClass}'`;
       }
       if (SubClass === '') {
-        condition.SubClass = null;
+        //condition.SubClass = null;
       } else {
-        condition.SubClass = SubClass;
+        //condition.SubClass = SubClass;
+        condition = condition + ` and "SubClass" = '${SubClass}'`;
       }
       
       if (basis !== '') {
         if (basis === 'D') {
-          condition.EffectiveDate = EffectiveDate;
+          //condition.EffectiveDate = EffectiveDate;
+          condition = condition + ` and "EffectiveDate" = '${EffectiveDate}'`
         } else {
           condition.EffectiveDate = sequelize.where(sequelize.fn('YEAR', sequelize.col('EffectiveDate')), EffectiveDate.getFullYear());
           if (basis === 'M') {
@@ -82,32 +86,34 @@ const getRunNo = async (req,res) => {
         }
       }
 
-      const turunResult = await TURUN.findOne({ where: condition, transaction });
+      const turunResult = await sequelize.query(`SELECT * FROM static_data."TURUN" WHERE ${condition} limit 1`, { type: sequelize.QueryTypes.SELECT , transaction});
+      //TURUN.findOne({ where: condition, transaction });
     let RunID = 0;
 
-    if (!turunResult) {
+    if (!turunResult[0]) {
       RunID = 0;
     } else {
-      RunID = turunResult.RunID;
+      RunID = turunResult[0].RunID;
       try {
-        await TURUN.update({ xlock: 'A' }, { where: {  RunID: RunID.toString() }, transaction });
+        await sequelize.query(`UPDATE static_data."TURUN" SET xlock = 'A' WHERE  "RunID" = ${RunID}`, { type: sequelize.QueryTypes.update, transaction});
+        //await TURUN.update({ xlock: 'A' }, { where: {  RunID: RunID.toString() }, transaction });
       } catch (error) {
         RunNo = -999;
         throw new Error('TURUN: Record is Locked!!');
       }
     }
 
-    const updatedTurunResult = await TURUN.findOne({ where: {  RunID: RunID.toString() }, transaction });
-    if (updatedTurunResult) {
-      RunNo = updatedTurunResult.LastNo + 1;
-      await TURUN.update({
-        LastNo: RunNo,
-        UpdateDate: sequelize.fn('current'),
-        UpdateUserCode,
-      }, {
-        where: {  RunID: RunID.toString() },
-        transaction,
-      });
+    const updatedTurunResult = await sequelize.query(`SELECT * FROM static_data."TURUN" WHERE ${condition} limit 1`, { type: sequelize.QueryTypes.SELECT , transaction});
+    //const updatedTurunResult = await TURUN.findOne({ where: {  RunID: RunID.toString() }, transaction });
+    console.log(updatedTurunResult);
+    if (updatedTurunResult[0]) {
+       RunNo = updatedTurunResult[0].LastNo + 1;
+      // await TURUN.update({LastNo: RunNo, UpdateDate: sequelize.fn('current'), UpdateUserCode,}, {
+      //   where: {  RunID: RunID.toString() },
+      //   transaction,
+      // });
+      await sequelize.query(`UPDATE static_data."TURUN" SET "LastNo" = ${RunNo} WHERE  "RunID" = ${RunID}`, { type: sequelize.QueryTypes.update, transaction});
+
     } else {
       const maxRunIDResult = await sequelize.query(`SELECT MAX("RunID") FROM static_data."TURUN" `, { type: sequelize.QueryTypes.SELECT, transaction });
       if (maxRunIDResult[0]['max'] === null) {
@@ -121,26 +127,24 @@ const getRunNo = async (req,res) => {
       let pClass = '';
       let pSubClass = '';
 
-          if (basis === 'Y') {
-        effDateRunNo = EffectiveDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-      } else if (basis === 'M') {
-        effDateRunNo = EffectiveDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-      } else {
-        effDateRunNo = EffectiveDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
-      }
+      // let UpdateDate = new Date()
+
+      //     if (basis === 'Y') {
+      //   effDateRunNo = UpdateDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
+      // } else if (basis === 'M') {
+      //   effDateRunNo = UpdateDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
+      // } else {
+      //   effDateRunNo = UpdateDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '/');
+      // }
       pClass = ParamClass === '' ? null : ParamClass;
       pSubClass = SubClass === '' ? null : SubClass;
 
-      await TURUN.create({
-        RunID,
-        RunType,
-        Class: pClass,
-        SubClass: pSubClass,
-        EffectiveDate,
-        LastNo: RunNo,
-        UpdateDate: sequelize.fn('current'),
-        UpdateUserCode,
-      }, { transaction });
+      
+      // await TURUN.create({RunID, RunType, Class: pClass, SubClass: pSubClass, EffectiveDate, LastNo: RunNo, UpdateDate: sequelize.fn('current'), UpdateUserCode,
+      // }, { transaction });
+
+      await sequelize.query(`insert into static_data."TURUN" ("RunID", "RunType", "Class", "SubClass", "EffectiveDate", "LastNo",  "UpdateUserCode") 
+      values (${RunID}, '${RunType}', ${pClass}, ${pSubClass}, '${EffectiveDate}', ${RunNo}, '${UpdateUserCode}')`, { type: sequelize.QueryTypes.update, transaction});
     }
     await transaction.commit();
 } catch (error) {
