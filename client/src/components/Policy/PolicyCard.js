@@ -1345,12 +1345,12 @@ const PolicyCard = (props) => {
       return(<tr>
       <th scope="row">insurer</th>
       <td>{i+1}</td>
-      <td>{ele.dueDate}</td>
-      <td>{ele.grossprem}</td>
-      <td>{ele.duty}</td>
-      <td>{ele.tax}</td>
-      <td>{ele.commin_amt}</td>
-      <td>{ele.ovin_amt}</td>
+      <td><input className="number" step={.01} value={ele.dueDate}></input></td>
+      <td><input className="number" step={.01} value={ele.grossprem}></input></td>
+      <td><input className="number" step={.01} value={ele.duty}></input></td>
+      <td><input className="number" step={.01} value={ele.tax}></input></td>
+      <td><input className="number" step={.01} value={ele.commin_amt}></input></td>
+      <td><input className="number" step={.01} value={ele.ovin_amt}></input></td>
       <td></td>
       <td></td>
     </tr>)
@@ -1359,17 +1359,60 @@ const PolicyCard = (props) => {
       return(<tr>
         <th scope="row">advisor</th>
         <td>{i+1}</td>
-        <td>{ele.dueDate}</td>
-        <td>{ele.grossprem}</td>
-        <td>{ele.duty}</td>
-        <td>{ele.tax}</td>
-        <td>{ele.commin_amt}</td>
-        <td>{ele.ovin_amt}</td>
-        <td>{ele.commout1_amt}</td>
-        <td>{ele.ovout1_amt}</td>
+        <td><input className="number" step={.01} value={ele.dueDate}></input></td>
+        <td><input className="number" step={.01} value={ele.grossprem}></input></td>
+        <td><input className="number" step={.01} value={ele.duty}></input></td>
+        <td><input className="number" step={.01} value={ele.tax}></input></td>
+        <td><input className="number" step={.01} value={ele.commin_amt}></input></td>
+        <td><input className="number" step={.01} value={ele.ovin_amt}></input></td>
+        <td><input className="number" step={.01} value={ele.commout1_amt}></input></td>
+        <td><input className="number" step={.01} value={ele.ovout1_amt}></input></td>
       </tr>)
     })}
-   
+    {installment.insurer.length >0? 
+    <tr>
+    <th scope="row">Summary Insurer</th>
+       <td></td>
+       <td></td>
+       <td>{installment.insurer.reduce((prev, curr) => prev + curr.grossprem, 0)}</td>
+       <td>{installment.insurer.reduce((prev, curr) => prev + curr.duty, 0)}</td>
+       <td>{installment.insurer.reduce((prev, curr) => prev + curr.tax, 0)}</td>
+       <td>{installment.insurer.reduce((prev, curr) => prev + curr.commin_amt, 0)}</td>
+       <td>{installment.insurer.reduce((prev, curr) => prev + curr.ovin_amt, 0)}</td>
+       <td></td>
+       <td></td>
+     </tr>
+    :null}
+  
+  {installment.advisor.length >0? 
+  <tr>
+  <th scope="row">Summary Advisor</th>
+       <td></td>
+       <td></td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.grossprem, 0)}</td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.duty, 0)}</td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.tax, 0)}</td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.commin_amt, 0)}</td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.ovin_amt, 0)}</td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.commout1_amt, 0)}</td>
+       <td>{installment.advisor.reduce((prev, curr) => prev + curr.ovout1_amt, 0)}</td>
+   </tr>
+  :null}
+    
+
+    <tr>
+   <th scope="row">This Policy</th>
+      <td></td>
+      <td></td>
+      <td>{formData.grossprem}</td>
+      <td>{formData.duty}</td>
+      <td>{formData.tax}</td>
+      <td>{formData.commin_amt}</td>
+      <td>{formData.ovin_amt}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    
   </tbody>
 </table>
       {/* entity table */}

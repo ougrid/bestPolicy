@@ -41,6 +41,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "AspNetCore.Reporting": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
             "ClosedXML": {
               "target": "Package",
               "version": "[0.102.0, )"
@@ -48,6 +52,18 @@
             "Dapper": {
               "target": "Package",
               "version": "[2.0.143, )"
+            },
+            "Microsoft.ReportViewer.Common": {
+              "target": "Package",
+              "version": "[10.0.40219.1, )"
+            },
+            "Microsoft.ReportViewer.WebForms": {
+              "target": "Package",
+              "version": "[10.0.40219.1, )"
+            },
+            "Microsoft.ReportingServices.ReportViewerControl.WebForms": {
+              "target": "Package",
+              "version": "[150.1586.0, )"
             },
             "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
               "target": "Package",
@@ -57,9 +73,21 @@
               "target": "Package",
               "version": "[7.0.4, )"
             },
+            "ReportViewerCore.NETCore": {
+              "target": "Package",
+              "version": "[15.1.18, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "System.Security.Permissions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "System.Text.Encoding.CodePages": {
+              "target": "Package",
+              "version": "[7.0.0, )"
             }
           },
           "imports": [
