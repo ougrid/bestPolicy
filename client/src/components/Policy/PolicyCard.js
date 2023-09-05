@@ -257,6 +257,34 @@ const PolicyCard = (props) => {
       });
   };
 
+  const editInstallment = (type,index) => {
+    //get tambons in distric selected
+    if (type === 'insurer') {
+      const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
+      const grossprem = parseInt(document.getElementsByName(`grossprem-${index}`)[0].value)
+      const duty = parseInt(document.getElementsByName(`duty-${index}`)[0].value)
+      const tax = document.getElementsByName(`tax-${index}`)[0].value
+      const commin_amt = document.getElementsByName(`commin_amt-${index}`)[0].value
+      const ovin_amt = document.getElementsByName(`ovin_amt-${index}`)[0].value
+      const commout1_amt = document.getElementsByName(`commout1_amt-${index}`)[0].value
+      const ovout1_amt = document.getElementsByName(`ovout1_amt-${index}`)[0].value
+
+
+      
+    }else if(type === 'advisor')
+    {
+      const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
+      const grossprem = parseInt(document.getElementsByName(`grossprem-${index}`)[0].value)
+      const duty = parseInt(document.getElementsByName(`duty-${index}`)[0].value)
+      const tax = document.getElementsByName(`tax-${index}`)[0].value
+      const commin_amt = document.getElementsByName(`commin_amt-${index}`)[0].value
+      const ovin_amt = document.getElementsByName(`ovin_amt-${index}`)[0].value
+      const commout1_amt = document.getElementsByName(`commout1_amt-${index}`)[0].value
+      const ovout1_amt = document.getElementsByName(`ovout1_amt-${index}`)[0].value
+    }
+  };
+
+
   const handleSubmit = async (e) => {
     const data = [];
     for (let i = 0; i < formData.length; i++) {
@@ -1328,48 +1356,93 @@ const PolicyCard = (props) => {
       <table class="table">
   <thead>
     <tr>
-      <th scope="col">instype</th>
-      <th scope="col">seqNo</th>
-      <th scope="col">dueDate</th>
-      <th scope="col">prem</th>
-      <th scope="col">duty</th>
-      <th scope="col">tax</th>
-      <th scope="col">commin</th>
-      <th scope="col">ovin</th>
-      <th scope="col">commout</th>
-      <th scope="col">ovout</th>
+      <th scope="col-1">instype</th>
+      <th scope="col-1">seqNo</th>
+      <th scope="col-2">dueDate</th>
+      <th scope="col-2">prem</th>
+      <th scope="col-1">duty</th>
+      <th scope="col-1">tax</th>
+      <th scope="col-1">commin</th>
+      <th scope="col-1">ovin</th>
+      <th scope="col-1">commout</th>
+      <th scope="col-1">ovout</th>
     </tr>
   </thead>
   <tbody>
     {installment.insurer.map((ele,i) =>{
       return(<tr>
       <th scope="row">insurer</th>
-      <td>{i+1}</td>
-      <td>{ele.dueDate}</td>
-      <td>{ele.grossprem}</td>
-      <td>{ele.duty}</td>
-      <td>{ele.tax}</td>
-      <td>{ele.commin_amt}</td>
-      <td>{ele.ovin_amt}</td>
-      <td></td>
-      <td></td>
+      <td scope="col-1">{i+1}</td>
+      <td scope="col-2"><input type="date" className="w-100" name={`dueDate-${i}`}  defaultValue={ele.dueDate}></input></td>
+      <td scope="col-2"><input type="number" className="w-100" name={`grossprem-${i}`} step={.01} defaultValue={ele.grossprem}></input></td>
+      <td scope="col-1"><input type="number" className="w-100" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
+      <td scope="col-1"><input type="number" className="w-100" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
+      <td scope="col-1"><input type="number" className="w-100" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
+      <td scope="col-1"><input type="number" className="w-100" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td>
+      <td scope="col-1"></td>
+      <td scope="col-1"></td>
+      <td><button >Edit</button></td>
     </tr>)
     })}
     {installment.advisor.map((ele,i) =>{
       return(<tr>
         <th scope="row">advisor</th>
         <td>{i+1}</td>
-        <td>{ele.dueDate}</td>
-        <td>{ele.grossprem}</td>
-        <td>{ele.duty}</td>
-        <td>{ele.tax}</td>
-        <td>{ele.commin_amt}</td>
-        <td>{ele.ovin_amt}</td>
-        <td>{ele.commout1_amt}</td>
-        <td>{ele.ovout1_amt}</td>
+        <td scope="col-2"><input type="date" name={`dueDate-${i}`}   defaultValue={ele.dueDate}></input></td>
+        <td scope="col-2"><input type="number" name={`grossprem-${i}`}  step={.01} defaultValue={ele.grossprem}></input></td>
+        <td scope="col-1"><input type="number" name={`duty-${i}`}  step={.01} defaultValue={ele.duty}></input></td>
+        <td scope="col-1"><input type="number" name={`tax-${i}`}  step={.01} defaultValue={ele.tax}></input></td>
+        <td scope="col-1"><input type="number" name={`commin_amt-${i}`}  step={.01} defaultValue={ele.commin_amt}></input></td>
+        <td scope="col-1"><input type="number" name={`ovin_amt-${i}`}  step={.01} defaultValue={ele.ovin_amt}></input></td>
+        <td scope="col-1"><input type="number" name={`commout1_amt-${i}`}  step={.01} defaultValue={ele.commout1_amt}></input></td>
+        <td scope="col-1"><input type="number" name={`ovout1_amt-${i}`}  step={.01} defaultValue={ele.ovout1_amt}></input></td>
+        <td scope="col-1"><button >Edit</button></td>
       </tr>)
     })}
-   
+    {installment.insurer.length >0? 
+    <tr>
+    <th scope="row">Summary Insurer</th>
+       <td></td>
+       <td></td>
+       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.grossprem.toFixed(2)), 0)}</td>
+       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + curr.duty, 0)}</td>
+       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0)}</td>
+       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + curr.commin_amt, 0)}</td>
+       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + curr.ovin_amt, 0)}</td>
+       <td></td>
+       <td></td>
+     </tr>
+    :null}
+  
+  {installment.advisor.length >0? 
+  <tr>
+  <th scope="row">Summary Advisor</th>
+       <td></td>
+       <td></td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.grossprem, 0)}</td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.duty, 0)}</td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.tax, 0)}</td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.commin_amt, 0)}</td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.ovin_amt, 0)}</td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.commout1_amt, 0)}</td>
+       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.ovout1_amt, 0)}</td>
+   </tr>
+  :null}
+    
+
+    <tr>
+   <th scope="row">This Policy</th>
+      <td></td>
+      <td></td>
+      <td>{formData.grossprem}</td>
+      <td>{formData.duty}</td>
+      <td>{formData.tax}</td>
+      <td>{formData.commin_amt}</td>
+      <td>{formData.ovin_amt}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    
   </tbody>
 </table>
       {/* entity table */}
