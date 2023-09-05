@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PolicyList from "./PolicyList";
+import PolicyListV2 from "./PolicyListV2";
 import jwt_decode from "jwt-decode";
 import {
   HeaderProfile,
@@ -130,7 +131,7 @@ const PolicyExcel = () => {
       </Border> */}
 
       <h2 className="text-center">Add New Policy</h2>
-      <PolicyList userId={profile.id} />
+      <PolicyListV2 userId={profile.id} />
     </>
   );
 };

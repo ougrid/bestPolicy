@@ -123,11 +123,18 @@ const findPolicyByBillno = async (req,res) => {
           type: QueryTypes.SELECT
         }
       );
+      const old_keyid = await sequelize.query('select id from static_data.b_jabilladvisors where billadvisorno = :billadvisor',{
+        replacements: {
+          billadvisor: req.body.billadvisor
+        },
+        type: QueryTypes.SELECT
+      })
+
       if (records.length === 0) {
         await res.status(201).json({msg:"not found policy in bill"})
       }else{
 
-        await res.json(records)
+        await res.json({data:records, old_keyid: old_keyid[0].id})
       }
 
 }
@@ -246,34 +253,42 @@ const getbilladvisordetail =async (req,res) =>{
 
 const editbilladvisor = async (req,res) =>{
   //insert new bill to master jabilladvisor
+  const t = await sequelize.transaction();
+  try{
+
+  
   const billadvisors = await sequelize.query(
     'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active, old_keyid ) ' +
-    'VALUES (:insurerID, :agentID, '+
+    'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode), '+
+    '(select id from static_data."Agents" where "agentCode" = :agentCode), '+
     ':billadvisorno, :billdate, :createusercode, :amt, :cashierreceiptno, \'Y\', :old_keyid) RETURNING "id"',
         {
           replacements: {
-            insurerID:req.body.bill.insurerID,
-            agentID:req.body.bill.agentID,
+            insurerCode:req.body.bill.insurerCode,
+            agentCode:req.body.bill.agentCode,
             billadvisorno: req.body.bill.billadvisorno,
-            billdate: Date.now(),
+            billdate: new Date(),
             createusercode: "kewn",
             amt:req.body.bill.amt,
             cashierreceiptno:null,
             old_keyid: req.body.bill.old_keyid,
           },
+          transaction: t ,
           type: QueryTypes.INSERT
         }
       );
 
       //update status old bill
        await sequelize.query(
-        'UPDATE static_data.b_jabilladvisors SET active = \'N\', inactiveusercode = :inactiveusercode, inactivedate = :inactivedate WHERE id = :old_keyid',
+        'UPDATE static_data.b_jabilladvisors SET active = \'N\', inactiveusercode = :inactiveusercode, inactivedate = :inactivedate WHERE id = :old_keyid ;',
             {
               replacements: {
-                inactivedate: Date.now(),
+                inactivedate: new Date(),
                 inactiveusercode: "kewneditja",
                 old_keyid: req.body.bill.old_keyid,
-              }
+              },
+              transaction: t ,
+              type: QueryTypes.INSERT
             }
           );
   for (let i = 0; i < req.body.detail.length; i++) {
@@ -288,7 +303,7 @@ const editbilladvisor = async (req,res) =>{
                 keyidm: billadvisors[0][0].id,
                 policyNo: req.body.detail[i].policyNo,
                 insureeCode: req.body.detail[i].insureeCode,
-                motorid: req.body.detail[i].itemlist,
+                motorid: req.body.detail[i].itemList,
                 grossprem: req.body.detail[i].grossprem,
                 duty: req.body.detail[i].duty,
                 tax: req.body.detail[i].tax,
@@ -301,6 +316,7 @@ const editbilladvisor = async (req,res) =>{
                 billpremium: req.body.detail[i].billpremium,
                 updateusercode: "kewn",
               },
+              transaction: t ,
               type: QueryTypes.INSERT
             }
           );
@@ -311,20 +327,22 @@ const editbilladvisor = async (req,res) =>{
           'DO $$ '+
             'DECLARE a_polid int; a_billadvisorno text; a_netflag text; '+
             'BEGIN  '+
-            'UPDATE static_data."Transactions" SET billadvisor = null, netflag = null WHERE billadvisor = (select billadvisor from static_data.b_jabilladvisors where id = old_keyid );'+
+            'UPDATE static_data."Transactions" SET billadvisor = null, netflag = null WHERE billadvisor = (select billadvisor from static_data.b_jabilladvisors where id = '+req.body.bill.old_keyid+' ) '+
             'FOR a_polid,a_billadvisorno,a_netflag IN '+
-                'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' m.id = :keyidm'+
-            'LOOP UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
+                'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id = '+billadvisors[0][0].id+' '+
+            'LOOP '+ 
+            'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
             'END LOOP; '+
           'END $$;',
           { 
-            replacements: {
-              old_keyid: req.body.bill.old_keyid,
-              keyidm:billadvisors[0][0].id,
-          },
-          raw: true }
+          transaction: t ,
+          raw: true 
+        }
         )
-    
+     } catch (error) {
+      console.log(error);
+      await t.rollback();
+      }
     await res.json({msg:"success!!"})
 }
 
