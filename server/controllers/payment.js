@@ -63,7 +63,7 @@ const findTransaction = async (req,res) => {
     for (let i = 0; i < transac.length; i++) {
     
     const data = await sequelize.query(
-          'select (select ent."t_ogName" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ins."insurerCode" = tran."insurerCode" ) as "insurerName",* from static_data."Transactions" tran  where '+
+          'select (select ent."t_ogName" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ins."insurerCode" = tran."insurerCode" ) as "insurerName",* from static_data."b_jaaraps" tran  where '+
           'CASE WHEN :filter = \'policyNo\'  THEN tran."policyNo" = :value '+
           'WHEN :filter = \'agentCode\' then tran."agentCode" = :value '+
           'else tran."insurerCode" = (select "insurerCode" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ent."t_ogName" = :value ) '+
@@ -88,7 +88,7 @@ const findTransaction = async (req,res) => {
 const findPolicyByPreminDue = async (req,res) => {
 
     const records = await sequelize.query(
-      'select * from static_data."Transactions" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
+      'select * from static_data."b_jaaraps" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
       'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode '+
       'and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)',
           {
@@ -115,7 +115,7 @@ const findPolicyByPreminDue = async (req,res) => {
 const findPolicyByBillno = async (req,res) => {
 
   const records = await sequelize.query(
-    'select * from  static_data."Policies" pol  join static_data."Transactions" tran  on tran."policyNo" = pol."policyNo" where tran.billadvisor = :billadvisor  and "transType" = \'PREM-IN\'',
+    'select * from  static_data."Policies" pol  join static_data."b_jaaraps" tran  on tran."policyNo" = pol."policyNo" where tran.billadvisor = :billadvisor  and "transType" = \'PREM-IN\'',
         {
           replacements: {
             billadvisor: req.body.billadvisor
@@ -200,7 +200,7 @@ const createbilladvisor = async (req,res) =>{
                 'BEGIN FOR a_polid,a_billadvisorno,a_netflag IN '+
                     'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id =  '+ billadvisors[0][0].id +
                 ' LOOP  '+
-                'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
+                'UPDATE static_data."b_jaaraps" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
                 'END LOOP; '+
               'END $$;',
               
@@ -291,9 +291,10 @@ const editbilladvisor = async (req,res) =>{
               type: QueryTypes.INSERT
             }
           );
+
   for (let i = 0; i < req.body.detail.length; i++) {
       //insert to deteil of jabilladvisor
-      sequelize.query(
+      await sequelize.query(
         'insert into static_data.b_jabilladvisordetails (keyidm, polid, customerid, motorid, grossprem, duty, tax, totalprem, "comm-out%", "comm-out-amt", '+
         ' "ov-out%", "ov-out-amt", netflag, billpremium,updateusercode) '+
         'values (:keyidm, (select id from static_data."Policies" where "policyNo" = :policyNo), (select id from static_data."Insurees" where "insureeCode" = :insureeCode), :motorid, '+
@@ -322,23 +323,41 @@ const editbilladvisor = async (req,res) =>{
           );
 
         }
+        console.log('oldkeyid : ' +req.body.bill.old_keyid);
+        console.log('billid : ' +billadvisors[0][0].id);
         //update ARAP table remove old billadvisor && netflag then update
-        sequelize.query(
-          'DO $$ '+
-            'DECLARE a_polid int; a_billadvisorno text; a_netflag text; '+
-            'BEGIN  '+
-            'UPDATE static_data."Transactions" SET billadvisor = null, netflag = null WHERE billadvisor = (select billadvisor from static_data.b_jabilladvisors where id = '+req.body.bill.old_keyid+' ) '+
-            'FOR a_polid,a_billadvisorno,a_netflag IN '+
-                'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id = '+billadvisors[0][0].id+' '+
-            'LOOP '+ 
-            'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
-            'END LOOP; '+
-          'END $$;',
+        await sequelize.query(
+          `DO $$ 
+          DECLARE 
+            a_polid int; 
+            a_billadvisorno text; 
+            a_netflag text; 
+          BEGIN 
+            -- Update rows where billadvisor matches
+            UPDATE static_data."b_jaaraps" 
+            SET billadvisor = null, netflag = null 
+            WHERE billadvisor = (SELECT billadvisor FROM static_data.b_jabilladvisors WHERE id = ${req.body.bill.old_keyid} ); 
+            
+            -- Loop through selected rows and update
+            FOR a_polid, a_billadvisorno, a_netflag IN 
+              SELECT d.polid, m.billadvisorno, d.netflag 
+              FROM static_data.b_jabilladvisordetails d 
+              JOIN static_data.b_jabilladvisors m ON m.id = d.keyidm 
+              WHERE m.active = 'Y' AND m.id = ${billadvisors[0][0].id} 
+            LOOP
+              UPDATE static_data."b_jaaraps" 
+              SET billadvisor = a_billadvisorno, netflag = a_netflag 
+              WHERE polid = a_polid; 
+            END LOOP; 
+          END $$;`,
           { 
           transaction: t ,
           raw: true 
         }
         )
+
+        await t.commit();
+
      } catch (error) {
       console.log(error);
       await t.rollback();

@@ -32,16 +32,16 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
 //RunType = บอกว่าเป็น runno ของค่าอะไร ,
 // Paramclass, subclass -> ในกรณีที่เลข runno แบ่งย่อยตาม class/subclass ประกัน 
 // outletcode -> ยังไม่ใช้
-const getRunNo = async (req,res) => {
+const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
 
     //public static long GetRunNo(string BrCode, string RunType, string ParamClass, string SubClass, string OutletCode, string UpdateUserCode, DateTime EffectiveDate)
  
     let RunNo = 0;
-    let RunType = req.runtype
-    let ParamClass = req.paramclass
-    let SubClass = req.subclass
-    let UpdateUserCode = req.usercode
-    let EffectiveDate = req.effdate
+    let RunType = runtype
+    let ParamClass = paramclass
+    let SubClass = subclass
+    let UpdateUserCode = usercode
+    let EffectiveDate = effdate
 
     try {
 
@@ -61,13 +61,13 @@ const getRunNo = async (req,res) => {
     // {
     //     RunType,
     //   };
-      if (ParamClass === '') {
+      if (ParamClass === '' || ParamClass === null) {
         //condition.Class = null;
       } else {
         //condition.Class = ParamClass;
         condition = condition + ` and "Class" = '${ParamClass}'`;
       }
-      if (SubClass === '') {
+      if (SubClass === '' || SubClass === null) {
         //condition.SubClass = null;
       } else {
         //condition.SubClass = SubClass;
@@ -165,7 +165,7 @@ const testRunno =  async (req,res) =>{
    await res.json({result: result})
 }
 module.exports = {
-
+getRunNo,
 testRunno
 
 };

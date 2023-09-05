@@ -179,6 +179,12 @@ const PolicyScreen = (props) => {
   const getcommov = (e) => {
     e.preventDefault();
     //get comm  ov setup
+    let i =1
+    if(e.target.name === 'btn_comm1'){
+      i =1
+    }else if(e.target.name === 'btn_comm2'){
+      i =2
+    }
     axios
       .post(url + "/insures/getcommov", formData)
       .then((res) => {
@@ -187,12 +193,12 @@ const PolicyScreen = (props) => {
           ...prevState,
           [`commin_rate`]: res.data[0].rateComIn,
           [`ovin_rate`]: res.data[0].rateOVIn_1,
-          [`commout_rate`]: res.data[0].rateComOut,
-          [`ovout_rate`]: res.data[0].rateOVOut_1,
+          [`commout${i}_rate`]: res.data[0].rateComOut,
+          [`ovout${i}_rate`]: res.data[0].rateOVOut_1,
           [`commin_amt`]: res.data[0].rateComIn * formData[`grossprem`] / 100,
           [`ovin_amt`]: res.data[0].rateOVIn_1 * formData[`grossprem`] / 100,
-          [`commout_amt`]: res.data[0].rateComOut * formData[`grossprem`] / 100,
-          [`ovout_amt`]: res.data[0].rateOVOut_1 * formData[`grossprem`] / 100,
+          [`commout${i}_amt`]: res.data[0].rateComOut * formData[`grossprem`] / 100,
+          [`ovout${i}_amt`]: res.data[0].rateOVOut_1 * formData[`grossprem`] / 100,
 
         }));
       })
@@ -270,10 +276,27 @@ const PolicyScreen = (props) => {
       taxNo = formData.regisNo.toString()
       data.push({ ...formData, t_ogName: t_ogName, taxNo: taxNo, t_firstName: t_firstName, t_lastName: t_lastName, idCardNo: idCardNo, idCardType: idCardType })
     }
-
+    data[0].specdiscamt = document.getElementsByName('specdiscamt')[0].value
+    data[0].netgrossprem = document.getElementsByName('grossprem')[0].value - document.getElementsByName('specdiscamt')[0].value
+    data[0].tax = document.getElementsByName('tax')[0].value
+    data[0].duty = document.getElementsByName('duty')[0].value
+    data[0].totalprem = document.getElementsByName('totalprem')[0].value 
+    data[0].commin_amt = document.getElementsByName('commin_amt')[0].value 
+    data[0].ovin_amt = document.getElementsByName('ovin_amt')[0].value 
+    data[0].commout1_amt = document.getElementsByName('commout1_amt')[0].value 
+    data[0].ovout1_amt = document.getElementsByName('ovout1_amt')[0].value 
+    if (document.getElementsByName('commout2_amt')[0]) {
+      data[0].commout2_amt = document.getElementsByName('commout2_amt')[0].value 
+    }
+    if (document.getElementsByName('ovout2_amt')[0]) {
+      
+      data[0].ovout2_amt = document.getElementsByName('ovout2_amt')[0].value 
+    }
+    data[0].commout_amt = document.getElementsByName('commout_amt')[0].value 
+    data[0].ovout_amt = document.getElementsByName('ovout_amt')[0].value 
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policynew/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     });
@@ -548,7 +571,7 @@ const PolicyScreen = (props) => {
                 className="form-control"
                 type="number"
                 step={0.1}
-                value={formData[`specdiscrate`]}
+                value={parseFloat(formData[`specdiscrate`])}
                 name={`specdiscrate`}
                 onChange={(e) => handleChange(e)}
               />
@@ -628,7 +651,7 @@ const PolicyScreen = (props) => {
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            comm_in% (1)<span class="text-danger"> *</span>
+            comm_in% <span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -636,8 +659,8 @@ const PolicyScreen = (props) => {
                 className="form-control"
                 type="number"
                 step={0.1}
-                value={formData[`commin1_rate`]}
-                name={`commin1_rate`}
+                value={formData[`commin_rate`]}
+                name={`commin_rate`}
                 onChange={(e) => handleChange(e)}
               />
             </div>
@@ -647,8 +670,8 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`commin1_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2))|| ""}
-                name={`commin1_amt`}
+                value={parseFloat((formData[`commin_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2))|| ""}
+                name={`commin_amt`}
                 onChange={(e) => handleChange(e)}
               />
             </div>
@@ -659,7 +682,7 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            OV_in % (1)<span class="text-danger"> *</span>
+            OV_in % <span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -667,8 +690,8 @@ const PolicyScreen = (props) => {
                 className="form-control"
                 type="number"
                 step={0.1}
-                value={formData[`ovin1_rate`]}
-                name={`ovin1_rate`}
+                value={formData[`ovin_rate`]}
+                name={`ovin_rate`}
                 onChange={handleChange}
               />
             </div>
@@ -678,8 +701,8 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                name={`ovin1_amt`}
-                value={parseFloat((formData[`ovin1_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                name={`ovin_amt`}
+                value={parseFloat((formData[`ovin_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
                 onChange={handleChange}
               />
             </div>
@@ -708,7 +731,7 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={(formData[`commout1_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`commout1_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
                 name={`commout1_amt`}
                 onChange={handleChange}
               />
@@ -749,7 +772,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-1 align-bottom">
         
-          <button type="button" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
+          <button type="button" name="btn_comm1" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
         </div>
 
 
@@ -757,69 +780,6 @@ const PolicyScreen = (props) => {
 
       <div class="row">
         <div className="col-1"></div>
-        <div class="col-2">
-          <label class="form-label ">
-            comm_in% (2)<span class="text-danger"> *</span>
-          </label>
-          <div className="row">
-            <div className="col">
-              <input
-                className="form-control"
-                type="number"
-                step={0.1}
-                value={formData[`commin2_rate`]}
-                name={`commin2_rate`}
-                onChange={(e) => handleChange(e)}
-              />
-            </div>
-            <div className="col">
-              <input
-                className="form-control"
-                type="number"
-                disabled
-                step={0.1}
-                //value={(formData[`commin2_rate`] * formData[`grossprem`]) / 100 || ""}
-                value={parseFloat((formData[`commin2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
-                name={`commin2_amt`}
-                onChange={(e) => handleChange(e)}
-              />
-            </div>
-          </div>
-
-        </div>
-
-
-        <div class="col-2">
-          <label class="form-label ">
-            OV_in % (2)<span class="text-danger"> *</span>
-          </label>
-          <div className="row">
-            <div className="col">
-              <input
-                className="form-control"
-                type="number"
-                step={0.1}
-                value={formData[`ovin2_rate`]}
-                name={`ovin2_rate`}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col">
-              <input
-                className="form-control"
-                type="number"
-                disabled
-                step={0.1}
-                name={`ovin2_amt`}
-                //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
-                value={parseFloat((formData[`ovin2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-        </div>
-
         <div class="col-2">
           <label class="form-label ">
             comm_out% (2)<span class="text-danger"> *</span>
@@ -832,7 +792,7 @@ const PolicyScreen = (props) => {
                 step={0.1}
                 value={formData[`commout2_rate`]}
                 name={`commout2_rate`}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
               />
             </div>
             <div className="col">
@@ -841,20 +801,21 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
+                //value={(formData[`commin2_rate`] * formData[`grossprem`]) / 100 || ""}
                 value={parseFloat((formData[`commout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
-                //value={(formData[`commout2_rate`] * formData[`grossprem`]) / 100 || ""}
                 name={`commout2_amt`}
-                onChange={handleChange}
+                onChange={(e) => handleChange(e)}
               />
             </div>
-
           </div>
+
         </div>
+
+
         <div class="col-2">
           <label class="form-label ">
             OV_out % (2)<span class="text-danger"> *</span>
           </label>
-
           <div className="row">
             <div className="col">
               <input
@@ -873,8 +834,70 @@ const PolicyScreen = (props) => {
                 disabled
                 step={0.1}
                 name={`ovout2_amt`}
-                //value={(formData[`ovout2_rate`] * formData[`grossprem`]) / 100 || ""}
+                //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
                 value={parseFloat((formData[`ovout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-2">
+          <label class="form-label ">
+            comm_out% (sum)<span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={parseFloat(formData[`commout1_rate`] || 0)  + parseFloat(formData[`commout2_rate`] || 0)}
+                name={`commout_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                // value={parseFloat((formData[`commout_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={((document.getElementsByName(`commout_rate`)[0] ? document.getElementsByName(`commout_rate`)[0].value: 0) * ((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ''}
+                name={`commout_amt`}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
+        </div>
+        <div class="col-2">
+          <label class="form-label ">
+            OV_out % (sum)<span class="text-danger"> *</span>
+          </label>
+
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1} 
+                value={parseFloat(formData[`ovout1_rate`] || 0)  + parseFloat(formData[`ovout2_rate`] || 0)}
+                name={`ovout_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout_amt`}
+                //value={(formData[`ovout2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={((document.getElementsByName(`ovout_rate`)[0] ? document.getElementsByName(`ovout_rate`)[0].value: 0) * ((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ''}
                 onChange={handleChange}
               />
             </div>
@@ -883,7 +906,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-1 align-bottom">
 
-          <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
+          <button type="button" name="btn_comm2" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
         </div>
 
 

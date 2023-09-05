@@ -5,6 +5,7 @@ const CommOVOut = require("../models").CommOVOut;
 const Insuree = require("../models").Insuree;
 const { throws } = require("assert");
 const process = require('process');
+const runningno = require('./lib/runningno');
 require('dotenv').config();
 // const Package = require("../models").Package;
 // const User = require("../models").User;
@@ -103,17 +104,24 @@ const createTransection = async (policy,t) => {
           //const dueDate = new Date()
           //dueDate.setDate(date.getDate() + i*insurer[0].premCreditT);
           await sequelize.query(
-            'INSERT INTO static_data."Transactions" ' +
-            '("transType", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
+            // 'INSERT INTO static_data."b_jaaraps" ' +
+            // '("transactiontype", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
+            // 'VALUES (:type, :subType, ' +
+            // '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
+            // ':agentCode, :policyNo, :totalamt,:totalamt, :duedate, :netgrossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :seqno ,:mainaccountcode ) ',
+            'INSERT INTO static_data."b_jaaraps" ' +
+            '("transactiontype", "subType", "insurerno","advisorno1", "advisorno2", "polid", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
             'VALUES (:type, :subType, ' +
-            '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
-            ':agentCode, :policyNo, :totalamt,:totalamt, :duedate, :netgrossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :seqno ,:mainaccountcode ) ',
+            '(select "id" from static_data."Insurers" where "insurerCode" = :insurerCode), (select "id" from static_data."Agents" where "agentCode" = :agentCode), ' +
+            '(case when :agentCode2 IS NOT NULL then (select "id" from static_data."Agents" where "agentCode" = :agentCode2) else null end ) '+
+            ' (select "id" from static_data."Policies" where "policyNo" = :policyNo), :totalamt,:totalamt, :duedate, :netgrossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :seqno ,:mainaccountcode ) ',
             {
               replacements: {
                 type: 'PREM-OUT',
                 subType: -1,
                 insurerCode: policy.insurerCode,
                 agentCode: policy.agentCode,
+                agentCode2: policy.agentCode2,
                 policyNo: policy.policyNo,
                 //totalamt: totalamt,
                 totalamt: jupgr.insurer[i].totalprem,
@@ -142,7 +150,7 @@ const createTransection = async (policy,t) => {
       //totalamt = policy.commin_amt/ policy.seqNoins
       //dueDate.setDate(dueDate.getDate() + insurer[0].commovCreditT);
       await sequelize.query(
-        'INSERT INTO static_data."Transactions" ' +
+        'INSERT INTO static_data."b_jaaraps" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -183,7 +191,7 @@ const createTransection = async (policy,t) => {
         //ov-in
         //totalamt = policy.ovin_amt/ policy.seqNoins
       await sequelize.query(
-        'INSERT INTO static_data."Transactions" ' +
+        'INSERT INTO static_data."b_jaaraps" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -232,7 +240,7 @@ const createTransection = async (policy,t) => {
           //const dueDate = new Date()
           //dueDate.setDate(date.getDate() + i*agent[0].premCreditT);
           await sequelize.query(
-            'INSERT INTO static_data."Transactions" ' +
+            'INSERT INTO static_data."b_jaaraps" ' +
             '("transType", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" , mainaccountcode ) ' +
             'VALUES (:type, :subType, ' +
             '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -272,7 +280,7 @@ const createTransection = async (policy,t) => {
       // totalamt = policy.commout1_amt/ policy.seqNoagt
       // dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
       await sequelize.query(
-        'INSERT INTO static_data."Transactions" ' +
+        'INSERT INTO static_data."b_jaaraps" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -313,7 +321,7 @@ const createTransection = async (policy,t) => {
         //ov-out
         //totalamt = policy.ovout1_amt/ policy.seqNoagt
       await sequelize.query(
-        'INSERT INTO static_data."Transactions" ' +
+        'INSERT INTO static_data."b_jaaraps" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -372,7 +380,7 @@ const createTransection = async (policy,t) => {
       const dueDate = new Date()
       dueDate.setDate(date.getDate() + agent2[0].commovCreditT);
       await sequelize.query(
-        'INSERT INTO static_data."Transactions" ' +
+        'INSERT INTO static_data."b_jaaraps" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode, "agentCode2" ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -406,7 +414,7 @@ const createTransection = async (policy,t) => {
         //ov-out
         totalamt = policy.ovout2_amt/ policy.seqNoagt
       await sequelize.query(
-        'INSERT INTO static_data."Transactions" ' +
+        'INSERT INTO static_data."b_jaaraps" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate", '+
         ' netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode, "agentCode2" ) ' +
         'VALUES (:type, :subType, ' +
@@ -739,223 +747,7 @@ const newPolicyList = async (req, res) => {
     createTransection(req.body[i])
 
 
-    // //find credit term 
-    // const insurer = await sequelize.query(
-    //   'select * FROM static_data."Insurers" where "insurerCode" = :insurerCode',
-    //   {
-    //     replacements: {
-    //       insurerCode: req.body[i].insurerCode,
-    //     },
-    //     type: QueryTypes.SELECT
-    //   }
-    // )
-    // const agent = await sequelize.query(
-    //   'select * FROM static_data."Agents" ' +
-    //   'where "agentCode" = :agentcode',
-    //   {
-    //     replacements: {
-    //       agentcode: req.body[i].agentCode,
-    //     },
-    //     type: QueryTypes.SELECT
-    //   }
-    // )
-   
     
-    // // find comm ov defualt
-    // const records = await sequelize.query(
-    //   'select * FROM static_data."CommOVOuts" comout ' +
-    //   'JOIN static_data."CommOVIns" comin ' +
-    //   'ON comin."insurerCode" = comout."insurerCode" and comin."insureID" = comout."insureID" ' +
-    //   'where comout."agentCode" = :agentcode ' +
-    //   'and comout."insureID" = (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass) '+
-    //   'and comout."insurerCode" = :insurerCode',
-    //   {
-    //     replacements: {
-    //       agentcode: req.body[i].agentCode,
-    //       class: req.body[i].class,
-    //       subClass: req.body[i].subClass,
-    //       insurerCode: req.body[i].insurerCode,
-    //     },
-    //     type: QueryTypes.SELECT
-    //   }
-    // )
-
-    //  // case 2 advisor
-    //  let agent2 =[];
-    //  let records2 =[];
-    //  if (req.body[i].agentCode !== null) {
-    //    agent2 = await sequelize.query(
-    //      'select * FROM static_data."Agents" ' +
-    //      'where "agentCode" = :agentcode',
-    //      {
-    //        replacements: {
-    //          agentcode: req.body[i].agentCode2,
-    //        },
-    //        type: QueryTypes.SELECT
-    //      }
-    //    )
-    //     // find comm ov defualt
-    //  records2 = await sequelize.query(
-    //    'select * FROM static_data."CommOVOuts" comout ' +
-    //    'where comout."agentCode" = :agentcode ' +
-    //    'and comout."insureID" = (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass) '+
-    //    'and comout."insurerCode" = :insurerCode',
-    //    {
-    //      replacements: {
-    //        agentcode: req.body[i].agentCode2,
-    //        class: req.body[i].class,
-    //        subClass: req.body[i].subClass,
-    //        insurerCode: req.body[i].insurerCode,
-    //      },
-    //      type: QueryTypes.SELECT
-    //    }
-    //  )
-    //  }
-    
-    // const setupcom = [["rateComOut", 'COMM-OUT', 'O'],
-    // ["rateOVOut_1", 'OV-OUT', 'O'],
-    // ["rateComIn", 'COMM-IN', 'I'],
-    // ["rateOVIn_1", 'OV-IN', 'I'],
-    
-    // [null, 'PREM-IN', 'I'],
-    // [null, 'PREM-OUT', 'O'],
-    // ]
-
-    // for (let j = 0; j < setupcom.length; j++) {
-    //   let subType = null
-    //   let commamt = null
-    //   let ovamt = null
-    //   let totalamt = null
-    //   let dueDate = new Date()
-    //   const seqnoins = req.body[i].seqNoins
-    //   const seqnoang = req.body[i].seqNoagt
-    //   let mainaccount = null
-      
-    //   //แบ่งงวด insurer
-    //   for (let k = 1 ; k <= seqnoins ; k++){
-    //     if (await records[0][setupcom[j][0]] != null) {
-
-    //       if (setupcom[j][1] === 'COMM-OUT') {
-    //         subType = -1
-    //         commamt = req.body[i].commout_amt
-    //         totalamt = req.body[i].commout_amt
-    //         dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
-  
-    //       } else if (setupcom[j][1] === 'OV-OUT') {
-    //         subType = -1
-    //         ovamt = req.body[i].ovout_amt
-    //         totalamt = req.body[i].ovout_amt
-    //         dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
-  
-    //       } 
-    //     } else {
-    //       if (setupcom[j][1] === 'PREM-OUT') {
-    //         subType = -1
-    //         totalamt = req.body[i].totalprem
-    //         dueDate.setDate(dueDate.getDate() + insurer[0].premCreditT);
-    //       }
-    //     }
-    //     await sequelize.query(
-    //       'INSERT INTO static_data."Transactions" ' +
-    //       '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,ovamt,ovtaxamt,totalamt,remainamt,"dueDate",grossprem,duty,tax,totalprem,txtype2, polid ) ' +
-    //       'VALUES (:type, :subType, ' +
-    //       '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
-    //       ':agentCode, :policyNo, :commamt , :commtaxamt, :ovamt, :ovtaxamt,:totalamt,:totalamt, :duedate, :grossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1)  ) ',
-    //       {
-    //         replacements: {
-    //           type: setupcom[j][1],
-    //           subType: subType,
-    //           insurerCode: req.body[i].insurerCode,
-    //           agentCode: req.body[i].agentCode,
-    //           policyNo: req.body[i].policyNo,
-    //           commamt: commamt,
-    //           commtaxamt: null,
-    //           ovamt: ovamt,
-    //           ovtaxamt: null,
-    //           totalamt: totalamt,
-    //           duedate: dueDate,
-    //           grossprem: req.body[i].grossprem,
-    //           duty: req.body[i].duty,
-    //           tax: req.body[i].tax,
-    //           totalprem: req.body[i].totalprem,
-    //           txtype2 :1,
-  
-    //         },
-    //         type: QueryTypes.INSERT
-    //       }
-    //     );
-    //   }
-    //   if (await records[0][setupcom[j][0]] != null) {
-
-    //     if (setupcom[j][1] === 'COMM-OUT') {
-    //       subType = -1
-    //       commamt = req.body[i].commout_amt/
-    //       totalamt = req.body[i].commout_amt
-    //       dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
-
-    //     } else if (setupcom[j][1] === 'OV-OUT') {
-    //       subType = -1
-    //       ovamt = req.body[i].ovout_amt
-    //       totalamt = req.body[i].ovout_amt
-    //       dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
-
-    //     } else if (setupcom[j][1] === 'COMM-IN') {
-    //       subType = 1
-    //       commamt = req.body[i].commin_amt
-    //       totalamt = req.body[i].commin_amt
-    //       dueDate.setDate(dueDate.getDate() + insurer[0].commovCreditT);
-
-    //     } else if (setupcom[j][1] === 'OV-IN') {
-    //       subType = 1
-    //       ovamt = req.body[i].ovin_amt
-    //       totalamt = req.body[i].ovin_amt
-    //       dueDate.setDate(dueDate.getDate() + insurer[0].commovCreditT);
-    //     }
-    //   } else {
-    //     if (setupcom[j][1] === 'PREM-IN') {
-    //       subType = 1
-    //       totalamt = req.body[i].totalprem
-    //       dueDate.setDate(dueDate.getDate() + agent[0].premCreditT);
-    //     } else if (setupcom[j][1] === 'PREM-OUT') {
-    //       subType = -1
-    //       totalamt = req.body[i].totalprem
-    //       dueDate.setDate(dueDate.getDate() + insurer[0].premCreditT);
-    //     }
-    //   }
-    //   console.log(dueDate);
-    //   console.log({ commamt: commamt, ovamt: ovamt });
-    //   await sequelize.query(
-    //     'INSERT INTO static_data."Transactions" ' +
-    //     '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,ovamt,ovtaxamt,totalamt,remainamt,"dueDate",grossprem,duty,tax,totalprem,txtype2, polid ) ' +
-    //     'VALUES (:type, :subType, ' +
-    //     '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
-    //     ':agentCode, :policyNo, :commamt , :commtaxamt, :ovamt, :ovtaxamt,:totalamt,:totalamt, :duedate, :grossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1)  ) ',
-    //     {
-    //       replacements: {
-    //         type: setupcom[j][1],
-    //         subType: subType,
-    //         insurerCode: req.body[i].insurerCode,
-    //         agentCode: req.body[i].agentCode,
-    //         policyNo: req.body[i].policyNo,
-    //         commamt: commamt,
-    //         commtaxamt: null,
-    //         ovamt: ovamt,
-    //         ovtaxamt: null,
-    //         totalamt: totalamt,
-    //         duedate: dueDate,
-    //         grossprem: req.body[i].grossprem,
-    //         duty: req.body[i].duty,
-    //         tax: req.body[i].tax,
-    //         totalprem: req.body[i].totalprem,
-    //         txtype2 :1,
-
-    //       },
-    //       type: QueryTypes.INSERT
-    //     }
-    //   );
-
-      
-    // }
 
   }
 
@@ -1133,24 +925,27 @@ const draftPolicyList = async (req, res) => {
         req.body[i][`ovout_amt`] = req.body[i][`ovout1_amt`]
       }
 
-    
+    //get application no
+    req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw','2023-09-05');
+    console.log(req.body[i].applicationNo);
+
       //insert policy
       await sequelize.query(
         'insert into static_data."Policies" ("applicationNo","insureeCode","insurerCode","agentCode","agentCode2","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem, ' +
         'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode, "itemList","status", ' +
-        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, "seqNoins", "seqNoagt",netgrossprem) ' +
+        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, netgrossprem) ' +
         // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
         'values ( :applicationNo, :insureeCode, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
         ':agentCode, :agentCode2, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
         ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem, ' +
         ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList ,\'I\', ' +
-        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :seqNoins, :seqNoagt,:netgrossprem)',
+        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt,:netgrossprem)',
         {
           replacements: {
             applicationNo: req.body[i].applicationNo,
-            seqNoins: req.body[i].seqNoins,
-            seqNoagt: req.body[i].seqNoagt,
+            // seqNoins: req.body[i].seqNoins,
+            // seqNoagt: req.body[i].seqNoagt,
             // entityInsuree:
             insureeCode: insureeCode,
             insurerCode: req.body[i].insurerCode,

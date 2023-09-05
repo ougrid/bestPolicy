@@ -25,8 +25,8 @@ const PolicyCard = (props) => {
   const [insurerDD, setInsurerDD] = useState([]);
   const [motorbrandDD, setMotorbrandDD] = useState([]);
   const [motormodelDD, setMotormodelDD] = useState([]);
-  const [installment, setInstallment] = useState({insurer : [], advisor : []})
-  
+  const [installment, setInstallment] = useState({ insurer: [], advisor: [] })
+
   const handleChange = async (e) => {
     e.preventDefault();
 
@@ -84,13 +84,13 @@ const PolicyCard = (props) => {
           [e.target.name]: e.target.value,
           ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
         }));
-      }else if (e.target.name === 'grossprem')
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-        duty: (duty * formData[`grossprem`]) / 100,
-        tax : (tax * formData[`grossprem`]) / 100
-      }));
+      } else if (e.target.name === 'grossprem')
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          duty: (duty * formData[`grossprem`]) / 100,
+          tax: (tax * formData[`grossprem`]) / 100
+        }));
     }
 
     //set dropdown title follow to personType
@@ -172,12 +172,12 @@ const PolicyCard = (props) => {
         const array = [];
         model.data.forEach((ele) => {
           array.push(
-            <option  value={ele.MODEL} >
+            <option value={ele.MODEL} >
               {ele.MODEL}
             </option>
           );
         });
-        setMotormodelDD (array);
+        setMotormodelDD(array);
       })
       .catch((err) => {
         // alert("cant get aumphur");
@@ -257,31 +257,68 @@ const PolicyCard = (props) => {
       });
   };
 
-  const editInstallment = (type,index) => {
+  const editInstallment = (e,type, index) => {
+    // e.preventDefault();
     //get tambons in distric selected
+    const arrI =[]
+    const arrA =[]
+    // get old installment
+    installment.insurer.map(ele =>{
+      arrI.push(ele)
+    })
+    installment.advisor.map(ele =>{
+      arrA.push(ele)
+    })
     if (type === 'insurer') {
       const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
-      const grossprem = parseInt(document.getElementsByName(`grossprem-${index}`)[0].value)
-      const duty = parseInt(document.getElementsByName(`duty-${index}`)[0].value)
-      const tax = document.getElementsByName(`tax-${index}`)[0].value
-      const commin_amt = document.getElementsByName(`commin_amt-${index}`)[0].value
-      const ovin_amt = document.getElementsByName(`ovin_amt-${index}`)[0].value
-      const commout1_amt = document.getElementsByName(`commout1_amt-${index}`)[0].value
-      const ovout1_amt = document.getElementsByName(`ovout1_amt-${index}`)[0].value
-
+      const netgrossprem = parseFloat(document.getElementsByName(`netgrossprem-${index}`)[0].value)
+      const dutyamt = parseFloat((netgrossprem * duty).toFixed(2))
+      const taxamt = parseFloat((netgrossprem * tax).toFixed(2))
+      const commin_amt = parseFloat((formData.commin_rate * netgrossprem / 100).toFixed(2))
+      const ovin_amt = parseFloat((formData.ovin_rate * netgrossprem / 100).toFixed(2))
 
       
-    }else if(type === 'advisor')
-    {
+      arrI[index] = {
+        netgrossprem: netgrossprem,
+        tax: taxamt,
+        duty: dutyamt,
+        totalprem: parseFloat((netgrossprem + tax + duty).toFixed(2)),
+        dueDate: dueDate,
+        commin_amt: commin_amt,
+        commin_taxamt: parseFloat((commin_amt * tax).toFixed(2)),
+        ovin_amt: ovin_amt,
+        ovin_taxamt: parseFloat((ovin_amt * tax).toFixed(2))
+      }
+      console.log(arrI);
+      setInstallment()
+
+    } else if (type === 'advisor') {
       const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
-      const grossprem = parseInt(document.getElementsByName(`grossprem-${index}`)[0].value)
-      const duty = parseInt(document.getElementsByName(`duty-${index}`)[0].value)
-      const tax = document.getElementsByName(`tax-${index}`)[0].value
-      const commin_amt = document.getElementsByName(`commin_amt-${index}`)[0].value
-      const ovin_amt = document.getElementsByName(`ovin_amt-${index}`)[0].value
-      const commout1_amt = document.getElementsByName(`commout1_amt-${index}`)[0].value
-      const ovout1_amt = document.getElementsByName(`ovout1_amt-${index}`)[0].value
+      const netgrossprem = parseFloat(document.getElementsByName(`netgrossprem-${index}`)[0].value)
+      const dutyamt = parseFloat((duty * netgrossprem).toFixed(2))
+      const taxamt = parseFloat((tax * netgrossprem).toFixed(2))
+      const commin_amt = parseFloat((formData.commin_rate * netgrossprem / 100).toFixed(2))
+      const ovin_amt = parseFloat((formData.ovin_rate * netgrossprem / 100).toFixed(2))
+      const commout1_amt = parseFloat((formData.commout1_rate * netgrossprem / 100).toFixed(2))
+      const ovout1_amt = parseFloat((formData.ovout1_rate * netgrossprem / 100).toFixed(2))
+
+    // get old installment
+    arrA[index] = {
+      netgrossprem: netgrossprem,
+      tax: taxamt,
+      duty: dutyamt,
+      totalprem: parseFloat((netgrossprem + tax + duty).toFixed(2)),
+      dueDate: dueDate,
+      commin_amt: commin_amt,
+      commin_taxamt: parseFloat((commin_amt * tax).toFixed(2)),
+      ovin_amt: ovin_amt,
+      ovin_taxamt: parseFloat((ovin_amt * tax).toFixed(2)),
+      commout1_amt: commout1_amt,
+      ovout1_amt: ovout1_amt
     }
+    
+  }
+  setInstallment({insurer: arrI, advisor : arrA})
   };
 
 
@@ -443,10 +480,10 @@ const PolicyCard = (props) => {
         setMotorbrandDD(array);
       })
       .catch((err) => { });
-      //get installment
-      if (props.formData.installment) {
-        setInstallment(props.formData.installment)
-      }
+    //get installment
+    if (props.formData.installment) {
+      setInstallment(props.formData.installment)
+    }
   }, []);
 
   const calinstallment = (e) => {
@@ -464,103 +501,108 @@ const PolicyCard = (props) => {
     const seqNoagttype = document.getElementsByName("seqNoagttype")[0].value
 
     const arrI = []
-    if (installI){
-      let premperseq = parseFloat((formData.netgrossprem / seqNoins ).toFixed(2))
-      console.log(formData.netgrossprem - premperseq * (seqNoins-1));
+    if (installI) {
+      let premperseq = parseFloat((formData.netgrossprem / seqNoins).toFixed(2))
+      console.log(formData.netgrossprem - premperseq * (seqNoins - 1));
       let dueDate = new Date()
       for (let i = 1; i <= seqNoins; i++) {
         let dutyseq = 0
-      
+
         // cal prem
-        if (i===1) {
-          premperseq = parseFloat((formData.netgrossprem - premperseq*(seqNoins-1)).toFixed(2))
-        
+        if (i === 1) {
+          premperseq = parseFloat((formData.netgrossprem - premperseq * (seqNoins - 1)).toFixed(2))
+
         }
-        else{premperseq = parseFloat((formData.netgrossprem / seqNoins ).toFixed(2))}
+        else { premperseq = parseFloat((formData.netgrossprem / seqNoins).toFixed(2)) }
         //cal tax
         let taxseq = parseFloat((tax * premperseq).toFixed(2))
 
         //cal duty
-        if(flagallowduty){dutyseq = parseFloat((premperseq *duty).toFixed(2))}
-        else{
-          if (i===1) {
-            dutyseq = parseFloat((formData.netgrossprem *duty).toFixed(2))
-          }else {dutyseq = 0}
+        if (flagallowduty) { dutyseq = parseFloat((premperseq * duty).toFixed(2)) }
+        else {
+          if (i === 1) {
+            dutyseq = parseFloat((formData.netgrossprem * duty).toFixed(2))
+          } else { dutyseq = 0 }
         }
         // cal duedate
         if (seqNoinstype === 'M') {
           dueDate.setMonth(dueDate.getMonth() + seqNoinstime)
-        }else {dueDate.setDate (dueDate.getDate() + seqNoinstime)}
+        } else { dueDate.setDate(dueDate.getDate() + seqNoinstime) }
 
         //cal comm-ov in
-        let comminseq = parseFloat((formData.commin_rate* premperseq/100).toFixed(2))
-        let ovinseq = parseFloat((formData.ovin_rate* premperseq/100).toFixed(2))
-        arrI.push({grossprem :premperseq,
-                    tax : taxseq,
-                  duty : dutyseq,
-                  totalprem : parseFloat((premperseq + taxseq + dutyseq).toFixed(2)),
-                dueDate :dueDate.toISOString().split('T')[0],
-              commin_amt : comminseq,
-              commin_taxamt : parseFloat((comminseq *tax).toFixed(2)),
-            ovin_amt : ovinseq,
-            ovin_taxamt : parseFloat((ovinseq *tax).toFixed(2)),})
-       
+        let comminseq = parseFloat((formData.commin_rate * premperseq / 100).toFixed(2))
+        let ovinseq = parseFloat((formData.ovin_rate * premperseq / 100).toFixed(2))
+        arrI.push({
+          netgrossprem: premperseq,
+          tax: taxseq,
+          duty: dutyseq,
+          totalprem: parseFloat((premperseq + taxseq + dutyseq).toFixed(2)),
+          dueDate: dueDate.toISOString().split('T')[0],
+          commin_amt: comminseq,
+          commin_taxamt: parseFloat((comminseq * tax).toFixed(2)),
+          ovin_amt: ovinseq,
+          ovin_taxamt: parseFloat((ovinseq * tax).toFixed(2)),
+        })
+
       }
       console.log(arrI);
     }
-    
+
     const arrA = []
-    if (installA){
-      let premperseq = parseFloat((formData.netgrossprem / seqNoagt ).toFixed(2))
-      console.log(formData.netgrossprem - premperseq * (seqNoagt-1));
+    if (installA) {
+      let premperseq = parseFloat((formData.netgrossprem / seqNoagt).toFixed(2))
+      console.log(formData.netgrossprem - premperseq * (seqNoagt - 1));
       let dueDate = new Date()
       for (let i = 1; i <= seqNoagt; i++) {
         let dutyseq = 0
-      
+
         // cal prem
-        if (i===1) {
-          premperseq = parseFloat((formData.netgrossprem - premperseq*(seqNoagt-1)).toFixed(2))
-        
+        if (i === 1) {
+          premperseq = parseFloat((formData.netgrossprem - premperseq * (seqNoagt - 1)).toFixed(2))
+
         }
-        else{premperseq = parseFloat((formData.netgrossprem / seqNoagt ).toFixed(2))}
+        else { premperseq = parseFloat((formData.netgrossprem / seqNoagt).toFixed(2)) }
         //cal tax
         let taxseq = parseFloat((tax * premperseq).toFixed(2))
 
         //cal duty
-        if(flagallowduty){dutyseq = parseFloat((premperseq *duty).toFixed(2))}
-        else{
-          if (i===1) {
-            dutyseq = parseFloat((formData.netgrossprem *duty).toFixed(2))
-          }else {dutyseq = 0}
+        if (flagallowduty) { dutyseq = parseFloat((premperseq * duty).toFixed(2)) }
+        else {
+          if (i === 1) {
+            dutyseq = parseFloat((formData.netgrossprem * duty).toFixed(2))
+          } else { dutyseq = 0 }
         }
         // cal duedate
         if (seqNoagttype === 'M') {
           dueDate.setMonth(dueDate.getMonth() + seqNoagttime)
-        }else {dueDate.setDate (dueDate.getDate() + seqNoagttime)}
+        } else { dueDate.setDate(dueDate.getDate() + seqNoagttime) }
 
         //cal comm-ov in
-        let comminseq = parseFloat((formData.commin_rate* premperseq/100).toFixed(2))
-        let ovinseq = parseFloat((formData.ovin_rate* premperseq/100).toFixed(2))
+        let comminseq = parseFloat((formData.commin_rate * premperseq / 100).toFixed(2))
+        let ovinseq = parseFloat((formData.ovin_rate * premperseq / 100).toFixed(2))
         //cal comm-ov out
-        let commoutseq = parseFloat((formData.commout1_rate* premperseq/100).toFixed(2))
-        let ovoutseq = parseFloat((formData.ovout1_rate* premperseq/100).toFixed(2))
-        arrA.push({grossprem :premperseq,
-                    tax : taxseq,
-                  duty : dutyseq,
-                  totalprem : premperseq + taxseq + dutyseq,
-                dueDate :dueDate.toISOString().split('T')[0],
-                commin_amt : comminseq,
-                commin_taxamt : comminseq *tax,
-                ovin_amt : ovinseq,
-                ovin_taxamt : ovinseq *tax,
-                commout1_amt : commoutseq,
-                ovout1_amt : ovoutseq})
-       
+        let commoutseq = parseFloat((formData.commout1_rate * premperseq / 100).toFixed(2))
+        let ovoutseq = parseFloat((formData.ovout1_rate * premperseq / 100).toFixed(2))
+        arrA.push({
+          netgrossprem: premperseq,
+          tax: taxseq,
+          duty: dutyseq,
+          totalprem: premperseq + taxseq + dutyseq,
+          dueDate: dueDate.toISOString().split('T')[0],
+          commin_amt: comminseq,
+          commin_taxamt: comminseq * tax,
+          ovin_amt: ovinseq,
+          ovin_taxamt: ovinseq * tax,
+          commout1_amt: commoutseq,
+          ovout1_amt: ovoutseq
+        })
+
       }
       console.log(arrI);
     }
-    setInstallment({insurer:arrI, advisor:arrA})
+    setInstallment({ insurer: arrI, advisor: arrA })
   }
+  
   return (
     <div>
       <h1 className="text-center">กรมธรรม์ฉบับที่ {parseInt(index) + 1}</h1>
@@ -599,7 +641,7 @@ const PolicyCard = (props) => {
             วันที่สิ้นสุด<span class="text-danger"> *</span>
           </label>
           <input
-          disabled
+            disabled
             className="form-control"
             type="date"
             defaultValue={formData.expDate}
@@ -629,7 +671,7 @@ const PolicyCard = (props) => {
             บริษัทรับประกัน<span class="text-danger"> *</span>
           </label>
           <select
-          disabled
+            disabled
             className="form-control"
             name={`insurerCode`}
             onChange={handleChange}
@@ -646,7 +688,7 @@ const PolicyCard = (props) => {
             รหัสผู้แนะนำ<span class="text-danger"> *</span>
           </label>
           <input
-          disabled
+            disabled
             className="form-control"
             type="text"
             defaultValue={formData.agentCode}
@@ -669,42 +711,42 @@ const PolicyCard = (props) => {
         </div>
         <div class="col-2 form-group ">
           <div className="row">
-            
-          <div className="col form-group">
-          <label class="form-label ">
-            Class
-          </label>
-          <select
-          disabled
-            className="form-control"
-            name={`class`}
-            onChange={handleChange}
-          >
-            <option value={formData.class} selected disabled hidden>
-              {formData.class}
-            </option>
-            {insureClassDD}
-          </select>
+
+            <div className="col form-group">
+              <label class="form-label ">
+                Class
+              </label>
+              <select
+                disabled
+                className="form-control"
+                name={`class`}
+                onChange={handleChange}
+              >
+                <option value={formData.class} selected disabled hidden>
+                  {formData.class}
+                </option>
+                {insureClassDD}
+              </select>
+            </div>
+            <div className="col form-group">
+              <label class="form-label ">
+                Subclass
+              </label>
+              <select
+                disabled
+                className="form-control"
+                name={`subClass`}
+                onChange={handleChange}
+              >
+                <option value={formData.subClass} selected disabled hidden>
+                  {formData.subClass}
+                </option>
+                {insureSubClassDD}
+              </select>
+            </div>
+
           </div>
-          <div className="col form-group">
-          <label class="form-label ">
-            Subclass
-          </label>
-          <select
-          disabled
-            className="form-control"
-            name={`subClass`}
-            onChange={handleChange}
-          >
-            <option value={formData.subClass} selected disabled hidden>
-              {formData.subClass}
-            </option>
-            {insureSubClassDD}
-          </select>
-          </div>
-          
-          </div>
-         
+
         </div>
 
       </div>
@@ -728,7 +770,7 @@ const PolicyCard = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            ส่วนลด % 
+            ส่วนลด %
           </label>
           <div className="row">
             <div className="col">
@@ -759,40 +801,40 @@ const PolicyCard = (props) => {
         <div class="col-2">
           <div className="row">
             <div className="col">
-            <label class="form-label ">
-            duty
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            disabled
-            // netgrossprem * tax 
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
-            //value={formData.duty}
-            name={`duty`}
-            onChange={handleChange}
-          />
+              <label class="form-label ">
+                duty
+              </label>
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                disabled
+                // netgrossprem * tax 
+                value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
+                //value={formData.duty}
+                name={`duty`}
+                onChange={handleChange}
+              />
             </div>
             <div className="col">
-            <label class="form-label ">
-            tax
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            disabled
-            // netgrossprem * tax 
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * tax).toFixed(2)) || ""}
-            //value={formData.tax}
-            name={`tax`}
-            onChange={handleChange}
-          />
+              <label class="form-label ">
+                tax
+              </label>
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                disabled
+                // netgrossprem * tax 
+                value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * tax).toFixed(2)) || ""}
+                //value={formData.tax}
+                name={`tax`}
+                onChange={handleChange}
+              />
             </div>
-            
+
           </div>
-          
+
         </div>
 
         <div class="col-2">
@@ -804,7 +846,7 @@ const PolicyCard = (props) => {
             className="form-control"
             // value={formData.totalprem} // Display the totalprem value from the state
             // value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty + tax)).toFixed(2)) || ""}
             step={0.1}
             name={`totalprem`}
             readOnly
@@ -872,7 +914,7 @@ const PolicyCard = (props) => {
         </div>
 
       </div> */}
-      
+
       <div class="row">
         <div className="col-1"></div>
         <div class="col-2">
@@ -896,7 +938,7 @@ const PolicyCard = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`commin_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2))|| ""}
+                value={parseFloat((formData[`commin_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 name={`commin_amt`}
                 onChange={(e) => handleChange(e)}
               />
@@ -928,7 +970,7 @@ const PolicyCard = (props) => {
                 disabled
                 step={0.1}
                 name={`ovin_amt`}
-                value={parseFloat((formData[`ovin_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={parseFloat((formData[`ovin_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 onChange={handleChange}
               />
             </div>
@@ -989,7 +1031,7 @@ const PolicyCard = (props) => {
                 step={0.1}
                 name={`ovout1_amt`}
                 //value={(formData[`ovout1_rate`] * formData[`grossprem`]) / 100 || ""}
-                value={parseFloat((formData[`ovout1_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={parseFloat((formData[`ovout1_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 onChange={handleChange}
               />
             </div>
@@ -1063,9 +1105,9 @@ const PolicyCard = (props) => {
         </div>
       </div> */}
 
-<div class="row">
+      <div class="row">
         <div className="col-1"></div>
-        
+
 
         <div class="col-2">
           <label class="form-label ">
@@ -1088,7 +1130,7 @@ const PolicyCard = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`commout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={parseFloat((formData[`commout2_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 //value={(formData[`commout2_rate`] * formData[`grossprem`]) / 100 || ""}
                 name={`commout2_amt`}
                 onChange={handleChange}
@@ -1121,7 +1163,7 @@ const PolicyCard = (props) => {
                 step={0.1}
                 name={`ovout2_amt`}
                 //value={(formData[`ovout2_rate`] * formData[`grossprem`]) / 100 || ""}
-                value={parseFloat((formData[`ovout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={parseFloat((formData[`ovout2_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 onChange={handleChange}
               />
             </div>
@@ -1150,7 +1192,7 @@ const PolicyCard = (props) => {
                 disabled
                 step={0.1}
                 //value={(formData[`commin2_rate`] * formData[`grossprem`]) / 100 || ""}
-                value={parseFloat((formData[`commout_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={parseFloat((formData[`commout_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 name={`commout_amt`}
                 onChange={(e) => handleChange(e)}
               />
@@ -1183,7 +1225,7 @@ const PolicyCard = (props) => {
                 step={0.1}
                 name={`ovout_amt`}
                 //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
-                value={parseFloat((formData[`ovout_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={parseFloat((formData[`ovout_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 onChange={handleChange}
               />
             </div>
@@ -1199,41 +1241,41 @@ const PolicyCard = (props) => {
       </div>
 
       <div class="row">
-        <div className="col-1"></div> 
+        <div className="col-1"></div>
         <div className="col-2">
-          
-        <h4 class="form-label ">
-          installment 
+
+          <h4 class="form-label ">
+            installment
           </h4>
-          </div> 
         </div>
-      
+      </div>
+
       <div class="row">
         <div className="col-1"></div>
         <div className="col-1">
 
-        <div class="form-check ">
-          <input class="form-check-input" type="checkbox" name="installmentInsurer" id="flexCheckDefault"/>
-        <label class="form-check-label" for="flexCheckChecked">
-          insurer
-          </label>
-        </div>
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" name="installmentInsurer" id="flexCheckDefault" />
+            <label class="form-check-label" for="flexCheckChecked">
+              insurer
+            </label>
+          </div>
         </div>
 
         <div class="col-1">
           <label class="form-label ">
             จำนวนงวด<span class="text-danger"> </span>
           </label>
-          </div>
-          <div class="col-1">
-            
+        </div>
+        <div class="col-1">
+
           <input
             className="form-control"
             type="number"
             defaultValue={formData.t_fn}
             name={`seqNoins`}
             onChange={handleChange}
-            />
+          />
         </div>
 
         <div class="col-1">
@@ -1249,40 +1291,40 @@ const PolicyCard = (props) => {
             defaultValue={formData.t_fn}
             name={`seqNoinstime`}
             onChange={handleChange}
-            />
-            </div>
-            <div className="col-1">
+          />
+        </div>
+        <div className="col-1">
 
           <select
             className="form-control"
             name={`seqNoinstype`}
             onChange={handleChange}
-            >
+          >
             <option value={formData.personType} disabled selected hidden>
               {formData.personType}
             </option>
             <option value="D">วัน</option>
             <option value="M">เดือน</option>
           </select>
-              </div>
-            
-        
-        
-        
-          <div class="col-2">
-           
-            <div class="form-check ">
-          <input class="form-check-input" type="checkbox" name="flagallowduty" id="flexCheckDefault"/>
-        <label class="form-check-label" for="flexCheckChecked">
-        allowcate duty
-          </label>
         </div>
-        
-          </div>
-          <div class="col-2 align-bottom">
 
-<button type="button" class="btn btn-primary align-bottom" onClick={calinstallment} >calculate installment</button>
-</div>
+
+
+
+        <div class="col-2">
+
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" name="flagallowduty" id="flexCheckDefault" />
+            <label class="form-check-label" for="flexCheckChecked">
+              allowcate duty
+            </label>
+          </div>
+
+        </div>
+        <div class="col-2 align-bottom">
+
+          <button type="button" class="btn btn-primary align-bottom" onClick={calinstallment} >calculate installment</button>
+        </div>
 
       </div>
 
@@ -1290,28 +1332,28 @@ const PolicyCard = (props) => {
         <div className="col-1"></div>
         <div className="col-1">
 
-        <div class="form-check ">
-          <input class="form-check-input" type="checkbox" name="installmentAdvisor" id="flexCheckDefault"/>
-        <label class="form-check-label" for="flexCheckChecked">
-          Advisor
-          </label>
-        </div>
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" name="installmentAdvisor" id="flexCheckDefault" />
+            <label class="form-check-label" for="flexCheckChecked">
+              Advisor
+            </label>
+          </div>
         </div>
 
         <div class="col-1">
           <label class="form-label ">
             จำนวนงวด<span class="text-danger"> </span>
           </label>
-          </div>
-          <div class="col-1">
-            
+        </div>
+        <div class="col-1">
+
           <input
             className="form-control"
             type="number"
             defaultValue={formData.t_fn}
             name={`seqNoagt`}
             onChange={handleChange}
-            />
+          />
         </div>
 
         <div class="col-1">
@@ -1327,124 +1369,134 @@ const PolicyCard = (props) => {
             defaultValue={formData.t_fn}
             name={`seqNoagttime`}
             onChange={handleChange}
-            />
-            </div>
-            <div className="col-1">
+          />
+        </div>
+        <div className="col-1">
 
           <select
             className="form-control"
             name={`seqNoagttype`}
             onChange={handleChange}
-            >
+          >
             <option value={formData.personType} disabled selected hidden>
               {formData.personType}
             </option>
             <option value="D">วัน</option>
             <option value="M">เดือน</option>
           </select>
-              </div>
-              <div className="col-2"></div>
-              
-            
-        
-        
-        
-        
+        </div>
+        <div className="col-2"></div>
+
+
+
+
+
+
 
       </div>
 
       <table class="table">
-  <thead>
-    <tr>
-      <th scope="col-1">instype</th>
-      <th scope="col-1">seqNo</th>
-      <th scope="col-2">dueDate</th>
-      <th scope="col-2">prem</th>
-      <th scope="col-1">duty</th>
-      <th scope="col-1">tax</th>
-      <th scope="col-1">commin</th>
-      <th scope="col-1">ovin</th>
-      <th scope="col-1">commout</th>
-      <th scope="col-1">ovout</th>
-    </tr>
-  </thead>
-  <tbody>
-    {installment.insurer.map((ele,i) =>{
-      return(<tr>
-      <th scope="row">insurer</th>
-      <td scope="col-1">{i+1}</td>
-      <td scope="col-2"><input type="date" className="w-100" name={`dueDate-${i}`}  defaultValue={ele.dueDate}></input></td>
-      <td scope="col-2"><input type="number" className="w-100" name={`grossprem-${i}`} step={.01} defaultValue={ele.grossprem}></input></td>
-      <td scope="col-1"><input type="number" className="w-100" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
-      <td scope="col-1"><input type="number" className="w-100" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
-      <td scope="col-1"><input type="number" className="w-100" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
-      <td scope="col-1"><input type="number" className="w-100" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td>
-      <td scope="col-1"></td>
-      <td scope="col-1"></td>
-      <td><button >Edit</button></td>
-    </tr>)
-    })}
-    {installment.advisor.map((ele,i) =>{
-      return(<tr>
-        <th scope="row">advisor</th>
-        <td>{i+1}</td>
-        <td scope="col-2"><input type="date" name={`dueDate-${i}`}   defaultValue={ele.dueDate}></input></td>
-        <td scope="col-2"><input type="number" name={`grossprem-${i}`}  step={.01} defaultValue={ele.grossprem}></input></td>
-        <td scope="col-1"><input type="number" name={`duty-${i}`}  step={.01} defaultValue={ele.duty}></input></td>
-        <td scope="col-1"><input type="number" name={`tax-${i}`}  step={.01} defaultValue={ele.tax}></input></td>
-        <td scope="col-1"><input type="number" name={`commin_amt-${i}`}  step={.01} defaultValue={ele.commin_amt}></input></td>
-        <td scope="col-1"><input type="number" name={`ovin_amt-${i}`}  step={.01} defaultValue={ele.ovin_amt}></input></td>
-        <td scope="col-1"><input type="number" name={`commout1_amt-${i}`}  step={.01} defaultValue={ele.commout1_amt}></input></td>
-        <td scope="col-1"><input type="number" name={`ovout1_amt-${i}`}  step={.01} defaultValue={ele.ovout1_amt}></input></td>
-        <td scope="col-1"><button >Edit</button></td>
-      </tr>)
-    })}
-    {installment.insurer.length >0? 
-    <tr>
-    <th scope="row">Summary Insurer</th>
-       <td></td>
-       <td></td>
-       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.grossprem.toFixed(2)), 0)}</td>
-       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + curr.duty, 0)}</td>
-       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0)}</td>
-       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + curr.commin_amt, 0)}</td>
-       <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + curr.ovin_amt, 0)}</td>
-       <td></td>
-       <td></td>
-     </tr>
-    :null}
-  
-  {installment.advisor.length >0? 
-  <tr>
-  <th scope="row">Summary Advisor</th>
-       <td></td>
-       <td></td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.grossprem, 0)}</td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.duty, 0)}</td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.tax, 0)}</td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.commin_amt, 0)}</td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.ovin_amt, 0)}</td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.commout1_amt, 0)}</td>
-       <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + curr.ovout1_amt, 0)}</td>
-   </tr>
-  :null}
-    
+        <thead>
+          <tr>
+            <th scope="col-1">instype</th>
+            <th scope="col-1">seqNo</th>
+            <th scope="col-2">dueDate</th>
+            <th scope="col-2">netgrossprem</th>
+            <th scope="col-1">duty</th>
+            <th scope="col-1">tax</th>
+            <th scope="col-1">commin</th>
+            <th scope="col-1">ovin</th>
+            <th scope="col-1">commout</th>
+            <th scope="col-1">ovout</th>
+          </tr>
+        </thead>
+        <tbody>
+          {installment.insurer.map((ele, i) => {
+            return (<tr>
+              <th scope="row">insurer</th>
+              <td scope="col-1">{i + 1}</td>
+              <td scope="col-2"><input type="date" className="w-100" name={`dueDate-${i}`} defaultValue={ele.dueDate}></input></td>
+              <td scope="col-2"><input type="number" className="w-100" name={`netgrossprem-${i}`} step={.01} defaultValue={ele.netgrossprem}></input></td>
+              {/* <td scope="col-1"><input type="number" className="w-100" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
+              <td scope="col-1"><input type="number" className="w-100" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
+              <td scope="col-1"><input type="number" className="w-100" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
+              <td scope="col-1"><input type="number" className="w-100" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td> */}
+              <td scope="col-1">{ele.duty}</td>
+              <td scope="col-1">{ele.tax}</td>
+              <td scope="col-1">{ele.commin_amt}</td>
+              <td scope="col-1">{ele.ovin_amt}</td>
+              <td scope="col-1"></td>
+              <td scope="col-1"></td>
+              <td scope="col-1"><button onClick={e=>editInstallment(e,'insurer', i)}>Edit</button></td>
+            </tr>)
+          })}
+          {installment.advisor.map((ele, i) => {
+            return (<tr>
+              <th scope="row">advisor</th>
+              <td>{i + 1}</td>
+              <td scope="col-2"><input type="date" name={`dueDate-${i}`} defaultValue={ele.dueDate}></input></td>
+              <td scope="col-2"><input type="number" name={`netgrossprem-${i}`} step={.01} defaultValue={ele.netgrossprem}></input></td>
+              {/* <td scope="col-1"><input type="number" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
+              <td scope="col-1"><input type="number" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
+              <td scope="col-1"><input type="number" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
+              <td scope="col-1"><input type="number" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td>
+              <td scope="col-1"><input type="number" name={`commout1_amt-${i}`} step={.01} defaultValue={ele.commout1_amt}></input></td>
+              <td scope="col-1"><input type="number" name={`ovout1_amt-${i}`} step={.01} defaultValue={ele.ovout1_amt}></input></td> */}
+              <td scope="col-1">{ele.duty}</td>
+              <td scope="col-1">{ele.tax}</td>
+              <td scope="col-1">{ele.commin_amt}</td>
+              <td scope="col-1">{ele.ovin_amt}</td>
+              <td scope="col-1">{ele.commout1_amt}</td>
+              <td scope="col-1">{ele.ovout1_amt}</td>
+              <td scope="col-1"><button onClick={e=>editInstallment(e,'advisor', i)}>Edit</button></td>
+            </tr>)
+          })}
+          {installment.insurer.length > 0 ?
+            <tr>
+              <th scope="row">Summary Insurer</th>
+              <td></td>
+              <td></td>
+              <td scope="col-1">{ installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0)}</td>
+              <td></td>
+              <td></td>
+            </tr>
+            : null}
 
-    <tr>
-   <th scope="row">This Policy</th>
-      <td></td>
-      <td></td>
-      <td>{formData.grossprem}</td>
-      <td>{formData.duty}</td>
-      <td>{formData.tax}</td>
-      <td>{formData.commin_amt}</td>
-      <td>{formData.ovin_amt}</td>
-      <td></td>
-      <td></td>
-    </tr>
-    
-  </tbody>
-</table>
+          {installment.advisor.length > 0 ?
+            <tr>
+              <th scope="row">Summary Advisor</th>
+              <td></td>
+              <td></td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commout1_amt.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovout1_amt.toFixed(2)), 0)}</td>
+            </tr>
+            : null}
+
+
+          <tr>
+            <th scope="row">This Policy</th>
+            <td></td>
+            <td></td>
+            <td>{formData.netgrossprem}</td>
+            <td>{formData.duty}</td>
+            <td>{formData.tax}</td>
+            <td>{formData.commin_amt}</td>
+            <td>{formData.ovin_amt}</td>
+            <td></td>
+            <td></td>
+          </tr>
+
+        </tbody>
+      </table>
       {/* entity table */}
       {/* <div class="row">
         <div className="col-1"></div>
@@ -1767,7 +1819,7 @@ const PolicyCard = (props) => {
       </div> */}
       <div class="d-flex justify-content-center">
 
-        <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, {...formData, installment:installment})}>
+        <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, { ...formData, installment: installment })}>
           Save Changes
         </button>
         <button className="p-2 btn btn-secondary " name="closed" onClick={e => props.setFormData(e)}>
