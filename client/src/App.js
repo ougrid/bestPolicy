@@ -21,6 +21,10 @@ import FindPolicy from "./components/Policy/FindPolicy";
 import FindBillAdvisor from "./components/ฺBillAdvisor/FindBillAdvisor";
 import CreateBillAdvisor from "./components/ฺBillAdvisor/CreateBillAdvisor";
 import EditBillAdvisor from "./components/ฺBillAdvisor/EditBillAdvisor";
+import FindCashierReceive from "./components/CashierReceive/FindCashierReceive";
+import CreateCashierReceive from "./components/CashierReceive/CreateCashierReceive";
+import EditCashierReceive from "./components/CashierReceive/EditCashierReceive";
+import Bank from "./components/Static/Bank";
 function App() {
   return (
     <div className="App">
@@ -38,6 +42,7 @@ function App() {
           <Route path="/insuretype" element={<InsureType />} />
           <Route path="/agent" element={<Agent />} />
           <Route path="/static" element={<Static />} />
+          <Route path="/bank" element={<Bank />} />
           <Route path="/static/:name" element={<Static />} />
           <Route path="/packages/:id" element={<Packages />} />
           <Route path="/findpolicy" element={<FindPolicy />} />
@@ -46,6 +51,9 @@ function App() {
           <Route path="bill/findbill" element={<FindBillAdvisor />} />
           <Route path="bill/createbill" element={<CreateBillAdvisor />} />
           <Route path="bill/editbill/:billno" element={<EditBillAdvisor />} />
+          <Route path="cashier/findcashier" element={<FindCashierReceive />} />
+          <Route path="cashier/createcashier" element={<CreateCashierReceive />} />
+          <Route path="cashier/editcashier" element={<EditCashierReceive />} />
         </Routes>
       </main>
       {/* <footer>
