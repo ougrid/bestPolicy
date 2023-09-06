@@ -186,6 +186,7 @@ const CreateBillAdvisor = () => {
 
                     }
                     console.log(array);
+                    console.log(res.data);
                     setPoliciesData(res.data)
                     setBillpremiumData(array)
                     alert("create new insuree success")
@@ -222,7 +223,7 @@ const CreateBillAdvisor = () => {
                 // window.location.reload();
                 // localStorage.setItem("jwt", token);
                 console.log(res.data);
-                alert("create new insuree success")
+                alert(res.data.msg)
             })
             .catch((err) => {
 
@@ -447,12 +448,12 @@ const CreateBillAdvisor = () => {
                     <Modal.Title >Confirm</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div class="row">
+                    {/* <div class="row">
                         <div class="col-2">
                             <label class="col-form-label">เลขที่ใบวางบิล</label>
                         </div>
                         <div class="col-2"> {filterData.billadvisor}</div>
-                    </div>
+                    </div> */}
                     <div class="row">
                         <div class="col-2">
                             <label class="col-form-label">billpremium</label>

@@ -21,6 +21,9 @@ import FindPolicy from "./components/Policy/FindPolicy";
 import FindBillAdvisor from "./components/ฺBillAdvisor/FindBillAdvisor";
 import CreateBillAdvisor from "./components/ฺBillAdvisor/CreateBillAdvisor";
 import EditBillAdvisor from "./components/ฺBillAdvisor/EditBillAdvisor";
+import PremInCreate from "./components/PremIn/PremInCreate";
+import PremInPaid from "./components/PremIn/PremInPaid";
+import PremInSreach from "./components/PremIn/PremInSearch";
 function App() {
   return (
     <div className="App">
@@ -46,6 +49,9 @@ function App() {
           <Route path="bill/findbill" element={<FindBillAdvisor />} />
           <Route path="bill/createbill" element={<CreateBillAdvisor />} />
           <Route path="bill/editbill/:billno" element={<EditBillAdvisor />} />
+          <Route path="premin/find" element={<PremInSreach/>} />
+          <Route path="premin/create" element={<PremInCreate />} />
+          <Route path="premin/paid" element={<PremInPaid />} />
         </Routes>
       </main>
       {/* <footer>
