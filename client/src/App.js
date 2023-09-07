@@ -25,6 +25,12 @@ import FindCashierReceive from "./components/CashierReceive/FindCashierReceive";
 import CreateCashierReceive from "./components/CashierReceive/CreateCashierReceive";
 import EditCashierReceive from "./components/CashierReceive/EditCashierReceive";
 import Bank from "./components/Static/Bank";
+import FindBillAdvisor from "./components/ฺBillAdvisor/FindBillAdvisor";
+import CreateBillAdvisor from "./components/ฺBillAdvisor/CreateBillAdvisor";
+import EditBillAdvisor from "./components/ฺBillAdvisor/EditBillAdvisor";
+import PremInCreate from "./components/PremIn/PremInCreate";
+import PremInPaid from "./components/PremIn/PremInPaid";
+import PremInSreach from "./components/PremIn/PremInSearch";
 function App() {
   return (
     <div className="App">
@@ -54,6 +60,9 @@ function App() {
           <Route path="cashier/findcashier" element={<FindCashierReceive />} />
           <Route path="cashier/createcashier" element={<CreateCashierReceive />} />
           <Route path="cashier/editcashier" element={<EditCashierReceive />} />
+          <Route path="premin/find" element={<PremInSreach/>} />
+          <Route path="premin/create" element={<PremInCreate />} />
+          <Route path="premin/paid" element={<PremInPaid />} />
         </Routes>
       </main>
       {/* <footer>

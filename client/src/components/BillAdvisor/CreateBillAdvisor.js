@@ -41,10 +41,12 @@ const CreateBillAdvisor = () => {
             "policyNoStart": '000000',
             "policyNoEnd": '0000000',
             "agentCode": null,
+            "billadvisor":'B'+ Date.now(),
 
         })
     const [policiesData, setPoliciesData] = useState([])
     const [policiesRender, setPoliciesRender] = useState({
+        
         net:{ no: 0, prem: 0, comm_out: 0, whtcom: 0, ov_out: 0, whtov: 0, },
         gross:{ no: 0, prem: 0 },
         total:{ no: 0, prem: 0, comm_out: 0, whtcom: 0, ov_out: 0, whtov: 0, billprem:0 },
@@ -184,6 +186,7 @@ const CreateBillAdvisor = () => {
 
                     }
                     console.log(array);
+                    console.log(res.data);
                     setPoliciesData(res.data)
                     setBillpremiumData(array)
                     alert("create new insuree success")
@@ -208,8 +211,9 @@ const CreateBillAdvisor = () => {
             }
             
         }
-        console.log(array);
+        console.log({bill:{...filterData,amt:policiesRender.total.billprem}, detail:array });
         console.log(Date.now)
+    
         axios
             .post(url + "/payments/createbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
             .then((res) => {
@@ -219,7 +223,7 @@ const CreateBillAdvisor = () => {
                 // window.location.reload();
                 // localStorage.setItem("jwt", token);
                 console.log(res.data);
-                alert("create new insuree success")
+                alert(res.data.msg)
             })
             .catch((err) => {
 
@@ -406,7 +410,7 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.policyNo}</td>
                                 <td>{ele.endorseNo}</td>
                                 <td>{ele.invoiceNo}</td>
-                                <td>{ele.seqno}</td>
+                                <td>{ele.seqNo}</td>
                                 <td>{ele.insureeCode}</td>
                                 <td>{ele.insureeName}</td>
                                 <td>{ele.licenseNo}</td>
@@ -444,12 +448,12 @@ const CreateBillAdvisor = () => {
                     <Modal.Title >Confirm</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div class="row">
+                    {/* <div class="row">
                         <div class="col-2">
                             <label class="col-form-label">เลขที่ใบวางบิล</label>
                         </div>
-                        <div class="col-2"> B{Date.now()}</div>
-                    </div>
+                        <div class="col-2"> {filterData.billadvisor}</div>
+                    </div> */}
                     <div class="row">
                         <div class="col-2">
                             <label class="col-form-label">billpremium</label>

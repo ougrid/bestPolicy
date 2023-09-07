@@ -64,7 +64,7 @@ function Nav() {
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/bill/findbill">ค้นหารายการ</a></li>
               <li><a class="dropdown-item" href="/bill/createbill">สร้างรายการใหม่</a></li>
-              <li><a class="dropdown-item" href="/policyexcel">แก้ไขรายการ</a></li>
+              {/* <li><a class="dropdown-item" href="/policyexcel">แก้ไขรายการ</a></li> */}
             </ul>
           </div>
           <div class="dropdown">
@@ -76,6 +76,17 @@ function Nav() {
               <li><a class="dropdown-item" href="/cashier/findcashier">ค้นหารายการ</a></li>
               <li><a class="dropdown-item" href="/cashier/createcashier">สร้างรายการใหม่</a></li>
               <li><a class="dropdown-item" href="/cashier/editcashier">แก้ไขรายการ</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              AR PREM-IN
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/premin/find">ค้นหารายการ</a></li>
+              <li><a class="dropdown-item" href="/premin/create">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/premin/paid">แก้ไขรายการ</a></li>
             </ul>
           </div>
           <div class="dropdown">

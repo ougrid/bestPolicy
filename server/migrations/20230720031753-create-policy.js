@@ -175,6 +175,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.CHAR
       },
+      issueDate :{
+        type: Sequelize.DATE
+      },
+      policyType:{
+        type: Sequelize.STRING
+      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

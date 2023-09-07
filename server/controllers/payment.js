@@ -63,7 +63,7 @@ const findTransaction = async (req,res) => {
     for (let i = 0; i < transac.length; i++) {
     
     const data = await sequelize.query(
-          'select (select ent."t_ogName" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ins."insurerCode" = tran."insurerCode" ) as "insurerName",* from static_data."Transactions" tran  where '+
+          'select (select ent."t_ogName" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ins."insurerCode" = tran."insurerCode" ) as "insurerName",* from static_data."b_jaaraps" tran  where '+
           'CASE WHEN :filter = \'policyNo\'  THEN tran."policyNo" = :value '+
           'WHEN :filter = \'agentCode\' then tran."agentCode" = :value '+
           'else tran."insurerCode" = (select "insurerCode" from static_data."Insurers" ins join static_data."Entities" ent on ent.id = ins."entityID" where ent."t_ogName" = :value ) '+
@@ -88,7 +88,7 @@ const findTransaction = async (req,res) => {
 const findPolicyByPreminDue = async (req,res) => {
 
     const records = await sequelize.query(
-      'select * from static_data."Transactions" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
+      'select * from static_data."b_jaaraps" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
       'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode '+
       'and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)',
           {
@@ -115,7 +115,7 @@ const findPolicyByPreminDue = async (req,res) => {
 const findPolicyByBillno = async (req,res) => {
     console.log(req.body.billadvisor)
   const records = await sequelize.query(
-    'select * from  static_data."Policies" pol  join static_data."Transactions" tran  on tran."policyNo" = pol."policyNo" where tran.billadvisor = :billadvisor  and "transType" = \'PREM-IN\'',
+    'select * from  static_data."Policies" pol  join static_data."b_jaaraps" tran  on tran."policyNo" = pol."policyNo" where tran.billadvisor = :billadvisor  and "transType" = \'PREM-IN\'',
         {
           replacements: {
             billadvisor: req.body.billadvisor
@@ -123,11 +123,18 @@ const findPolicyByBillno = async (req,res) => {
           type: QueryTypes.SELECT
         }
       );
+      const old_keyid = await sequelize.query('select id from static_data.b_jabilladvisors where billadvisorno = :billadvisor',{
+        replacements: {
+          billadvisor: req.body.billadvisor
+        },
+        type: QueryTypes.SELECT
+      })
+
       if (records.length === 0) {
         await res.status(201).json({msg:"not found policy in bill"})
       }else{
 
-        await res.json(records)
+        await res.json({data:records, old_keyid: old_keyid[0].id})
       }
 
 }
@@ -145,8 +152,8 @@ const createbilladvisor = async (req,res) =>{
               replacements: {
                 insurerCode:req.body.bill.insurerCode,
                 agentCode:req.body.bill.agentCode,
-                // billadvisorno: req.body.bill.billadvisorno,
-                billadvisorno: billno,
+                 billadvisorno: req.body.bill.billadvisor,
+               
                 billdate: billdate,
                 createusercode: "kewn",
                 amt:req.body.bill.amt,
@@ -193,7 +200,7 @@ const createbilladvisor = async (req,res) =>{
                 'BEGIN FOR a_polid,a_billadvisorno,a_netflag IN '+
                     'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' and m.id =  '+ billadvisors[0][0].id +
                 ' LOOP  '+
-                'UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
+                'UPDATE static_data."b_jaaraps" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
                 'END LOOP; '+
               'END $$;',
               
@@ -246,39 +253,48 @@ const getbilladvisordetail =async (req,res) =>{
 
 const editbilladvisor = async (req,res) =>{
   //insert new bill to master jabilladvisor
+  const t = await sequelize.transaction();
+  try{
+
+  
   const billadvisors = await sequelize.query(
     'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active, old_keyid ) ' +
-    'VALUES (:insurerID, :agentID, '+
+    'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode), '+
+    '(select id from static_data."Agents" where "agentCode" = :agentCode), '+
     ':billadvisorno, :billdate, :createusercode, :amt, :cashierreceiptno, \'Y\', :old_keyid) RETURNING "id"',
         {
           replacements: {
-            insurerID:req.body.bill.insurerID,
-            agentID:req.body.bill.agentID,
+            insurerCode:req.body.bill.insurerCode,
+            agentCode:req.body.bill.agentCode,
             billadvisorno: req.body.bill.billadvisorno,
-            billdate: Date.now(),
+            billdate: new Date(),
             createusercode: "kewn",
             amt:req.body.bill.amt,
             cashierreceiptno:null,
             old_keyid: req.body.bill.old_keyid,
           },
+          transaction: t ,
           type: QueryTypes.INSERT
         }
       );
 
       //update status old bill
        await sequelize.query(
-        'UPDATE static_data.b_jabilladvisors SET active = \'N\', inactiveusercode = :inactiveusercode, inactivedate = :inactivedate WHERE id = :old_keyid',
+        'UPDATE static_data.b_jabilladvisors SET active = \'N\', inactiveusercode = :inactiveusercode, inactivedate = :inactivedate WHERE id = :old_keyid ;',
             {
               replacements: {
-                inactivedate: Date.now(),
+                inactivedate: new Date(),
                 inactiveusercode: "kewneditja",
                 old_keyid: req.body.bill.old_keyid,
-              }
+              },
+              transaction: t ,
+              type: QueryTypes.INSERT
             }
           );
+
   for (let i = 0; i < req.body.detail.length; i++) {
       //insert to deteil of jabilladvisor
-      sequelize.query(
+      await sequelize.query(
         'insert into static_data.b_jabilladvisordetails (keyidm, polid, customerid, motorid, grossprem, duty, tax, totalprem, "comm-out%", "comm-out-amt", '+
         ' "ov-out%", "ov-out-amt", netflag, billpremium,updateusercode) '+
         'values (:keyidm, (select id from static_data."Policies" where "policyNo" = :policyNo), (select id from static_data."Insurees" where "insureeCode" = :insureeCode), :motorid, '+
@@ -288,7 +304,7 @@ const editbilladvisor = async (req,res) =>{
                 keyidm: billadvisors[0][0].id,
                 policyNo: req.body.detail[i].policyNo,
                 insureeCode: req.body.detail[i].insureeCode,
-                motorid: req.body.detail[i].itemlist,
+                motorid: req.body.detail[i].itemList,
                 grossprem: req.body.detail[i].grossprem,
                 duty: req.body.detail[i].duty,
                 tax: req.body.detail[i].tax,
@@ -301,30 +317,51 @@ const editbilladvisor = async (req,res) =>{
                 billpremium: req.body.detail[i].billpremium,
                 updateusercode: "kewn",
               },
+              transaction: t ,
               type: QueryTypes.INSERT
             }
           );
 
         }
+        console.log('oldkeyid : ' +req.body.bill.old_keyid);
+        console.log('billid : ' +billadvisors[0][0].id);
         //update ARAP table remove old billadvisor && netflag then update
-        sequelize.query(
-          'DO $$ '+
-            'DECLARE a_polid int; a_billadvisorno text; a_netflag text; '+
-            'BEGIN  '+
-            'UPDATE static_data."Transactions" SET billadvisor = null, netflag = null WHERE billadvisor = (select billadvisor from static_data.b_jabilladvisors where id = old_keyid );'+
-            'FOR a_polid,a_billadvisorno,a_netflag IN '+
-                'SELECT polid, billadvisorno, netflag FROM static_data.b_jabilladvisors m JOIN static_data.b_jabilladvisordetails d ON m.id = d.keyidm WHERE m.active = \'Y\' m.id = :keyidm'+
-            'LOOP UPDATE static_data."Transactions" SET billadvisor = a_billadvisorno, netflag = a_netflag WHERE polid = a_polid; '+
-            'END LOOP; '+
-          'END $$;',
+        await sequelize.query(
+          `DO $$ 
+          DECLARE 
+            a_polid int; 
+            a_billadvisorno text; 
+            a_netflag text; 
+          BEGIN 
+            -- Update rows where billadvisor matches
+            UPDATE static_data."b_jaaraps" 
+            SET billadvisor = null, netflag = null 
+            WHERE billadvisor = (SELECT billadvisor FROM static_data.b_jabilladvisors WHERE id = ${req.body.bill.old_keyid} ); 
+            
+            -- Loop through selected rows and update
+            FOR a_polid, a_billadvisorno, a_netflag IN 
+              SELECT d.polid, m.billadvisorno, d.netflag 
+              FROM static_data.b_jabilladvisordetails d 
+              JOIN static_data.b_jabilladvisors m ON m.id = d.keyidm 
+              WHERE m.active = 'Y' AND m.id = ${billadvisors[0][0].id} 
+            LOOP
+              UPDATE static_data."b_jaaraps" 
+              SET billadvisor = a_billadvisorno, netflag = a_netflag 
+              WHERE polid = a_polid; 
+            END LOOP; 
+          END $$;`,
           { 
-            replacements: {
-              old_keyid: req.body.bill.old_keyid,
-              keyidm:billadvisors[0][0].id,
-          },
-          raw: true }
+          transaction: t ,
+          raw: true 
+        }
         )
-    
+
+        await t.commit();
+
+     } catch (error) {
+      console.log(error);
+      await t.rollback();
+      }
     await res.json({msg:"success!!"})
 }
 

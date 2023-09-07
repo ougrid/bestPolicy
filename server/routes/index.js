@@ -15,6 +15,8 @@ module.exports = {
     policies : require("./policies"),
     payments :require("./payment"),
     bills :require("./bill")
+    payments :require("./payment"),
+    runno :require("./runno")
     // reports : require("./report"),
     
 

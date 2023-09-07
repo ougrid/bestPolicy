@@ -15,6 +15,8 @@ module.exports = {
     auth : require("./auth"),
     payments :require("./payment"),
     bill :require("./bill")
+    payments :require("./payment"),
+    runno :require("./lib/runningno")
     // reports : require("./report"),
     
 

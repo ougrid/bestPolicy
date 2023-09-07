@@ -42,6 +42,7 @@ const EditBillAdvisor = (props) => {
             "policyNoStart": '000000',
             "policyNoEnd": '0000000',
             "agentCode": null,
+            "billadvisorno":'B'+ Date.now(),
 
         })
     const [policiesData, setPoliciesData] = useState([])
@@ -67,13 +68,19 @@ const EditBillAdvisor = (props) => {
 
 
                 const array = []
-                for (let i = 0; i < res.data.length; i++) {
+                const arrPoldata = []
+                for (let i = 0; i < res.data.data.length; i++) {
                     // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                    array.push(res.data[i].totalprem)
+                    array.push(res.data.data[i].totalprem)
+                    if(res.data.data[i].netflag === 'N'){
 
+                        arrPoldata.push({...res.data.data[i], 'select':true,'statementtype':true})
+                    }else{
+                        arrPoldata.push({...res.data.data[i], 'select':true,'statementtype':false})
+                    }
                 }
-                setPoliciesData(res.data)
-                setFilterData({...filterData, insurerCode:res.data[0].insurerCode, agentCode:res.data[0].agentCode })
+                setPoliciesData(arrPoldata)
+                setFilterData({...filterData, insurerCode:res.data.data[0].insurerCode, agentCode:res.data.data[0].agentCode ,old_keyid:res.data.old_keyid})
                 setBillpremiumData(array)
                 alert("create new insuree success") 
             }
@@ -190,6 +197,7 @@ const EditBillAdvisor = (props) => {
         console.log(array);
     };
 
+    //for add new policy in bill
     const submitFilter = (e) => {
         e.preventDefault();
         console.log(filterData);
@@ -202,16 +210,29 @@ const EditBillAdvisor = (props) => {
 
                 } else {
 
-
                     const array = []
+                    const arrPoldata = policiesData
                     for (let i = 0; i < res.data.length; i++) {
                         // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
                         array.push(res.data[i].totalprem)
-
+                        
+                            arrPoldata.push(res.data[i])
+                        
                     }
-                    console.log(array);
-                    setPoliciesData(...res.data, ...policiesData)
+                    setPoliciesData(arrPoldata)
+                    setFilterData({...filterData, insurerCode:res.data[0].insurerCode, agentCode:res.data[0].agentCode })
                     setBillpremiumData(array)
+
+
+                    // const array = []
+                    // for (let i = 0; i < res.data.length; i++) {
+                    //     // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                    //     array.push(res.data[i].totalprem)
+
+                    // }
+                    // console.log(array);
+                    // setPoliciesData(...res.data, ...policiesData)
+                    // setBillpremiumData(array)
                     alert("create new insuree success")
                 }
             })
@@ -221,7 +242,7 @@ const EditBillAdvisor = (props) => {
 
             });
     };
-    const createbill = (e) => {
+    const editbill = (e) => {
         e.preventDefault();
         const array = policiesData.filter((ele) => ele.select)
         for (let i = 0; i < array.length; i++) {
@@ -235,9 +256,9 @@ const EditBillAdvisor = (props) => {
             
         }
         console.log(array);
-        console.log(Date.now)
+        console.log({ bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
         axios
-            .post(url + "/payments/createbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
+            .post(url + "/payments/editbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -390,6 +411,90 @@ const EditBillAdvisor = (props) => {
 
 
                 </div>
+
+                <div class="row">
+                    <div class="col-1">
+
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">Endorse No.</label>
+
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">form</label>
+                    </div>
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control " name="policyNoStart" onChange={handleChange} />
+
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">to</label>
+                    </div>
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="policyNoEnd" onChange={handleChange} />
+                            <div class="input-group-append">
+                                <div class="input-group-text ">
+                                    <div class="form-check checkbox-xl">
+                                        <input class="form-check-input" type="checkbox" name="policyNoAll" onClick={(e) => {
+                                            setFilterData((prevState) => ({
+                                                ...prevState,
+                                                policyNoAll: e.target.checked,
+                                            }))
+                                        }} />
+                                        <label class="form-check-label" >All</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                    <div class="col-1">
+
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">application No.</label>
+
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">form</label>
+                    </div>
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control " name="policyNoStart" onChange={handleChange} />
+
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <label class="col-form-label">to</label>
+                    </div>
+                    <div class="col-2 ">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="policyNoEnd" onChange={handleChange} />
+                            <div class="input-group-append">
+                                <div class="input-group-text ">
+                                    <div class="form-check checkbox-xl">
+                                        <input class="form-check-input" type="checkbox" name="policyNoAll" onClick={(e) => {
+                                            setFilterData((prevState) => ({
+                                                ...prevState,
+                                                policyNoAll: e.target.checked,
+                                            }))
+                                        }} />
+                                        <label class="form-check-label" >All</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
             </form>
             <form className="container-fluid " >
 
@@ -425,7 +530,7 @@ const EditBillAdvisor = (props) => {
                     <tbody>
                         {policiesData.map((ele, i) => {
                             return (<tr>
-                                <th scope="row"><input type="checkbox" name="select" defaultChecked={true} id={i} onClick={changestatementtype} />{i + 1}</th>
+                                <th scope="row"><input type="checkbox" name="select" defaultChecked={ele.select} id={i} onClick={changestatementtype} />{i + 1}</th>
                                 <td>{ele.insurerCode}</td>
                                 <td>{ele.agentCode}</td>
                                 <td>{ele.dueDate}</td>
@@ -474,7 +579,7 @@ const EditBillAdvisor = (props) => {
                         <div class="col-2">
                             <label class="col-form-label">เลขที่ใบวางบิล</label>
                         </div>
-                        <div class="col-2"> B{Date.now()}</div>
+                        <div class="col-2">{filterData.billadvisorno}</div>
                     </div>
                     <div class="row">
                         <div class="col-2">
@@ -545,7 +650,7 @@ const EditBillAdvisor = (props) => {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="button" class="btn btn-primary" onClick={createbill}>Save changes</button>
+                    <button type="button" class="btn btn-primary" onClick={editbill}>Save changes</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={handleClose}>Close</button>
                 </Modal.Footer>
             </Modal>

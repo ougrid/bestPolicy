@@ -263,7 +263,7 @@ const FindBillAdvisor = () => {
                                 className="form-control"
                                 type="text"
 
-                                name="premCreditT"
+                                name="billadvisorno"
                                 onChange={handleChange}
                             />
 
@@ -287,7 +287,7 @@ const FindBillAdvisor = () => {
                     <div class="col-2 ">
 
                         <div class="input-group mb-3">
-                            <input  type="date" class="form-control " name="dueDate" onChange={handleChange} />
+                            <input  type="date" class="form-control " name="billdate" onChange={handleChange} />
 
                         </div>
 

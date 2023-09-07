@@ -8,6 +8,7 @@ router.post('/findpolicyinDue', ctrl.payments.findPolicyByPreminDue);
 router.post('/findpolicybyBill', ctrl.payments.findPolicyByBillno);
 router.post('/createbill', ctrl.payments.createbilladvisor);
 router.post('/findbill', ctrl.payments.findbilladvisor);
+router.post('/editbill', ctrl.payments.editbilladvisor);
 
 // router.post('/', ctrl.cars.postCar);
 // router.delete('/:index', ctrl.cars.removeCar);
