@@ -316,9 +316,9 @@ const editbilladvisor = async (req,res) =>{
       //insert to deteil of jabilladvisor
       await sequelize.query(
         'insert into static_data.b_jabilladvisordetails (keyidm, polid, customerid, motorid, grossprem, duty, tax, totalprem, "comm-out%", "comm-out-amt", '+
-        ' "ov-out%", "ov-out-amt", netflag, billpremium,updateusercode) '+
+        ' "ov-out%", "ov-out-amt", netflag, billpremium,updateusercode, seqno) '+
         'values (:keyidm, (select id from static_data."Policies" where "policyNo" = :policyNo), (select id from static_data."Insurees" where "insureeCode" = :insureeCode), :motorid, '+
-        ':grossprem, :duty, :tax, :totalprem, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :netflag, :billpremium, :updateusercode) ',
+        ':grossprem, :duty, :tax, :totalprem, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :netflag, :billpremium, :updateusercode, :seqno) ',
             {
               replacements: {
                 keyidm: billadvisors[0][0].id,
@@ -336,6 +336,7 @@ const editbilladvisor = async (req,res) =>{
                 netflag: req.body.detail[i].netflag,
                 billpremium: req.body.detail[i].billpremium,
                 updateusercode: "kewn",
+                seqno: req.body.detail[i].seqNo,
               },
               transaction: t ,
               type: QueryTypes.INSERT
@@ -350,24 +351,25 @@ const editbilladvisor = async (req,res) =>{
           `DO $$ 
           DECLARE 
             a_polid int; 
+            a_seqno int; 
             a_billadvisorno text; 
             a_netflag text; 
           BEGIN 
             -- Update rows where billadvisor matches
             UPDATE static_data."Transactions" 
             SET billadvisor = null, netflag = null 
-            WHERE billadvisor = (SELECT billadvisor FROM static_data.b_jabilladvisors WHERE id = ${req.body.bill.old_keyid} ); 
+            WHERE billadvisor = (SELECT billadvisorno FROM static_data.b_jabilladvisors WHERE id = ${req.body.bill.old_keyid} ); 
             
             -- Loop through selected rows and update
-            FOR a_polid, a_billadvisorno, a_netflag IN 
-              SELECT d.polid, m.billadvisorno, d.netflag 
+            FOR a_polid, a_billadvisorno, a_netflag , a_seqno IN 
+              SELECT d.polid, m.billadvisorno, d.netflag ,d.seqno
               FROM static_data.b_jabilladvisordetails d 
               JOIN static_data.b_jabilladvisors m ON m.id = d.keyidm 
               WHERE m.active = 'Y' AND m.id = ${billadvisors[0][0].id} 
             LOOP
               UPDATE static_data."Transactions" 
               SET billadvisor = a_billadvisorno, netflag = a_netflag 
-              WHERE polid = a_polid; 
+              WHERE polid = a_polid and seqno = a_seqno; 
             END LOOP; 
           END $$;`,
           { 

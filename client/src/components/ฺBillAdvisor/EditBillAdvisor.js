@@ -82,7 +82,7 @@ const EditBillAdvisor = (props) => {
                 setPoliciesData(arrPoldata)
                 setFilterData({...filterData, insurerCode:res.data.data[0].insurerCode, agentCode:res.data.data[0].agentCode ,old_keyid:res.data.old_keyid})
                 setBillpremiumData(array)
-                alert("create new insuree success") 
+                alert("found it") 
             }
         })
         .catch((err) => { });

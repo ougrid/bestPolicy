@@ -518,7 +518,7 @@ module.exports = {
 
     getbilldata,
     getcashierdata,
-  createbilladvisor,
+ 
   findbilladvisor,
   getbilladvisordetail,
   editbilladvisor
