@@ -428,11 +428,214 @@ const saveCashier = async (req, res) => {
 
 }
 
+const editSaveBill = async (req, res) => {
+    const schema = Joi.object({
+        // keyid: Joi.string().required(),
+        billadvisorno: Joi.string().required(),
+        // cashierreceiveno: Joi.string().required(),
+        // cashierdate: Joi.date().required(),
+        // dfrpreferno: Joi.string().required(),
+        transactiontype: Joi.string().required(),
+        insurercode: Joi.string().required(),
+        advisorcode: Joi.string().required(),
+        customerid: Joi.string().required(),
+        receivefrom: Joi.string().required(),
+        receivename: Joi.string().required(),
+        receivetype: Joi.string().required(),
+        PartnerBank: Joi.string().required(),
+        PartnerBankbranch: Joi.string().required(),
+        PartnerAccountno: Joi.string().required(),
+        AmityBank: Joi.string().required(),
+        AmityBankBranch: Joi.string().required(),
+        AmityAccountno: Joi.string().required(),
+        Amt: Joi.number().required(),
+        // createdate: Joi.date().required(),
+        // createtime: Joi.string().required(),
+        // createusercode: Joi.string().required(),
+        // updatedate: Joi.date().required(),
+        // updatetime: Joi.string().required(),
+        // updateusercode: Joi.string().required(),
+        // canceldate: Joi.date().required(),
+        // canceltime: Joi.string().required(),
+        // cancelusercode: Joi.string().required(),
+        // status: Joi.string().valid('I').required()
+    });
+    const {error} = schema.validate(req.body);
+    if (error) {
+        return res.status(400).json({error: error.details[0].message});
+    }
+    const insertQuery = `
+    INSERT INTO static_data."b_jacashiers"
+    (
+        billadvisorno, cashierreceiveno, cashierdate,
+        transactiontype, insurercode, advisorcode,
+        customerid, receivefrom, receivename, receivetype,
+        "partnerBank", "partnerBankbranch", "partnerAccountno",
+        "amityBank", "amityBankbranch", "amityAccountno",
+        amt, "createdAt", createusercode, status
+    )
+    VALUES
+    (
+        :billadvisorno, :cashierreceiveno, :cashierdate,
+        :transactiontype, :insurercode, :advisorcode,
+        :customerid, :receivefrom, :receivename, :receivetype,
+        :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
+        :AmityBank, :AmityBankBranch, :AmityAccountno,
+        :Amt, :createdate, :createusercode, :status
+    );
+    `;
+    await sequelize.query(insertQuery, {
+        replacements: {
+            // keyid: req.body.keyid,
+            billadvisorno: req.body.billadvisorno,
+            cashierreceiveno: null,
+            cashierdate: null,
+            dfrpreferno: null,
+            transactiontype: req.body.transactiontype,
+            insurercode: req.body.insurercode,
+            advisorcode: req.body.advisorcode,
+            customerid: req.body.customerid,
+            receivefrom: req.body.receivefrom,
+            receivename: req.body.receivename,
+            receivetype: req.body.receivetype,
+            PartnerBank: req.body.PartnerBank,
+            PartnerBankbranch: req.body.PartnerBankbranch,
+            PartnerAccountno: req.body.PartnerAccountno,
+            AmityBank: req.body.AmityBank,
+            AmityBankBranch: req.body.AmityBankBranch,
+            AmityAccountno: req.body.AmityAccountno,
+            Amt: req.body.Amt,
+            createdate: new Date(),
+            createtime: req.body.createtime,
+            createusercode: "testUser",
+            updatedate: new Date(),
+            updatetime: req.body.updatetime,
+            updateusercode: req.body.updateusercode,
+            // canceldate: null,
+            // canceltime: req.body.canceltime,
+            // cancelusercode: req.body.cancelusercode,
+            status: 'I'
+        },
+        type: QueryTypes.INSERT
+    })
+        .then(result => {
+            console.log("Record inserted successfully");
+            res.status(200).json(({}))
+        })
+        .catch(error => {
+            console.log("Error inserting record: ", error);
+            res.status(500).json(error);
+        });
+
+}
+const editSubmitBill = async (req, res) => {
+    const schema = Joi.object({
+        // keyid: Joi.string().required(),
+        billadvisorno: Joi.string().required(),
+        // cashierreceiveno: Joi.string().required(),
+        // cashierdate: Joi.date().required(),
+        // dfrpreferno: Joi.string().required(),
+        transactiontype: Joi.string().required(),
+        insurercode: Joi.string().required(),
+        advisorcode: Joi.string().required(),
+        customerid: Joi.string().required(),
+        receivefrom: Joi.string().required(),
+        receivename: Joi.string().required(),
+        receivetype: Joi.string().required(),
+        PartnerBank: Joi.string().required(),
+        PartnerBankbranch: Joi.string().required(),
+        PartnerAccountno: Joi.string().required(),
+        AmityBank: Joi.string().required(),
+        AmityBankBranch: Joi.string().required(),
+        AmityAccountno: Joi.string().required(),
+        Amt: Joi.number().required(),
+        // createdate: Joi.date().required(),
+        // createtime: Joi.string().required(),
+        // createusercode: Joi.string().required(),
+        // updatedate: Joi.date().required(),
+        // updatetime: Joi.string().required(),
+        // updateusercode: Joi.string().required(),
+        // canceldate: Joi.date().required(),
+        // canceltime: Joi.string().required(),
+        // cancelusercode: Joi.string().required(),
+        // status: Joi.string().valid('I').required()
+    });
+    const {error} = schema.validate(req.body);
+    if (error) {
+        return res.status(400).json({error: error.details[0].message});
+    }
+    const insertQuery = `
+    INSERT INTO static_data."b_jacashiers"
+    (
+        billadvisorno, cashierreceiveno, cashierdate,
+        transactiontype, insurercode, advisorcode,
+        customerid, receivefrom, receivename, receivetype,
+        "partnerBank", "partnerBankbranch", "partnerAccountno",
+        "amityBank", "amityBankbranch", "amityAccountno",
+        amt, "createdAt", createusercode, status
+    )
+    VALUES
+    (
+        :billadvisorno, :cashierreceiveno, :cashierdate,
+        :transactiontype, :insurercode, :advisorcode,
+        :customerid, :receivefrom, :receivename, :receivetype,
+        :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
+        :AmityBank, :AmityBankBranch, :AmityAccountno,
+        :Amt, :createdate, :createusercode, :status
+    );
+    `;
+    await sequelize.query(insertQuery, {
+        replacements: {
+            // keyid: req.body.keyid,
+            billadvisorno: req.body.billadvisorno,
+            cashierreceiveno: null,
+            cashierdate: null,
+            dfrpreferno: null,
+            transactiontype: req.body.transactiontype,
+            insurercode: req.body.insurercode,
+            advisorcode: req.body.advisorcode,
+            customerid: req.body.customerid,
+            receivefrom: req.body.receivefrom,
+            receivename: req.body.receivename,
+            receivetype: req.body.receivetype,
+            PartnerBank: req.body.PartnerBank,
+            PartnerBankbranch: req.body.PartnerBankbranch,
+            PartnerAccountno: req.body.PartnerAccountno,
+            AmityBank: req.body.AmityBank,
+            AmityBankBranch: req.body.AmityBankBranch,
+            AmityAccountno: req.body.AmityAccountno,
+            Amt: req.body.Amt,
+            createdate: new Date(),
+            createtime: req.body.createtime,
+            createusercode: "testUser",
+            updatedate: new Date(),
+            updatetime: req.body.updatetime,
+            updateusercode: req.body.updateusercode,
+            // canceldate: null,
+            // canceltime: req.body.canceltime,
+            // cancelusercode: req.body.cancelusercode,
+            status: 'I'
+        },
+        type: QueryTypes.INSERT
+    })
+        .then(result => {
+            console.log("Record inserted successfully");
+            res.status(200).json(({}))
+        })
+        .catch(error => {
+            console.log("Error inserting record: ", error);
+            res.status(500).json(error);
+        });
+
+}
+
 module.exports = {
     test,
     createCashier,
     findDataByBillAdvisoryNo,
     findbill,
     submitCashier,
-    saveCashier
+    saveCashier,
+    editSaveBill,
+    
 };

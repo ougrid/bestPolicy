@@ -84,6 +84,9 @@ const EditCashierReceive = (props) => {
     const handleShow = () => setShow(true);
     const [modalText, setModalText] = useState()
 
+    //select cashier
+    const [selectId, setSelectId] = useState("123");
+
     const onSearch = (e) =>{
         e.preventDefault()
         console.log(billAdvisorNo)
@@ -407,12 +410,19 @@ const EditCashierReceive = (props) => {
                 console.log(error);
             });
     }
+    
+    const click=(id)=>{
+        setShow(true)
+        setSelectId(id)
+        
+        
+    }
 
     return (
         <>
             <Modal show={show} onHide={handleClose} size={"xl"}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal Heading</Modal.Title>
+                    <Modal.Title>Edit Data {selectId}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>
@@ -426,7 +436,7 @@ const EditCashierReceive = (props) => {
                             <div className="col-7">
                                 <input type="text" id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control"/>
                             </div>
-                            <div className="col-1 text-center">
+                            <div className="col-1 text-center" style={{paddingRight:"20px"}}>
                                 <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
                             </div>
                         </div>
@@ -859,7 +869,7 @@ const EditCashierReceive = (props) => {
                                     onChange={(e) => setTransactionType(e.target.value)}
                                     className="form-control"
                                     disabled={transactionTypeReadOnly}
-                                    style={{ backgroundColor: transactionTypeReadOnly ? 'white' : '' }}
+                                    style={{ backgroundColor: transactionTypeReadOnly ? 'grey' : 'white' }}
                                 >
                                     <option value="" disabled>Select Transaction Type</option>
                                     <option value="PREM-IN">PREM-IN</option>
@@ -919,7 +929,7 @@ const EditCashierReceive = (props) => {
                                 <tbody>
                                 {tableData.map((row, index) => (
                                     <tr key={index}>
-                                        <td>{row.status=="I"?<button>EDIT</button>:<></>}</td>
+                                        <td>{row.status=="I"?<button onClick={()=>click(row.id)}>EDIT</button>:<></>}</td>
                                         <td>{row.billadvisorno}</td>
                                         <td>{row.dfrprederno ? row.dfrprederno : 'N/A'}</td>
                                         <td>{row.insurercode}</td>
