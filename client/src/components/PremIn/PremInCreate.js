@@ -35,12 +35,16 @@ export default function PremInCreate() {
     "totalamt",
     "comm-out%",
     "comm-out-amt",
+    "ov-out%",
+    "ov-out-amt",
+    "[] net",
+    "billpremium",
   ];
   
   const rowData = [
     {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
       advisorCode: "ADV" + Math.floor(Math.random() * 1000),
+      insurerCode: "INS" + Math.floor(Math.random() * 1000),
       Duedate: "2023-09-15",
       Policyno: "POL" + Math.floor(Math.random() * 10000),
       Endorseno: "END" + Math.floor(Math.random() * 100),
@@ -262,7 +266,7 @@ const getData = (e) => {
   e.preventDefault();
   if (e.target.name === 'cashier-btn') {
     axios
-    .post(url + "/araps/getbilldata", filterData)
+    .post(url + "/araps/getcashierdata", filterData)
     .then((res) => {
         if (res.status === 201) {
             console.log(res.data);
@@ -271,15 +275,9 @@ const getData = (e) => {
         } else {
 
 
-            const array = []
-            for (let i = 0; i < res.data.length; i++) {
-                // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                array.push(res.data[i].totalprem)
-
-            }
-            console.log(array);
-            console.log(res.data);
-            setPoliciesData(res.data)
+          console.log(res.data);
+            const data = {...filterData , ActualValue : res.data[0].amt}
+            setFilterData(data)
         }
     })
     .catch((err) => {
@@ -297,11 +295,36 @@ const getData = (e) => {
 
         } else {
 
-
-          
-            console.log(res.data);
-            const data = {...filterData , agentCode : res.data[0].agentCode, insurerCode : res.data[0].insurerCode, amt : res.data[0].amt}
+            const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode, amt : res.data.billdata[0].amt}
             setFilterData(data)
+            const arrTr = []
+            res.data.trans.map((ele,i) =>{
+              arrTr.push(
+                {advisorCode: ele.agentCode,
+                insurerCode: ele.insurerCode,
+                Duedate: ele.dueDate,
+                Policyno: ele.policyNo,
+                Endorseno: ele.endorseNo,
+                Invoiceno: '-',
+                seqno: ele.seqNo,
+                customerid: 5,
+                insuredname: "John Doe",
+                licenseno: "ABC123",
+                province: "California",
+                chassisno: "CHS" + Math.floor(Math.random() * 1000),
+                grossprem: Math.floor(Math.random() * 1000),
+                duty: Math.floor(Math.random() * 1000),
+                tax: Math.floor(Math.random() * 1000),
+                totalamt: Math.floor(Math.random() * 1000),
+                "comm-out%": Math.floor(Math.random() * 1000),
+                "comm-out-amt": Math.floor(Math.random() * 1000),
+                "ov-out%": Math.floor(Math.random() * 1000),
+                "ov-out-amt": Math.floor(Math.random() * 1000),
+                "net []": true,
+                "billpremium" : 54584215}
+              )
+            }) 
+            
             
         }
     })
@@ -440,6 +463,7 @@ const getData = (e) => {
               className="form-control"
               type="number"
               name="ActualValue"
+              value={filterData.ActualValue}
               id="ActualValue"
               disabled
             />
@@ -453,8 +477,7 @@ const getData = (e) => {
               type="number"
               name="DiffAmt"
               id="DiffAmt"
-              // value={state.ActualValue-state.Amt}
-              value={123}
+              value={filterData.ActualValue - filterData.amt}
               readOnly
             />
           </div>

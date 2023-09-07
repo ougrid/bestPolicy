@@ -104,33 +104,28 @@ const createTransection = async (policy,t) => {
           //const dueDate = new Date()
           //dueDate.setDate(date.getDate() + i*insurer[0].premCreditT);
           await sequelize.query(
-            // 'INSERT INTO static_data."b_jaaraps" ' +
-            // '("transactiontype", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
-            // 'VALUES (:type, :subType, ' +
-            // '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
-            // ':agentCode, :policyNo, :totalamt,:totalamt, :duedate, :netgrossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :seqno ,:mainaccountcode ) ',
-            'INSERT INTO static_data."b_jaaraps" ' +
-            '("transactiontype", "subType", "insurerno","advisorno1", "advisorno2", "polid", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
+            'INSERT INTO static_data."Transactions" ' +
+            '("transType", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo",  mainaccountcode ) ' +
             'VALUES (:type, :subType, ' +
-            '(select "id" from static_data."Insurers" where "insurerCode" = :insurerCode), (select "id" from static_data."Agents" where "agentCode" = :agentCode), ' +
-            '(case when :agentCode2 IS NOT NULL then (select "id" from static_data."Agents" where "agentCode" = :agentCode2) else null end ) '+
-            ' (select "id" from static_data."Policies" where "policyNo" = :policyNo), :totalamt,:totalamt, :duedate, :netgrossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :seqno ,:mainaccountcode ) ',
+            '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
+            ':agentCode, :policyNo, :totalamt,:totalamt, :duedate, :netgrossprem, :duty,:tax,:totalprem, :txtype2, (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :seqno ,:mainaccountcode ) ',
+           
             {
               replacements: {
                 type: 'PREM-OUT',
                 subType: -1,
                 insurerCode: policy.insurerCode,
                 agentCode: policy.agentCode,
-                agentCode2: policy.agentCode2,
+                // agentCode2: policy.agentCode2,
                 policyNo: policy.policyNo,
-                //totalamt: totalamt,
+                // totalamt: totalamt,
                 totalamt: jupgr.insurer[i].totalprem,
                 // duedate: dueDate,
                 duedate: jupgr.insurer[i].dueDate,
-                // netgrossprem: policy.netgrossprem,
-                // duty: policy.duty,
-                // tax: policy.tax,
-                // totalprem: policy.totalprem,
+                netgrossprem: policy.netgrossprem,
+                duty: policy.duty,
+                tax: policy.tax,
+                totalprem: policy.totalprem,
                 netgrossprem: jupgr.insurer[i].netgrossprem,
                 duty: jupgr.insurer[i].duty,
                 tax: jupgr.insurer[i].tax,
@@ -150,7 +145,7 @@ const createTransection = async (policy,t) => {
       //totalamt = policy.commin_amt/ policy.seqNoins
       //dueDate.setDate(dueDate.getDate() + insurer[0].commovCreditT);
       await sequelize.query(
-        'INSERT INTO static_data."b_jaaraps" ' +
+        'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -191,7 +186,7 @@ const createTransection = async (policy,t) => {
         //ov-in
         //totalamt = policy.ovin_amt/ policy.seqNoins
       await sequelize.query(
-        'INSERT INTO static_data."b_jaaraps" ' +
+        'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -240,7 +235,7 @@ const createTransection = async (policy,t) => {
           //const dueDate = new Date()
           //dueDate.setDate(date.getDate() + i*agent[0].premCreditT);
           await sequelize.query(
-            'INSERT INTO static_data."b_jaaraps" ' +
+            'INSERT INTO static_data."Transactions" ' +
             '("transType", "subType", "insurerCode","agentCode", "policyNo", totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" , mainaccountcode ) ' +
             'VALUES (:type, :subType, ' +
             '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -280,7 +275,7 @@ const createTransection = async (policy,t) => {
       // totalamt = policy.commout1_amt/ policy.seqNoagt
       // dueDate.setDate(dueDate.getDate() + agent[0].commovCreditT);
       await sequelize.query(
-        'INSERT INTO static_data."b_jaaraps" ' +
+        'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -321,7 +316,7 @@ const createTransection = async (policy,t) => {
         //ov-out
         //totalamt = policy.ovout1_amt/ policy.seqNoagt
       await sequelize.query(
-        'INSERT INTO static_data."b_jaaraps" ' +
+        'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -380,7 +375,7 @@ const createTransection = async (policy,t) => {
       const dueDate = new Date()
       dueDate.setDate(date.getDate() + agent2[0].commovCreditT);
       await sequelize.query(
-        'INSERT INTO static_data."b_jaaraps" ' +
+        'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", commamt,commtaxamt,totalamt,remainamt,"dueDate",netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo", mainaccountcode, "agentCode2" ) ' +
         'VALUES (:type, :subType, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -414,7 +409,7 @@ const createTransection = async (policy,t) => {
         //ov-out
         totalamt = policy.ovout2_amt/ policy.seqNoagt
       await sequelize.query(
-        'INSERT INTO static_data."b_jaaraps" ' +
+        'INSERT INTO static_data."Transactions" ' +
         '("transType", "subType", "insurerCode","agentCode", "policyNo", ovamt,ovtaxamt,totalamt,remainamt,"dueDate", '+
         ' netgrossprem,duty,tax,totalprem,txtype2, polid, "seqNo" ,mainaccountcode, "agentCode2" ) ' +
         'VALUES (:type, :subType, ' +
@@ -1003,7 +998,7 @@ const editPolicyList = async (req, res) => {
 
     try {
     
-     if(req.body[i].installment.advisor.length === 0 && req.body[i].installment.insurer.length)
+     if(req.body[i].installment.advisor.length === 0 && req.body[i].installment.insurer.length === 0)
      {
       req.body[i].policyType = 'F'
      }else{req.body[i].policyType = 'S'}
@@ -1091,10 +1086,11 @@ if (policy.installment.advisor.length === 0 ) {
     `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
     specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
     "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
-    commout_amt, ovout_rate, ovout_amt, createusercode)
+    commout_amt, ovout_rate, ovout_amt, createusercode, polid)
     values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
     :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
-    :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+    :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, 
+     (select id from static_data."Policies" where "policyNo" = :policyNo) )`,
     {
       replacements: {
         policyNo: policy.policyNo,
@@ -1144,10 +1140,11 @@ if (policy.installment.insurer.length === 0 ) {
     `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
     specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
     "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
-    commout_amt, ovout_rate, ovout_amt, createusercode)
+    commout_amt, ovout_rate, ovout_amt, createusercode, polid)
     values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
     :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
-    :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+    :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode,
+    (select id from static_data."Policies" where "policyNo" = :policyNo) )`,
     {
       replacements: {
         policyNo: policy.policyNo,
@@ -1200,10 +1197,10 @@ if (policy.installment.insurer.length === 0 ) {
       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
       specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
       "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout_rate, 
-      commout_amt, ovout_rate, ovout_amt, createusercode)
+      commout_amt, ovout_rate, ovout_amt, createusercode, polid)
       values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
       :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
-      :ovout1_rate, :ovout1_amt,  :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+      :ovout1_rate, :ovout1_amt,  :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, (select id from static_data."Policies" where "policyNo" = :policyNo))`,
       {
         replacements: {
           policyNo: policy.policyNo,
@@ -1252,9 +1249,10 @@ if (policy.installment.insurer.length === 0 ) {
       const ins =  await sequelize.query(
        `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
-       "agentCode", "agentCode2", createusercode)
+       "agentCode", "agentCode2", createusercode, polid)
        values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
-       :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :createusercode)`,
+       :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :createusercode, 
+       (select id from static_data."Policies" where "policyNo" = :policyNo))`,
        {
          replacements: {
            policyNo: policy.policyNo,
@@ -1263,10 +1261,10 @@ if (policy.installment.insurer.length === 0 ) {
            taxInvoiceNo: policy.taxInvoiceNo,
            installmenttype: 'I',
            seqNo: i +1,
-           grossprem: insurer[i].grossprem,
+           grossprem: insurer[i].netgrossprem,
            specdiscrate: 0,
            specdiscamt: 0,
-           netgrossprem: insurer[i].grossprem,
+           netgrossprem: insurer[i].netgrossprem,
            duty: insurer[i].duty,
            tax: insurer[i].tax,
            totalprem: insurer[i].totalprem,
@@ -1296,10 +1294,11 @@ if (policy.installment.insurer.length === 0 ) {
        `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
        "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
-       commout_amt, ovout_rate, ovout_amt, createusercode)
+       commout_amt, ovout_rate, ovout_amt, createusercode, polid)
        values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
        :tax, :duty, :totalprem, :commin_rate, :commin_amt, :commin_taxamt, :ovin_rate, :ovin_amt, :ovin_taxamt, :agentCode, :agentCode2, :commout1_rate, :commout1_amt, 
-       :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode)`,
+       :ovout1_rate, :ovout1_amt, :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, 
+       (select id from static_data."Policies" where "policyNo" = :policyNo))`,
        {
          replacements: {
            policyNo: policy.policyNo,

@@ -31,8 +31,8 @@ export default function PremInPaid() {
   ];
   const rowData = [
     {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
       AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
+      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
       Duedate: "2023-09-15",
       Policyno: "POL" + Math.floor(Math.random() * 10000),
       Endorseno: "END" + Math.floor(Math.random() * 100),

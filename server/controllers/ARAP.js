@@ -10,13 +10,6 @@ require('dotenv').config();
 // const Package = require("../models").Package;
 // const User = require("../models").User;
 const { Op, QueryTypes, Sequelize } = require("sequelize");
-//handle index request
-// const showAll = (req,res) =>{
-//     Location.findAll({
-//     }).then((locations)=>{
-//         res.json(locations);
-//     })
-// }
 
 // Replace 'your_database', 'your_username', 'your_password', and 'your_host' with your database credentials
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
@@ -31,7 +24,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
   },
 });
 
-const findTransaction = async (req,res) => {
+const findPolicyPremIn = async (req,res) => {
   // let transac1 = null
   // let transac2 = null
   let transac = []
@@ -86,32 +79,60 @@ const findTransaction = async (req,res) => {
   
 }
 
-const findPolicyByPreminDue = async (req,res) => {
+const getbilldata = async (req,res) => {
 
     const records = await sequelize.query(
-      'select * from static_data."Transactions" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
-      'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode and billadvisor isnull '+
-      'and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)',
-          {
+        'select (select "insurerCode" from static_data."Insurers" where id = insurerno ), '+
+        '(select "agentCode" from static_data."Agents" where id = advisorno ), *  from static_data.b_jabilladvisors '+
+        'where active =\'Y\' and billadvisorno = :billadvisorno ',
+            {
+              replacements: {
+                billadvisorno: req.body.billadvisorno,
+              },
+              type: QueryTypes.SELECT
+            }
+          );
+    const trans = await sequelize.query(
+        `select * from static_data."Transactions" where billadvisor = :billadvisorno and "transType" = 'PREM-IN'`,
+        {
             replacements: {
-              agentCode:req.body.agentCode,
-              insurerCode:req.body.insurerCode,
-              dueDate: req.body.dueDate,
-              policyNoStart: req.body.policyNoStart,
-              policyNoEnd: req.body.policyNoEnd,
-              policyNoAll:req.body.policyNoAll,
-            },
-            type: QueryTypes.SELECT
-          }
-        );
+                billadvisorno: req.body.billadvisorno,
+              },
+              type: QueryTypes.SELECT
+        }
+    )      
         if (records.length === 0) {
           await res.status(201).json({msg:"not found policy"})
+        }else{
+
+          await res.json({billdata: records, trans : trans})
+        }
+  
+}
+
+
+const getcashierdata = async (req,res) => {
+
+    const records = await sequelize.query(
+        'select  *  from static_data.b_jacashiers '+
+        'where cashierreceiveno = :cashierreceiveno ',
+            {
+              replacements: {
+                cashierreceiveno : req.body.CashierReceiveNo,
+              },
+              type: QueryTypes.SELECT
+            }
+          );
+          
+        if (records.length === 0) {
+          await res.status(201).json({msg:"not found cashierno"})
         }else{
 
           await res.json(records)
         }
   
 }
+
 
 const findPolicyByBillno = async (req,res) => {
 
@@ -411,10 +432,8 @@ const createcashier = async (req,res) =>{
 
 module.exports = {
 
-
-  findTransaction,
-  findPolicyByPreminDue,
-  findPolicyByBillno,
+    getbilldata,
+    getcashierdata,
   createbilladvisor,
   findbilladvisor,
   getbilladvisordetail,

@@ -13,7 +13,8 @@ module.exports = {
     policies : require("./policies"),
     auth : require("./auth"),
     payments :require("./payment"),
-    runno :require("./lib/runningno")
+    runno :require("./lib/runningno"),
+    arap : require("./ARAP")
     // reports : require("./report"),
     
 
