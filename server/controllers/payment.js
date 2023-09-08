@@ -276,7 +276,7 @@ const editbilladvisor = async (req,res) =>{
   const t = await sequelize.transaction();
   try{
 
-    req.body.bill.billadvisor = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05');
+    req.body.bill.billadvisorno = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05');
   const billadvisors = await sequelize.query(
     'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active, old_keyid ) ' +
     'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode), '+
@@ -369,7 +369,7 @@ const editbilladvisor = async (req,res) =>{
             LOOP
               UPDATE static_data."Transactions" 
               SET billadvisor = a_billadvisorno, netflag = a_netflag 
-              WHERE polid = a_polid and seqno = a_seqno; 
+              WHERE polid = a_polid and "seqNo" = a_seqno; 
             END LOOP; 
           END $$;`,
           { 
