@@ -1,6 +1,8 @@
 import "./App.css";
 import { Route, Routes, Link, Navigate } from "react-router-dom";
 import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 import Nav from "./components/NavBar/Nav";
 import Index from "./components/Index/Index";

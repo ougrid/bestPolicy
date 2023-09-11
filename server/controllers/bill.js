@@ -276,11 +276,13 @@ const submitCashier = async (req, res) => {
         :Amt, :createdate, :createusercode, :status
     );
     `;
+    
+    let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate())
     await sequelize.query(insertQuery, {
         replacements: {
             // keyid: req.body.keyid,
             billadvisorno: req.body.billadvisorno,
-            cashierreceiveno: await getRunNo('cash',null,null,'kw',getCurrentDate()),
+            cashierreceiveno: cashierreceiveno,
             cashierdate: null,
             dfrpreferno: null,
             transactiontype: req.body.transactiontype,
@@ -311,6 +313,8 @@ const submitCashier = async (req, res) => {
         type: QueryTypes.INSERT
     })
         .then(result => {
+
+            updateCashierReceiveNo (cashierreceiveno,req.body.billadvisorno)
             console.log("Record inserted successfully");
 
             //TABLE b_jugltx  
@@ -581,12 +585,12 @@ const editSubmitBill = async (req, res) => {
     id=:id
   `;
     console.log(getCurrentDate())
-
+    let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate())
     await sequelize.query(updateQuery, {
         replacements: {
             id:req.body.id,
             billadvisorno: req.body.billadvisorno,
-            cashierreceiveno: await getRunNo('cash',null,null,'kw',getCurrentDate()),
+            cashierreceiveno: cashierreceiveno,
             cashierdate: null,
             transactiontype: req.body.transactiontype,
             insurercode: req.body.insurercode,
@@ -609,6 +613,8 @@ const editSubmitBill = async (req, res) => {
         type: Sequelize.QueryTypes.UPDATE
     })
         .then(result => {
+             updateCashierReceiveNo (cashierreceiveno,req.body.billadvisorno)
+            
             console.log("Record inserted successfully");
             res.status(200).json(({}))
         })
@@ -626,6 +632,29 @@ function getCurrentDate() {
     let result = `${year}-${month}-${day}`
     return result.toString();
 }
+const updateCashierReceiveNo = async (cashierreceiveno,billadvisorno) => {
+    try {
+        await sequelize.transaction(async (transaction) => {
+            // Assuming jacashier and jacaahier are variables holding the relevant data
+            const jacashierCashierReceiveNo = cashierreceiveno;
+            const jacaahierBillAdvisorNo = billadvisorno;
+
+            // Perform the update operation
+            await sequelize.query(
+                `UPDATE static_data."b_jabilladvisors" SET cashierreceiptno = :cashierreceiveno WHERE billadvisorno = :billadvisorno`,
+                {
+                    replacements: {
+                        cashierreceiveno: jacashierCashierReceiveNo,
+                        billadvisorno: jacaahierBillAdvisorNo,
+                    },
+                    transaction,
+                }
+            );
+        });
+    } catch (error) {
+        console.error("Error updating the record:", error);
+    }
+};
 module.exports = {
     test,
     createCashier,

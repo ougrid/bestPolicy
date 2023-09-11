@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
@@ -29,6 +29,8 @@ const NormalText = {
 const EditCashierReceive = (props) => {
     const url = config.url;
     const navigate = useNavigate();
+    const searchButtonRef = useRef(null);
+
 
 
     const [tableData, setTableData] = useState([])
@@ -83,10 +85,7 @@ const EditCashierReceive = (props) => {
 
     //select cashier
     const [selectId, setSelectId] = useState("123");
-
-    useEffect(() => {
-
-    }, [billAdvisorNo]);
+    
     
     const onSearch = (e) =>{
         e.preventDefault()
@@ -281,7 +280,13 @@ const EditCashierReceive = (props) => {
                 if (response.status==200) {
                     console.log("Success")
                     setModalText("Success")
-                    setShow(true)
+                    // if (searchButtonRef.current) {
+                    //     searchButtonRef.current.click();
+                    // }
+                    // setTableData([])
+                    window.location.reload()
+                    setShowSuccess(true)
+                    
                 }
             })
             .catch((error) => {
@@ -322,7 +327,12 @@ const EditCashierReceive = (props) => {
                 console.log(response)
                 if (response.status==200) {
                     setModalText("Success")
+                    // setTableData([])
+                    window.location.reload()
                     setShowSuccess(true)
+                    // if (searchButtonRef.current) {
+                    //     searchButtonRef.current.click();
+                    // }
                     console.log("Success")
                 }
             })
@@ -464,7 +474,7 @@ const EditCashierReceive = (props) => {
                                 <input type="text" id="billAdvisorNo" required value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control"/>
                             </div>
                             <div className="col-1 text-center" style={{paddingRight:"20px"}}>
-                                <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
+                                <button type="submit" ref={searchButtonRef} className="btn btn-primary" id={"click"} onClick={onSearch}>Search</button>
                             </div>
                         </div>
 
