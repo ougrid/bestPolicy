@@ -73,9 +73,9 @@ function Nav() {
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a class="dropdown-item" href="/findpolicy">ค้นหารายการ</a></li>
-              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่</a></li>
-              <li><a class="dropdown-item" href="/policyexcel">แก้ไขรายการ</a></li>
+              <li><a class="dropdown-item" href="/cashier/findcashier">ค้นหารายการ</a></li>
+              <li><a class="dropdown-item" href="/cashier/createcashier">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/cashier/editcashier">แก้ไขรายการ</a></li>
             </ul>
           </div>
           <div class="dropdown">
@@ -98,6 +98,7 @@ function Nav() {
               <li><a class="dropdown-item" href="/insurer">สร้างบริษัทรับประกัน</a></li>
               <li><a class="dropdown-item" href="/insureType">สร้างแผนประกัน</a></li>
               <li><a class="dropdown-item" href="/agent">สร้างผู้แนะนำ</a></li>
+              <li><a className="dropdown-item" href="/bank">สร้างธนาคาร</a></li>
             </ul>
           </div>
             {/* <NavList>

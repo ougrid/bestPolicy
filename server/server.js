@@ -45,6 +45,7 @@ app.use("/v1/static/tambons", routes.tambons);
 app.use("/v1/static/titles", routes.titles);
 app.use("/v1/static/mt_brands", routes.MT_Brands);
 app.use("/v1/static/mt_models", routes.MT_Models);
+app.use("/v1/static/bank", routes.banks);
 
 app.use("/v1/locations", routes.locations);
 app.use("/v1/persons", routes.persons);
@@ -52,6 +53,8 @@ app.use("/v1/auth", routes.auth);
 app.use("/v1/insures", routes.insures);
 app.use("/v1/policies", routes.policies);
 app.use("/v1/payments", routes.payments);
+app.use("/v1/bills", routes.bills);
+// app.use("/v1/reports", routes.reports);
 app.use("/v1/getrunno", routes.runno);  
 app.use("/v1/araps", routes.arap);  
 

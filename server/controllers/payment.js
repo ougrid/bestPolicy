@@ -114,7 +114,7 @@ const findPolicyByPreminDue = async (req,res) => {
 }
 
 const findPolicyByBillno = async (req,res) => {
-
+    console.log(req.body.billadvisor)
   const records = await sequelize.query(
     'select * from   static_data."Transactions"  tran join static_data."Policies" pol   on tran."policyNo" = pol."policyNo" where tran.billadvisor = :billadvisor  and "transType" = \'PREM-IN\'',
         {

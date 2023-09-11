@@ -4,6 +4,7 @@ module.exports = {
     amphurs: require("./static/amphurs"),
     tambons: require("./static/tambons"),
     titles: require("./static/titles"),
+    banks: require("./static/bank"),
     sendmail: require("./sendmail"),
     MT_Brands: require("./static/MT_brands"),
     MT_Models: require("./static/MT_Models"),
@@ -14,7 +15,8 @@ module.exports = {
     policies : require("./policies"),
     payments :require("./payment"),
     runno :require("./runno"),
-    arap : require("./ARAP")
+    arap : require("./ARAP"),
+    bills :require("./bill"),
     // reports : require("./report"),
     
 
