@@ -404,7 +404,43 @@ const removeRow = (e) => {
          
           
         </div>
-
+        <div class="row">
+          <div class="col-2 "></div>
+          <div class="col-2">
+            <label class="form-label ">
+              จดทะเบียน vat
+            </label>
+            <InputBtn
+              type="checkbox"
+              name="vatflag"
+              onChange={(e) =>
+                setAgentData({ ...entityData, vatflag: e.target.checked })
+              }
+            />
+          </div>
+          <div class="col-2">
+            <label class="form-label ">
+              เลขที่จดทะเบียน
+            </label>
+            <InputBtn
+              className="form-control"
+              type="text"
+              name="taxno"
+              onChange={changeAgent}
+            />
+          </div>
+          <div class="col-2">
+            <label class="form-label ">
+              อัตราภาษีหัก ณ ที่จ่าย
+            </label>
+            <InputBtn
+              className="form-control"
+              type='number'
+              name="deducttaxrate"
+              onChange={changeAgent}
+            />
+          </div>
+        </div>
 
         {/* location table */}
         <div class="row">
