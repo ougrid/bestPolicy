@@ -120,7 +120,7 @@ const UserCarList = (props) => {
     }
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policynew/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     });
@@ -174,7 +174,7 @@ const handleClose = (e) =>{
         // Update the state to populate the form data with the Excel data
         const element = []
         for (let i = 2; i < excelData.length; i++) {
-          excelData[i].policyNo = excelData[i].policyNo.toString()
+          //excelData[i].policyNo = excelData[i].policyNo.toString()
           if ('chassisNo' in excelData[i]) {excelData[i].chassisNo = excelData[i].chassisNo.toString()}
           if ('licenseNo' in excelData[i]) {excelData[i].licenseNo = excelData[i].licenseNo.toString()}
           element.push(excelData[i])

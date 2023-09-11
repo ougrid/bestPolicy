@@ -14,9 +14,10 @@ module.exports = {
     policies : require("./policies"),
     auth : require("./auth"),
     payments :require("./payment"),
-    bill :require("./bill")
+    bill :require("./bill"),
     payments :require("./payment"),
-    runno :require("./lib/runningno")
+    runno :require("./lib/runningno"),
+    arap : require("./ARAP")
     // reports : require("./report"),
     
 

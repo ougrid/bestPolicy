@@ -56,6 +56,7 @@ app.use("/v1/payments", routes.payments);
 app.use("/v1/bills", routes.bills);
 // app.use("/v1/reports", routes.reports);
 app.use("/v1/getrunno", routes.runno);  
+app.use("/v1/araps", routes.arap);  
 
 // app.use("/v1/insures", routes.insures);
 // app.use("/sendmail", routes.sendmail);
