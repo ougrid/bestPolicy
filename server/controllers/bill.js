@@ -21,6 +21,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
     },
 });
 const Joi = require('joi');
+const {getRunNo} = require("./lib/runningno");
 
 const test = (req, res) => {
 
@@ -279,7 +280,7 @@ const submitCashier = async (req, res) => {
         replacements: {
             // keyid: req.body.keyid,
             billadvisorno: req.body.billadvisorno,
-            cashierreceiveno: null,
+            cashierreceiveno: await getRunNo('cash',null,null,'kw',getCurrentDate()),
             cashierdate: null,
             dfrpreferno: null,
             transactiontype: req.body.transactiontype,
@@ -430,6 +431,7 @@ const saveCashier = async (req, res) => {
 
 const editSaveBill = async (req, res) => {
     const schema = Joi.object({
+        id:Joi.number().required(),
         // keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
         // cashierreceiveno: Joi.string().required(),
@@ -438,7 +440,7 @@ const editSaveBill = async (req, res) => {
         transactiontype: Joi.string().required(),
         insurercode: Joi.string().required(),
         advisorcode: Joi.string().required(),
-        customerid: Joi.string().required(),
+        customerid: Joi.required(),
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
@@ -464,33 +466,38 @@ const editSaveBill = async (req, res) => {
     if (error) {
         return res.status(400).json({error: error.details[0].message});
     }
-    const insertQuery = `
-    INSERT INTO static_data."b_jacashiers"
-    (
-        billadvisorno, cashierreceiveno, cashierdate,
-        transactiontype, insurercode, advisorcode,
-        customerid, receivefrom, receivename, receivetype,
-        "partnerBank", "partnerBankbranch", "partnerAccountno",
-        "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status
-    )
-    VALUES
-    (
-        :billadvisorno, :cashierreceiveno, :cashierdate,
-        :transactiontype, :insurercode, :advisorcode,
-        :customerid, :receivefrom, :receivename, :receivetype,
-        :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
-        :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status
-    );
-    `;
-    await sequelize.query(insertQuery, {
+    const updateQuery = `
+  UPDATE static_data."b_jacashiers"
+  SET
+    cashierreceiveno = :cashierreceiveno,
+    cashierdate = :cashierdate,
+    transactiontype = :transactiontype,
+    insurercode = :insurercode,
+    advisorcode = :advisorcode,
+    customerid = :customerid,
+    receivefrom = :receivefrom,
+    receivename = :receivename,
+    receivetype = :receivetype,
+    "partnerBank" = :PartnerBank,
+    "partnerBankbranch" = :PartnerBankbranch,
+    "partnerAccountno" = :PartnerAccountno,
+    "amityBank" = :AmityBank,
+    "amityBankbranch" = :AmityBankBranch,
+    "amityAccountno" = :AmityAccountno,
+    amt = :Amt,
+    "updatedAt" = :updatedate,
+    status = :status,
+    "updateusercode" = :updateusercode
+  WHERE
+    id=:id
+  `;
+
+    await sequelize.query(updateQuery, {
         replacements: {
-            // keyid: req.body.keyid,
+            id:req.body.id,
             billadvisorno: req.body.billadvisorno,
             cashierreceiveno: null,
             cashierdate: null,
-            dfrpreferno: null,
             transactiontype: req.body.transactiontype,
             insurercode: req.body.insurercode,
             advisorcode: req.body.advisorcode,
@@ -505,18 +512,11 @@ const editSaveBill = async (req, res) => {
             AmityBankBranch: req.body.AmityBankBranch,
             AmityAccountno: req.body.AmityAccountno,
             Amt: req.body.Amt,
-            createdate: new Date(),
-            createtime: req.body.createtime,
-            createusercode: "testUser",
             updatedate: new Date(),
-            updatetime: req.body.updatetime,
-            updateusercode: req.body.updateusercode,
-            // canceldate: null,
-            // canceltime: req.body.canceltime,
-            // cancelusercode: req.body.cancelusercode,
+            updateusercode: "testUser",
             status: 'I'
         },
-        type: QueryTypes.INSERT
+        type: Sequelize.QueryTypes.UPDATE
     })
         .then(result => {
             console.log("Record inserted successfully");
@@ -530,6 +530,7 @@ const editSaveBill = async (req, res) => {
 }
 const editSubmitBill = async (req, res) => {
     const schema = Joi.object({
+        id:Joi.number().required(),
         // keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
         // cashierreceiveno: Joi.string().required(),
@@ -538,7 +539,7 @@ const editSubmitBill = async (req, res) => {
         transactiontype: Joi.string().required(),
         insurercode: Joi.string().required(),
         advisorcode: Joi.string().required(),
-        customerid: Joi.string().required(),
+        customerid: Joi.required(),
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
@@ -549,48 +550,44 @@ const editSubmitBill = async (req, res) => {
         AmityBankBranch: Joi.string().required(),
         AmityAccountno: Joi.string().required(),
         Amt: Joi.number().required(),
-        // createdate: Joi.date().required(),
-        // createtime: Joi.string().required(),
-        // createusercode: Joi.string().required(),
-        // updatedate: Joi.date().required(),
-        // updatetime: Joi.string().required(),
-        // updateusercode: Joi.string().required(),
-        // canceldate: Joi.date().required(),
-        // canceltime: Joi.string().required(),
-        // cancelusercode: Joi.string().required(),
-        // status: Joi.string().valid('I').required()
     });
     const {error} = schema.validate(req.body);
     if (error) {
         return res.status(400).json({error: error.details[0].message});
     }
-    const insertQuery = `
-    INSERT INTO static_data."b_jacashiers"
-    (
-        billadvisorno, cashierreceiveno, cashierdate,
-        transactiontype, insurercode, advisorcode,
-        customerid, receivefrom, receivename, receivetype,
-        "partnerBank", "partnerBankbranch", "partnerAccountno",
-        "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status
-    )
-    VALUES
-    (
-        :billadvisorno, :cashierreceiveno, :cashierdate,
-        :transactiontype, :insurercode, :advisorcode,
-        :customerid, :receivefrom, :receivename, :receivetype,
-        :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
-        :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status
-    );
-    `;
-    await sequelize.query(insertQuery, {
+    const updateQuery = `
+  UPDATE static_data."b_jacashiers"
+  SET
+    cashierreceiveno = :cashierreceiveno,
+    cashierdate = :cashierdate,
+    transactiontype = :transactiontype,
+    insurercode = :insurercode,
+    advisorcode = :advisorcode,
+    customerid = :customerid,
+    receivefrom = :receivefrom,
+    receivename = :receivename,
+    receivetype = :receivetype,
+    "partnerBank" = :PartnerBank,
+    "partnerBankbranch" = :PartnerBankbranch,
+    "partnerAccountno" = :PartnerAccountno,
+    "amityBank" = :AmityBank,
+    "amityBankbranch" = :AmityBankBranch,
+    "amityAccountno" = :AmityAccountno,
+    amt = :Amt,
+    "updatedAt" = :updatedate,
+    status = :status,
+    "updateusercode" = :updateusercode
+  WHERE
+    id=:id
+  `;
+    console.log(getCurrentDate())
+
+    await sequelize.query(updateQuery, {
         replacements: {
-            // keyid: req.body.keyid,
+            id:req.body.id,
             billadvisorno: req.body.billadvisorno,
-            cashierreceiveno: null,
+            cashierreceiveno: await getRunNo('cash',null,null,'kw',getCurrentDate()),
             cashierdate: null,
-            dfrpreferno: null,
             transactiontype: req.body.transactiontype,
             insurercode: req.body.insurercode,
             advisorcode: req.body.advisorcode,
@@ -605,18 +602,11 @@ const editSubmitBill = async (req, res) => {
             AmityBankBranch: req.body.AmityBankBranch,
             AmityAccountno: req.body.AmityAccountno,
             Amt: req.body.Amt,
-            createdate: new Date(),
-            createtime: req.body.createtime,
-            createusercode: "testUser",
             updatedate: new Date(),
-            updatetime: req.body.updatetime,
-            updateusercode: req.body.updateusercode,
-            // canceldate: null,
-            // canceltime: req.body.canceltime,
-            // cancelusercode: req.body.cancelusercode,
-            status: 'I'
+            updateusercode: "testUser",
+            status: 'A'
         },
-        type: QueryTypes.INSERT
+        type: Sequelize.QueryTypes.UPDATE
     })
         .then(result => {
             console.log("Record inserted successfully");
@@ -628,7 +618,14 @@ const editSubmitBill = async (req, res) => {
         });
 
 }
-
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const day = String(today.getDate()).padStart(2, '0');
+    let result = `${year}-${month}-${day}`
+    return result.toString();
+}
 module.exports = {
     test,
     createCashier,
@@ -637,5 +634,5 @@ module.exports = {
     submitCashier,
     saveCashier,
     editSaveBill,
-    
+    editSubmitBill
 };

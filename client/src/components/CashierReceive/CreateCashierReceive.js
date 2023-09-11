@@ -24,6 +24,8 @@ const NormalText = {
     color: "white",
     paddingBottom: "10px",
 };
+// import joi from joi;
+const Joi = require('joi');
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateCashierReceive = () => {
@@ -268,6 +270,45 @@ const CreateCashierReceive = () => {
             // cancelusercode: Joi.string().required(),
             // status: Joi.string().valid('I').required()
         }
+
+
+        const schema = Joi.object({
+            // keyid: Joi.string().required(),
+            billadvisorno: Joi.string().required(),
+            // cashierreceiveno: Joi.string().required(),
+            // cashierdate: Joi.date().required(),
+            // dfrpreferno: Joi.string().required(),
+            transactiontype: Joi.string().required(),
+            insurercode: Joi.string().required(),
+            advisorcode: Joi.string().required(),
+            customerid: Joi.string().required(),
+            receivefrom: Joi.string().required(),
+            receivename: Joi.string().required(),
+            receivetype: Joi.string().required(),
+            PartnerBank: Joi.string().required(),
+            PartnerBankbranch: Joi.string().required(),
+            PartnerAccountno: Joi.string().required(),
+            AmityBank: Joi.string().required(),
+            AmityBankBranch: Joi.string().required(),
+            AmityAccountno: Joi.string().required(),
+            Amt: Joi.number().required(),
+            // createdate: Joi.date().required(),
+            // createtime: Joi.string().required(),
+            // createusercode: Joi.string().required(),
+            // updatedate: Joi.date().required(),
+            // updatetime: Joi.string().required(),
+            // updateusercode: Joi.string().required(),
+            // canceldate: Joi.date().required(),
+            // canceltime: Joi.string().required(),
+            // cancelusercode: Joi.string().required(),
+            // status: Joi.string().valid('I').required()
+        });
+        const {error} = schema.validate(data);
+        if (error) {
+            setModalText(error)
+            return
+        }
+        
         axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/submitCasheir",data, {
             headers: {
                 'Content-Type': 'application/json',
@@ -288,6 +329,37 @@ const CreateCashierReceive = () => {
 
     };
     const handleSave = () => {
+        const schema = Joi.object({
+            // keyid: Joi.string().required(),
+            billadvisorno: Joi.string().required(),
+            // cashierreceiveno: Joi.string().required(),
+            // cashierdate: Joi.date().required(),
+            // dfrpreferno: Joi.string().required(),
+            transactiontype: Joi.string().required(),
+            insurercode: Joi.string().required(),
+            advisorcode: Joi.string().required(),
+            customerid: Joi.string().required(),
+            receivefrom: Joi.string().required(),
+            receivename: Joi.string().required(),
+            receivetype: Joi.string().required(),
+            PartnerBank: Joi.string().required(),
+            PartnerBankbranch: Joi.string().required(),
+            PartnerAccountno: Joi.string().required(),
+            AmityBank: Joi.string().required(),
+            AmityBankBranch: Joi.string().required(),
+            AmityAccountno: Joi.string().required(),
+            Amt: Joi.number().required(),
+            // createdate: Joi.date().required(),
+            // createtime: Joi.string().required(),
+            // createusercode: Joi.string().required(),
+            // updatedate: Joi.date().required(),
+            // updatetime: Joi.string().required(),
+            // updateusercode: Joi.string().required(),
+            // canceldate: Joi.date().required(),
+            // canceltime: Joi.string().required(),
+            // cancelusercode: Joi.string().required(),
+            // status: Joi.string().valid('I').required()
+        });
         let data={
             // keyid: Joi.string().required(),
             billadvisorno: billAdvisorNo,
@@ -318,6 +390,11 @@ const CreateCashierReceive = () => {
             // canceltime: Joi.string().required(),
             // cancelusercode: Joi.string().required(),
             // status: Joi.string().valid('I').required()
+        }
+        const {error} = schema.validate(data);
+        if (error) {
+            setModalText(error)
+            return
         }
         axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/saveCasheir",data, {
             headers: {
@@ -394,7 +471,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="billAdvisorNo" className="form-label">Bill Advisor No</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control"/>
+                                <input type="text" required id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control"/>
                             </div>
                             <div className="col-1 text-center">
                                 <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
@@ -407,7 +484,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="Insurer" className="form-label">Insurer</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Insurer" value={Insurer} readOnly={insurerReadOnly} onChange={(e) => setInsurer(e.target.value)} className="form-control"/>
+                                <input type="text" id="Insurer" required value={Insurer} readOnly={insurerReadOnly} onChange={(e) => setInsurer(e.target.value)} className="form-control"/>
                             </div>
                         </div>
                         {/* Advisor */}
@@ -416,7 +493,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="Advisor" className="form-label">Advisor</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Advisor" value={Advisor} readOnly={advisoryReadOnly} onChange={(e) => setAdvisor(e.target.value)} className="form-control"/>
+                                <input type="text" id="Advisor"  required value={Advisor} readOnly={advisoryReadOnly} onChange={(e) => setAdvisor(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -426,7 +503,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="Customer" className="form-label">Customer</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Customer" value={Customer} onChange={(e) => setCustomer(e.target.value)} className="form-control"/>
+                                <input type="text" id="Customer" value={Customer} required onChange={(e) => setCustomer(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -436,7 +513,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="cashierReceiptNo" className="form-label">Cashier Receipt No</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="cashierReceiptNo" value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control"/>
+                                <input type="text" id="cashierReceiptNo" required  value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -446,7 +523,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="cashierDate" className="form-label">Cashier Date</label>
                             </div>
                             <div className="col-7">
-                                <input type="datetime-local" id="cashierDate" value={cashierDate} onChange={(e) => setCashierDate(e.target.value)} className="form-control"/>
+                                <input type="datetime-local" id="cashierDate" required value={cashierDate} onChange={(e) => setCashierDate(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -475,7 +552,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="receiveName" className="form-label">Receive Name</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="receiveName" value={receiveName} onChange={(e) => setReceiveName(e.target.value)} className="form-control"/>
+                                <input type="text" id="receiveName" value={receiveName} required onChange={(e) => setReceiveName(e.target.value)} className="form-control"/>
                             </div>
                         </div>
                         {/* Receive Type */}
@@ -689,7 +766,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="amount" className="form-label">Amount</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control"/>
+                                <input type="text" id="amount" required value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 

@@ -43,10 +43,7 @@ const EditCashierReceive = (props) => {
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [dfrpreferno, setDfrpreferno] = useState();
-
-    useEffect(() => {
-
-    }, [billAdvisorNo]);
+    
 
     const [Insurer, setInsurer] = useState("");
     const [Advisor, setAdvisor] = useState("")
@@ -87,6 +84,10 @@ const EditCashierReceive = (props) => {
     //select cashier
     const [selectId, setSelectId] = useState("123");
 
+    useEffect(() => {
+
+    }, [billAdvisorNo]);
+    
     const onSearch = (e) =>{
         e.preventDefault()
         console.log(billAdvisorNo)
@@ -245,23 +246,18 @@ const EditCashierReceive = (props) => {
 
     }, [bankBranchPartner]);
 
-
-
-
-    useEffect(() => {
-
-
-    }, [receiveForm]);
+    
     const handleSubmit = () => {
         let data={
+            id:selectData.id,
             // keyid: Joi.string().required(),
             billadvisorno: billAdvisorNo,
             // cashierreceiveno: Joi.string().required(),
             // cashierdate: Joi.date().required(),
             // dfrpreferno: Joi.string().required(),
             transactiontype: transactionType,
-            insurercode: Insurer,
-            advisorcode: Advisor,
+            insurercode: insurercode,
+            advisorcode: advisorcode,
             customerid: Customer,
             receivefrom: receiveForm,
             receivename: receiveName,
@@ -272,19 +268,9 @@ const EditCashierReceive = (props) => {
             AmityBank: bankAmity,
             AmityBankBranch: bankBranchAmity,
             AmityAccountno: bankNo,
-            Amt: amount
-            // createdate: Joi.date().required(),
-            // createtime: Joi.string().required(),
-            // createusercode: Joi.string().required(),
-            // updatedate: Joi.date().required(),
-            // updatetime: Joi.string().required(),
-            // updateusercode: Joi.string().required(),
-            // canceldate: Joi.date().required(),
-            // canceltime: Joi.string().required(),
-            // cancelusercode: Joi.string().required(),
-            // status: Joi.string().valid('I').required()
+            Amt: amount,
         }
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/submitCasheir",data, {
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/editsubmitCasheir",data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
@@ -305,14 +291,15 @@ const EditCashierReceive = (props) => {
     };
     const handleSave = () => {
         let data={
+            id:selectData.id,
             // keyid: Joi.string().required(),
             billadvisorno: billAdvisorNo,
             // cashierreceiveno: Joi.string().required(),
             // cashierdate: Joi.date().required(),
             // dfrpreferno: Joi.string().required(),
             transactiontype: transactionType,
-            insurercode: Insurer,
-            advisorcode: Advisor,
+            insurercode: insurercode,
+            advisorcode: advisorcode,
             customerid: Customer,
             receivefrom: receiveForm,
             receivename: receiveName,
@@ -324,18 +311,8 @@ const EditCashierReceive = (props) => {
             AmityBankBranch: bankBranchAmity,
             AmityAccountno: bankNo,
             Amt: amount
-            // createdate: Joi.date().required(),
-            // createtime: Joi.string().required(),
-            // createusercode: Joi.string().required(),
-            // updatedate: Joi.date().required(),
-            // updatetime: Joi.string().required(),
-            // updateusercode: Joi.string().required(),
-            // canceldate: Joi.date().required(),
-            // canceltime: Joi.string().required(),
-            // cancelusercode: Joi.string().required(),
-            // status: Joi.string().valid('I').required()
         }
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/saveCasheir",data, {
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/editsaveCasheir",data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
@@ -345,7 +322,7 @@ const EditCashierReceive = (props) => {
                 console.log(response)
                 if (response.status==200) {
                     setModalText("Success")
-                    setShow(true)
+                    setShowSuccess(true)
                     console.log("Success")
                 }
             })
@@ -386,6 +363,7 @@ const EditCashierReceive = (props) => {
     const searchdata = (e) =>{
         e.preventDefault()
         let data = JSON.stringify({
+            
             "billadvisorno": billAdvisorNo,
             "insurercode":insurercode,
             "advisorcode":advisorcode,
@@ -410,19 +388,68 @@ const EditCashierReceive = (props) => {
                 console.log(error);
             });
     }
-    
-    const click=(id)=>{
+
+    const [selectData, setSelectData] = useState({});
+    const click=(rowData)=>{
         setShow(true)
-        setSelectId(id)
-        
+        setSelectId(rowData.billadvisorno)
+        setSelectData(rowData);
         
     }
+    useEffect(() => {
+        if (selectData) {
+            setBillAdvisorNo(selectData.billadvisorno || "");
+            if(selectData.insurercode)
+            setInsurercode(selectData.insurercode || "");
+            if (selectData.advisorcode)
+            setAdvisorcode(selectData.advisorcode || "");
+            setRefno(selectData.dfrprederno || "");
+            setCashierReceiptNo(selectData.cashierreceiveno || "");
+            if (selectData.transactiontype)
+            setTransactionType(selectData.transactiontype || {});
+            setCreateUserCode(selectData.createusercode || "");
+            setDfrpreferno(selectData.dfrprederno || "");
+
+            // Set the rest of the state variables based on the keys in selectData
+            setInsurer(selectData.insurer || "");
+            setAdvisor(selectData.advisor || "");
+            setCustomer(selectData.customerid || "");
+            setCashierDate(selectData.cashierdate || "");
+            setReceiveForm(selectData.receivefrom || "Advisor");
+            setReceiveName(selectData.receivename || "");
+            setReceiveType(selectData.receivetype || "เงินโอน");
+            setBankPartner(selectData.partnerBank || "");
+            setBankBranchPartner(selectData.partnerBankbranch || "");
+            setBankNoPartner(selectData.partnerAccountno || "");
+            setBankAmity(selectData.amityBank || "");
+            setBankBranchAmity(selectData.amityBankbranch || "");
+            setBankNo(selectData.amityAccountno || "");
+            setAmount(selectData.amt || "");
+        }
+    }, [selectData]);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     return (
         <>
+            <Modal show={showSuccess} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal Heading</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {modalText}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={()=>{
+                        handleClose()
+                        setShowSuccess(false)
+                    }}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Modal show={show} onHide={handleClose} size={"xl"}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Data {selectId}</Modal.Title>
+                    <Modal.Title>Bill Advisory Number {selectId}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>
@@ -434,7 +461,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="billAdvisorNo" className="form-label">Bill Advisor No</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control"/>
+                                <input type="text" id="billAdvisorNo" required value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control"/>
                             </div>
                             <div className="col-1 text-center" style={{paddingRight:"20px"}}>
                                 <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
@@ -447,7 +474,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="Insurer" className="form-label">Insurer</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Insurer" value={Insurer} readOnly={insurerReadOnly} onChange={(e) => setInsurer(e.target.value)} className="form-control"/>
+                                <input type="text" id="Insurer" required value={insurercode} readOnly={insurerReadOnly} onChange={(e) => setInsurer(e.target.value)} className="form-control"/>
                             </div>
                         </div>
                         {/* Advisor */}
@@ -456,7 +483,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="Advisor" className="form-label">Advisor</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Advisor" value={Advisor} readOnly={advisoryReadOnly} onChange={(e) => setAdvisor(e.target.value)} className="form-control"/>
+                                <input type="text" id="Advisor" required value={advisorcode} readOnly={advisoryReadOnly} onChange={(e) => setAdvisor(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -466,7 +493,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="Customer" className="form-label">Customer</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Customer" value={Customer} onChange={(e) => setCustomer(e.target.value)} className="form-control"/>
+                                <input type="text" id="Customer" required value={Customer} onChange={(e) => setCustomer(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -476,7 +503,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="cashierReceiptNo" className="form-label">Cashier Receipt No</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="cashierReceiptNo" value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control"/>
+                                <input type="text" id="cashierReceiptNo" required value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -486,7 +513,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="cashierDate" className="form-label">Cashier Date</label>
                             </div>
                             <div className="col-7">
-                                <input type="datetime-local" id="cashierDate" value={cashierDate} onChange={(e) => setCashierDate(e.target.value)} className="form-control"/>
+                                <input type="datetime-local" id="cashierDate" required value={cashierDate} onChange={(e) => setCashierDate(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -515,7 +542,7 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="receiveName" className="form-label">Receive Name</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="receiveName" value={receiveName} onChange={(e) => setReceiveName(e.target.value)} className="form-control"/>
+                                <input type="text" id="receiveName" required value={receiveName} onChange={(e) => setReceiveName(e.target.value)} className="form-control"/>
                             </div>
                         </div>
                         {/* Receive Type */}
@@ -729,26 +756,31 @@ const EditCashierReceive = (props) => {
                                 <label htmlFor="amount" className="form-label">Amount</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="amount" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control"/>
+                                <input type="text" id="amount" required value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
                     </form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <div className="row" style={{ marginTop: '20px' }}>
-                        <div className="col-12 text-center">
-                            <button type="submit" className="btn btn-primary btn-lg" onClick={handleSave}>Save</button>
-                        </div>
-                    </div>
                     <div className="row" style={{ marginTop: '20px' }}>
                         <div className="col-12 text-center">
                             <button type="submit" className="btn btn-primary btn-lg" onClick={handleSubmit}>Submit</button>
                         </div>
                     </div>
+
+                    <div className="row" style={{ marginTop: '20px' }}>
+                        <div className="col-12 text-center">
+                            <button type="submit" className="btn btn-primary btn-lg" onClick={handleSave}>Save</button>
+                        </div>
+                    </div>
+
+                    <div className="row" style={{ marginTop: '20px' }}>
+                        <div className="col-12 text-center">
+                            <button type="submit" className="btn btn-primary btn-lg" onClick={handleClose}>Close</button>
+                        </div>
+                    </div>
+
                 </Modal.Footer>
             </Modal>
         <div className="container" style={{marginTop:"30px",marginBottom:"30px"}}>
@@ -899,9 +931,9 @@ const EditCashierReceive = (props) => {
                     </form>
                 </div>
                 <div className="col-lg-12">
-                    <div style={{ overflowY: 'auto', height: '400px' , marginTop:"50px" }}>
+                    <div style={{ overflowY: 'auto', overflowX: 'auto', height: '400px' , marginTop:"50px" }}>
                         {tableData.length!=0?<table className="table table-striped table-bordered">
-                                <thead>
+                                <thead className="sticky-header">
                                 <tr>
                                     <th>Edit Button</th>
                                     <th>Bill Advisor No</th>
@@ -929,14 +961,14 @@ const EditCashierReceive = (props) => {
                                 <tbody>
                                 {tableData.map((row, index) => (
                                     <tr key={index}>
-                                        <td>{row.status=="I"?<button onClick={()=>click(row.id)}>EDIT</button>:<></>}</td>
+                                        <td>{row.status=="I"?<button onClick={()=>click(row)}>EDIT</button>:<></>}</td>
                                         <td>{row.billadvisorno}</td>
                                         <td>{row.dfrprederno ? row.dfrprederno : 'N/A'}</td>
                                         <td>{row.insurercode}</td>
                                         <td>{row.advisorcode}</td>
                                         <td>{row.cashierreceiveno ? row.cashierreceiveno : 'N/A'}</td>
                                         <td>{row.cashierdate ? row.cashierdate : 'N/A'}</td>
-                                        <td>{row.ARNO ? row.ARNO : 'N/A'}</td>
+                                        {/*<td>{row.ARNO ? row.ARNO : 'N/A'}</td>*/}
                                         <td>{row.receivefrom}</td>
                                         <td>{row.receivename}</td>
                                         <td>{row.createusercode}</td>
