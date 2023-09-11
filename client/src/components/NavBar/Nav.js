@@ -86,7 +86,9 @@ function Nav() {
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/premin/find">ค้นหารายการ</a></li>
               <li><a class="dropdown-item" href="/premin/create">สร้างรายการใหม่</a></li>
-              <li><a class="dropdown-item" href="/premin/paid">แก้ไขรายการ</a></li>
+              <li><a class="dropdown-item" href="/premin/paid/premout">ค้นหารายการ prem-out</a></li>
+              <li><a class="dropdown-item" href="/premin/paid/commovout">ค้นหารายการ comm/ov-out</a></li>
+              <li><a class="dropdown-item" href="/premin/paid/wht3">ค้นหารายการ WHT 3%</a></li>
             </ul>
           </div>
           <div class="dropdown">

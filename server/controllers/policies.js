@@ -295,7 +295,7 @@ const createTransection = async (policy,t) => {
             // duty: policy.duty,
             // tax: policy.tax,
             // totalprem: policy.totalprem,
-            commamt: jupgr.advisor[i].commout_amt,
+            commamt: jupgr.advisor[i].commout1_amt,
             commtaxamt: null,
             totalamt: jupgr.advisor[i].commout1_amt,
             duedate: jupgr.advisor[i].dueDate,
@@ -336,7 +336,7 @@ const createTransection = async (policy,t) => {
             // duty: policy.duty,
             // tax: policy.tax,
             // totalprem: policy.totalprem,
-            ovamt: jupgr.advisor[i].ovout_amt,
+            ovamt: jupgr.advisor[i].ovout1_amt,
             ovtaxamt: null,
             totalamt: jupgr.advisor[i].ovout1_amt,
             duedate: jupgr.advisor[i].dueDate,
@@ -754,6 +754,8 @@ const draftPolicyList = async (req, res) => {
 
   for (let i = 0; i < req.body.length; i++) {
     //create entity 
+    const t = await sequelize.transaction();
+  try {
     await sequelize.query(
       'insert into static_data."Entities" ("personType","titleID","t_ogName","t_firstName","t_lastName","idCardType","idCardNo","taxNo") ' +
       'values (:personType, (select "TITLEID" from static_data."Titles" where "TITLETHAIBEGIN" = :title limit 1), :t_ogName, :t_firstName, :t_lastName,:idCardType,:idCardNo,:taxNo) ' +
@@ -769,6 +771,7 @@ const draftPolicyList = async (req, res) => {
           idCardNo: req.body[i].idCardNo,
           taxNo: req.body[i].taxNo
         },
+        transaction: t,
         type: QueryTypes.INSERT
       }
     ).then(async (entity) => {
@@ -806,6 +809,7 @@ const draftPolicyList = async (req, res) => {
               tel_1: req.body[i].telNum_1,
               locationType: 'A'
             },
+            transaction: t,
             type: QueryTypes.INSERT
           }
         )
@@ -813,7 +817,7 @@ const draftPolicyList = async (req, res) => {
         //select insuree
         const insuree = await sequelize.query(
           'select * FROM static_data."Insurees" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id" WHERE (CASE WHEN ent."personType" = \'P\' THEN "idCardNo" ELSE "taxNo" END) = :idNo ',
-          { replacements: { idNo: req.body[i].personType === "P" ? req.body[i].idCardNo : req.body[i].taxNo }, type: QueryTypes.SELECT })
+          { replacements: { idNo: req.body[i].personType === "P" ? req.body[i].idCardNo : req.body[i].taxNo },  transaction: t, type: QueryTypes.SELECT })
 
         insureeCode = insuree[0].insureeCode
         
@@ -840,6 +844,7 @@ const draftPolicyList = async (req, res) => {
               motorprovinceID:2,
               modelYear: req.body[i].modelYear,
             },
+            transaction: t,
             type: QueryTypes.SELECT
           }
         )
@@ -860,6 +865,7 @@ const draftPolicyList = async (req, res) => {
           subClass: req.body[i].subClass,
           insurerCode: req.body[i].insurerCode,
         },
+        transaction: t,
         type: QueryTypes.SELECT
       }
     )
@@ -921,7 +927,7 @@ const draftPolicyList = async (req, res) => {
       }
 
     //get application no
-    req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw','2023-09-05');
+    req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw','2023-09-05',t);
     console.log(req.body[i].applicationNo);
 
       //insert policy
@@ -977,13 +983,18 @@ const draftPolicyList = async (req, res) => {
             itemList: cars[0].id,
             
           },
+          transaction: t,
           type: QueryTypes.INSERT
         }
       )
 
 
     })
-
+    await t.commit();
+  } catch (error) {
+    console.log(error);
+    await t.rollback();
+  }
 
   }
 
@@ -1209,10 +1220,10 @@ if (policy.installment.insurer.length === 0 ) {
           taxInvoiceNo: policy.taxInvoiceNo,
           installmenttype: 'A',
           seqNo: i +1,
-          grossprem: advisor[i].grossprem,
+          grossprem: advisor[i].netgrossprem,
           specdiscrate: 0,
           specdiscamt: 0,
-          netgrossprem: advisor[i].grossprem,
+          netgrossprem: advisor[i].netgrossprem,
           duty: advisor[i].duty,
           tax: advisor[i].tax,
           totalprem: advisor[i].totalprem,
@@ -1229,9 +1240,9 @@ if (policy.installment.insurer.length === 0 ) {
           ovout1_rate: policy[`ovout1_rate`],
           ovout1_amt: advisor[i][`ovout1_amt`],
           commout_rate: policy[`commout_rate`],
-          commout_amt: parseFloat((advisor[i].grossprem *policy[`commout_rate`]/100).toFixed(2)),
+          commout_amt: parseFloat((advisor[i].netgrossprem *policy[`commout_rate`]/100).toFixed(2)),
           ovout_rate: policy[`ovout_rate`],
-          ovout_amt: parseFloat((advisor[i].grossprem *policy[`ovout_rate`]/100).toFixed(2)),
+          ovout_amt: parseFloat((advisor[i].netgrossprem *policy[`ovout_rate`]/100).toFixed(2)),
           createusercode: "kwanjai",
           
         },

@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useEffect, useState}  from "react";
+
+import { useParams} from "react-router-dom";
 import PremInTable from "./PremInTable";
 import axios from "axios";
 
+const config = require("../../config.json");
+
 export default function PremInPaid() {
+  const url = config.url;
+  const [filterData, setFilterData] = useState(
+    {
+        "billadvisorno": null,
+        "insurerCode": null,
+        "agentCode": null,
+        "cashierreceiveno": null,
+        "arno" : null 
+
+    })
+    const [policiesData, setPoliciesData] = useState([])
   const colData = [
     "InsurerCode",
     "AdvisorCode",
@@ -112,16 +127,45 @@ export default function PremInPaid() {
     },
     // Add more objects as needed
   ];
-
+  const { type } = useParams();
   //apis 
   const searchHandler=(e)=>{
-    e.preventDefault();
-    axios.get().then(res=>{
-      alert("search")
-      //do search api logic
-    }).catch(()=>{
-      alert('error')
+    
+  e.preventDefault();
+    if (type === 'premout') {
+      let data = filterData
+      data.type = 'prem_out'
+      setFilterData(data)
+    }else if (type === 'commovout' ) {
+      let data = filterData
+      data.type = 'comm/ov_out'
+      setFilterData(data)
+    }else if (type === 'wht3') {
+      let data = filterData
+      data.type = 'wht_out'
+      setFilterData(data)
+    }
+    axios
+    .post(url + "/araps/getartrans", filterData)
+    .then((res) => {
+        if (res.status === 201) {
+            console.log(res.data);
+            alert("dont find billadvisorNo : " + filterData.billadvisorno);
+
+        } else {
+
+            const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
+            setFilterData(data)
+            setPoliciesData(res.data.trans)
+            
+            
+        }
     })
+    .catch((err) => {
+
+         alert("dont find billadvisorNo : " + filterData.billadvisorno);
+
+    });
   }
   return (
     <div className="container d-fle justify-content-center my-5">

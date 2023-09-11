@@ -10,7 +10,7 @@ export default function PremInCreate() {
         "billadvisorno": null,
         "insurerCode": null,
         "agentCode": null,
-        "CashierReceiveNo": null,
+        "cashierreceiveno": null,
         "dueDate" : null,
         "policyNoAll" : true
 
@@ -41,188 +41,7 @@ export default function PremInCreate() {
     "billpremium",
   ];
   
-  const rowData = [
-    {
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-    {
-      insurerCode: "INS" + Math.floor(Math.random() * 1000),
-      advisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.floor(Math.random() * 1000),
-      duty: Math.floor(Math.random() * 1000),
-      tax: Math.floor(Math.random() * 1000),
-      totalamt: Math.floor(Math.random() * 1000),
-      "comm-out%": Math.floor(Math.random() * 1000),
-      "comm-out-amt": Math.floor(Math.random() * 1000),
-    },
-  ];
+  
   const handleChange = (e) => {
     
     setFilterData((prevState) => ({
@@ -270,19 +89,19 @@ const getData = (e) => {
     .then((res) => {
         if (res.status === 201) {
             console.log(res.data);
-            alert("dont find CashierReceiveNo : " + filterData.CashierReceiveNo);
+            alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
 
         } else {
 
 
           console.log(res.data);
-            const data = {...filterData , ActualValue : res.data[0].amt}
+            const data = {...filterData ,amt: res.data[0].amt}
             setFilterData(data)
         }
     })
     .catch((err) => {
 
-         alert("dont find CashierReceiveNo : " + filterData.CashierReceiveNo);
+         alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
 
     });
   }else if (e.target.name === 'bill-btn'){
@@ -295,36 +114,9 @@ const getData = (e) => {
 
         } else {
 
-            const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode, amt : res.data.billdata[0].amt}
+            const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
             setFilterData(data)
             setPoliciesData(res.data.trans)
-            // const arrTr = []
-            // res.data.trans.map((ele,i) =>{
-            //   arrTr.push(
-            //     {advisorCode: ele.agentCode,
-            //     insurerCode: ele.insurerCode,
-            //     Duedate: ele.dueDate,
-            //     Policyno: ele.policyNo,
-            //     Endorseno: ele.endorseNo,
-            //     Invoiceno: '-',
-            //     seqno: ele.seqNo,
-            //     customerid: 5,
-            //     insuredname: "John Doe",
-            //     licenseno: "ABC123",
-            //     province: "California",
-            //     chassisno: "CHS" + Math.floor(Math.random() * 1000),
-            //     grossprem: Math.floor(Math.random() * 1000),
-            //     duty: Math.floor(Math.random() * 1000),
-            //     tax: Math.floor(Math.random() * 1000),
-            //     totalamt: Math.floor(Math.random() * 1000),
-            //     "comm-out%": Math.floor(Math.random() * 1000),
-            //     "comm-out-amt": Math.floor(Math.random() * 1000),
-            //     "ov-out%": Math.floor(Math.random() * 1000),
-            //     "ov-out-amt": Math.floor(Math.random() * 1000),
-            //     "net []": true,
-            //     "billpremium" : 54584215}
-            //   )
-            // }) 
             
             
         }
@@ -348,6 +140,23 @@ const getData = (e) => {
         alert('error but created in test')
       })
     }
+
+const savearpremin = async (e) => {
+  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
+  await axios.post(url + "/araps/savearpremin", {master : {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData}).then((res) => {
+    alert("save account recive successed!!!");
+    // window.location.reload(false);
+  });
+};
+
+const submitarpremin = async (e) => {
+  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
+  await axios.post(url + "/araps/submitarpremin", {master : {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData}).then((res) => {
+    alert("save account recive successed!!!");
+    // window.location.reload(false);
+  });
+};
+
   return (
     <div className="container d-fle justify-content-center my-5">
       <form onSubmit={(e)=>createHandler(e)}>
@@ -411,7 +220,7 @@ const getData = (e) => {
           </div>
         </div>
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="CashierReceiveNo">
+          <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
             dueDate
           </label>
           <div className="col-4 ">
@@ -424,17 +233,17 @@ const getData = (e) => {
               />
           </div>
         </div>
-              {/* CashierReceiveNo */}
+              {/* cashierreceiveno */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="CashierReceiveNo">
-            CashierReceiveNo
+          <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
+            cashierreceiveno
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="CashierReceiveNo"
-              id="CashierReceiveNo"
+              name="cashierreceiveno"
+              id="cashierreceiveno"
               onChange={handleChange}
             />
           </div>
@@ -447,29 +256,29 @@ const getData = (e) => {
         </div>
         {/* Amt */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="Amt">
+          <label class="col-sm-2 col-form-label" htmlFor="amt">
             Amt
           </label>
           <div className="col-4 ">
-            <input className="form-control" type="number" name="Amt" id="Amt" value={filterData.amt} disabled/>
+            <input className="form-control" type="number" name="amt" id="amt" value={filterData.amt} disabled/>
           </div>
         </div>
-        {/* ActualValue */}
+        {/* actualvalue */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="ActualValue">
+          <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
             ActualValue
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="number"
-              name="ActualValue"
-              value={filterData.ActualValue}
-              id="ActualValue"
+              name="actualvalue"
+              value={filterData.actualvalue}
+              id="actualvalue"
               disabled
             />
           </div>
-          <label class="col-sm-2 col-form-label" htmlFor="ActualValue">
+          <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
             DiffAmt
           </label>
           <div className="col-4 ">
@@ -478,7 +287,7 @@ const getData = (e) => {
               type="number"
               name="DiffAmt"
               id="DiffAmt"
-              value={filterData.ActualValue - filterData.amt}
+              value={filterData.actualvalue - filterData.amt}
               readOnly
             />
           </div>
@@ -490,6 +299,8 @@ const getData = (e) => {
       <div>
         <PremInTable cols={colsData} rows={policiesData} />
         <button className="btn btn-primary">Export To Excel</button>
+        <button className="btn btn-warning" onClick={(e)=>savearpremin(e)}>save</button>
+        <button className="btn btn-success" onClick={(e)=>submitarpremin(e)}>submit</button>
       </div>
     </div>
   );

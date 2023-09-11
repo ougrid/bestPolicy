@@ -82,7 +82,7 @@ const getbilldata = async (req, res) => {
         join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
         join static_data."Policies" p on p.id = j.polid
         where t.billadvisor = :billadvisorno 
-        and t."transType" = 'PREM-IN' `,
+        and t."transType" = 'PREM-IN' and j.installmenttype ='A' `,
     {
       replacements: {
         billadvisorno: req.body.billadvisorno,
@@ -103,7 +103,7 @@ const getcashierdata = async (req, res) => {
       "where cashierreceiveno = :cashierreceiveno ",
     {
       replacements: {
-        cashierreceiveno: req.body.CashierReceiveNo,
+        cashierreceiveno: req.body.cashierreceiveno,
       },
       type: QueryTypes.SELECT,
     }
@@ -124,21 +124,22 @@ const submitARPremin = async (req, res) => {
     // const billno = 'B' +  Date.now()
     req.body.master.arno =
       "ARNO" +
-      (await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
+      (await runningno.getRunNo("arno", null, null, "kw", "2023-09-05",t));
 
     //insert into b_jaaraps
     const arPremIn = await sequelize.query(
       `insert into static_data.b_jaaraps (billadvisorno, cashierreceiveno, cashieramt, insurerno, advisorno, type, transactiontype, actualvalue, diffamt, status, 
             createusercode, dfrpreferno, rprefdate )
-          values( :billadvisorno, :cashierreceiveno, :cashieramt, :insurerno, :advisorno, :type, :transactiontype, :actualvalue, :diffamt, :status, 
-            :createusercode, :dfrpreferno, :rprefdate ) `,
+          values( :billadvisorno, :cashierreceiveno, :cashieramt, (select "id" from static_data."Insurers" where "insurerCode" = :insurerCode), 
+          (select "id" from static_data."Agents" where "agentCode" = :agentCode), :type, :transactiontype, :actualvalue, :diffamt, :status, 
+            :createusercode, :dfrpreferno, :rprefdate ) Returning id`,
       {
         replacements: {
           billadvisorno: req.body.master.billadvisorno,
           cashierreceiveno: req.body.master.cashierreceiveno,
-          cashieramt: req.body.master.cashieramt,
-          insurerno: req.body.master.insurerno,
-          advisorno: req.body.master.advisorno,
+          cashieramt: req.body.master.amt,
+          insurerCode: req.body.master.insurerCode,
+          agentCode: req.body.master.agentCode,
           type: "AR",
           transactiontype: "PREM-IN",
           actualvalue: req.body.master.actualvalue,
@@ -150,6 +151,7 @@ const submitARPremin = async (req, res) => {
           billdate: billdate,
           createusercode: "kewn",
         },
+        
         transaction: t,
         type: QueryTypes.INSERT,
       }
@@ -180,37 +182,40 @@ const submitARPremin = async (req, res) => {
             invoiceNo: req.body.trans[i].invoiceNo,
             seqNo: req.body.trans[i].seqNo,
             netflag: req.body.trans[i].netflag,
-            netamt: req.body.trans[i].netamt,
+            netamt: req.body.trans[i].remainamt,
           },
           transaction: t,
           type: QueryTypes.INSERT,
         }
       );
-    }
-    console.log(billadvisors[0][0].id);
+    
+   
     //update arno, refdate to transaction table
+    let cond = ' and txtype2 in ( 1, 2, 3, 4, 5 ) and status = \'N\''
+    if (req.body.trans[i].endorseNo !== null) {
+      cond =cond + ' and "endorseNo"= ' + req.body.trans[i].endorseNo
+    }
+    if (req.body.trans[i].seqNo !== null) {
+      cond = cond +' and "seqNo" = ' +req.body.trans[i].seqNo
+    }
     await sequelize.query(
       `update static_data."Transactions" 
         set dfrpreferno = :dfrpreferno ,
           rprefdate = :rprefdate ,
           "prem-in-dfrpreferno" = :dfrpreferno,
-          "premin-rprefdate" = :rprefdate
-        where "transType" = 'PREM-IN'
-          and txtype2 in ('1','2','3','4','5')
-          and status = 'N'
+          "premin-rprefdate" = :rprefdate,
+          receiptno = :cashierreceiveno
+        where "transType" in ( 'PREM-IN', 'PREM-OUT')
           and "insurerCode" = :insurerCode
           and "agentCode" = :agentCode
-          and polid = :polid
-          and "endorseNo"= :endorseNo
-          and receiptno = :cashierreceiveno
-          and "seqNo" = :seqNo`,
+          and polid = :polid ${cond}`,
           {replacements:{
             dfrpreferno: req.body.master.arno,
             rprefdate: billdate,
             agentCode: req.body.trans[i].agentCode,
             insurerCode: req.body.trans[i].insurerCode,
             polid: req.body.trans[i].polid,
-            endorseNo: req.body.trans[i].endorseNo,
+            
             cashierreceiveno: req.body.master.cashierreceiveno,
             seqNo: req.body.trans[i].seqNo,
           },
@@ -237,14 +242,14 @@ const submitARPremin = async (req, res) => {
           replacements: {
             keyidm: arPremIn[0][0].id,
             advisorcode: req.body.trans[i].agentCode,
-            taxno: agent[0][0].taxno,
-            deducttaxrate: agent[0][0].deducttaxrate,
+            taxno: agent[0].taxno,
+            deducttaxrate: agent[0].deducttaxrate,
             commout_amt: req.body.trans[i].commout_amt,
             ovout_amt: req.body.trans[i].ovout_amt,
             whtcommout_amt:
-              (req.body.trans[i].commout_amt * agent[0][0].deducttaxrate) / 100,
+              (req.body.trans[i].commout_amt * agent[0].deducttaxrate) / 100,
             whtovout_amt:
-              (req.body.trans[i].commout_amt * agent[0][0].deducttaxrate) / 100,
+              (req.body.trans[i].commout_amt * agent[0].deducttaxrate) / 100,
           },
           transaction: t,
           type: QueryTypes.INSERT,
@@ -256,39 +261,40 @@ const submitARPremin = async (req, res) => {
         set dfrpreferno = :dfrpreferno ,
           rprefdate = :rprefdate ,
           "prem-in-dfrpreferno" = :dfrpreferno,
-          "premin-rprefdate" = :rprefdate
-        where "transType" in ('CONN-OUT','OV-OUT')
-          and txtype2 in ('1','2','3','4','5')
+          "premin-rprefdate" = :rprefdate,
+          receiptno = :cashierreceiveno
+        where "transType" in ('COMM-OUT','OV-OUT')
           and status = 'N'
           and "insurerCode" = :insurerCode
           and "agentCode" = :agentCode
           and polid = :polid
-          and "endorseNo"= :endorseNo
-          and receiptno = :cashierreceiveno
-          and "seqNo" = :seqNo`,
+          ${cond}`,
           {replacements:{
             dfrpreferno: req.body.master.arno,
             rprefdate: billdate,
             agentCode: req.body.trans[i].agentCode,
             insurerCode: req.body.trans[i].insurerCode,
             polid: req.body.trans[i].polid,
-            endorseNo: req.body.trans[i].endorseNo,
+            // endorseNo: req.body.trans[i].endorseNo,
             cashierreceiveno: req.body.master.cashierreceiveno,
-            seqNo: req.body.trans[i].seqNo,
+            // seqNo: req.body.trans[i].seqNo,
           },
           transaction: t,
           type: QueryTypes.UPDATE,
         })
     }
+
+  }// end for loop
     await t.commit();
+    await res.json({
+      msg: `created ARNO : ${req.body.master.arno } success!!`,
+    });
   } catch (error) {
     console.log(error);
     await t.rollback();
   }
 
-  await res.json({
-    msg: `created ARNO : ${req.body.master.arno } success!!`,
-  });
+  
 };
 
 const saveARPremin = async (req, res) => {
@@ -297,21 +303,20 @@ const saveARPremin = async (req, res) => {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
     // const billno = 'B' +  Date.now()
-    req.body.master.xxx =
-      "BILL" +
-      (await runningno.getRunNo("bill", null, null, "kw", "2023-09-05"));
+    // req.body.master.arno = "ARNO" +(await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
     const arPremIn = await sequelize.query(
       `insert into static_data.b_jaaraps (billadvisorno, cashierreceiveno, cashieramt, insurerno, advisorno, type, transactiontype, actualvalue, diffamt, status, 
             createusercode )
-          values( :billadvisorno, :cashierreceiveno, :cashieramt, :insurerno, :advisorno, :type, :transactiontype, :actualvalue, :diffamt, :status, 
-            :createusercode ) `,
+          values( :billadvisorno, :cashierreceiveno, :cashieramt, (select "id" from static_data."Insurers" where "insurerCode" = :insurerCode), 
+          (select "id" from static_data."Agents" where "agentCode" = :agentCode), :type, :transactiontype, :actualvalue, :diffamt, :status, 
+            :createusercode ) Returning id`,
       {
         replacements: {
           billadvisorno: req.body.master.billadvisorno,
           cashierreceiveno: req.body.master.cashierreceiveno,
-          cashieramt: req.body.master.cashieramt,
-          insurerno: req.body.master.insurerno,
-          advisorno: req.body.master.advisorno,
+          cashieramt: req.body.master.amt,
+          insurerCode: req.body.master.insurerCode,
+          agentCode: req.body.master.agentCode,
           type: "AR",
           transactiontype: "PREM-IN",
           actualvalue: req.body.master.actualvalue,
@@ -326,6 +331,7 @@ const saveARPremin = async (req, res) => {
         type: QueryTypes.INSERT,
       }
     );
+    
     for (let i = 0; i < req.body.trans.length; i++) {
       //insert to deteil of jaarapds
       await sequelize.query(
@@ -339,18 +345,17 @@ const saveARPremin = async (req, res) => {
             invoiceNo: req.body.trans[i].invoiceNo,
             seqNo: req.body.trans[i].seqNo,
             netflag: req.body.trans[i].netflag,
-            netamt: req.body.trans[i].netamt,
+            netamt: req.body.trans[i].remainamt,
           },
           transaction: t,
           type: QueryTypes.INSERT,
         }
       );
-    }
-    console.log(billadvisors[0][0].id);
+    
     //insert to deteil of jatw when netflag = N
     if (req.body.trans[i].netflag === "N") {
       const agent = await sequelize.query(
-        '(select taxno, deducttaxrate from static_data."Agents" where "agentCode" = :agentCode )',
+        'select taxno, deducttaxrate from static_data."Agents" where "agentCode" = :agentCode ',
         {
           replacements: {
             agentCode: req.body.trans[i].agentCode,
@@ -359,6 +364,7 @@ const saveARPremin = async (req, res) => {
           type: QueryTypes.SELECT,
         }
       );
+      console.log(agent[0]);
       await sequelize.query(
         `insert into static_data.b_jatws (keyidm, advisorcode, commout_amt, ovout_amt, whtrate, whtcommout_amt,  whtovout_amt, taxid) 
                   values(:keyidm, :advisorcode, :commout_amt, :ovout_amt, :deducttaxrate,
@@ -367,30 +373,96 @@ const saveARPremin = async (req, res) => {
           replacements: {
             keyidm: arPremIn[0][0].id,
             advisorcode: req.body.trans[i].agentCode,
-            taxno: agent[0][0].taxno,
-            deducttaxrate: agent[0][0].deducttaxrate,
+            taxno: agent[0].taxno,
+            deducttaxrate: agent[0].deducttaxrate,
             commout_amt: req.body.trans[i].commout_amt,
             ovout_amt: req.body.trans[i].ovout_amt,
             whtcommout_amt:
-              (req.body.trans[i].commout_amt * agent[0][0].deducttaxrate) / 100,
+              (req.body.trans[i].commout_amt * agent[0].deducttaxrate) / 100,
             whtovout_amt:
-              (req.body.trans[i].commout_amt * agent[0][0].deducttaxrate) / 100,
+              (req.body.trans[i].commout_amt * agent[0].deducttaxrate) / 100,
           },
           transaction: t,
           type: QueryTypes.INSERT,
         }
       );
     }
+  }//end for loop
     await t.commit();
+    await res.json({
+      msg: `created billadvisorNO : ${req.body.master.billadvisorno} success!!`,
+    });
   } catch (error) {
     console.log(error);
     await t.rollback();
   }
 
-  await res.json({
-    msg: `created billadvisorNO : ${req.body.bill.billadvisor} success!!`,
-  });
+  
 };
+
+const getARtrans = async (req, res) => {
+  
+  let cond = ''
+  if (req.body.billadvisorno !== null) {
+    cond = cond + ` and t.billadvisor = ${req.body.billadvisorno}` 
+  }
+  if (req.body.insurerCode !== null) {
+    cond = cond + ` and t.insurerCode = ${req.body.insurerCode}` 
+  }
+  if (req.body.agentCode !== null) {
+    cond = cond + ` and t.agentCode = ${req.body.agentCode}` 
+  }
+  if (req.body.cashierreceiveno !== null) {
+    cond = cond + ` and t.receiptno = ${req.body.cashierreceiveno}` 
+  }
+  if (req.body.arno !== null) {
+    cond = cond + ` and t.prem-in-dfrpreferno = ${req.body.arno}` 
+  }
+  if (req.body.type === 'prem_out') {
+    cond = cond + ` and t."transType" = 'PREM-OUT' 
+                    and "premout-rprefdate" is null
+                    and "prem-out-dfrpreferno" is null
+                    and rprefdate is null` 
+  }else if (req.body.type === 'comm/ov_out') {
+    cond = cond + ` and t."transType" in ( 'COMM-OUT', 'OV-OUT' ) and rprefdate is null` 
+  }else if (req.body.type === 'wht_out') {
+    cond = cond + ` and t."transType" in ( 'COMM-OUT', 'OV-OUT' ) and rprefdate is not null`     
+  }
+  
+  const trans = await sequelize.query(
+    `select t."agentCode", t."insurerCode", 
+        t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
+        (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
+        (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
+        (select "entityID" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) ) as insureeName , 
+       
+        j.polid, (select "licenseNo" from static_data."Motors" where id = p."itemList") , (select  "chassisNo" from static_data."Motors" where id = p."itemList"), j.netgrossprem, j.duty, j.tax, j.totalprem, j.commout_rate,
+        j.commout_amt, j.ovout_rate, j.ovout_amt, t.netflag, t.remainamt
+        from static_data."Transactions" t 
+        join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
+        join static_data."Policies" p on p.id = j.polid
+        where t.txtype2 in ( 1, 2, 3, 4, 5 )
+        and t.status ='N'
+        and "premin-rprefdate" is not null
+        and  "prem-in-dfrpreferno" is not null
+        and j.installmenttype ='I' ${cond}`,
+    {
+      replacements: {
+        billadvisorno: req.body.billadvisorno,
+      },
+      type: QueryTypes.SELECT,
+    }
+  );
+  if (trans.length === 0) {
+    await res.status(201).json({ msg: "not found transaction" });
+  } else {
+    await res.json({ trans: trans });
+  }
+};
+
+
+
+
 
 const findPolicyByBillno = async (req, res) => {
   const records = await sequelize.query(
@@ -465,7 +537,7 @@ const editbilladvisor = async (req, res) => {
   try {
     req.body.bill.billadvisor =
       "BILL" +
-      (await runningno.getRunNo("bill", null, null, "kw", "2023-09-05"));
+      (await runningno.getRunNo("bill", null, null, "kw", "2023-09-05",t));
     const billadvisors = await sequelize.query(
       "INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active, old_keyid ) " +
         'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
@@ -600,6 +672,7 @@ module.exports = {
   getcashierdata,
   submitARPremin,
   saveARPremin,
+  getARtrans,
   findbilladvisor,
   getbilladvisordetail,
   editbilladvisor,

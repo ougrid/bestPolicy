@@ -32,7 +32,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
 //RunType = บอกว่าเป็น runno ของค่าอะไร ,
 // Paramclass, subclass -> ในกรณีที่เลข runno แบ่งย่อยตาม class/subclass ประกัน 
 // outletcode -> ยังไม่ใช้
-const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
+const getRunNo = async (runtype,paramclass,subclass,usercode,effdate,t) => {
 
     //public static long GetRunNo(string BrCode, string RunType, string ParamClass, string SubClass, string OutletCode, string UpdateUserCode, DateTime EffectiveDate)
  
@@ -48,10 +48,10 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
         await sequelize.authenticate();
         await sequelize.query('set lock_timeout = 5000');
         await sequelize.query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
-        const transaction = await sequelize.transaction();
+        // const transaction = await sequelize.transaction();
 
         //table TURUNT
-          const basisResult = await sequelize.query(`SELECT "PeriodBasis" FROM static_data."TURUNT" WHERE "RunType" = '${RunType}'`, { type: sequelize.QueryTypes.SELECT });
+          const basisResult = await sequelize.query(`SELECT "PeriodBasis" FROM static_data."TURUNT" WHERE "RunType" = '${RunType}'`, { transaction: t,type: sequelize.QueryTypes.SELECT });
     if (basisResult.length === 0) {
       throw new Error(`RunType: ${RunType} not found in TURUNT !`);
     }
@@ -86,7 +86,7 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
         }
       }
 
-      const turunResult = await sequelize.query(`SELECT * FROM static_data."TURUN" WHERE ${condition} limit 1`, { type: sequelize.QueryTypes.SELECT , transaction});
+      const turunResult = await sequelize.query(`SELECT * FROM static_data."TURUN" WHERE ${condition} limit 1`, { transaction: t,type: sequelize.QueryTypes.SELECT });
       //TURUN.findOne({ where: condition, transaction });
     let RunID = 0;
 
@@ -95,7 +95,7 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
     } else {
       RunID = turunResult[0].RunID;
       try {
-        await sequelize.query(`UPDATE static_data."TURUN" SET xlock = 'A' WHERE  "RunID" = ${RunID}`, { type: sequelize.QueryTypes.update, transaction});
+        await sequelize.query(`UPDATE static_data."TURUN" SET xlock = 'A' WHERE  "RunID" = ${RunID}`, { transaction: t, type: sequelize.QueryTypes.update});
         //await TURUN.update({ xlock: 'A' }, { where: {  RunID: RunID.toString() }, transaction });
       } catch (error) {
         RunNo = -999;
@@ -103,7 +103,7 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
       }
     }
 
-    const updatedTurunResult = await sequelize.query(`SELECT * FROM static_data."TURUN" WHERE ${condition} limit 1`, { type: sequelize.QueryTypes.SELECT , transaction});
+    const updatedTurunResult = await sequelize.query(`SELECT * FROM static_data."TURUN" WHERE ${condition} limit 1`, { transaction: t, type: sequelize.QueryTypes.SELECT });
     //const updatedTurunResult = await TURUN.findOne({ where: {  RunID: RunID.toString() }, transaction });
     console.log(updatedTurunResult);
     if (updatedTurunResult[0]) {
@@ -112,10 +112,10 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
       //   where: {  RunID: RunID.toString() },
       //   transaction,
       // });
-      await sequelize.query(`UPDATE static_data."TURUN" SET "LastNo" = ${RunNo} WHERE  "RunID" = ${RunID}`, { type: sequelize.QueryTypes.update, transaction});
+      await sequelize.query(`UPDATE static_data."TURUN" SET "LastNo" = ${RunNo} WHERE  "RunID" = ${RunID}`, { transaction: t, type: sequelize.QueryTypes.update,});
 
     } else {
-      const maxRunIDResult = await sequelize.query(`SELECT MAX("RunID") FROM static_data."TURUN" `, { type: sequelize.QueryTypes.SELECT, transaction });
+      const maxRunIDResult = await sequelize.query(`SELECT MAX("RunID") FROM static_data."TURUN" `, { transaction: t, type: sequelize.QueryTypes.SELECT, });
       if (maxRunIDResult[0]['max'] === null) {
         RunID = 1;
       } else {
@@ -144,9 +144,9 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate) => {
       // }, { transaction });
 
       await sequelize.query(`insert into static_data."TURUN" ("RunID", "RunType", "Class", "SubClass", "EffectiveDate", "LastNo",  "UpdateUserCode") 
-      values (${RunID}, '${RunType}', ${pClass}, ${pSubClass}, '${EffectiveDate}', ${RunNo}, '${UpdateUserCode}')`, { type: sequelize.QueryTypes.update, transaction});
+      values (${RunID}, '${RunType}', ${pClass}, ${pSubClass}, '${EffectiveDate}', ${RunNo}, '${UpdateUserCode}')`, { transaction: t, type: sequelize.QueryTypes.update,});
     }
-    await transaction.commit();
+    // await t.commit();
 } catch (error) {
     throw error;
 }
