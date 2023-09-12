@@ -43,52 +43,55 @@ const PolicyScreen = (props) => {
       setInsureSubClassDD(array);
     }
     //  set totalprem
-    if (
-      formData.duty !== null &&
-      formData.tax !== null &&
-      formData.grossprem !== null
-    ) {
-      const newTotalPrem =
-        parseFloat(formData.grossprem) -
-        parseFloat(formData.duty) -
-        parseFloat(formData.tax);
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-        totalprem: newTotalPrem,
-      }));
-    } else {
-      if (e.target.name === 'commin_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'ovin_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'commout_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'ovout_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
-        }));
-      }
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-      }));
-    }
-
+    // if (
+    //   formData.duty !== null &&
+    //   formData.tax !== null &&
+    //   formData.grossprem !== null
+    // ) {
+    //   const newTotalPrem =
+    //     parseFloat(formData.netgrossprem) +
+    //     parseFloat(formData.duty) +
+    //     parseFloat(formData.tax);
+    //   setFormData((prevState) => ({
+    //     ...prevState,
+    //     [e.target.name]: e.target.value,
+    //     totalprem: newTotalPrem,
+    //   }));
+    // } else {
+    //   if (e.target.name === 'commin_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'ovin_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'commout_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'ovout_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   }
+    //   setFormData((prevState) => ({
+    //     ...prevState,
+    //     [e.target.name]: e.target.value,
+    //   }));
+    // }
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
     //set dropdown title follow to personType
     if (e.target.name === "personType") {
       if (e.target.value === "P") {

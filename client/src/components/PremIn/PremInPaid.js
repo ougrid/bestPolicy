@@ -44,89 +44,7 @@ export default function PremInPaid() {
     "vat-comm-in",
     "ov-in  + vat-ov_in",
   ];
-  const rowData = [
-    {
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    // Add more objects as needed
-  ];
+  
   const { type } = useParams();
   //apis 
   const searchHandler=(e)=>{
@@ -148,14 +66,15 @@ export default function PremInPaid() {
     axios
     .post(url + "/araps/getartrans", filterData)
     .then((res) => {
+      console.log(res.data);
         if (res.status === 201) {
             console.log(res.data);
-            alert("dont find billadvisorNo : " + filterData.billadvisorno);
+            alert("dont find policy");
 
         } else {
 
-            const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
-            setFilterData(data)
+            // const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
+            // setFilterData(data)
             setPoliciesData(res.data.trans)
             
             
@@ -163,7 +82,7 @@ export default function PremInPaid() {
     })
     .catch((err) => {
 
-         alert("dont find billadvisorNo : " + filterData.billadvisorno);
+         alert("error");
 
     });
   }
@@ -302,7 +221,7 @@ export default function PremInPaid() {
         </div>
       </form>
       <div>
-        <PremInTable cols={colData} rows={rowData} />
+        <PremInTable cols={colData} rows={policiesData} />
         <button className="btn btn-primary">Export To Excel</button>
       </div>
     </div>

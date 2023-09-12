@@ -26,8 +26,10 @@ import CreateCashierReceive from "./components/CashierReceive/CreateCashierRecei
 import EditCashierReceive from "./components/CashierReceive/EditCashierReceive";
 import Bank from "./components/Static/Bank";
 import PremInCreate from "./components/PremIn/PremInCreate";
+import PremInCreateDirect from "./components/PremIn/PremInCreateDirect";
 import PremInPaid from "./components/PremIn/PremInPaid";
 import PremInSreach from "./components/PremIn/PremInSearch";
+import PolicyReconcile from "./components/Policy/PolicyReconcile";
 import { type } from "@testing-library/user-event/dist/type";
 function App() {
   return (
@@ -60,7 +62,9 @@ function App() {
           <Route path="cashier/editcashier" element={<EditCashierReceive />} />
           <Route path="premin/find" element={<PremInSreach/>} />
           <Route path="premin/create" element={<PremInCreate />} />
+          <Route path="premin/createdirect" element={<PremInCreateDirect />} />
           <Route path="premin/paid/:type" element={<PremInPaid />} />
+          <Route path="/policyreconcile" element={<PolicyReconcile />} />
         </Routes>
       </main>
       {/* <footer>
