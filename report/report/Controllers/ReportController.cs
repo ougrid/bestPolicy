@@ -11,14 +11,14 @@ namespace report.Controllers
 {
 
     [ApiController]
-    
+
     public class ReportController : Controller
     {
         private readonly ITransactionService _transactionService;
         private readonly IPolicyService _policyService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ReportController(ITransactionService transactionService, IPolicyService policyService,  IWebHostEnvironment webHostEnvironment)
+        public ReportController(ITransactionService transactionService, IPolicyService policyService, IWebHostEnvironment webHostEnvironment)
         {
             _transactionService = transactionService;
             this._webHostEnvironment = webHostEnvironment;
@@ -74,7 +74,7 @@ namespace report.Controllers
         public async Task<IActionResult> GetBilling(Billing data)
         {
             var records = await _policyService.GetPolicyListbyAgent(data);
-            var dateNow = DateOnly.FromDateTime(DateTime.Now);
+            var dateNow = DateOnly.FromDateTime(DateTime.Now); -
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Users");
@@ -122,7 +122,7 @@ namespace report.Controllers
                     worksheet.Cell(currentRow, 7).Value = record.insureeCode;
                     //worksheet.Cell(currentRow, 8).Value = "เลที่ใบกำกับภาษี";
                     //worksheet.Cell(currentRow, 9).Value = "เลขตัวถัง";
-                    worksheet.Cell(currentRow, 10).Value = record.policyNo ;
+                    worksheet.Cell(currentRow, 10).Value = record.policyNo;
                     worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
                     worksheet.Cell(currentRow, 12).Value = record.duty;
                     worksheet.Cell(currentRow, 13).Value = record.tax;
@@ -137,7 +137,7 @@ namespace report.Controllers
                     //worksheet.Cell(currentRow, 22).Value = "ส่วนลด";
 
                 }
-                worksheet.Range("A4:V"+currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
                 worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
                 worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                 worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorderColor = XLColor.Black;
@@ -150,7 +150,7 @@ namespace report.Controllers
                         content,
                          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         "billing" + dateNow + ".xlsx");
-                    
+
                 }
             }
 
@@ -176,7 +176,7 @@ namespace report.Controllers
             LocalReport lr = new LocalReport(path);
             //lr.AddDataSource("dsEmployee", dt);
             var result = lr.Execute(RenderType.Pdf, extension, parameters, mimetype);
-            return File(result.MainStream, "application/pdf") ;
+            return File(result.MainStream, "application/pdf");
         }
         private DataTable GetBillList()
         {
@@ -203,7 +203,7 @@ namespace report.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEmployee([FromBody] Billing data)
         {
-            
+
             var result = await _policyService.GetPolicyListbyAgent(data);
 
 
@@ -225,5 +225,14 @@ namespace report.Controllers
 
         //    return Ok(result);
         //}
+
+        [Route("[controller]/advisor-premin-debtwriteoff-setter")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
+        [HttpPost]
+
+
+        // [Route("[controller]/advisor-premin-debtwriteoff-cutter")] // รายงานตัดหนี้ตัวแทน ตัวตัด report-premin-...
+        // [Route("[controller]/advisor-premin-debtwriteoff-balance")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-...
     }
 }
+
+
