@@ -226,7 +226,7 @@ namespace report.Controllers
         //    return Ok(result);
         //}
 
-        [Route("[controller]/advisor-premin-debtwriteoff-setter")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
+        [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
         [HttpPost]
 
 
