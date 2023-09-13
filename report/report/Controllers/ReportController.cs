@@ -228,7 +228,94 @@ namespace report.Controllers
 
         [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
         [HttpPost]
+        public async Task<IActionResult> GetPremInOutstanding(Billing data)
+        {
+            var records = await _preminReportService.GetPremInOutstanding(data);
+            var dateNow = DateOnly.FromDateTime(DateTime.Now); -
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Users");
+                worksheet.Cell(1, 1).Value = "รายงานตัดหนี้ตัวแทน ตัวตั้ง";
+                worksheet.Cell(2, 1).Value = "ประกันภัยรถยนต์ภาคบังคับและภาคสมัครใจ ความคุ้มครองเดือน ธันวาคม 2566 รอบวางบิล" + dateNow;
+                // worksheet.Cell(3, 1).Value = "บริษัท ทิพยประกันภัย จำกัด (มหาชน)";
+                worksheet.Cell(4, 1).Value = "รายการกรมธรรม์ประกันภัย";
+                worksheet.Range("A4:S4").Merge();
+                worksheet.Cell(4, 20).Value = "ภาษี ณ ที่จ่าย 1% ???";
+                worksheet.Range("T4:U4").Merge();
+                var currentRow = 5;
+                worksheet.Cell(currentRow, 1).Value = "ลำดับ";
+                worksheet.Cell(currentRow, 2).Value = "เลขที่กรมธรรม์(ประกันภัย)";
+                worksheet.Cell(currentRow, 3).Value = "เลขที่สลักหลัง (Endorse No.)";
+                worksheet.Cell(currentRow, 4).Value = "Invoice No.";
+                worksheet.Cell(currentRow, 5).Value = "Sequence No.";
+                worksheet.Cell(currentRow, 6).Value = "เลขที่ Cashier";
+                worksheet.Cell(currentRow, 7).Value = "วันที่ Cashier";
+                worksheet.Cell(currentRow, 8).Value = "Cashier Amount";
+                worksheet.Cell(currentRow, 9).Value = "Cashier Receive Type";
+                worksheet.Cell(currentRow, 10).Value = "Cashier Reference No.";
+                worksheet.Cell(currentRow, 11).Value = "Cashier Reference Date";
+                worksheet.Cell(currentRow, 12).Value = "เลขที่ตัดหนี้ PREM-IN";
+                worksheet.Cell(currentRow, 13).Value = "วันที่ตัดหนี้";
+                worksheet.Cell(currentRow, 14).Value = "Net Flag";
+                worksheet.Cell(currentRow, 15).Value = "จำนวนเงินตัดหนี้";
+                worksheet.Cell(currentRow, 16).Value = "Difference Amount";
+                worksheet.Cell(currentRow, 17).Value = "สถานะ";
+                worksheet.Cell(currentRow, 18).Value = "Effective Date";
+                worksheet.Cell(currentRow, 19).Value = "Expiry Date";
+                worksheet.Cell(currentRow, 20).Value = "Advisor Code";
+                worksheet.Cell(currentRow, 21).Value = "Advisor Name";
+                worksheet.Cell(currentRow, 22).Value = "Customer ID";
+                worksheet.Cell(currentRow, 23).Value = "Customer Name";
+                worksheet.Cell(currentRow, 24).Value = "Class";
+                worksheet.Cell(currentRow, 25).Value = "Subclass";
+                worksheet.Cell(currentRow, 26).Value = "Duty";
+                worksheet.Cell(currentRow, 27).Value = "Tax";
+                worksheet.Cell(currentRow, 28).Value = "Total Prem";
+                worksheet.Cell(currentRow, 29).Value = "Comm-out%";
+                worksheet.Cell(currentRow, 30).Value = "Comm-out Amount";
+                worksheet.Cell(currentRow, 31).Value = "OV-out%";
+                worksheet.Cell(currentRow, 32).Value = "OV-out Amount";
 
+                worksheet.Range("A4:V5").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                foreach (var record in records)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = record.id;
+                    //worksheet.Cell(currentRow, 2).Value = "record";
+                    worksheet.Cell(currentRow, 3).Value = record.actDate;
+                    worksheet.Cell(currentRow, 4).Value = record.expDate;
+                    //worksheet.Cell(currentRow, 5).Value = "ยี่ห้อ/รุ่นรภยนต์";
+                    //worksheet.Cell(currentRow, 6).Value = "ปีรถ";
+                    worksheet.Cell(currentRow, 7).Value = record.insureeCode;
+                    //worksheet.Cell(currentRow, 8).Value = "เลที่ใบกำกับภาษี";
+                    //worksheet.Cell(currentRow, 9).Value = "เลขตัวถัง";
+                    worksheet.Cell(currentRow, 10).Value = record.policyNo;
+                    worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
+                    worksheet.Cell(currentRow, 12).Value = record.duty;
+                    worksheet.Cell(currentRow, 13).Value = record.tax;
+                    worksheet.Cell(currentRow, 14).Value = record.totalprem;
+
+                }
+                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
+                worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorderColor = XLColor.Black;
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(
+                        content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "report-premin-outstanding" + dateNow + ".xlsx");
+
+                }
+            }
+
+
+        }
 
         // [Route("[controller]/advisor-premin-debtwriteoff-cutter")] // รายงานตัดหนี้ตัวแทน ตัวตัด report-premin-...
         // [Route("[controller]/advisor-premin-debtwriteoff-balance")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-...
