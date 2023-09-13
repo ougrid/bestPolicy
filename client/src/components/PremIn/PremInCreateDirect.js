@@ -5,6 +5,8 @@ const config = require("../../config.json");
 
 export default function PremInCreateDirect() {
   const url = config.url;
+  const wht = config.wht;
+  const vat = config.vat;
   const [filterData, setFilterData] = useState(
     {
       
@@ -71,6 +73,7 @@ export default function PremInCreateDirect() {
             console.log(res.data);
             // const data = { ...filterData, amt: res.data[0].amt }
             // setFilterData(data)
+            
             setPoliciesData(res.data)
 
           }
@@ -95,16 +98,67 @@ export default function PremInCreateDirect() {
   }
 
   const savearpremin = async (e) => {
-    console.log({ master: { ...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value }, trans: policiesData });
-    await axios.post(url + "/araps/savearpremin", { master: { ...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value }, trans: policiesData }).then((res) => {
+    
+    const master = filterData
+
+    for (let i = 0; i < policiesData.length; i++) {
+      master.cashieramt = master.cashieramt + policiesData[i].netamt;
+      master.netprem = master.netprem + policiesData[i].totalprem;
+      master.commin = master.commin + policiesData[i].commin_amt;
+      master.ovin = master.ovin + policiesData[i].ovin_amt;
+      master.vatcommin = master.vatcommin  + policiesData[i].commin_amt*vat;
+      master.vatovin = master.vatovin + policiesData[i].ovin_amt*vat;
+      if (policiesData[i].netflag === 'N') {
+        master.commout = master.commout + policiesData[i].commout_amt;
+        master.ovout = master.ovout + policiesData[i].ovout_amt;
+      }
+    }
+    // master.cashieramt = policiesData.reduce((acc, curr) => acc + curr.netamt, 0);
+    master.actualvalue = master.cashieramt
+    // master.netprem = policiesData.reduce((acc, curr) => acc + curr.totalprem, 0);
+    // master.commin = policiesData.reduce((acc, curr) => acc + curr.commin_amt, 0);
+    // master.ovin = policiesData.reduce((acc, curr) => acc + curr.ovin_amt, 0);
+    // master.vatcommin = policiesData.reduce((acc, curr) => acc + curr.commin_amt*vat, 0);
+    // master.vatovin = policiesData.reduce((acc, curr) => acc + curr.ovin_amt*vat, 0);
+    master.whtcommin = master.commin * wht
+    master.whtovin = master.ovin * wht
+    master.whtcommout = master.commout * wht
+    master.whtovout = master.ovout * wht
+    console.log(master);
+    await axios.post(url + "/araps/savearpremindirect", { master: filterData, trans: policiesData }).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
     });
   };
 
   const submitarpremin = async (e) => {
-    console.log({ master: { ...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value }, trans: policiesData });
-    await axios.post(url + "/araps/submitarpremin", { master: { ...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value }, trans: policiesData }).then((res) => {
+    const master = filterData
+
+    for (let i = 0; i < policiesData.length; i++) {
+      master.cashieramt = master.cashieramt + policiesData[i].netamt;
+      master.netprem = master.netprem + policiesData[i].totalprem;
+      master.commin = master.commin + policiesData[i].commin_amt;
+      master.ovin = master.ovin + policiesData[i].ovin_amt;
+      master.vatcommin = master.vatcommin  + policiesData[i].commin_amt*vat;
+      master.vatovin = master.vatovin + policiesData[i].ovin_amt*vat;
+      if (policiesData[i].netflag === 'N') {
+        master.commout = master.commout + policiesData[i].commout_amt;
+        master.ovout = master.ovout + policiesData[i].ovout_amt;
+      }
+    }
+    // master.cashieramt = policiesData.reduce((acc, curr) => acc + curr.netamt, 0);
+    master.actualvalue = master.cashieramt
+    // master.netprem = policiesData.reduce((acc, curr) => acc + curr.totalprem, 0);
+    // master.commin = policiesData.reduce((acc, curr) => acc + curr.commin_amt, 0);
+    // master.ovin = policiesData.reduce((acc, curr) => acc + curr.ovin_amt, 0);
+    // master.vatcommin = policiesData.reduce((acc, curr) => acc + curr.commin_amt*vat, 0);
+    // master.vatovin = policiesData.reduce((acc, curr) => acc + curr.ovin_amt*vat, 0);
+    master.whtcommin = master.commin * wht
+    master.whtovin = master.ovin * wht
+    master.whtcommout = master.commout * wht
+    master.whtovout = master.ovout * wht
+    console.log(master);
+    await axios.post(url + "/araps/submitarpremindirect", { master: filterData, trans: policiesData }).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
     });

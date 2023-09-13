@@ -16,7 +16,63 @@ export default function PremInSearch() {
     "DiffAmt",
     "status",
   ];
+  const colData2 = {
+    Billadvisorno:"Billadvisorno",
+    insurercode :"insurercode",
+    advisorcode: "advisorcode",
+    CashierReceiptNo: "CashierReceiptNo",
+    CashierDate: "CashierDate",
+    CashierAmt: "CashierAmt",
+    ARNO : "ARNO",
+    ARDate : "ARDate",
+    ARcreateusercode :"ARcreateusercode",
+    ActualValue :"ActualValue",
+    DiffAmt : "DiffAmt",
+    status : "status",
+  };
   const rowData = [
+    {
+      Billadvisorno: Math.floor(Math.random() * 9000) + 1000,
+      insurercode: Math.floor(Math.random() * 900) + 100,
+      advisorcode: Math.floor(Math.random() * 9000) + 1000,
+      CashierReceiptNo: Math.floor(Math.random() * 90000) + 10000,
+      CashierDate: "2023-08-28",
+      CashierAmt: Math.floor(Math.random() * 901) + 100,
+      ARNO: Math.floor(Math.random() * 9000) + 1000,
+      ARDate: "2023-08-29",
+      ARcreateusercode: Math.floor(Math.random() * 900) + 100,
+      ActualValue: Math.floor(Math.random() * 1001) + 500,
+      DiffAmt: Math.floor(Math.random() * 101),
+      status: "Pending",
+    },
+    {
+      Billadvisorno: Math.floor(Math.random() * 9000) + 1000,
+      insurercode: Math.floor(Math.random() * 900) + 100,
+      advisorcode: Math.floor(Math.random() * 9000) + 1000,
+      CashierReceiptNo: Math.floor(Math.random() * 90000) + 10000,
+      CashierDate: "2023-08-28",
+      CashierAmt: Math.floor(Math.random() * 901) + 100,
+      ARNO: Math.floor(Math.random() * 9000) + 1000,
+      ARDate: "2023-08-29",
+      ARcreateusercode: Math.floor(Math.random() * 900) + 100,
+      ActualValue: Math.floor(Math.random() * 1001) + 500,
+      DiffAmt: Math.floor(Math.random() * 101),
+      status: "Pending",
+    },
+    {
+      Billadvisorno: Math.floor(Math.random() * 9000) + 1000,
+      insurercode: Math.floor(Math.random() * 900) + 100,
+      advisorcode: Math.floor(Math.random() * 9000) + 1000,
+      CashierReceiptNo: Math.floor(Math.random() * 90000) + 10000,
+      CashierDate: "2023-08-28",
+      CashierAmt: Math.floor(Math.random() * 901) + 100,
+      ARNO: Math.floor(Math.random() * 9000) + 1000,
+      ARDate: "2023-08-29",
+      ARcreateusercode: Math.floor(Math.random() * 900) + 100,
+      ActualValue: Math.floor(Math.random() * 1001) + 500,
+      DiffAmt: Math.floor(Math.random() * 101),
+      status: "Pending",
+    },
     {
       Billadvisorno: Math.floor(Math.random() * 9000) + 1000,
       insurercode: Math.floor(Math.random() * 900) + 100,
@@ -268,7 +324,7 @@ export default function PremInSearch() {
         </div>
       </form>
       <div>
-        <PremInTable cols={colData} rows={rowData} />
+        <PremInTable cols={colData} rows={rowData} cols2 ={colData2}/>
       </div>
     </div>
   );

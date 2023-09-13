@@ -9,6 +9,12 @@ router.post('/savearpremin', ctrl.arap.saveARPremin);
 router.post('/submitarpremin', ctrl.arap.submitARPremin);
 router.post('/getartrans', ctrl.arap.getARtrans);
 router.post('/getartransdirect', ctrl.arap.findARPremInDirect);
+router.post('/savearpremindirect', ctrl.arap.saveARPreminDirect);
+router.post('/submitarpremindirect', ctrl.arap.submitARPreminDirect);
+router.post('/getaptrans', ctrl.arap.findAPPremOut);
+router.post('/saveappremout', ctrl.arap.saveAPPremOut);
+router.post('/submitappremout', ctrl.arap.submitAPPremOut);
+
 
 
 

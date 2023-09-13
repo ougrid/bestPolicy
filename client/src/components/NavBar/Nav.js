@@ -95,6 +95,24 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              AP Prem-out
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/premout/create">stament ค่าเบี้ยส่งทิพ</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              AR Comm-in
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/commin/create">สร้างรายการใหม่</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
               ข้อมูลทั่วไป
             </a>
 

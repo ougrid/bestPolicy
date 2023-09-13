@@ -30,6 +30,8 @@ import PremInCreateDirect from "./components/PremIn/PremInCreateDirect";
 import PremInPaid from "./components/PremIn/PremInPaid";
 import PremInSreach from "./components/PremIn/PremInSearch";
 import PolicyReconcile from "./components/Policy/PolicyReconcile";
+import PremOutCreate from "./components/PremOut/PremOutCreate";
+import CommInCreate from "./components/CommIn/CommInCreate";
 import { type } from "@testing-library/user-event/dist/type";
 function App() {
   return (
@@ -65,6 +67,8 @@ function App() {
           <Route path="premin/createdirect" element={<PremInCreateDirect />} />
           <Route path="premin/paid/:type" element={<PremInPaid />} />
           <Route path="/policyreconcile" element={<PolicyReconcile />} />
+          <Route path="premout/create" element={<PremOutCreate />} />
+          <Route path="commin/create" element={<CommInCreate />} />
         </Routes>
       </main>
       {/* <footer>
