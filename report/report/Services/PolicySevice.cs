@@ -34,9 +34,9 @@ namespace report.Services
             DateTime startDate = data.startDate;
             DateTime endDate = data.endDate;
             const cond = '';
-            if (data.startDate)
+            if (startDate)
             {
-                cond = cond + ' and startdate = ' + data.startdate
+                cond = cond + ' and startdate = ' + startDate
             }
 
             var policyList = await _dbService.GetAll<Policy>("SELECT * FROM static_data.\"Policies\" Where \"agentCode\" = @agentCode And \"createdAt\" >= @startDate And \"createdAt\" <= @endDate" + cond,
