@@ -75,10 +75,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      note: {
-
-        type: Sequelize.STRING
-      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

@@ -39,6 +39,9 @@ module.exports = {
       Outlet: {
         type: Sequelize.STRING
       },
+      xlock: {
+        type: Sequelize.STRING
+      },
       
       createdAt: {
         defaultValue: new Date(),

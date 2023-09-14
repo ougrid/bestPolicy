@@ -1132,7 +1132,7 @@ const PolicyScreen = (props) => {
         </div>
       </div>
       {/* motor table */}
-      {formData.class === "Motor" ? (
+      {formData.class === "MO" ? (
         <>
           <div class="row">
             <div className="col-1"></div>

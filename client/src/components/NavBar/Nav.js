@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
-import { redirect, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 
 import {
   NavBar,
@@ -50,10 +50,10 @@ function Nav() {
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li><a class="dropdown-item" href="/findpolicy">ค้นหากรมธรรม์</a></li>
-              <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่ (excel)</a></li>
-              <li><a class="dropdown-item" href="/policyscreen">สร้างรายการใหม่ (screen)</a></li>
-              <li><a class="dropdown-item" href="/policyreconcile">Reconcile</a></li>
+              <li><a class="dropdown-item"  href="/findpolicy">ค้นหากรมธรรม์</a></li>
+              <li><a class="dropdown-item"  href="/policyexcel">สร้างรายการใหม่ (excel)</a></li>
+              <li><a class="dropdown-item"  href="/policyscreen">สร้างรายการใหม่ (screen)</a></li>
+              <li><a class="dropdown-item"  href="/policyreconcile">Reconcile</a></li>
             </ul>
           </div>
           

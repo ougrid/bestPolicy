@@ -2,35 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('b_jatws', {
+    await queryInterface.createTable('TURUNT', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      keyidm: {
-        type: Sequelize.INTEGER
-      },
-      "commout_amt": {
-        type: Sequelize.FLOAT
-      },
-      whtrate: {
-        type: Sequelize.FLOAT
-      },
-      "whtcommout_amt": {
-        type: Sequelize.FLOAT
-      },
-      "ovout_amt": {
-        type: Sequelize.FLOAT
-      },
-      "whtovout_amt": {
-        type: Sequelize.FLOAT
-      },
-      taxid: {
+      typename: {
         type: Sequelize.STRING
       },
-      advisorcode: {
+      updateusercode: {
+        type: Sequelize.STRING
+      },
+      PeriodBasis: {
+        type: Sequelize.STRING
+      },
+      RunType: {
+        type: Sequelize.STRING
+      },
+      xlock: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -46,6 +37,6 @@ module.exports = {
     },{ schema: 'static_data'});
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('b_jatws',{ schema: 'static_data'});
+    await queryInterface.dropTable('TURUNT',{ schema: 'static_data'});
   }
 };

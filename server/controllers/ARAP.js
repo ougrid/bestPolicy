@@ -178,7 +178,7 @@ const submitARPremin = async (req, res) => {
       dfrpreferno = CASE WHEN "transType" = 'PREM-IN' THEN :dfrpreferno ELSE dfrpreferno END,
       rprefdate = CASE WHEN "transType" = 'PREM-IN' THEN :rprefdate ELSE rprefdate END,
       receiptno = CASE WHEN "transType" = 'PREM-IN' THEN :cashierreceiveno ELSE receiptno END,
-          "prem-in-dfrpreferno" = :dfrpreferno,
+          "premin-dfrpreferno" = :dfrpreferno,
           "premin-rprefdate" = :rprefdate
         where  "transType" in ( 'PREM-IN', 'COMM-OUT', 'OV-OUT', 'PREM-OUT', 'COMM-IN', 'OV-IN')
           and "insurerCode" = :insurerCode
@@ -235,7 +235,7 @@ const submitARPremin = async (req, res) => {
       `update static_data."Transactions" 
         set dfrpreferno = :dfrpreferno ,
           rprefdate = :rprefdate ,
-          "prem-in-dfrpreferno" = :dfrpreferno,
+          "premin-dfrpreferno" = :dfrpreferno,
           "premin-rprefdate" = :rprefdate,
           receiptno = :cashierreceiveno
         where "transType" in ('COMM-OUT','OV-OUT')
@@ -391,12 +391,12 @@ const getARtrans = async (req, res) => {
     cond = cond + ` and t.receiptno = ${req.body.cashierreceiveno}` 
   }
   if (req.body.arno !== null) {
-    cond = cond + ` and t.prem-in-dfrpreferno = ${req.body.arno}` 
+    cond = cond + ` and t.premin-dfrpreferno = ${req.body.arno}` 
   }
   if (req.body.type === 'prem_out') {
     cond = cond + ` and t."transType" = 'PREM-OUT' 
                     and "premout-rprefdate" is null
-                    and "prem-out-dfrpreferno" is null
+                    and "premout-dfrpreferno" is null
                     and rprefdate is null` 
   }else if (req.body.type === 'comm/ov_out') {
     cond = cond + ` and t."transType" in ( 'COMM-OUT', 'OV-OUT' ) and rprefdate is null` 
@@ -419,7 +419,7 @@ const getARtrans = async (req, res) => {
         where t.txtype2 in ( 1, 2, 3, 4, 5 )
         and t.status ='N'
         and "premin-rprefdate" is not null
-        and  "prem-in-dfrpreferno" is not null
+        and  "premin-dfrpreferno" is not null
         and j.installmenttype ='I' ${cond}`,
     {
       replacements: {
@@ -439,28 +439,28 @@ const getARtrans = async (req, res) => {
 const findARPremInDirect = async (req, res) => {
   let cond = ''
   if (req.body.insurerCode) {
-    cond = cond + ` and t.insurerCode = ${req.body.insurerCode}`
+    cond = cond + ` and t."insurerCode" = '${req.body.insurerCode}'`
   }
   if (req.body.agentCode) {
-    cond = cond + ` and t.agentCode = ${req.body.insurerCode}`
+    cond = cond + ` and t."agentCode" = '${req.body.agentCode}'`
   }
   if (req.body.policyNoStart) {
-    cond = cond + ` and t.policyNo >= ${req.body.policyNoStart}`
+    cond = cond + ` and t."policyNo" >= '${req.body.policyNoStart}'`
   }
   if (req.body.policyNoEnd) {
-    cond = cond + ` and t.policyNo <= ${req.body.policyNoEnd}`
+    cond = cond + ` and t."policyNo" <= '${req.body.policyNoEnd}'`
   }
   if (req.body.endorseNoStart) {
-    cond = cond + ` and j.endorseNo = ${req.body.endorseNoStart}`
+    cond = cond + ` and j."endorseNo" = '${req.body.endorseNoStart}'`
   }
   if (req.body.endorseNoEnd) {
-    cond = cond + ` and j.endorseNo = ${req.body.endorseNoEnd}`
+    cond = cond + ` and j."endorseNo" = '${req.body.endorseNoEnd}'`
   }
   if (req.body.invoiceNoStart) {
-    cond = cond + ` and j.invioceNo = ${req.body.invoiceNoStart}`
+    cond = cond + ` and j."invioceNo" = '${req.body.invoiceNoStart}'`
   }
   if (req.body.invoiceNoEnd) {
-    cond = cond + ` and j.invioceNo = ${req.body.invoiceNoEnd}`
+    cond = cond + ` and j."invioceNo" = '${req.body.invoiceNoEnd}'`
   }
   const trans = await sequelize.query(
     `select t."agentCode", t."insurerCode", 
@@ -682,7 +682,7 @@ const submitARPreminDirect = async (req, res) => {
       set 
       dfrpreferno = CASE WHEN "transType" in ( 'PREM-IN', 'PREM-OUT' ) THEN :dfrpreferno ELSE dfrpreferno END,
       rprefdate = CASE WHEN "transType" in ( 'PREM-IN', 'PREM-OUT' ) THEN :rprefdate ELSE rprefdate END,
-          "prem-in-dfrpreferno" = :dfrpreferno,
+          "premin-dfrpreferno" = :dfrpreferno,
           "premin-rprefdate" = :rprefdate
         where  "transType" in ( 'PREM-IN', 'COMM-OUT', 'OV-OUT', 'PREM-OUT', 'COMM-IN', 'OV-IN')
           and "insurerCode" = :insurerCode
@@ -737,7 +737,7 @@ const submitARPreminDirect = async (req, res) => {
       `update static_data."Transactions" 
         set dfrpreferno = :dfrpreferno ,
           rprefdate = :rprefdate ,
-          "prem-in-dfrpreferno" = :dfrpreferno,
+          "premin-dfrpreferno" = :dfrpreferno,
           "premin-rprefdate" = :rprefdate,
         where "transType" in ('COMM-OUT','OV-OUT')
           and status = 'N'
@@ -816,7 +816,7 @@ const findAPPremOut = async (req, res) => {
         and t.rprefdate is null
         and t.dfrpreferno is null
         and t."premin-rprefdate" is not null
-        and t."prem-in-dfrpreferno" is not null
+        and t."premin-dfrpreferno" is not null
         and j.installmenttype ='I' ${cond} `,
     {
       
@@ -984,7 +984,7 @@ const submitAPPremOut = async (req, res) => {
       set 
       dfrpreferno = CASE WHEN "transType" = 'PREM-OUT'  THEN :dfrpreferno ELSE dfrpreferno END,
       rprefdate = CASE WHEN "transType" = 'PREM-OUT'  THEN :rprefdate ELSE rprefdate END,
-          "prem-out-dfrpreferno" = :dfrpreferno,
+          "premout-dfrpreferno" = :dfrpreferno,
           "premout-rprefdate" = :rprefdate
         where  "transType" in ( 'PREM-IN', 'COMM-OUT', 'OV-OUT', 'PREM-OUT', 'COMM-IN', 'OV-IN')
           and "insurerCode" = :insurerCode

@@ -167,7 +167,7 @@ const Policy = () => {
         </div>
 
         {/* motor table */}
-        {policyData.insureType === "Motor" ? (
+        {policyData.insureType === "MO" ? (
           <>
             <div class="row">
               <div class="col">

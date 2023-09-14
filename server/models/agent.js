@@ -28,9 +28,12 @@ module.exports = (sequelize, DataTypes) => {
     commovCreditT:  DataTypes.INTEGER,
     // A = active I = inactive
     status: DataTypes.CHAR,
-    note:  DataTypes.STRING,
+    // note:  DataTypes.STRING,
     entityID: DataTypes.INTEGER,
     stamentType: DataTypes.STRING,
+    vatflag: DataTypes.STRING,
+    taxno: DataTypes.STRING,
+    deducttaxrate: DataTypes.INTEGER,
     
   }, {
     sequelize,

@@ -5,8 +5,8 @@ const Agent = require("../models").Agent;
 const User = require("../models").User;
 const Location = require("../models").Location;
 const AgentGroup = require("../models").AgentGroup;
-const CommOVIn =require("../models").CommOVIn;
-const CommOVOut =require("../models").CommOVOut;
+const CommOVIn = require("../models").CommOVIn;
+const CommOVOut = require("../models").CommOVOut;
 const process = require('process');
 require('dotenv').config();
 
@@ -32,9 +32,9 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
 // }
 
 const getEntityByid = (req, res) => {
-    Entity.findOne ({
+  Entity.findOne({
     where: {
-        id: req.params.id
+      id: req.params.id
     }
   }).then((entity) => {
     res.json(entity);
@@ -42,15 +42,15 @@ const getEntityByid = (req, res) => {
 };
 
 const newEntity = (req, res) => {
-    Entity.create(req.body).then((entity) => {
-      res.json(entity);
-    });
-  };
-  
+  Entity.create(req.body).then((entity) => {
+    res.json(entity);
+  });
+};
+
 const getInsureeByid = (req, res) => {
-    Insuree.findOne ({
+  Insuree.findOne({
     where: {
-        insureeCode: req.params.id
+      insureeCode: req.params.id
     }
   }).then((insuree) => {
     res.json(insuree);
@@ -63,75 +63,108 @@ const newInsuree = (req, res) => {
     req.body.location.entityID = entity.id
     Insuree.create(req.body.insuree).then((insuree) => {
       Location.create(req.body.location).then((location) => {
-        res.json({...insuree, ...entity,...location});
-    });
-    
+        res.json({ ...insuree, ...entity, ...location });
+      });
+
       // res.json(location);
     });
     // res.json({});
   });
-  };
+};
 
-  const getInsurerByid = (req, res) => {
-    Insurer.findOne ({
+const getInsurerByid = (req, res) => {
+  Insurer.findOne({
     where: {
-        insurerCode: req.params.id
+      insurerCode: req.params.id
     }
   }).then((insuree) => {
     res.json(insuree);
   });
 };
 
-const getInsurerAll =  (req, res) => {
-   sequelize.query(
+const getInsurerAll = (req, res) => {
+  sequelize.query(
     'select * FROM static_data."Insurers" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id";',
-    {type: QueryTypes.SELECT}).then((insurer) => {
-  res.json(insurer);
-});
+    { type: QueryTypes.SELECT }).then((insurer) => {
+      res.json(insurer);
+    });
 };
 
 
-
+//use create insurer
 const newInsurer = async (req, res) => {
-    const entity = await Entity.create(req.body.entity)
-      req.body.insurer.entityID = entity.id
-      req.body.location.entityID = entity.id
-    const insurer = await Insurer.create(req.body.insurer)
-    const location = await Location.create(req.body.location)
-  // console.log(req.body);
-    req.body.commOVIn.forEach(async ele => {
-      ele.insurerCode = req.body.insurer.insurerCode
-      const commovin = await CommOVIn.create (ele)
-    }); 
-  res.json({...insurer, ...entity,...location});
-  
-  };
+  const t = await sequelize.transaction();
+  try {
 
-  const getAgentAll = (req, res) => {
-    Agent.findAll ().then((agent) => {
+
+    const entity = await Entity.create(req.body.entity, { transaction: t })
+    req.body.insurer.entityID = entity.id
+    req.body.location.entityID = entity.id
+    const insurer = await Insurer.create(req.body.insurer, { transaction: t })
+    const location = await Location.create(req.body.location, { transaction: t })
+    // console.log(req.body);
+    // req.body.commOVIn.forEach(async ele => {
+    //   ele.insurerCode = req.body.insurer.insurerCode
+    //   const commovin = await CommOVIn.create(ele, { transaction: t })
+    // });
+
+    for (let i = 0; i < req.body.commOVIn.length; i++) {
+      req.body.commOVIn[i].insurerCode = req.body.insurer.insurerCode
+      await  CommOVIn.create(req.body.commOVIn[i], { transaction: t })
+
+    }
+    res.json({ ...insurer, ...entity, ...location });
+    await t.commit();
+    await res.json({
+      msg: `created insurer : ${req.body.insurer.insurerCode} success!!`,
+    });
+  } catch (error) {
+    console.log(error);
+    await t.rollback();
+  }
+};
+
+const getAgentAll = (req, res) => {
+  Agent.findAll().then((agent) => {
     res.json(agent);
   });
 };
 
+//use create agent
 const newAgent = async (req, res) => {
-  const entity = await Entity.create(req.body.entity)
-  req.body.agent.entityID = entity.id
-  req.body.location.entityID = entity.id
-const agent = await Agent.create(req.body.agent)
-const location = await Location.create(req.body.location)
-// console.log(req.body);
-req.body.commOVOut.forEach(async ele => {
-  ele.agentCode = req.body.agent.agentCode
-  const commovout = await CommOVOut.create (ele)
-}); 
-res.json({...agent, ...entity,...location});
-  
-  };
+  const t = await sequelize.transaction();
+  try {
+
+    const entity = await Entity.create(req.body.entity, { transaction: t })
+    req.body.agent.entityID = entity.id
+    req.body.location.entityID = entity.id
+    const agent = await Agent.create(req.body.agent, { transaction: t })
+    const location = await Location.create(req.body.location, { transaction: t })
+    // console.log(req.body);
+    // req.body.commOVOut.forEach(ele => {
+    //   ele.agentCode = req.body.agent.agentCodes
+    //   await  CommOVOut.create(ele, { transaction: t })
+    // });
+    for (let i = 0; i < req.body.commOVOut.length; i++) {
+      req.body.commOVOut[i].agentCode = req.body.agent.agentCode
+      await  CommOVOut.create(req.body.commOVOut[i], { transaction: t })
+
+    }
+    // res.json({...agent, ...entity,...location});
+    await t.commit();
+    await res.json({
+      msg: `created agent : ${req.body.agent.agentCode} success!!`,
+    });
+  } catch (error) {
+    console.log(error);
+    await t.rollback();
+  }
+};
 
 const getUserByid = (req, res) => {
-    User.findOne ({
+  User.findOne({
     where: {
-        id: req.params.id
+      id: req.params.id
     }
   }).then((user) => {
     res.json(user);
@@ -139,13 +172,13 @@ const getUserByid = (req, res) => {
 };
 
 const newUser = (req, res) => {
-    User.create(req.body).then((user) => {
-      res.json(user);
-    });
-  };
+  User.create(req.body).then((user) => {
+    res.json(user);
+  });
+};
 
-  const getAgentGroupByid = (req, res) => {
-    AgentGruop.findOne ({
+const getAgentGroupByid = (req, res) => {
+  AgentGruop.findOne({
     where: {
       agentGroup: req.params.id
     }
@@ -155,18 +188,18 @@ const newUser = (req, res) => {
 };
 
 const newAgentGroup = (req, res) => {
-    AgentGruop.create(req.body).then((agentGroup) => {
-      res.json(agentGroup);
-    });
-  };
+  AgentGruop.create(req.body).then((agentGroup) => {
+    res.json(agentGroup);
+  });
+};
 module.exports = {
-//   showAll,
+  //   showAll,
   getEntityByid,
   newEntity,
   getInsureeByid,
   newInsuree,
   getInsurerByid,
-  newInsurer,  
+  newInsurer,
   getAgentAll,
   newAgent,
   getUserByid,

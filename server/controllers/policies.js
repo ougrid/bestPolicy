@@ -999,6 +999,8 @@ const draftPolicyList = async (req, res) => {
 
     })
     await t.commit();
+    await res.json({ status: 'success' })
+
   } catch (error) {
     console.log(error);
     await t.rollback();
@@ -1007,7 +1009,7 @@ const draftPolicyList = async (req, res) => {
   }
 
 
-  await res.json({ status: 'success' })
+
 };
 
 const editPolicyList = async (req, res) => {
@@ -1110,9 +1112,11 @@ const createjupgr = async (policy,t) => {
   const insurer =  policy.installment.insurer 
   const arrIns =[]
   const arrAds = []
+  policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
+  policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
 if (policy.installment.advisor.length === 0 ) {
   const ads = await sequelize.query(
-    `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+    `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
     specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
     "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
     commout_amt, ovout_rate, ovout_amt, createusercode, polid)
@@ -1166,7 +1170,7 @@ if (policy.installment.advisor.length === 0 ) {
 }
 if (policy.installment.insurer.length === 0 ) {
  const ins = await sequelize.query(
-    `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+    `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
     specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
     "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
     commout_amt, ovout_rate, ovout_amt, createusercode, polid)
@@ -1223,7 +1227,7 @@ if (policy.installment.insurer.length === 0 ) {
      for (let i = 0; i < advisor.length; i++) {
      //insert jupgr
     const ads = await sequelize.query(
-      `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+      `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
       specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
       "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout_rate, 
       commout_amt, ovout_rate, ovout_amt, createusercode, polid)
@@ -1276,7 +1280,7 @@ if (policy.installment.insurer.length === 0 ) {
      for (let i = 0; i < insurer.length; i++) {
       //insert jupgr
       const ins =  await sequelize.query(
-       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
        "agentCode", "agentCode2", createusercode, polid)
        values(:policyNo, :endorseNo, :invoiceNo, :taxInvoiceNo, :installmenttype, :seqNo, :grossprem, :specdiscrate, :specdiscamt, :netgrossprem, 
@@ -1320,7 +1324,7 @@ if (policy.installment.insurer.length === 0 ) {
     
    
      await sequelize.query(
-       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvioceNo", "installmenttype", "seqNo", grossprem, 
+       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
        "agentCode", "agentCode2", commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, commout_rate, 
        commout_amt, ovout_rate, ovout_amt, createusercode, polid)

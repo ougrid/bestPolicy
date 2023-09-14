@@ -29,9 +29,6 @@ module.exports = {
       blacklistDesp: {
         type: Sequelize.STRING
       },
-      note: {
-        type: Sequelize.STRING
-      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

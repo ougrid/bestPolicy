@@ -1,0 +1,25 @@
+flow
+ 
+save policy
+save draft 
+	=>insert into -> entity -> insuree -> location -> motor (if motor type) -> policy status 'I'
+edit 
+	=>update -> policy status 'I' to 'A'
+	=>insert into -> jupgr -> transaction
+
+bill 
+	=> insert into ->b_jabilladvisors (master table) -> b_jabilladvisordetails (child)
+	=> update -> policy table  (SET billadvisor,netflag WHERE polid  and "seqNo"  )
+
+save cashier
+	=> insert into -> b_jacashiers status = 'I'
+submit cashier
+	=> insert into -> b_jacashiers status = 'A'
+
+save arprem-in
+	=> insert into -> b_jaaraps (master) status 'I' -> b_jaaraps (child) -> b_jatw (if netflag = 'N' ) 
+submit arprem-in
+	=> insert into -> b_jaaraps (master) status 'I' gen dfrpreferno and rprefdate -> b_jaaraps (child) -> b_jatw (if netflag = 'N' ) 
+	=> update b_jacashiers (set dfrpreferno) ->transaction (set dfrpreferno, rprefdate, prem-in-rpreferno, prem-in-rprefdate, where premin)
+	=> if netflag = 'N' update ->transaction (set dfrpreferno, rprefdate, prem-in-rpreferno, prem-in-rprefdate, where commout, ovout)
+	

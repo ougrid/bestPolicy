@@ -136,7 +136,7 @@ const CommOv = () => {
             />
           </div>
         </div>
-        {insureData.insureType === "Motor" ? (
+        {insureData.insureType === "MO" ? (
           <div class="row">
             <div class="col">
               <h6>voluntaryCode</h6>

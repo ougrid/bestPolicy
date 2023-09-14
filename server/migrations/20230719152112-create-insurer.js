@@ -33,12 +33,10 @@ module.exports = {
       premCreditT: {
         type: Sequelize.INTEGER
       },
-      commCreditT: {
+      commovCreditT: {
         type: Sequelize.INTEGER
       },
-      ovCreditT: {
-        type: Sequelize.INTEGER
-      },
+      
       entityID: {
         allowNull: false,
         type: Sequelize.INTEGER

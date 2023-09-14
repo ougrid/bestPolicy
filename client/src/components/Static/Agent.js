@@ -93,7 +93,7 @@ const Agent = () => {
 
                 const array = []
                 province.data.forEach(ele => {
-                    array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+                    array.push(<option key={ele.id} value={ele.id}>{ele.class} : {ele.subClass}</option>)
                 });
                 setInsureTypeDD(array)
 
@@ -247,7 +247,13 @@ const removeRow = (e) => {
 };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault({
+      agent: agentData,
+      entity: entityData,
+      location: locationData,
+      commOVOut:comOvOutData
+    });
+    console.log();
     axios
       .post(url + "/persons/agentnew", {
         agent: agentData,
@@ -305,7 +311,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เครดิตเทอมค่าเบี้ย <span class="text-danger"> *</span></label>
             <InputBtn
                 className="form-control"
-              type="text"
+              type="number"
               required
               // placeholder="InsurerCode"
               name="premCreditT"
@@ -316,7 +322,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เครดิตเทอมค่าcomm/ov <span class="text-danger"> *</span></label>
             <InputBtn
                 className="form-control"
-              type="text"
+              type="number"
               required
               // placeholder="InsurerCode"
               name="commovCreditT"
@@ -414,7 +420,7 @@ const removeRow = (e) => {
               type="checkbox"
               name="vatflag"
               onChange={(e) =>
-                setAgentData({ ...entityData, vatflag: e.target.checked })
+                setAgentData({ ...agentData, vatflag: e.target.checked })
               }
             />
           </div>
