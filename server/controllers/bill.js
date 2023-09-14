@@ -224,9 +224,9 @@ const submitCashier = async (req, res) => {
     const schema = Joi.object({
         // keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
-        // cashierreceiveno: Joi.string().required(),
-        // cashierdate: Joi.date().required(),
-        // dfrpreferno: Joi.string().required(),
+        cashierreceiveno: Joi.string().required(),
+        cashierdate: Joi.date().required(),
+        dfrpreferno: Joi.string().required(),
         transactiontype: Joi.string().required(),
         insurercode: Joi.string().required(),
         advisorcode: Joi.string().required(),
@@ -264,7 +264,7 @@ const submitCashier = async (req, res) => {
         customerid, receivefrom, receivename, receivetype,
         "partnerBank", "partnerBankbranch", "partnerAccountno",
         "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status
+        amt, "createdAt", createusercode, status 
     )
     VALUES
     (
@@ -273,7 +273,7 @@ const submitCashier = async (req, res) => {
         :customerid, :receivefrom, :receivename, :receivetype,
         :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
         :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status
+        :Amt, :createdate, :createusercode, :status 
     );
     `;
     
@@ -283,7 +283,7 @@ const submitCashier = async (req, res) => {
             // keyid: req.body.keyid,
             billadvisorno: req.body.billadvisorno,
             cashierreceiveno: cashierreceiveno,
-            cashierdate: null,
+            cashierdate: req.body.cashierdate,
             dfrpreferno: null,
             transactiontype: req.body.transactiontype,
             insurercode: req.body.insurercode,
@@ -537,8 +537,8 @@ const editSubmitBill = async (req, res) => {
         id:Joi.number().required(),
         // keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
-        // cashierreceiveno: Joi.string().required(),
-        // cashierdate: Joi.date().required(),
+        cashierreceiveno: Joi.string().required(),
+        cashierdate: Joi.date().required(),
         // dfrpreferno: Joi.string().required(),
         transactiontype: Joi.string().required(),
         insurercode: Joi.string().required(),
@@ -591,7 +591,7 @@ const editSubmitBill = async (req, res) => {
             id:req.body.id,
             billadvisorno: req.body.billadvisorno,
             cashierreceiveno: cashierreceiveno,
-            cashierdate: null,
+            cashierdate: req.body.cashierdate,
             transactiontype: req.body.transactiontype,
             insurercode: req.body.insurercode,
             advisorcode: req.body.advisorcode,

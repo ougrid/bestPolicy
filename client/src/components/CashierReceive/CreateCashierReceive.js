@@ -242,9 +242,9 @@ const CreateCashierReceive = () => {
         let data={
             // keyid: Joi.string().required(),
             billadvisorno: billAdvisorNo,
-            // cashierreceiveno: Joi.string().required(),
-            // cashierdate: Joi.date().required(),
-            // dfrpreferno: Joi.string().required(),
+            cashierreceiveno: cashierReceiptNo,
+            cashierdate: cashierDate,
+            dfrpreferno: "1111",
             transactiontype: transactionType,
             insurercode: Insurer,
             advisorcode: Advisor,
@@ -275,9 +275,9 @@ const CreateCashierReceive = () => {
         const schema = Joi.object({
             // keyid: Joi.string().required(),
             billadvisorno: Joi.string().required(),
-            // cashierreceiveno: Joi.string().required(),
-            // cashierdate: Joi.date().required(),
-            // dfrpreferno: Joi.string().required(),
+            cashierreceiveno: Joi.required(),
+            cashierdate: Joi.date().required(),
+            dfrpreferno: Joi.string().required(),
             transactiontype: Joi.string().required(),
             insurercode: Joi.string().required(),
             advisorcode: Joi.string().required(),
@@ -305,7 +305,10 @@ const CreateCashierReceive = () => {
         });
         const {error} = schema.validate(data);
         if (error) {
-            setModalText(error)
+            console.log(data)
+            console.log(error)
+            setModalText(error.toString())
+            setShow(true)
             return
         }
         
@@ -320,6 +323,9 @@ const CreateCashierReceive = () => {
                 if (response.status==200) {
                     console.log("Success")
                     setModalText("Success")
+                    setShow(true)
+                }else{
+                    setModalText(response.data.error)
                     setShow(true)
                 }
             })
@@ -500,10 +506,10 @@ const CreateCashierReceive = () => {
                         {/* Customer */}
                         <div className="row mb-3">
                             <div className="col-4">
-                                <label htmlFor="Customer" className="form-label">Customer</label>
+                                <label htmlFor="CustomerId" className="form-label">Customer ID</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="Customer" value={Customer} required onChange={(e) => setCustomer(e.target.value)} className="form-control"/>
+                                <input type="number" id="Customer" value={Customer} required onChange={(e) => setCustomer(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 
@@ -513,7 +519,7 @@ const CreateCashierReceive = () => {
                                 <label htmlFor="cashierReceiptNo" className="form-label">Cashier Receipt No</label>
                             </div>
                             <div className="col-7">
-                                <input type="text" id="cashierReceiptNo" required  value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control"/>
+                                <input type="number" id="cashierReceiptNo" required  value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control"/>
                             </div>
                         </div>
 

@@ -251,8 +251,8 @@ const EditCashierReceive = (props) => {
             id:selectData.id,
             // keyid: Joi.string().required(),
             billadvisorno: billAdvisorNo,
-            // cashierreceiveno: Joi.string().required(),
-            // cashierdate: Joi.date().required(),
+            cashierreceiveno: cashierReceiptNo,
+            cashierdate: cashierDate,
             // dfrpreferno: Joi.string().required(),
             transactiontype: transactionType,
             insurercode: insurercode,
@@ -287,6 +287,9 @@ const EditCashierReceive = (props) => {
                     window.location.reload()
                     setShowSuccess(true)
                     
+                }else{
+                    setModalText(response.data.error)
+                    setShow(true)
                 }
             })
             .catch((error) => {
