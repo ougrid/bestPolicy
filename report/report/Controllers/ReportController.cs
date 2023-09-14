@@ -74,7 +74,7 @@ namespace report.Controllers
         public async Task<IActionResult> GetBilling(Billing data)
         {
             var records = await _policyService.GetPolicyListbyAgent(data);
-            var dateNow = DateOnly.FromDateTime(DateTime.Now); -
+            var dateNow = DateOnly.FromDateTime(DateTime.Now);
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Users");
@@ -199,48 +199,21 @@ namespace report.Controllers
             return dt;
         }
 
-        [Route("[controller]/json")]
-        [HttpPost]
-        public async Task<IActionResult> AddEmployee([FromBody] Billing data)
-        {
-
-            var result = await _policyService.GetPolicyListbyAgent(data);
-
-
-            return Ok(result);
-        }
-
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
-        //{
-        //    var result = await _transactionService.UpdateEmployee(employee);
-
-        //    return Ok(result);
-        //}
-
-        //[HttpDelete("{id:int}")]
-        //public async Task<IActionResult> DeleteEmployee(int id)
-        //{
-        //    var result = await _transactionService.DeleteEmployee(id);
-
-        //    return Ok(result);
-        //}
-
         [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
         [HttpPost]
         public async Task<IActionResult> GetPremInOutstanding(Billing data)
         {
-            var records = await _preminReportService.GetPremInOutstanding(data);
-            var dateNow = DateOnly.FromDateTime(DateTime.Now); -
+            var records = await _policyService.GetPolicyListByPremIn(data);
+            var dateNow = DateOnly.FromDateTime(DateTime.Now);
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.Worksheets.Add("Users");
+                var worksheet = workbook.Worksheets.Add("report");
                 worksheet.Cell(1, 1).Value = "รายงานตัดหนี้ตัวแทน ตัวตั้ง";
-                worksheet.Cell(2, 1).Value = "ประกันภัยรถยนต์ภาคบังคับและภาคสมัครใจ ความคุ้มครองเดือน ธันวาคม 2566 รอบวางบิล" + dateNow;
+                // worksheet.Cell(2, 1).Value = "ประกันภัยรถยนต์ภาคบังคับและภาคสมัครใจ ความคุ้มครองเดือน ธันวาคม 2566 รอบวางบิล" + dateNow;
                 // worksheet.Cell(3, 1).Value = "บริษัท ทิพยประกันภัย จำกัด (มหาชน)";
                 worksheet.Cell(4, 1).Value = "รายการกรมธรรม์ประกันภัย";
                 worksheet.Range("A4:S4").Merge();
-                worksheet.Cell(4, 20).Value = "ภาษี ณ ที่จ่าย 1% ???";
+                worksheet.Cell(4, 20).Value = "ภาษี ณ ที่จ่าย 1%";
                 worksheet.Range("T4:U4").Merge();
                 var currentRow = 5;
                 worksheet.Cell(currentRow, 1).Value = "ลำดับ";
@@ -309,13 +282,42 @@ namespace report.Controllers
                     return File(
                         content,
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "report-premin-outstanding" + dateNow + ".xlsx");
+                        "report-premin-outstanding_" + dateNow + ".xlsx");
 
                 }
             }
 
 
         }
+
+        [Route("[controller]/json")]
+        [HttpPost]
+        public async Task<IActionResult> AddEmployee([FromBody] Billing data)
+        {
+
+            var result = await _policyService.GetPolicyListbyAgent(data);
+
+
+            return Ok(result);
+        }
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
+        //{
+        //    var result = await _transactionService.UpdateEmployee(employee);
+
+        //    return Ok(result);
+        //}
+
+        //[HttpDelete("{id:int}")]
+        //public async Task<IActionResult> DeleteEmployee(int id)
+        //{
+        //    var result = await _transactionService.DeleteEmployee(id);
+
+        //    return Ok(result);
+        //}
+
+        // [Route("Report/reportpreminoutstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
 
         // [Route("[controller]/advisor-premin-debtwriteoff-cutter")] // รายงานตัดหนี้ตัวแทน ตัวตัด report-premin-...
         // [Route("[controller]/advisor-premin-debtwriteoff-balance")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-...

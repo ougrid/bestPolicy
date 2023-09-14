@@ -9,5 +9,7 @@ namespace report.Services
         //Task<bool> CreateEmployee(Employee employee);
         //Task<Employee> UpdateEmployee(Employee employee);
         //Task<bool> DeleteEmployee(int key);
+
+        Task<List<Policy>> GetPolicyListByPremIn(Billing data);
     }
 }
