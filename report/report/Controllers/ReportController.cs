@@ -209,13 +209,47 @@ namespace report.Controllers
             {
                 var worksheet = workbook.Worksheets.Add("report");
                 worksheet.Cell(1, 1).Value = "รายงานตัดหนี้ตัวแทน ตัวตั้ง";
-                // worksheet.Cell(2, 1).Value = "ประกันภัยรถยนต์ภาคบังคับและภาคสมัครใจ ความคุ้มครองเดือน ธันวาคม 2566 รอบวางบิล" + dateNow;
-                // worksheet.Cell(3, 1).Value = "บริษัท ทิพยประกันภัย จำกัด (มหาชน)";
+                worksheet.Cell(2, 1).Value = "ประกันภัยรถยนต์ภาคบังคับและภาคสมัครใจ ความคุ้มครองเดือน ธันวาคม 2566 รอบวางบิล" + dateNow;
+                worksheet.Cell(3, 1).Value = "บริษัท ทิพยประกันภัย จำกัด (มหาชน)";
                 worksheet.Cell(4, 1).Value = "รายการกรมธรรม์ประกันภัย";
-                worksheet.Range("A4:S4").Merge();
-                worksheet.Cell(4, 20).Value = "ภาษี ณ ที่จ่าย 1%";
-                worksheet.Range("T4:U4").Merge();
+                worksheet.Range("A4:AF4").Merge();
                 var currentRow = 5;
+                worksheet.Range("A4:AF5").Style.Font.Bold = true;
+                worksheet.Range("A4:AF5").Style.Fill.BackgroundColor = XLColor.FromArgb(217, 217, 217);
+                worksheet.Column(1).Width = 8;
+                worksheet.Column(2).Width = 26;
+                worksheet.Column(3).Width = 26;
+                worksheet.Column(4).Width = 26;
+                worksheet.Column(5).Width = 20;
+                worksheet.Column(6).Width = 20;
+                worksheet.Column(7).Width = 16;
+                worksheet.Column(8).Width = 20;
+                worksheet.Column(9).Width = 20;
+                worksheet.Column(10).Width = 20;
+                worksheet.Column(11).Width = 20;
+                worksheet.Column(12).Width = 20;
+                worksheet.Column(13).Width = 16;
+                worksheet.Column(14).Width = 8;
+                worksheet.Column(15).Width = 20;
+                worksheet.Column(16).Width = 20;
+                worksheet.Column(17).Width = 8;
+                worksheet.Column(18).Width = 16;
+                worksheet.Column(19).Width = 16;
+                worksheet.Column(20).Width = 20;
+                worksheet.Column(21).Width = 20;
+                worksheet.Column(22).Width = 20;
+                worksheet.Column(23).Width = 20;
+                worksheet.Column(24).Width = 8;
+                worksheet.Column(25).Width = 8;
+                worksheet.Column(26).Width = 8;
+                worksheet.Column(27).Width = 20;
+                worksheet.Column(28).Width = 20;
+                worksheet.Column(29).Width = 20;
+                worksheet.Column(30).Width = 20;
+                worksheet.Column(31).Width = 16;
+                worksheet.Column(32).Width = 20;
+                worksheet.Column(33).Width = 20;
+                worksheet.Range("A4:AF5").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 worksheet.Cell(currentRow, 1).Value = "ลำดับ";
                 worksheet.Cell(currentRow, 2).Value = "เลขที่กรมธรรม์(ประกันภัย)";
                 worksheet.Cell(currentRow, 3).Value = "เลขที่สลักหลัง (Endorse No.)";
@@ -249,8 +283,6 @@ namespace report.Controllers
                 worksheet.Cell(currentRow, 31).Value = "OV-out%";
                 worksheet.Cell(currentRow, 32).Value = "OV-out Amount";
 
-                worksheet.Range("A4:V5").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
                 foreach (var record in records)
                 {
                     currentRow++;
@@ -270,10 +302,10 @@ namespace report.Controllers
                     worksheet.Cell(currentRow, 14).Value = record.totalprem;
 
                 }
-                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
-                worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorderColor = XLColor.Black;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.OutsideBorderColor = XLColor.Black;
                 using (var stream = new MemoryStream())
                 {
                     workbook.SaveAs(stream);
