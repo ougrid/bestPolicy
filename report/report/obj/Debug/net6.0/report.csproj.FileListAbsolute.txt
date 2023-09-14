@@ -161,3 +161,13 @@ C:\Users\maharnnops\git\bestPolicy\report\report\bin\Debug\net6.0\System.Securit
 C:\Users\maharnnops\git\bestPolicy\report\report\bin\Debug\net6.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\maharnnops\git\bestPolicy\report\report\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 C:\Users\maharnnops\git\bestPolicy\report\report\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.dll
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\refint\report.dll
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.pdb
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.csproj.AssemblyReference.cache
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.AssemblyInfoInputs.cache
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.AssemblyInfo.cs
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.csproj.CoreCompileInputs.cache
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ougridd\source\repos\bestPolicy\report\report\obj\Debug\net6.0\report.MvcApplicationPartsAssemblyInfo.cache
