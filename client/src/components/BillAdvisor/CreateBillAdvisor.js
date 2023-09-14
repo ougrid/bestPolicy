@@ -121,7 +121,7 @@ const CreateBillAdvisor = () => {
             whtcom: net.whtcom,
             ov_out: net.ov_out,
             whtov: net.whtov,
-            billprem: net.prem + gross.prem + net.comm_out + net.whtcom + net.ov_out + net.whtov
+            billprem: net.prem + gross.prem - net.comm_out + net.whtcom - net.ov_out + net.whtov
         }
         setPoliciesRender({ net: net, gross: gross, total: total })
     };

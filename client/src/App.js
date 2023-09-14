@@ -28,8 +28,13 @@ import CreateCashierReceive from "./components/CashierReceive/CreateCashierRecei
 import EditCashierReceive from "./components/CashierReceive/EditCashierReceive";
 import Bank from "./components/Static/Bank";
 import PremInCreate from "./components/PremIn/PremInCreate";
+import PremInCreateDirect from "./components/PremIn/PremInCreateDirect";
 import PremInPaid from "./components/PremIn/PremInPaid";
 import PremInSreach from "./components/PremIn/PremInSearch";
+import PolicyReconcile from "./components/Policy/PolicyReconcile";
+import PremOutCreate from "./components/PremOut/PremOutCreate";
+import CommInCreate from "./components/CommIn/CommInCreate";
+import { type } from "@testing-library/user-event/dist/type";
 function App() {
   return (
     <div className="App">
@@ -61,7 +66,11 @@ function App() {
           <Route path="cashier/editcashier" element={<EditCashierReceive />} />
           <Route path="premin/find" element={<PremInSreach/>} />
           <Route path="premin/create" element={<PremInCreate />} />
-          <Route path="premin/paid" element={<PremInPaid />} />
+          <Route path="premin/createdirect" element={<PremInCreateDirect />} />
+          <Route path="premin/paid/:type" element={<PremInPaid />} />
+          <Route path="/policyreconcile" element={<PolicyReconcile />} />
+          <Route path="premout/create" element={<PremOutCreate />} />
+          <Route path="commin/create" element={<CommInCreate />} />
         </Routes>
       </main>
       {/* <footer>

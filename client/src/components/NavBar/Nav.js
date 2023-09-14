@@ -53,6 +53,7 @@ function Nav() {
               <li><a class="dropdown-item" href="/findpolicy">ค้นหากรมธรรม์</a></li>
               <li><a class="dropdown-item" href="/policyexcel">สร้างรายการใหม่ (excel)</a></li>
               <li><a class="dropdown-item" href="/policyscreen">สร้างรายการใหม่ (screen)</a></li>
+              <li><a class="dropdown-item" href="/policyreconcile">Reconcile</a></li>
             </ul>
           </div>
           
@@ -86,7 +87,28 @@ function Nav() {
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/premin/find">ค้นหารายการ</a></li>
               <li><a class="dropdown-item" href="/premin/create">สร้างรายการใหม่</a></li>
-              <li><a class="dropdown-item" href="/premin/paid">แก้ไขรายการ</a></li>
+              <li><a class="dropdown-item" href="/premin/createdirect">สร้างรายการใหม่ (จ่ายแบบ direct)</a></li>
+              <li><a class="dropdown-item" href="/premin/paid/premout">ค้นหารายการ prem-out</a></li>
+              <li><a class="dropdown-item" href="/premin/paid/commovout">ค้นหารายการ comm/ov-out</a></li>
+              <li><a class="dropdown-item" href="/premin/paid/wht3">ค้นหารายการ WHT 3%</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              AP Prem-out
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/premout/create">stament ค่าเบี้ยส่งทิพ</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              AR Comm-in
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/commin/create">สร้างรายการใหม่</a></li>
             </ul>
           </div>
           <div class="dropdown">

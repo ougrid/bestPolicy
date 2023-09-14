@@ -148,7 +148,7 @@ const createbilladvisor = async (req,res) =>{
       //insert to master jabilladvisor
       const billdate = new Date().toISOString().split('T')[0]
       // const billno = 'B' +  Date.now()
-      req.body.bill.billadvisor = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05');
+      req.body.bill.billadvisor = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05',t);
       const billadvisors = await sequelize.query(
         'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active ) ' +
         'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode limit 1), '+
@@ -276,7 +276,7 @@ const editbilladvisor = async (req,res) =>{
   const t = await sequelize.transaction();
   try{
 
-    req.body.bill.billadvisorno = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05');
+    req.body.bill.billadvisorno = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05',t);
   const billadvisors = await sequelize.query(
     'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active, old_keyid ) ' +
     'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode), '+
