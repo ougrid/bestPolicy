@@ -33,13 +33,14 @@ namespace report.Services
             string agentCode = data.agentCode;
             DateTime startDate = data.startDate;
             DateTime endDate = data.endDate;
-            const cond = '';
-            if (data.startDate)
-            {
-                cond = cond + ' and startdate = ' + data.startdate
-            }
+            // const cond = '';
+            // if (data.startDate)
+            // {
+            //     cond = cond + ' and startdate = ' + data.startdate;
+            // }
 
-            var policyList = await _dbService.GetAll<Policy>("SELECT * FROM static_data.\"Policies\" Where \"agentCode\" = @agentCode And \"createdAt\" >= @startDate And \"createdAt\" <= @endDate" + cond,
+            // var policyList = await _dbService.GetAll<Policy>("SELECT * FROM static_data.\"Policies\" Where \"agentCode\" = @agentCode And \"createdAt\" >= @startDate And \"createdAt\" <= @endDate" + cond,
+            var policyList = await _dbService.GetAll<Policy>("SELECT * FROM static_data.\"Policies\" Where \"agentCode\" = @agentCode And \"createdAt\" >= @startDate And \"createdAt\" <= @endDate",
                 new
                 {
                     agentCode = agentCode,
