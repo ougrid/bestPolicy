@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using amityReport.Models;
 using report.Models;
 using report.Services;
 using System.Data;
@@ -74,7 +75,7 @@ namespace report.Controllers
         public async Task<IActionResult> GetBilling(Billing data)
         {
             var records = await _policyService.GetPolicyListbyAgent(data);
-            var dateNow = DateOnly.FromDateTime(DateTime.Now); -
+            var dateNow = DateOnly.FromDateTime(DateTime.Now);
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Users");
@@ -199,50 +200,57 @@ namespace report.Controllers
             return dt;
         }
 
-        [Route("[controller]/json")]
-        [HttpPost]
-        public async Task<IActionResult> AddEmployee([FromBody] Billing data)
-        {
-
-            var result = await _policyService.GetPolicyListbyAgent(data);
-
-
-            return Ok(result);
-        }
-
-        //[HttpPut]
-        //public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
-        //{
-        //    var result = await _transactionService.UpdateEmployee(employee);
-
-        //    return Ok(result);
-        //}
-
-        //[HttpDelete("{id:int}")]
-        //public async Task<IActionResult> DeleteEmployee(int id)
-        //{
-        //    var result = await _transactionService.DeleteEmployee(id);
-
-        //    return Ok(result);
-        //}
-
         [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
         [HttpPost]
-        public async Task<IActionResult> GetPremInOutstanding(Billing data)
+        public async Task<IActionResult> GetPremInOutstanding(Transaction data)
         {
-            var records = await _preminReportService.GetPremInOutstanding(data);
-            var dateNow = DateOnly.FromDateTime(DateTime.Now); -
+            var records = await _policyService.GetPolicyListByPremIn(data);
+            var dateNow = DateOnly.FromDateTime(DateTime.Now);
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.Worksheets.Add("Users");
+                var worksheet = workbook.Worksheets.Add("report");
                 worksheet.Cell(1, 1).Value = "รายงานตัดหนี้ตัวแทน ตัวตั้ง";
                 worksheet.Cell(2, 1).Value = "ประกันภัยรถยนต์ภาคบังคับและภาคสมัครใจ ความคุ้มครองเดือน ธันวาคม 2566 รอบวางบิล" + dateNow;
-                // worksheet.Cell(3, 1).Value = "บริษัท ทิพยประกันภัย จำกัด (มหาชน)";
+                worksheet.Cell(3, 1).Value = "บริษัท ทิพยประกันภัย จำกัด (มหาชน)";
                 worksheet.Cell(4, 1).Value = "รายการกรมธรรม์ประกันภัย";
-                worksheet.Range("A4:S4").Merge();
-                worksheet.Cell(4, 20).Value = "ภาษี ณ ที่จ่าย 1% ???";
-                worksheet.Range("T4:U4").Merge();
+                worksheet.Range("A4:AF4").Merge();
                 var currentRow = 5;
+                worksheet.Range("A4:AF5").Style.Font.Bold = true;
+                worksheet.Range("A4:AF5").Style.Fill.BackgroundColor = XLColor.FromArgb(217, 217, 217);
+                worksheet.Column(1).Width = 8;
+                worksheet.Column(2).Width = 26;
+                worksheet.Column(3).Width = 26;
+                worksheet.Column(4).Width = 26;
+                worksheet.Column(5).Width = 20;
+                worksheet.Column(6).Width = 20;
+                worksheet.Column(7).Width = 16;
+                worksheet.Column(8).Width = 20;
+                worksheet.Column(9).Width = 20;
+                worksheet.Column(10).Width = 20;
+                worksheet.Column(11).Width = 20;
+                worksheet.Column(12).Width = 20;
+                worksheet.Column(13).Width = 16;
+                worksheet.Column(14).Width = 8;
+                worksheet.Column(15).Width = 20;
+                worksheet.Column(16).Width = 20;
+                worksheet.Column(17).Width = 8;
+                worksheet.Column(18).Width = 16;
+                worksheet.Column(19).Width = 16;
+                worksheet.Column(20).Width = 20;
+                worksheet.Column(21).Width = 20;
+                worksheet.Column(22).Width = 20;
+                worksheet.Column(23).Width = 20;
+                worksheet.Column(24).Width = 8;
+                worksheet.Column(25).Width = 8;
+                worksheet.Column(26).Width = 8;
+                worksheet.Column(27).Width = 20;
+                worksheet.Column(28).Width = 20;
+                worksheet.Column(29).Width = 20;
+                worksheet.Column(30).Width = 20;
+                worksheet.Column(31).Width = 16;
+                worksheet.Column(32).Width = 20;
+                worksheet.Column(33).Width = 20;
+                worksheet.Range("A4:AF5").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 worksheet.Cell(currentRow, 1).Value = "ลำดับ";
                 worksheet.Cell(currentRow, 2).Value = "เลขที่กรมธรรม์(ประกันภัย)";
                 worksheet.Cell(currentRow, 3).Value = "เลขที่สลักหลัง (Endorse No.)";
@@ -276,31 +284,29 @@ namespace report.Controllers
                 worksheet.Cell(currentRow, 31).Value = "OV-out%";
                 worksheet.Cell(currentRow, 32).Value = "OV-out Amount";
 
-                worksheet.Range("A4:V5").Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-
                 foreach (var record in records)
                 {
                     currentRow++;
-                    worksheet.Cell(currentRow, 1).Value = record.id;
+                    //worksheet.Cell(currentRow, 1).Value = record.id;
                     //worksheet.Cell(currentRow, 2).Value = "record";
-                    worksheet.Cell(currentRow, 3).Value = record.actDate;
-                    worksheet.Cell(currentRow, 4).Value = record.expDate;
+                    //worksheet.Cell(currentRow, 3).Value = record.actDate;
+                    //worksheet.Cell(currentRow, 4).Value = record.expDate;
                     //worksheet.Cell(currentRow, 5).Value = "ยี่ห้อ/รุ่นรภยนต์";
                     //worksheet.Cell(currentRow, 6).Value = "ปีรถ";
-                    worksheet.Cell(currentRow, 7).Value = record.insureeCode;
+                    //worksheet.Cell(currentRow, 7).Value = record.insureeCode;
                     //worksheet.Cell(currentRow, 8).Value = "เลที่ใบกำกับภาษี";
                     //worksheet.Cell(currentRow, 9).Value = "เลขตัวถัง";
                     worksheet.Cell(currentRow, 10).Value = record.policyNo;
-                    worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
+                    //worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
                     worksheet.Cell(currentRow, 12).Value = record.duty;
-                    worksheet.Cell(currentRow, 13).Value = record.tax;
-                    worksheet.Cell(currentRow, 14).Value = record.totalprem;
+                    //worksheet.Cell(currentRow, 13).Value = record.tax;
+                    //worksheet.Cell(currentRow, 14).Value = record.totalprem;
 
                 }
-                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A4:V" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
-                worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                worksheet.Range("A4:V" + currentRow).Style.Border.OutsideBorderColor = XLColor.Black;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                worksheet.Range("A4:AF" + currentRow).Style.Border.OutsideBorderColor = XLColor.Black;
                 using (var stream = new MemoryStream())
                 {
                     workbook.SaveAs(stream);
@@ -309,13 +315,42 @@ namespace report.Controllers
                     return File(
                         content,
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "report-premin-outstanding" + dateNow + ".xlsx");
+                        "report-premin-outstanding_" + dateNow + ".xlsx");
 
                 }
             }
 
 
         }
+
+        [Route("[controller]/json")]
+        [HttpPost]
+        public async Task<IActionResult> AddEmployee([FromBody] Billing data)
+        {
+
+            var result = await _policyService.GetPolicyListbyAgent(data);
+
+
+            return Ok(result);
+        }
+
+        //[HttpPut]
+        //public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
+        //{
+        //    var result = await _transactionService.UpdateEmployee(employee);
+
+        //    return Ok(result);
+        //}
+
+        //[HttpDelete("{id:int}")]
+        //public async Task<IActionResult> DeleteEmployee(int id)
+        //{
+        //    var result = await _transactionService.DeleteEmployee(id);
+
+        //    return Ok(result);
+        //}
+
+        // [Route("Report/reportpreminoutstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
 
         // [Route("[controller]/advisor-premin-debtwriteoff-cutter")] // รายงานตัดหนี้ตัวแทน ตัวตัด report-premin-...
         // [Route("[controller]/advisor-premin-debtwriteoff-balance")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-...

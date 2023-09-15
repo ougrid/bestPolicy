@@ -1,4 +1,5 @@
-﻿using report.Models;
+﻿using amityReport.Models;
+using report.Models;
 
 namespace report.Services
 {
@@ -9,5 +10,7 @@ namespace report.Services
         //Task<bool> CreateEmployee(Employee employee);
         //Task<Employee> UpdateEmployee(Employee employee);
         //Task<bool> DeleteEmployee(int key);
+
+        Task<List<Transaction>> GetPolicyListByPremIn(Transaction data);
     }
 }

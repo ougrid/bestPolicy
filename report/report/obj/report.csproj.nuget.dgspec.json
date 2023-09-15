@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\maharnnops\\git\\bestPolicy\\report\\report\\report.csproj": {}
+    "C:\\Users\\ougridd\\source\\repos\\bestPolicy\\report\\report\\report.csproj": {}
   },
   "projects": {
-    "C:\\Users\\maharnnops\\git\\bestPolicy\\report\\report\\report.csproj": {
+    "C:\\Users\\ougridd\\source\\repos\\bestPolicy\\report\\report\\report.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\maharnnops\\git\\bestPolicy\\report\\report\\report.csproj",
+        "projectUniqueName": "C:\\Users\\ougridd\\source\\repos\\bestPolicy\\report\\report\\report.csproj",
         "projectName": "report",
-        "projectPath": "C:\\Users\\maharnnops\\git\\bestPolicy\\report\\report\\report.csproj",
-        "packagesPath": "C:\\Users\\maharnnops\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\maharnnops\\git\\bestPolicy\\report\\report\\obj\\",
+        "projectPath": "C:\\Users\\ougridd\\source\\repos\\bestPolicy\\report\\report\\report.csproj",
+        "packagesPath": "C:\\Users\\ougridd\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ougridd\\source\\repos\\bestPolicy\\report\\report\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\maharnnops\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ougridd\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,8 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
-          "https://www.nuget.org/api/v2/": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
@@ -101,6 +100,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[6.0.21, 6.0.21]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[6.0.21, 6.0.21]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[6.0.21, 6.0.21]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[6.0.21, 6.0.21]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -109,7 +126,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }
