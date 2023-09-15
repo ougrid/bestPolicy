@@ -18,32 +18,31 @@ export default function PremInPaid() {
 
     })
     const [policiesData, setPoliciesData] = useState([])
-  const colData = [
-    "InsurerCode",
-    "AdvisorCode",
-    "Duedate",
-    "Policyno",
-    "Endorseno",
-    "Invoiceno",
-    "seqno",
-    "customerid",
-    "insuredname",
-    "licenseno",
-    "province",
-    "chassisno",
-    "grossprem",
-    "duty",
-    "tax",
-    "totalamt",
-    "comm-in%",
-    "comm-in-amt",
-    "vat-comm-in",
-    "comm-in + vat-comm_in",
-    "ov-in%",
-    "ov-in amt",
-    "vat-comm-in",
-    "ov-in  + vat-ov_in",
-  ];
+    const colData = {
+      insurerCode: "insurerCode",
+      agentCode: "advisorCode",
+      dueDate:"Duedate",
+      policyNo:"Policyno",
+      endorseNo:"Endorseno",
+      invoiceNo:"Invoiceno",
+      seqNo: "seqno",
+      customerid:"customerid",
+      insureename:"insuredname",
+      licenseNo:"licenseno",
+      // "province",
+      chassisNo:"chassisno",
+      netgrossprem:"grossprem",
+      duty:"duty",
+      tax:"tax",
+      totalprem:"totalamt",
+      commout_rate:"comm-out%",
+      commout_amt:"comm-out-amt",
+      ovout_rate:"ov-out%",
+      ovout_amt:"ov-out-amt",
+      netflag:"[] net",
+      remainamt:"billpremium",
+  
+  };
   
   const { type } = useParams();
   //apis 

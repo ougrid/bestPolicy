@@ -23,30 +23,31 @@ export default function PremInCreateDirect() {
 
     })
   const [policiesData, setPoliciesData] = useState([])
-  const colsData = [
-    "insurerCode",
-    "advisorCode",
-    "Duedate",
-    "Policyno",
-    "Endorseno",
-    "Invoiceno",
-    "seqno",
-    "customerid",
-    "insuredname",
-    "licenseno",
-    "province",
-    "chassisno",
-    "grossprem",
-    "duty",
-    "tax",
-    "totalamt",
-    "comm-out%",
-    "comm-out-amt",
-    "ov-out%",
-    "ov-out-amt",
-    "[] net",
-    "billpremium",
-  ];
+  const colsData = {
+    insurerCode: "insurerCode",
+    agentCode: "advisorCode",
+    dueDate:"Duedate",
+    policyNo:"Policyno",
+    endorseNo:"Endorseno",
+    invoiceNo:"Invoiceno",
+    seqNo: "seqno",
+    customerid:"customerid",
+    insureename:"insuredname",
+    licenseNo:"licenseno",
+    // "province",
+    chassisNo:"chassisno",
+    netgrossprem:"grossprem",
+    duty:"duty",
+    tax:"tax",
+    totalprem:"totalamt",
+    commout_rate:"comm-out%",
+    commout_amt:"comm-out-amt",
+    ovout_rate:"ov-out%",
+    ovout_amt:"ov-out-amt",
+    netflag:"[] net",
+    remainamt:"billpremium",
+
+};
 
 
   const handleChange = (e) => {

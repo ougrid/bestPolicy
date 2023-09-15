@@ -16,30 +16,31 @@ export default function PremInCreate() {
 
     })
     const [policiesData, setPoliciesData] = useState([])
-  const colsData = [
-    "insurerCode",
-    "advisorCode",
-    "Duedate",
-    "Policyno",
-    "Endorseno",
-    "Invoiceno",
-    "seqno",
-    "customerid",
-    "insuredname",
-    "licenseno",
-    "province",
-    "chassisno",
-    "grossprem",
-    "duty",
-    "tax",
-    "totalamt",
-    "comm-out%",
-    "comm-out-amt",
-    "ov-out%",
-    "ov-out-amt",
-    "[] net",
-    "billpremium",
-  ];
+  const colsData = {
+    insurerCode: "insurerCode",
+    agentCode: "advisorCode",
+    dueDate:"Duedate",
+    policyNo:"Policyno",
+    endorseNo:"Endorseno",
+    invoiceNo:"Invoiceno",
+    seqNo: "seqno",
+    customerid:"customerid",
+    insureename:"insuredname",
+    licenseNo:"licenseno",
+    // "province",
+    chassisNo:"chassisno",
+    netgrossprem:"grossprem",
+    duty:"duty",
+    tax:"tax",
+    totalprem:"totalamt",
+    commout_rate:"comm-out%",
+    commout_amt:"comm-out-amt",
+    ovout_rate:"ov-out%",
+    ovout_amt:"ov-out-amt",
+    netflag:"[] net",
+    remainamt:"billpremium",
+
+};
   
   
   const handleChange = (e) => {
@@ -62,13 +63,13 @@ export default function PremInCreate() {
             } else {
 
 
-                const array = []
-                for (let i = 0; i < res.data.length; i++) {
-                    // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                    array.push(res.data[i].totalprem)
+                // const array = []
+                // for (let i = 0; i < res.data.length; i++) {
+                //     // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                //     array.push(res.data[i].totalprem)
 
-                }
-                console.log(array);
+                // }
+                // console.log(array);
                 console.log(res.data);
                 setPoliciesData(res.data)
                 
@@ -116,6 +117,7 @@ const getData = (e) => {
 
             const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
             setFilterData(data)
+            console.log(res.data.trans);
             setPoliciesData(res.data.trans)
             
             

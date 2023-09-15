@@ -11,7 +11,8 @@ export default function CommInCreate() {
         "insurerCode": null,
         "agentCode": null,
         "dueDate" : null,
-        "reconcile" : true
+        "reconcile" : true,
+        "premin_type":'PREM-IN'
 
     })
     const [policiesData, setPoliciesData] = useState([])
@@ -101,7 +102,7 @@ const submitarpremout = async (e) => {
   return (
     <div className="container d-fle justify-content-center my-5">
       <form onSubmit={(e)=>submitFilter(e)}>
-        <h1>Stament ค่าเบี้ยส่ง insurer</h1>
+        <h1>ตัดหนี้ Comm/ov-in</h1>
        
         {/* insurerCode  */}
         <div className="row my-3">
