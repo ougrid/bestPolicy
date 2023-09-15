@@ -16,5 +16,7 @@ namespace report.Services
             var transactionList = await _dbService.GetAll<Transaction>("SELECT * FROM static_data.\"Transactions\"", new { });
             return transactionList;
         }
+
+
     }
 }
