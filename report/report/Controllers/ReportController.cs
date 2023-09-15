@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using amityReport.Models;
 using report.Models;
 using report.Services;
 using System.Data;
@@ -201,7 +202,7 @@ namespace report.Controllers
 
         [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
         [HttpPost]
-        public async Task<IActionResult> GetPremInOutstanding(Billing data)
+        public async Task<IActionResult> GetPremInOutstanding(Transaction data)
         {
             var records = await _policyService.GetPolicyListByPremIn(data);
             var dateNow = DateOnly.FromDateTime(DateTime.Now);
@@ -286,20 +287,20 @@ namespace report.Controllers
                 foreach (var record in records)
                 {
                     currentRow++;
-                    worksheet.Cell(currentRow, 1).Value = record.id;
+                    //worksheet.Cell(currentRow, 1).Value = record.id;
                     //worksheet.Cell(currentRow, 2).Value = "record";
-                    worksheet.Cell(currentRow, 3).Value = record.actDate;
-                    worksheet.Cell(currentRow, 4).Value = record.expDate;
+                    //worksheet.Cell(currentRow, 3).Value = record.actDate;
+                    //worksheet.Cell(currentRow, 4).Value = record.expDate;
                     //worksheet.Cell(currentRow, 5).Value = "ยี่ห้อ/รุ่นรภยนต์";
                     //worksheet.Cell(currentRow, 6).Value = "ปีรถ";
-                    worksheet.Cell(currentRow, 7).Value = record.insureeCode;
+                    //worksheet.Cell(currentRow, 7).Value = record.insureeCode;
                     //worksheet.Cell(currentRow, 8).Value = "เลที่ใบกำกับภาษี";
                     //worksheet.Cell(currentRow, 9).Value = "เลขตัวถัง";
                     worksheet.Cell(currentRow, 10).Value = record.policyNo;
-                    worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
+                    //worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
                     worksheet.Cell(currentRow, 12).Value = record.duty;
-                    worksheet.Cell(currentRow, 13).Value = record.tax;
-                    worksheet.Cell(currentRow, 14).Value = record.totalprem;
+                    //worksheet.Cell(currentRow, 13).Value = record.tax;
+                    //worksheet.Cell(currentRow, 14).Value = record.totalprem;
 
                 }
                 worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
