@@ -68,6 +68,9 @@ module.exports = {
       taxno: {
         type: Sequelize.STRING
       },
+      contactPersonID: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

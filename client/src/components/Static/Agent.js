@@ -354,7 +354,7 @@ const removeRow = (e) => {
                   onChange={changeEntity}
                 >
                   <option selected value="P">บุคคล</option>
-                  <option value="C">นิติบุคคล</option>
+                  <option value="O">นิติบุคคล</option>
                 </select>
               </div>
               <div class="col-1"></div>

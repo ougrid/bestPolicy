@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     stamentType: DataTypes.STRING,
     vatflag: DataTypes.STRING,
     taxno: DataTypes.STRING,
+    contactPersonID : DataTypes.INTEGER,
     deducttaxrate: DataTypes.INTEGER,
     
   }, {

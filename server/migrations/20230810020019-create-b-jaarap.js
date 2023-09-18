@@ -79,6 +79,12 @@ module.exports = {
       whtovin:{
         type:Sequelize.FLOAT
       },
+      commout:{
+        type:Sequelize.FLOAT
+      },
+      ovout:{
+        type:Sequelize.FLOAT
+      },
       
       
     

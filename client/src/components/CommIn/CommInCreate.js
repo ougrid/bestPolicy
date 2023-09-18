@@ -12,10 +12,12 @@ export default function CommInCreate() {
         "agentCode": null,
         "dueDate" : null,
         "reconcile" : true,
-        "premin_type":'PREM-IN'
+        "cashieramt":null,
+        "actualvalue": null,
 
     })
     const [policiesData, setPoliciesData] = useState([])
+    const [artype, setArtype] = useState('N')
   const colsData = [
     "insurerCode",
     "advisorCode",
@@ -104,6 +106,52 @@ const submitarpremout = async (e) => {
       <form onSubmit={(e)=>submitFilter(e)}>
         <h1>ตัดหนี้ Comm/ov-in</h1>
        
+
+       {/* type  */}
+       <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
+            รูปแบบการตัดหนี้ 
+          </label>
+          
+          <div class="form-check col-2">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onChange={(e)=>setArtype('N')}/>
+  <label class="form-check-label" for="flexRadioDefault1">
+    จ่ายเงินที่ amity
+  </label>
+</div>
+<div class="form-check col-2">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" onChange={(e)=>setArtype('D')}/>
+  <label class="form-check-label" for="flexRadioDefault2">
+    จ่ายเงินที่ บริษัทประกัน
+  </label>
+</div>
+        </div>
+
+        {/* change by premin type  */}
+        
+        <div className="row my-3">
+        {artype === 'N'? 
+        <label class="col-sm-2 col-form-label" htmlFor="dfrpreferno">
+          เลขที่ตัดจ่าย PREM-OUT ให้ประกัน
+        </label>
+         :
+         <label class="col-sm-2 col-form-label" htmlFor="dfrpreferno">
+         เลขที่รายการที่ลูกค้าจ่ายเงินที่ประกัน
+       </label>}
+        <div className="col-4 ">
+          <input
+            className="form-control"
+            type="text"
+            name="dfrpreferno"
+            id="dfrpreferno"
+            value={filterData.dfrpreferno}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+     
+      
+
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
@@ -136,35 +184,65 @@ const submitarpremout = async (e) => {
             />
           </div>
         </div>
-          {/* reconcileno */}
+          {/* cashierReceiveNo */}
           <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
-            reconcileno
+          cashierReceiveNo
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="reconcileno"
-              id="reconcileno"
-              disabled
-              placeholder="comming soonnnnnn"
+              name="cashierreceiveno"
+              id="cashierreceiveno"
               onChange={handleChange}
             />
           </div>
           </div>
-         {/* duedate  */}
+         {/* cashieramt  */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
-            dueDate
+          <label class="col-sm-2 col-form-label" htmlFor="cashieramt">
+            amt
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
-              type="date"
-              name="dueDate"
-              id="dueDate"
+              type="number"
+              name="cashieramt"
+              id="cashieramt"
               onChange={handleChange}
+              />
+          </div>
+        </div>
+        {/* actualvalue  */}
+        <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
+          ActualValue
+          </label>
+          <div className="col-4 ">
+            <input
+              className="form-control"
+              type="number"
+              name="actualvalue"
+              id="actualvalue"
+              onChange={handleChange}
+              />
+          </div>
+        </div>
+        {/* diff-amt */}
+        <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="diffamt">
+          Diff-amt
+          </label>
+          <div className="col-4 ">
+            <input
+              className="form-control"
+              type="number"
+              name="diffamt"
+              id="diffamt"
+              disabled
+              value={filterData.actualvalue - filterData.cashieramt}
+              // onChange={handleChange}
               />
           </div>
         </div>

@@ -126,7 +126,7 @@ export default function PremInCreateDirect() {
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
     console.log(master);
-    await axios.post(url + "/araps/savearpremindirect", { master: filterData, trans: policiesData }).then((res) => {
+    await axios.post(url + "/araps/savearpremindirect", { master: master, trans: policiesData }).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
     });
@@ -159,7 +159,7 @@ export default function PremInCreateDirect() {
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
     console.log(master);
-    await axios.post(url + "/araps/submitarpremindirect", { master: filterData, trans: policiesData }).then((res) => {
+    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: policiesData }).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
     });

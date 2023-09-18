@@ -33,7 +33,7 @@ const Insurer = () => {
     deductTaxRate: 3,
   });
   const [entityData, setEntityData] = useState({
-    personType: "C",
+    personType: "O",
     ogType: "ประกันภัย",
   });
   const [locationData, setLocationData] = useState({

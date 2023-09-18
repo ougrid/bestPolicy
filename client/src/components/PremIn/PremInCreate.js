@@ -5,6 +5,7 @@ const config = require("../../config.json");
 
 export default function PremInCreate() {
   const url = config.url;
+  const wht = config.wht;
   const [filterData, setFilterData] = useState(
     {
         "billadvisorno": null,
@@ -144,16 +145,58 @@ const getData = (e) => {
     }
 
 const savearpremin = async (e) => {
-  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/savearpremin", {master : {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData}).then((res) => {
+  let commout = 0
+  let ovout = 0 
+  let netflag = 'G'
+  for (let i = 0; i < policiesData.length; i++) {
+    if (policiesData[i].netflag === 'N') {
+      netflag = 'N'
+      commout = commout + policiesData[i].commout_amt
+      ovout = ovout + policiesData[i].ovout_amt
+    }
+    
+  }
+  const whtcommout = commout * wht
+  const whtovout = ovout * wht
+  const data = filterData 
+  data.diffamt = document.getElementsByName('DiffAmt')[0].value
+  data.commout = commout
+  data.ovout = ovout
+  data.whtcommout = whtcommout
+  data.whtovout = whtovout
+
+  console.log({master :  data, trans : policiesData});
+  await axios.post(url + "/araps/savearpremin",
+   {master : data, 
+   trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });
 };
 
 const submitarpremin = async (e) => {
-  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/submitarpremin", {master : {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData}).then((res) => {
+  let commout = 0
+  let ovout = 0 
+  let netflag = 'G'
+  for (let i = 0; i < policiesData.length; i++) {
+    if (policiesData[i].netflag === 'N') {
+      netflag = 'N'
+      commout = commout + policiesData[i].commout_amt
+      ovout = ovout + policiesData[i].ovout_amt
+    }
+    
+  }
+  const whtcommout = commout * wht
+  const whtovout = ovout * wht
+  const data = filterData 
+  data.diffamt = document.getElementsByName('DiffAmt')[0].value
+  data.commout = commout
+  data.ovout = ovout
+  data.whtcommout = whtcommout
+  data.whtovout = whtovout
+
+  console.log({master :  data, trans : policiesData});
+  await axios.post(url + "/araps/submitarpremin", {master : data, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });

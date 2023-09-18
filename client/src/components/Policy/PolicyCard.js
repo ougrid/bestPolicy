@@ -1300,8 +1300,8 @@ const PolicyCard = (props) => {
             name={`seqNoinstype`}
             onChange={handleChange}
           >
-            <option value={formData.personType} disabled selected hidden>
-              {formData.personType}
+            <option value={formData.seqNoinstype} disabled selected hidden>
+              {formData.seqNoinstype}
             </option>
             <option value="D">วัน</option>
             <option value="M">เดือน</option>
@@ -1378,8 +1378,8 @@ const PolicyCard = (props) => {
             name={`seqNoagttype`}
             onChange={handleChange}
           >
-            <option value={formData.personType} disabled selected hidden>
-              {formData.personType}
+            <option value={formData.seqNoagttype} disabled selected hidden>
+              {formData.seqNoagttype}
             </option>
             <option value="D">วัน</option>
             <option value="M">เดือน</option>
