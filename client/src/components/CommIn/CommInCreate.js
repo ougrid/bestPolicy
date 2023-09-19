@@ -8,12 +8,14 @@ export default function CommInCreate() {
   const [filterData, setFilterData] = useState(
     {
        
+      "dfrpreferno" : null,
         "insurerCode": null,
         "agentCode": null,
-        "dueDate" : null,
-        "reconcile" : true,
+        "cashierreceiveno" : null,
+        "actualvalue" : null,
         "cashieramt":null,
         "actualvalue": null,
+        "diffamt" : null,
 
     })
     const [policiesData, setPoliciesData] = useState([])
@@ -55,7 +57,7 @@ export default function CommInCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/payments/findpolicyinDue", filterData)
+        .post(url + "/araps/getarcommin", filterData)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -64,17 +66,16 @@ export default function CommInCreate() {
             } else {
 
 
-                const array = []
-                for (let i = 0; i < res.data.length; i++) {
-                    // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                    array.push(res.data[i].totalprem)
+                // const array = []
+                // for (let i = 0; i < res.data.length; i++) {
+                //     // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                //     array.push(res.data[i].totalprem)
 
-                }
-                console.log(array);
+                // }
                 console.log(res.data);
                 setPoliciesData(res.data)
                 
-                alert("create new insuree success")
+                alert("get t5ransaction for AR Comm in ")
             }
         })
         .catch((err) => {
@@ -85,7 +86,7 @@ export default function CommInCreate() {
 };
 
 
-const savearpremout = async (e) => {
+const saveapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
   await axios.post(url + "/araps/savearpremin", {master : filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
@@ -93,7 +94,7 @@ const savearpremout = async (e) => {
   });
 };
 
-const submitarpremout = async (e) => {
+const submitapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
   await axios.post(url + "/araps/submitarpremin", {master :filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
@@ -107,14 +108,14 @@ const submitarpremout = async (e) => {
         <h1>ตัดหนี้ Comm/ov-in</h1>
        
 
-       {/* type  */}
+       {/* artype  */}
        <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
             รูปแบบการตัดหนี้ 
           </label>
           
           <div class="form-check col-2">
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onChange={(e)=>setArtype('N')}/>
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked onChange={(e)=>setArtype('N')}/>
   <label class="form-check-label" for="flexRadioDefault1">
     จ่ายเงินที่ amity
   </label>
@@ -127,7 +128,7 @@ const submitarpremout = async (e) => {
 </div>
         </div>
 
-        {/* change by premin type  */}
+        {/* change by premin type  dfrpreferno*/}
         
         <div className="row my-3">
         {artype === 'N'? 
@@ -255,8 +256,8 @@ const submitarpremout = async (e) => {
       <div>
         <PremInTable cols={colsData} rows={policiesData} />
         <button className="btn btn-primary">Export To Excel</button>
-        <button className="btn btn-warning" onClick={(e)=>savearpremout(e)}>save</button>
-        <button className="btn btn-success" onClick={(e)=>submitarpremout(e)}>submit</button>
+        <button className="btn btn-warning" onClick={(e)=>saveapcommin(e)}>save</button>
+        <button className="btn btn-success" onClick={(e)=>submitapcommin(e)}>submit</button>
       </div>
     </div>
   );
