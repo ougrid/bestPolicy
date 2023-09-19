@@ -10,10 +10,13 @@ export default function CommOutCreate() {
   const [filterData, setFilterData] = useState(
     {
        
+        "effDatestart" : '1990-01-01',
+        "effDateend" : '2100-01-01',
         "insurerCode": null,
         "agentCode": null,
+        "policyNostart" : null,
+        "policyNoend" : null,
         "dueDate" : null,
-        "reconcileno" : null
 
     })
     const [policiesData, setPoliciesData] = useState([])
@@ -129,7 +132,7 @@ export default function CommOutCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/araps/getaptrans", filterData)
+        .post(url + "/araps/getapcommout", filterData)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -159,17 +162,17 @@ export default function CommOutCreate() {
 };
 
 
-const savearpremout = async (e) => {
+const saveapcommout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
-  await axios.post(url + "/araps/saveappremout", {master : filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/saveapcommout", {master : filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });
 };
 
-const submitarpremout = async (e) => {
+const submitapcommout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
-  await axios.post(url + "/araps/submitappremout", {master :filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/submitapcommout", {master :filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });
@@ -346,8 +349,8 @@ const submitarpremout = async (e) => {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                <button className="btn btn-warning" onClick={(e)=>savearpremout(e)}>save</button>
-        <button className="btn btn-success" onClick={(e)=>submitarpremout(e)}>submit</button>
+                <button className="btn btn-warning" onClick={(e)=>saveapcommout(e)}>save</button>
+        <button className="btn btn-success" onClick={(e)=>submitapcommout(e)}>submit</button>
                 </Modal.Footer>
             </Modal>
       <div>

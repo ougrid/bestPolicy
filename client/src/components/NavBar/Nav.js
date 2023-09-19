@@ -38,7 +38,7 @@ function Nav() {
           <NavLogo to="/">
             <ImgLogo 
               style={{ height: "70px" }}
-              src="./amitylogo.png"
+              src="/amitylogo.png"
             />
           </NavLogo>
         
@@ -119,6 +119,26 @@ function Nav() {
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/commout/create">สร้างรายการใหม่</a></li>
+            </ul>
+          </div>
+          <div class="dropdown">
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              รายงาน
+            </a>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="/reports/policy">รายงานบันทึกกรมธรรม์ประจำวัน </a></li>
+              <li><a class="dropdown-item" href="/reports/endorse">รายงานบันทึกสลักหลัง </a></li>
+              <li><a class="dropdown-item" href="/reports/invoice">รายงานบันทึกใบแจ้งหนี้ </a></li>
+              <li><a class="dropdown-item" href="/reports/billadvisor">รายงานใบวางบิล </a></li>
+              <li><a class="dropdown-item" href="/reports/cashier">รายงานรับเงิน </a></li>
+              <li><a class="dropdown-item" href="/reports/arapadvisor">รายงานตัดหนี้/ตัดจ่าย ตัวแทน  </a></li>
+              <li><a class="dropdown-item" href="/reports/arapdirect">รายงานลูกค้าจ่ายเงินที่ประกัน  </a></li>
+              <li><a class="dropdown-item" href="/reports/arapinsurer">รายงานตัดหนี้/ตัดจ่าย ประกัน  </a></li>
+              <li><a class="dropdown-item" href="/reports/tax">รายงานภาษี  </a></li>
+              {/* <li><a class="dropdown-item" href="/insureType">สร้างแผนประกัน</a></li>
+              <li><a class="dropdown-item" href="/agent">สร้างผู้แนะนำ</a></li>
+              <li><a className="dropdown-item" href="/bank">สร้างธนาคาร</a></li> */}
             </ul>
           </div>
           <div class="dropdown">

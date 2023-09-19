@@ -88,7 +88,7 @@ export default function CommInCreate() {
 
 const saveapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/savearpremin", {master : filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/savearcommin", {master : filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });
@@ -96,7 +96,7 @@ const saveapcommin = async (e) => {
 
 const submitapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/submitarpremin", {master :filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/submitarcommin", {master :filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });

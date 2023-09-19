@@ -234,6 +234,7 @@ const submitCashier = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
+        refno: Joi.string().required(),
         PartnerBank: Joi.string().required(),
         PartnerBankbranch: Joi.string().required(),
         PartnerAccountno: Joi.string().required(),
@@ -264,7 +265,7 @@ const submitCashier = async (req, res) => {
         customerid, receivefrom, receivename, receivetype,
         "partnerBank", "partnerBankbranch", "partnerAccountno",
         "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status 
+        amt, "createdAt", createusercode, status , refno
     )
     VALUES
     (
@@ -273,7 +274,7 @@ const submitCashier = async (req, res) => {
         :customerid, :receivefrom, :receivename, :receivetype,
         :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
         :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status 
+        :Amt, :createdate, :createusercode, :status ,:refno
     );
     `;
     
@@ -292,6 +293,7 @@ const submitCashier = async (req, res) => {
             receivefrom: req.body.receivefrom,
             receivename: req.body.receivename,
             receivetype: req.body.receivetype,
+            refno: req.body.refno,
             PartnerBank: req.body.PartnerBank,
             PartnerBankbranch: req.body.PartnerBankbranch,
             PartnerAccountno: req.body.PartnerAccountno,
@@ -346,6 +348,7 @@ const saveCashier = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
+        refno: Joi.string().required(),
         PartnerBank: Joi.string().required(),
         PartnerBankbranch: Joi.string().required(),
         PartnerAccountno: Joi.string().required(),
@@ -376,7 +379,7 @@ const saveCashier = async (req, res) => {
         customerid, receivefrom, receivename, receivetype,
         "partnerBank", "partnerBankbranch", "partnerAccountno",
         "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status
+        amt, "createdAt", createusercode, status, refno
     )
     VALUES
     (
@@ -385,7 +388,7 @@ const saveCashier = async (req, res) => {
         :customerid, :receivefrom, :receivename, :receivetype,
         :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
         :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status
+        :Amt, :createdate, :createusercode, :status, :refno
     );
     `;
     await sequelize.query(insertQuery, {
@@ -402,6 +405,7 @@ const saveCashier = async (req, res) => {
             receivefrom: req.body.receivefrom,
             receivename: req.body.receivename,
             receivetype: req.body.receivetype,
+            refno: req.body.refno,
             PartnerBank: req.body.PartnerBank,
             PartnerBankbranch: req.body.PartnerBankbranch,
             PartnerAccountno: req.body.PartnerAccountno,
@@ -448,6 +452,7 @@ const editSaveBill = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
+        refno: Joi.string().required(),
         PartnerBank: Joi.string().required(),
         PartnerBankbranch: Joi.string().required(),
         PartnerAccountno: Joi.string().required(),
@@ -482,6 +487,7 @@ const editSaveBill = async (req, res) => {
     receivefrom = :receivefrom,
     receivename = :receivename,
     receivetype = :receivetype,
+    refno = :refno,
     "partnerBank" = :PartnerBank,
     "partnerBankbranch" = :PartnerBankbranch,
     "partnerAccountno" = :PartnerAccountno,
@@ -509,6 +515,7 @@ const editSaveBill = async (req, res) => {
             receivefrom: req.body.receivefrom,
             receivename: req.body.receivename,
             receivetype: req.body.receivetype,
+            refno: req.body.refno,
             PartnerBank: req.body.PartnerBank,
             PartnerBankbranch: req.body.PartnerBankbranch,
             PartnerAccountno: req.body.PartnerAccountno,
@@ -547,6 +554,7 @@ const editSubmitBill = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
+        refno: Joi.string().required(),
         PartnerBank: Joi.string().required(),
         PartnerBankbranch: Joi.string().required(),
         PartnerAccountno: Joi.string().required(),
@@ -571,6 +579,7 @@ const editSubmitBill = async (req, res) => {
     receivefrom = :receivefrom,
     receivename = :receivename,
     receivetype = :receivetype,
+    refno = :refno,
     "partnerBank" = :PartnerBank,
     "partnerBankbranch" = :PartnerBankbranch,
     "partnerAccountno" = :PartnerAccountno,
@@ -599,6 +608,7 @@ const editSubmitBill = async (req, res) => {
             receivefrom: req.body.receivefrom,
             receivename: req.body.receivename,
             receivetype: req.body.receivetype,
+            refno: req.body.refno,
             PartnerBank: req.body.PartnerBank,
             PartnerBankbranch: req.body.PartnerBankbranch,
             PartnerAccountno: req.body.PartnerAccountno,

@@ -35,7 +35,17 @@ import PolicyReconcile from "./components/Policy/PolicyReconcile";
 import PremOutCreate from "./components/PremOut/PremOutCreate";
 import CommInCreate from "./components/CommIn/CommInCreate";
 import CommOutCreate from "./components/CommOut/CommOutCreate";
+import ReportPolicy from "./components/Reports/ReportPolicy";
+import ReportEndorse from "./components/Reports/ReportEndorse";
+import ReportInvoice from "./components/Reports/ReportInvoice";
+import ReportฺBilladvisor from "./components/Reports/ReportฺBilladvisor";
+import ReportฺCashier from "./components/Reports/ReportฺCashier";
+import ReportฺARAPAdvisor from "./components/Reports/ReportฺARAPAdvisor";
+import ReportฺARAPDirect from "./components/Reports/ReportฺARAPDirect";
+import ReportฺARAPInsurer from "./components/Reports/ReportฺARAPInsurer";
+import ReportฺTax from "./components/Reports/ReportฺTax";
 import { type } from "@testing-library/user-event/dist/type";
+
 function App() {
   return (
     <div className="App">
@@ -73,6 +83,15 @@ function App() {
           <Route path="premout/create" element={<PremOutCreate />} />
           <Route path="commin/create" element={<CommInCreate />} />
           <Route path="commout/create" element={<CommOutCreate />} />
+          <Route path="reports/policy" element={<ReportPolicy />} />
+          <Route path="reports/endorse" element={<ReportEndorse />} />
+          <Route path="reports/invoice" element={<ReportInvoice />} />
+          <Route path="reports/billadvisor" element={<ReportฺBilladvisor />} />
+          <Route path="reports/cashier" element={<ReportฺCashier />} />
+          <Route path="reports/arapadvisor" element={<ReportฺARAPAdvisor />} />
+          <Route path="reports/arapdirect" element={<ReportฺARAPDirect />} />
+          <Route path="reports/arapinsurer" element={<ReportฺARAPInsurer />} />
+          <Route path="reports/tax" element={<ReportฺTax />} />
         </Routes>
       </main>
       {/* <footer>

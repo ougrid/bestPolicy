@@ -1069,10 +1069,10 @@ const findARCommIn = async (req, res) => {
 
 
   if (req.body.insurerCode !== null) {
-    cond = cond + ` and t.insurerCode = '${req.body.insurerCode}'`
+    cond = cond + ` and t."insurerCode" = '${req.body.insurerCode}'`
   }
   if (req.body.agentCode !== null) {
-    cond = cond + ` and t.agentCode = '${req.body.insurerCode}'`
+    cond = cond + ` and t."agentCode" = '${req.body.insurerCode}'`
   }
   if (req.body.dfrpreferno !== null) {
     cond = cond + ` and a.dfrpreferno = '${req.body.dfrpreferno}'`
@@ -1090,7 +1090,7 @@ const findARCommIn = async (req, res) => {
         (select "entityID" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) ) as insureeName , 
        
         j.polid, (select "licenseNo" from static_data."Motors" where id = p."itemList") , (select  "chassisNo" from static_data."Motors" where id = p."itemList"), j.netgrossprem, j.duty, j.tax, j.totalprem,
-        j.commin_rate, j.commin_amt
+        j.commin_rate, j.commin_amt,
         -- CASE when t.netflag = 'N' then j.commin_amt else 0 end as commin_amt , 
         -- CASE when t.netflag = 'N' then  j.commin_taxamt else 0 end as  commin_taxamt , 
         -- CASE when t.netflag = 'N' then j.commin_amt + j.commin_taxamt else 0 end as "commin_total", 
@@ -1098,12 +1098,13 @@ const findARCommIn = async (req, res) => {
         -- CASE when t.netflag = 'N' then j.ovin_amt else 0 end as ovin_amt , 
         -- CASE when t.netflag = 'N' then  j.ovin_taxamt else 0 end as  ovin_taxamt , 
         -- CASE when t.netflag = 'N' then j.ovin_amt + j.ovin_taxamt else 0 end as "ovin_total",
-        -- t.netflag, 
+        -- t.netflag
         -- CASE when t.netflag = 'N' then j.totalprem - j.commin_taxamt - j.ovin_taxamt else j.totalprem end as "paymentamt"
         from static_data."Transactions" t 
         join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
         join static_data."Policies" p on p.id = j.polid
-        join static_data.b_jaaraps a on a.polid = j.polid
+        join static_data.b_jaarapds ad on ad.polid = j.polid
+        join static_data.b_jaaraps a on ad.keyidm =a.id 
         where t."transType" = 'COMM-IN' 
         and t.txtype2 in ( 1, 2, 3, 4, 5 )
         and t.status = 'N'
@@ -1438,22 +1439,22 @@ const submitARCommIn = async (req, res) => {
 //account payment comm/ov out 
 const findAPCommOut = async (req, res) => {
 
-  let cond = ` and p."actDate" between '${req.body.effDatestart}' and '${req.body.effDateend}'   or p."expDate" between '${req.body.effDatestart}' and '${req.body.effDateend}'`
+  let cond = ` and (p."actDate" between '${req.body.effDatestart}' and '${req.body.effDateend}'   or p."expDate" between '${req.body.effDatestart}' and '${req.body.effDateend}')`
 
   if (req.body.insurerCode !== null) {
-    cond = cond + ` and t.insurerCode = '${req.body.insurerCode}'`
+    cond = cond + ` and t."insurerCode" = '${req.body.insurerCode}'`
   }
   if (req.body.agentCode !== null) {
-    cond = cond + ` and t.agentCode = '${req.body.insurerCode}'`
+    cond = cond + ` and t."agentCode" = '${req.body.insurerCode}'`
   }
   if (req.body.policyNostart !== null) {
-    cond = cond + ` and p.policyNo >= '${req.body.policyNostart}'`
+    cond = cond + ` and p."policyNo" >= '${req.body.policyNostart}'`
   }
   if (req.body.policyNoend !== null) {
-    cond = cond + ` and p.policyNo <= '${req.body.policyNoend}'`
+    cond = cond + ` and p."policyNo" <= '${req.body.policyNoend}'`
   }
   if (req.body.dueDate !== null) {
-    cond = cond + ` and  t.dueDate = '${req.body.dueDate}'`
+    cond = cond + ` and  t."dueDate" = '${req.body.dueDate}'`
   }
   
   //wait rewrite when clear reconcile process
@@ -1465,21 +1466,12 @@ const findAPCommOut = async (req, res) => {
         (select "entityID" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) ) as insureeName , 
        
         j.polid, (select "licenseNo" from static_data."Motors" where id = p."itemList") , (select  "chassisNo" from static_data."Motors" where id = p."itemList"), j.netgrossprem, j.duty, j.tax, j.totalprem,
-        j.commout_rate, j.commout_amt
-        -- CASE when t.netflag = 'N' then j.commin_amt else 0 end as commin_amt , 
-        -- CASE when t.netflag = 'N' then  j.commin_taxamt else 0 end as  commin_taxamt , 
-        -- CASE when t.netflag = 'N' then j.commin_amt + j.commin_taxamt else 0 end as "commin_total", 
-        j.ovout_rate, j.ovout_amt,
-        -- CASE when t.netflag = 'N' then j.ovin_amt else 0 end as ovin_amt , 
-        -- CASE when t.netflag = 'N' then  j.ovin_taxamt else 0 end as  ovin_taxamt , 
-        -- CASE when t.netflag = 'N' then j.ovin_amt + j.ovin_taxamt else 0 end as "ovin_total",
-        -- t.netflag, 
-        -- CASE when t.netflag = 'N' then j.totalprem - j.commin_taxamt - j.ovin_taxamt else j.totalprem end as "paymentamt"
-        t."premin-rprefdate" , t."premin-dfrpreferno" 
+        j.commout_rate, j.commout_amt, j.ovout_rate, j.ovout_amt, t."premin-rprefdate" , t."premin-dfrpreferno" 
         from static_data."Transactions" t 
         join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
         join static_data."Policies" p on p.id = j.polid
-        join static_data.b_jaaraps a on a.polid = j.polid
+        -- join static_data.b_jaarapds ad on ad.polid = j.polid
+        -- join static_data.b_jaaraps a on ad.keyidm =a.id 
         where t."transType" = 'COMM-OUT' 
         and t.txtype2 in ( 1, 2, 3, 4, 5 )
         and t.status = 'N'
