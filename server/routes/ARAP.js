@@ -14,6 +14,8 @@ router.post('/submitarpremindirect', ctrl.arap.submitARPreminDirect);
 router.post('/getaptrans', ctrl.arap.findAPPremOut);
 router.post('/saveappremout', ctrl.arap.saveAPPremOut);
 router.post('/submitappremout', ctrl.arap.submitAPPremOut);
+router.post('/getarpremindata', ctrl.arap.getARPremindata);
+
 
 
 

@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class b_jugltxtype extends Model {
+  class b_tugltxtype extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  b_jugltxtype.init({
+  b_tugltxtype.init({
     ttype:  DataTypes.STRING,
     seqno:  DataTypes.INTEGER,
     accountno:DataTypes.STRING,
@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     command: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'b_jugltxtype',
+    modelName: 'b_tugltxtype',
     schema: 'static_data'
   });
-  return b_jugltxtype;
+  return b_tugltxtype;
 };

@@ -90,6 +90,58 @@ const getcashierdata = async (req, res) => {
   }
 };
 
+const getARPremindata = async (req, res) => {
+  let cond = ''
+  if (req.body.billadvisorno !== null) {
+    cond = cond + ` and a.billadvisorno = '${req.body.billadvisorno}'`
+  }
+  if (req.body.insurercode !== null) {
+    cond = cond + ` and a.insurerno = (select id from static_data."Insurers" where "insurerCode" = '${req.body.insurercode}')`
+  }
+  if (req.body.advisorcode !== null) {
+    cond = cond + ` and a.advisorno = (select id from static_data."Agents" where "agentCode" = '${req.body.advisorcode}')`
+  }
+  if (req.body.cashierreceiveno !== null) {
+    cond = cond + ` and a.cashierreceiveno = '${req.body.cashierreceiveno}'`
+  }
+  if (req.body.refno !== null) {
+    cond = cond + ` and a.refno = '${req.body.refno}'`
+  }
+  if (req.body.arno !== null) {
+    cond = cond + ` and a.dfrpreferno = '${req.body.arno}'`
+  }
+  if (req.body.ardatestart !== null) {
+    cond = cond +` and a.rprefdate >= '${req.body.ardate}'`
+  }
+  if (req.body.ardateend !== null) {
+    cond = cond +` and a.rprefdate <= '${req.body.ardate}'`
+  }
+  if (req.body.arcreateusercode !== null) {
+    cond = cond +` and a.createusercode ='${req.body.arcreateusercode}'`
+  }
+  const records = await sequelize.query(
+    `select a.billadvisorno, 
+    (select "insurerCode" from static_data."Insurers" where id = a.insurerno ) as insurercode,
+    (select "agentCode" from static_data."Agents" where id = a.advisorno ) as advisorcode,
+    a.cashierreceiveno, b.cashierdate as cashierdate, a.cashieramt,
+    a.dfrpreferno as "ARNO", a.rprefdate as "ARDate",
+    a.createusercode as "ARcreateusercode",a.actualvalue,a.diffamt,a.status
+    from static_data.b_jaaraps a
+    join static_data.b_jacashiers b on b.cashierreceiveno = a.cashierreceiveno
+    where 1=1 
+    ${cond}`,
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (records.length === 0) {
+    await res.status(201).json({ msg: "not found cashierno" });
+  } else {
+    await res.json(records);
+  }
+};
+
 const submitARPremin = async (req, res) => {
   const t = await sequelize.transaction();
   try {
@@ -775,22 +827,22 @@ const submitARPreminDirect = async (req, res) => {
 //Account payment prem out
 const findAPPremOut = async (req, res) => {
   let cond = ''
-  if (req.body.insurerCode) {
-    cond = cond + ` and t.insurerCode = ${req.body.insurerCode}`
+  if (req.body.insurerCode !== null ) {
+    cond = cond + ` and t."insurerCode" = '${req.body.insurerCode}'`
   }
-  if (req.body.agentCode) {
-    cond = cond + ` and t.agentCode = ${req.body.insurerCode}`
+  if (req.body.agentCode !== null ) {
+    cond = cond + ` and t."agentCode" = '${req.body.insurerCode}'`
   }
-  if (req.body.reconcileno) {
-    cond = cond + ` and r.reconcileno = ${req.body.reconcileno}`
+  if (req.body.reconcileno !== null ) {
+    cond = cond + ` and r.reconcileno = '${req.body.reconcileno}'`
   }
-  if (req.body.dueDate) {
-    cond = cond + ` and  ${req.body.dueDate} <= t.dueDate `
+  if (req.body.dueDate !== null ) {
+    cond = cond + ` and  '${req.body.dueDate}' <= t."dueDate" `
   }
   
   //wait rewrite when clear reconcile process
   const trans = await sequelize.query(
-    `select  t."insurerCode", t."agentCode",
+    `select  'true' as select , t."insurerCode", t."agentCode",
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -1061,6 +1113,7 @@ module.exports = {
   getbilldata,
   findARPremInDirect,
   getcashierdata,
+  getARPremindata,
   submitARPremin,
   saveARPremin,
   getARtrans,
