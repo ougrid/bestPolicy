@@ -66,6 +66,9 @@ module.exports = {
       createusercode: {
         type: Sequelize.STRING
       },
+      refno: {
+        type: Sequelize.STRING
+      },
       status: {
         type: Sequelize.STRING
       },

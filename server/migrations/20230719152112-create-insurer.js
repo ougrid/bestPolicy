@@ -41,6 +41,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      contactPersonID: {
+        type: Sequelize.INTEGER
+      },
       stamentType: {
         defaultValue:"Gross",
         type: Sequelize.STRING

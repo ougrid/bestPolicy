@@ -930,7 +930,7 @@ const PolicyScreen = (props) => {
               {formData.personType}
             </option>
             <option value="P">บุคคล</option>
-            <option value="C">นิติบุคคล</option>
+            <option value="O">นิติบุคคล</option>
           </select>
         </div>
 

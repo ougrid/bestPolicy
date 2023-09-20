@@ -79,9 +79,9 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate,t) => {
           //condition.EffectiveDate = EffectiveDate;
           condition = condition + ` and "EffectiveDate" = '${EffectiveDate}'`
         } else {
-          condition.EffectiveDate = sequelize.where(sequelize.fn('YEAR', sequelize.col('EffectiveDate')), EffectiveDate.getFullYear());
+          condition.EffectiveDate = ` and "EffectiveDate" = '${EffectiveDate.getFullYear()}'` 
           if (basis === 'M') {
-            condition.EffectiveDate = sequelize.and(condition.EffectiveDate, sequelize.where(sequelize.fn('MONTH', sequelize.col('EffectiveDate')), EffectiveDate.getMonth() + 1));
+            condition.EffectiveDate = ` and "EffectiveDate" = '${EffectiveDate.getMonth()}'`
           }
         }
       }

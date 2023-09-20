@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     commovCreditT:  DataTypes.INTEGER,
     entityID:  DataTypes.INTEGER,
     stamentType: DataTypes.STRING,
+    contactPersonID : DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Insurer',

@@ -8,14 +8,18 @@ export default function CommInCreate() {
   const [filterData, setFilterData] = useState(
     {
        
+      "dfrpreferno" : null,
         "insurerCode": null,
         "agentCode": null,
-        "dueDate" : null,
-        "reconcile" : true,
-        "premin_type":'PREM-IN'
+        "cashierreceiveno" : null,
+        "actualvalue" : null,
+        "cashieramt":null,
+        "actualvalue": null,
+        "diffamt" : null,
 
     })
     const [policiesData, setPoliciesData] = useState([])
+    const [artype, setArtype] = useState('N')
   const colsData = [
     "insurerCode",
     "advisorCode",
@@ -53,7 +57,7 @@ export default function CommInCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/payments/findpolicyinDue", filterData)
+        .post(url + "/araps/getarcommin", filterData)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -62,17 +66,16 @@ export default function CommInCreate() {
             } else {
 
 
-                const array = []
-                for (let i = 0; i < res.data.length; i++) {
-                    // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                    array.push(res.data[i].totalprem)
+                // const array = []
+                // for (let i = 0; i < res.data.length; i++) {
+                //     // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                //     array.push(res.data[i].totalprem)
 
-                }
-                console.log(array);
+                // }
                 console.log(res.data);
                 setPoliciesData(res.data)
                 
-                alert("create new insuree success")
+                alert("get t5ransaction for AR Comm in ")
             }
         })
         .catch((err) => {
@@ -83,17 +86,17 @@ export default function CommInCreate() {
 };
 
 
-const savearpremout = async (e) => {
+const saveapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/savearpremin", {master : filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/savearcommin", {master : filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });
 };
 
-const submitarpremout = async (e) => {
+const submitapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/submitarpremin", {master :filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/submitarcommin", {master :filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   });
@@ -104,6 +107,52 @@ const submitarpremout = async (e) => {
       <form onSubmit={(e)=>submitFilter(e)}>
         <h1>ตัดหนี้ Comm/ov-in</h1>
        
+
+       {/* artype  */}
+       <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
+            รูปแบบการตัดหนี้ 
+          </label>
+          
+          <div class="form-check col-2">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" defaultChecked onChange={(e)=>setArtype('N')}/>
+  <label class="form-check-label" for="flexRadioDefault1">
+    จ่ายเงินที่ amity
+  </label>
+</div>
+<div class="form-check col-2">
+  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" onChange={(e)=>setArtype('D')}/>
+  <label class="form-check-label" for="flexRadioDefault2">
+    จ่ายเงินที่ บริษัทประกัน
+  </label>
+</div>
+        </div>
+
+        {/* change by premin type  dfrpreferno*/}
+        
+        <div className="row my-3">
+        {artype === 'N'? 
+        <label class="col-sm-2 col-form-label" htmlFor="dfrpreferno">
+          เลขที่ตัดจ่าย PREM-OUT ให้ประกัน
+        </label>
+         :
+         <label class="col-sm-2 col-form-label" htmlFor="dfrpreferno">
+         เลขที่รายการที่ลูกค้าจ่ายเงินที่ประกัน
+       </label>}
+        <div className="col-4 ">
+          <input
+            className="form-control"
+            type="text"
+            name="dfrpreferno"
+            id="dfrpreferno"
+            value={filterData.dfrpreferno}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+     
+      
+
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
@@ -136,35 +185,65 @@ const submitarpremout = async (e) => {
             />
           </div>
         </div>
-          {/* reconcileno */}
+          {/* cashierReceiveNo */}
           <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
-            reconcileno
+          cashierReceiveNo
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="reconcileno"
-              id="reconcileno"
-              disabled
-              placeholder="comming soonnnnnn"
+              name="cashierreceiveno"
+              id="cashierreceiveno"
               onChange={handleChange}
             />
           </div>
           </div>
-         {/* duedate  */}
+         {/* cashieramt  */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
-            dueDate
+          <label class="col-sm-2 col-form-label" htmlFor="cashieramt">
+            amt
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
-              type="date"
-              name="dueDate"
-              id="dueDate"
+              type="number"
+              name="cashieramt"
+              id="cashieramt"
               onChange={handleChange}
+              />
+          </div>
+        </div>
+        {/* actualvalue  */}
+        <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
+          ActualValue
+          </label>
+          <div className="col-4 ">
+            <input
+              className="form-control"
+              type="number"
+              name="actualvalue"
+              id="actualvalue"
+              onChange={handleChange}
+              />
+          </div>
+        </div>
+        {/* diff-amt */}
+        <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="diffamt">
+          Diff-amt
+          </label>
+          <div className="col-4 ">
+            <input
+              className="form-control"
+              type="number"
+              name="diffamt"
+              id="diffamt"
+              disabled
+              value={filterData.actualvalue - filterData.cashieramt}
+              // onChange={handleChange}
               />
           </div>
         </div>
@@ -177,8 +256,8 @@ const submitarpremout = async (e) => {
       <div>
         <PremInTable cols={colsData} rows={policiesData} />
         <button className="btn btn-primary">Export To Excel</button>
-        <button className="btn btn-warning" onClick={(e)=>savearpremout(e)}>save</button>
-        <button className="btn btn-success" onClick={(e)=>submitarpremout(e)}>submit</button>
+        <button className="btn btn-warning" onClick={(e)=>saveapcommin(e)}>save</button>
+        <button className="btn btn-success" onClick={(e)=>submitapcommin(e)}>submit</button>
       </div>
     </div>
   );
