@@ -287,9 +287,9 @@ namespace report.Controllers
                 foreach (var record in records)
                 {
                     currentRow++;
-                    //worksheet.Cell(currentRow, 1).Value = record.id;
-                    //worksheet.Cell(currentRow, 2).Value = "record";
-                    //worksheet.Cell(currentRow, 3).Value = record.actDate;
+                    worksheet.Cell(currentRow, 1).Value = record.Id;
+                    worksheet.Cell(currentRow, 2).Value = record.policyNo;
+                    worksheet.Cell(currentRow, 3).Value = record.endoseNo;
                     //worksheet.Cell(currentRow, 4).Value = record.expDate;
                     //worksheet.Cell(currentRow, 5).Value = "ยี่ห้อ/รุ่นรภยนต์";
                     //worksheet.Cell(currentRow, 6).Value = "ปีรถ";

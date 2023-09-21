@@ -57,7 +57,7 @@ namespace report.Services
             // return policyList;
 
 
-            //             select t."policyNo", t."endorseNo", t."receiptno" , t."seqNo"
+            // select t."policyNo", t."endorseNo", t."receiptno" , t."seqNo"
             // ,(select cashierreceiveno
             //   from static_data."b_jaaraps" a
             //   where a.dfrpreferno = t."policyNo"
@@ -72,7 +72,7 @@ namespace report.Services
             // and t."agentCode" = 'A12134';
 
 
-            List<Transaction> policyList = await _dbService.GetAll<Transaction>("SELECT t.\"policyNo\", t.\"endorseNo\", t.\"receiptno\", t.\"seqNo\", (SELECT cashierreceiveno FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) AS cashierno FROM static_data.\"Transactions\" t WHERE t.\"transType\" = 'PREM-IN' AND t.\"duty\" in ('1', '2', '3', '4', '5') AND t.\"status\" = 'N' AND t.\"createdAt\" between '2023-09-01' and '2023-09-30' AND t.\"insurerCode\" = @insurerCode AND t.\"agentCode\" = @agentCode;",
+            List<Transaction> policyList = await _dbService.GetAll<Transaction>("SELECT t.\"policyNo\", t.\"endorseNo\", t.\"receiptno\", t.\"seqNo\", t.\"netflag\", (SELECT cashierreceiveno FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) AS cashierNo, (SELECT diffamt FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) as diffAmt, (SELECT cashieramt FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) as cashierAmt, (SELECT status FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) as status FROM static_data.\"Transactions\" t WHERE t.\"transType\" = 'PREM-IN' AND t.\"duty\" in ('1', '2', '3', '4', '5') AND t.\"status\" = 'N' AND t.\"createdAt\" between '2023-09-01' and '2023-09-30' AND t.\"insurerCode\" = @insurerCode AND t.\"agentCode\" = @agentCode;",
                 new
                 {
                     insurerCode = insurerCode,
