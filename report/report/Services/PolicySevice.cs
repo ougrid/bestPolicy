@@ -98,7 +98,7 @@ namespace report.Services
             string insurerCode = data.insurerCode;
             string agentCode = data.agentCode;
 
-            List<Transaction> policyList = await _dbService.GetAll<Transaction>("<querry/>"
+            List<Transaction> policyList = await _dbService.GetAll<Transaction>("<query/>"
             ,
                 new
                 {
