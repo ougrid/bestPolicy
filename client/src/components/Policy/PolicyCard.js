@@ -8,7 +8,7 @@ const config = require("../../config.json");
 
 const PolicyCard = (props) => {
   const index = props.index;
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax
   const duty = config.duty
 

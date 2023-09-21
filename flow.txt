@@ -3,9 +3,10 @@ flow
 save policy
 save draft 
 	=>insert into -> entity -> insuree -> location -> motor (if motor type) -> policy status 'I'
+		-> getrunningno 'app' (application number)
 edit 
 	=>update -> policy status 'I' to 'A'
-	=>insert into -> jupgr -> transaction
+	=>insert into -> jupgr -> transaction -> ลงผังบัญชี b_jugltxes
 
 bill 
 	=> insert into ->b_jabilladvisors (master table) -> b_jabilladvisordetails (child)

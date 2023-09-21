@@ -10,7 +10,7 @@ import Pagination from "./Pagination";
 const config = require("../../config.json");
 
 const UserCarList = (props) => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [row, setRow] = useState(0);
   const [hidecard, setHidecard] = useState([false,0]);
   //import excel

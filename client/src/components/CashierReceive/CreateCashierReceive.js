@@ -29,7 +29,7 @@ const Joi = require('joi');
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateCashierReceive = () => {
-    const url = config.url;
+    const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
 
     const [billAdvisorNo, setBillAdvisorNo] = useState("")

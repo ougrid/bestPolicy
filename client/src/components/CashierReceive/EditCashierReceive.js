@@ -27,7 +27,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const EditCashierReceive = (props) => {
-    const url = config.url;
+    const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const searchButtonRef = useRef(null);
 

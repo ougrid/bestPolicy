@@ -89,9 +89,11 @@ const findTransaction = async (req,res) => {
 const findPolicyByPreminDue = async (req,res) => {
 
     const records = await sequelize.query(
-      'select * from static_data."Transactions" tran join static_data."Policies" pol  on tran."policyNo" = pol."policyNo" where "transType" = \'PREM-IN\' ' +
-      'and txtype2 = \'1\' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode and billadvisor isnull '+
-      'and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)',
+      `select * from static_data."Transactions" tran join static_data."b_jupgrs" pol  on tran."policyNo" = pol."policyNo" and tran."seqNo" = pol."seqNo" 
+      where "transType" = 'PREM-IN' 
+      and txtype2 = '1' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode and billadvisor isnull 
+      and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)
+      and pol.installmenttype ='A'`,
           {
             replacements: {
               agentCode:req.body.agentCode,

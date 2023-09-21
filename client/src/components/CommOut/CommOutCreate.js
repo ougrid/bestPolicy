@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal';
 const config = require("../../config.json");
 
 export default function CommOutCreate() {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const [filterData, setFilterData] = useState(
     {

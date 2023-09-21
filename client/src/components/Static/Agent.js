@@ -26,7 +26,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Agent = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [agentData, setAgentData] = useState({ entityID: null });
   const [entityData, setEntityData] = useState({ personType: "P" });

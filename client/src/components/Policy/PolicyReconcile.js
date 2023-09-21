@@ -10,7 +10,7 @@ import Pagination from "./Pagination";
 const config = require("../../config.json");
 
 const PolicyReconcile = (props) => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   //import excel
   const [formData, setFormData] = useState([{
     policyNo: null,

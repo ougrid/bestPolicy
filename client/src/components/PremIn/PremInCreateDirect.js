@@ -4,7 +4,7 @@ import axios from "axios";
 const config = require("../../config.json");
 
 export default function PremInCreateDirect() {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const vat = config.vat;
   const [filterData, setFilterData] = useState(

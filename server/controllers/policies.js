@@ -6,7 +6,7 @@ const Insuree = require("../models").Insuree;
 const { throws } = require("assert");
 const process = require('process');
 const runningno = require('./lib/runningno');
-require('dotenv').config();
+const account =require('./lib/runningaccount')
 // const Package = require("../models").Package;
 // const User = require("../models").User;
 const { Op, QueryTypes, Sequelize } = require("sequelize");
@@ -935,21 +935,22 @@ const draftPolicyList = async (req, res) => {
       }
 
     //get application no
-    req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw','2023-09-05',t);
+    const currentDate = new Date();
+    req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw',currentDate,t);
     console.log(req.body[i].applicationNo);
 
       //insert policy
       await sequelize.query(
         'insert into static_data."Policies" ("applicationNo","insureeCode","insurerCode","agentCode","agentCode2","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem, ' +
         'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode, "itemList","status", ' +
-        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, netgrossprem) ' +
+        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, netgrossprem, specdiscrate, specdiscamt ) ' +
         // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
         'values ( :applicationNo, :insureeCode, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
         ':agentCode, :agentCode2, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
         ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem, ' +
         ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList ,\'I\', ' +
-        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt,:netgrossprem)',
+        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :netgrossprem,  :specdiscrate, :specdiscamt )',
         {
           replacements: {
             applicationNo: req.body[i].applicationNo,
@@ -965,10 +966,12 @@ const draftPolicyList = async (req, res) => {
             actDate: req.body[i].actDate,
             expDate: req.body[i].expDate,
             grossprem: req.body[i].grossprem,
-            netgrossprem: req.body[i].grossprem,
+            netgrossprem: req.body[i].netgrossprem,
             duty: req.body[i].duty,
             tax: req.body[i].tax,
             totalprem: req.body[i].totalprem,
+            specdiscrate: req.body[i][`specdiscrate`],
+            specdiscamt: req.body[i][`specdiscamt`],
             commin_rate: req.body[i][`commin_rate`],
             commin_amt: req.body[i][`commin_amt`],
             ovin_rate: req.body[i][`ovin_rate`],
@@ -1030,7 +1033,7 @@ const editPolicyList = async (req, res) => {
       //update policy
       const policy = await sequelize.query(
        `update static_data."Policies" 
-       SET "policyNo" = :policyNo,  grossprem = :grossprem, duty = :duty, tax = :tax, totalprem = :totalprem, 
+       SET "policyNo" = :policyNo,  grossprem = :grossprem,  netgrossprem = :netgrossprem, specdiscrate = :specdiscrate, specdiscamt = :specdiscamt, duty = :duty, tax = :tax, totalprem = :totalprem, 
        commin_rate = :commin_rate, commin_amt = :commin_amt, ovin_rate = :ovin_rate, ovin_amt = :ovin_amt, commin_taxamt = :commin_taxamt, 
        ovin_taxamt = :ovin_taxamt, commout_rate = :commout_rate, commout_amt = :commout_amt, ovout_rate = :ovout_rate, ovout_amt = :ovout_amt, 
       "policyDate" = :policyDate, "status" = 'A', commout1_rate = :commout1_rate, commout1_amt = :commout1_amt, ovout1_rate = :ovout1_rate, 
@@ -1044,9 +1047,12 @@ const editPolicyList = async (req, res) => {
             seqNoins: req.body[i].seqNoins,
             seqNoagt: req.body[i].seqNoagt,
             grossprem: req.body[i].grossprem,
+            netgrossprem: req.body[i].netgrossprem,
             duty: req.body[i].duty,
             tax: req.body[i].tax,
             totalprem: req.body[i].totalprem,
+            specdiscrate: req.body[i][`specdiscrate`],
+            specdiscamt: req.body[i][`specdiscamt`],
             commin_rate: req.body[i][`commin_rate`],
             commin_amt: req.body[i][`commin_amt`],
             ovin_rate: req.body[i][`ovin_rate`],
@@ -1088,6 +1094,9 @@ if (!req.body[i].installment) {
     await createTransection(req.body[i],t)
     // await createTransection(req.body[i],t)
 
+    // insert  jugltx table -> ลงผังบัญชี
+    await account.insertjugltx('POLICY',req.body[i].policyNo,t )
+
     await t.commit();
     // If the execution reaches this line, an error was thrown.
     // We rollback the transaction.
@@ -1115,6 +1124,8 @@ const createjupgr = async (policy,t) => {
   policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
   policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
 if (policy.installment.advisor.length === 0 ) {
+  policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
+  policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
   const ads = await sequelize.query(
     `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
     specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
@@ -1225,6 +1236,8 @@ if (policy.installment.insurer.length === 0 ) {
     //console.log(policy);
      // installment advisor 
      for (let i = 0; i < advisor.length; i++) {
+      policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
+  policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
      //insert jupgr
     const ads = await sequelize.query(
       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
@@ -1322,7 +1335,8 @@ if (policy.installment.insurer.length === 0 ) {
       // installment advisor2 
    if (policy.agentCode2) {
     
-   
+    policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
+    policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
      await sequelize.query(
        `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 

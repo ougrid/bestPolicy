@@ -17,7 +17,7 @@ const config = require("../../config.json");
 const Index = (props) => {
   const [packages, setPackages] = useState([]);
   const [filterPack, setFilterPack] = useState([])
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   // useEffect(() => {
   //   axios.get(url + "/packages").then((res) => {
   //     let pack = res.data.map((item) => {

@@ -4,7 +4,7 @@ import axios from "axios";
 const config = require("../../config.json");
 
 export default function CommInCreate() {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [filterData, setFilterData] = useState(
     {
        

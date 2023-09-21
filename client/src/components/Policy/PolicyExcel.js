@@ -16,7 +16,7 @@ import { InputBtn } from "../StylesPages/LoginStyles";
 const config = require("../../config.json");
 
 const PolicyExcel = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [profile, setProfile] = useState({});
   // var decoded = jwt_decode(localStorage.getItem("jwt"));
   // useEffect(() => {

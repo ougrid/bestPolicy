@@ -27,7 +27,7 @@ const NormalText = {
 
   
 const ExportFile = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [insureData, setInsureData] = useState({});
   // const [locationData, setLocationData] = useState({entityID : null});

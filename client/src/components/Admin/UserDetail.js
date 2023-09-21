@@ -5,7 +5,7 @@ import { Container } from "../StylesPages/PagesLayout";
 const config = require("../../config.json");
 
 const UserDetails = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [users, setUsers] = useState([]);
   useEffect(() => {
     axios

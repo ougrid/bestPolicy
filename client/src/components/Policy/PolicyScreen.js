@@ -8,7 +8,7 @@ const config = require("../../config.json");
 
 const PolicyScreen = (props) => {
 
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax;
   const duty = config.duty;
 
@@ -355,14 +355,23 @@ const PolicyScreen = (props) => {
         // window.location.reload();
         // localStorage.setItem("jwt", token);
 
-        const array = [];
-        insuretype.data.forEach((ele) => {
-          array.push(
-            <option key={ele.id} value={ele.class}>
-              {ele.class}
-            </option>
-          );
-        });
+        // const array = [];
+        // insuretype.data.forEach((ele) => {
+        //   array.push(
+        //     <option key={ele.id} value={ele.class}>
+        //       {ele.class}
+        //     </option>
+        //   );
+        // });
+
+        const uniqueClasses = [...new Set(insuretype.data.map(ele => ele.class))];
+
+        const array = uniqueClasses.map((className, index) => (
+          <option key={index} value={className}>
+            {className}
+          </option>
+        ));
+
         setInsureTypeDD(insuretype.data);
         setInsureClassDD(array);
       })

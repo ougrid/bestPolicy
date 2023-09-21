@@ -25,7 +25,7 @@ function Packages() {
   const [cars, setCars] = useState([]);
   const [qr, setQr] = useState("");
   const { id } = useParams();
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   let cost = new Intl.NumberFormat().format(packages.cost);
   async function getPackages() {
     axios
