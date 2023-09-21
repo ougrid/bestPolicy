@@ -57,19 +57,30 @@ namespace report.Services
             // return policyList;
 
 
-            // select t."policyNo", t."endorseNo", t."receiptno" , t."seqNo"
+            // select t."policyNo", t."endorseNo", t."receiptno" , t."seqNo", t."netflag"
             // ,(select cashierreceiveno
-            //   from static_data."b_jaaraps" a
-            //   where a.dfrpreferno = t."policyNo"
-            //   and a.rprefdate = t.rprefdate) as cashierno
-            // --,(
+            // from static_data."b_jaaraps" a
+            // where a.dfrpreferno = t."policyNo"
+            // and a.rprefdate = t.rprefdate) as cashierNo
+            // ,(select diffamt
+            // from static_data."b_jaaraps" a
+            // where a.dfrpreferno = t."policyNo"
+            // and a.rprefdate = t.rprefdate) as diffAmt
+            // ,(select cashieramt
+            // from static_data."b_jaaraps" a
+            // where a.dfrpreferno = t."policyNo"
+            // and a.rprefdate = t.rprefdate) as cashierAmt
+            // ,(select status
+            // from static_data."b_jaaraps" a
+            // where a.dfrpreferno = t."policyNo"
+            // and a.rprefdate = t.rprefdate) as status
             // from static_data."Transactions" t
             // where t."transType" = 'PREM-IN'
             // and t."duty" in ('1', '2', '3', '4', '5')
             // and t."status" = 'N'
             // and t."createdAt" between '2023-09-01' and '2023-09-30'
-            // and t."insurerCode" = 'test23'
-            // and t."agentCode" = 'A12134';
+            // and t."agentCode" = 'A12134'
+            // and t."insurerCode" = 'test23';
 
 
             List<Transaction> policyList = await _dbService.GetAll<Transaction>("SELECT t.\"policyNo\", t.\"endorseNo\", t.\"receiptno\", t.\"seqNo\", t.\"netflag\", (SELECT cashierreceiveno FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) AS cashierNo, (SELECT diffamt FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) as diffAmt, (SELECT cashieramt FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) as cashierAmt, (SELECT status FROM static_data.\"b_jaaraps\" a WHERE a.dfrpreferno = t.\"policyNo\" AND a.rprefdate = t.rprefdate) as status FROM static_data.\"Transactions\" t WHERE t.\"transType\" = 'PREM-IN' AND t.\"duty\" in ('1', '2', '3', '4', '5') AND t.\"status\" = 'N' AND t.\"createdAt\" between '2023-09-01' and '2023-09-30' AND t.\"insurerCode\" = @insurerCode AND t.\"agentCode\" = @agentCode;",
@@ -80,6 +91,22 @@ namespace report.Services
                     // policyapprovedate = policyapprovedate --> into t."createdAt" between '2023-09-01' and '2023-09-30'
                 });
             return policyList;
+        }
+
+        public async Task<List<Transaction>> GetPolicyListByPremInDeduct(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
+        {
+            string insurerCode = data.insurerCode;
+            string agentCode = data.agentCode;
+
+            List<Transaction> policyList = await _dbService.GetAll<Transaction>("<querry/>"
+            ,
+                new
+                {
+                    insurerCode = insurerCode,
+                    agentCode = agentCode
+                });
+            return policyList;
+
         }
     }
 }
