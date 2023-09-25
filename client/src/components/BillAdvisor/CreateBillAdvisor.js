@@ -387,7 +387,7 @@ const CreateBillAdvisor = () => {
                             <th scope="col">licenseno</th>
                             <th scope="col">province</th>
                             <th scope="col">chassino</th>
-                            <th scope="col">grossprem</th>
+                            <th scope="col">netgrossprem</th>
                             <th scope="col">duty</th>
                             <th scope="col">tax</th>
                             <th scope="col">totalamt</th>
@@ -412,11 +412,11 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.invoiceNo}</td>
                                 <td>{ele.seqNo}</td>
                                 <td>{ele.insureeCode}</td>
-                                <td>{ele.insureeName}</td>
+                                <td>{ele.insureename}</td>
                                 <td>{ele.licenseNo}</td>
                                 <td>{ele.motorprovinceID}</td>
                                 <td>{ele.chassisNo}</td>
-                                <td>{ele.grossprem}</td>
+                                <td>{ele.netgrossprem}</td>
                                 <td>{ele.duty}</td>
                                 <td>{ele.tax}</td>
                                 <td>{ele.totalprem}</td>

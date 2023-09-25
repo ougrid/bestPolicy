@@ -29,7 +29,7 @@ const test = (req, res) => {
 };
 
 const createCashier = async (req, res) => {
-    const schema = Joi.object({
+    let joidata = {
         keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
         cashierreceiveno: Joi.string().required(),
@@ -42,12 +42,7 @@ const createCashier = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
-        PartnerBank: Joi.string().required(),
-        PartnerBankbranch: Joi.string().required(),
-        PartnerAccountno: Joi.string().required(),
-        AmityBank: Joi.string().required(),
-        AmityBankBranch: Joi.string().required(),
-        AmityAccountno: Joi.string().required(),
+        
         Amt: Joi.number().required(),
         // createdate: Joi.date().required(),
         createtime: Joi.string().required(),
@@ -59,8 +54,20 @@ const createCashier = async (req, res) => {
         canceltime: Joi.string().required(),
         cancelusercode: Joi.string().required(),
         status: Joi.string().valid('I').required()
-    });
+    }
+    if (req.body.receivetype === "Cheque" || req.body.receivetype === "Bank-Transfer" ) {
+        joidata.PartnerBank =  Joi.string().required()
+        joidata.PartnerBankbranch =  Joi.string().required()
+        joidata.PartnerAccountno =  Joi.string().required()
+        joidata.AmityBank =  Joi.string().required()
+        joidata.AmityBankBranch =  Joi.string().required()
+        joidata.AmityAccountno =  Joi.string().required()
+        joidata.refno =  Joi.string().required()
+    }
+    const schema = Joi.object(joidata);
+    console.log(req.body);
     const {error} = schema.validate(req.body);
+
     if (error) {
         return res.status(400).json({error: error.details[0].message});
     }
@@ -221,11 +228,11 @@ const findbill = async (req, res) => {
 };
 
 const submitCashier = async (req, res) => {
-    const schema = Joi.object({
+    let joidata = {
         // keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
         cashierreceiveno: Joi.string().required(),
-        cashierdate: Joi.date().required(),
+        // cashierdate: Joi.date().required(),
         dfrpreferno: Joi.string().required(),
         transactiontype: Joi.string().required(),
         insurercode: Joi.string().required(),
@@ -234,13 +241,7 @@ const submitCashier = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
-        refno: Joi.string().required(),
-        PartnerBank: Joi.string().required(),
-        PartnerBankbranch: Joi.string().required(),
-        PartnerAccountno: Joi.string().required(),
-        AmityBank: Joi.string().required(),
-        AmityBankBranch: Joi.string().required(),
-        AmityAccountno: Joi.string().required(),
+        
         Amt: Joi.number().required(),
         // createdate: Joi.date().required(),
         // createtime: Joi.string().required(),
@@ -252,11 +253,26 @@ const submitCashier = async (req, res) => {
         // canceltime: Joi.string().required(),
         // cancelusercode: Joi.string().required(),
         // status: Joi.string().valid('I').required()
-    });
-    const {error} = schema.validate(req.body);
-    if (error) {
-        return res.status(400).json({error: error.details[0].message});
     }
+    if (req.body.receivetype === "Cheque" || req.body.receivetype === "Bank-Transfer" ) {
+        joidata.PartnerBank =  Joi.string().required()
+        joidata.PartnerBankbranch =  Joi.string().required()
+        joidata.PartnerAccountno =  Joi.string().required()
+        joidata.AmityBank =  Joi.string().required()
+        joidata.AmityBankBranch =  Joi.string().required()
+        joidata.AmityAccountno =  Joi.string().required()
+        joidata.refno =  Joi.string().required()
+    }
+    const schema = Joi.object(joidata);
+    const {error} = schema.validate(req.body);
+    // if (error) {
+    //     return res.status(400).json({error: error.details[0].message});
+    // }
+
+    const t = await sequelize.transaction();
+    try{
+
+    
     const insertQuery = `
     INSERT INTO static_data."b_jacashiers"
     (
@@ -277,8 +293,7 @@ const submitCashier = async (req, res) => {
         :Amt, :createdate, :createusercode, :status ,:refno
     );
     `;
-    
-    let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate())
+    let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate(),t)
     await sequelize.query(insertQuery, {
         replacements: {
             // keyid: req.body.keyid,
@@ -312,35 +327,34 @@ const submitCashier = async (req, res) => {
             // cancelusercode: req.body.cancelusercode,
             status: 'I'
         },
+        transaction: t,
         type: QueryTypes.INSERT
     })
-        .then(result => {
 
-            updateCashierReceiveNo (cashierreceiveno,req.body.billadvisorno)
-            console.log("Record inserted successfully");
+    await t.commit();
+    updateCashierReceiveNo (cashierreceiveno,req.body.billadvisorno)
+    console.log("Record inserted successfully");
 
-            //TABLE b_jugltx  
-            res.status(200).json(({}))
-            
-            
-            
-            
-            
-            
-        })
-        .catch(error => {
-            console.log("Error inserting record: ", error);
-            res.status(500).json(error);
-        });
+    //TABLE b_jugltx  
+    res.status(200).json(({}))
 
+} catch (error) {
+    console.log(error);
+    await t.rollback();
+    console.log("Error inserting record: ", error);
+    res.status(500).json(error);
+  }
+
+            
+    
 }
 const saveCashier = async (req, res) => {
-    const schema = Joi.object({
-        // keyid: Joi.string().required(),
+    let joidata = {
+        keyid: Joi.string().required(),
         billadvisorno: Joi.string().required(),
-        // cashierreceiveno: Joi.string().required(),
+        cashierreceiveno: Joi.string().required(),
         // cashierdate: Joi.date().required(),
-        // dfrpreferno: Joi.string().required(),
+        dfrpreferno: Joi.string().required(),
         transactiontype: Joi.string().required(),
         insurercode: Joi.string().required(),
         advisorcode: Joi.string().required(),
@@ -348,25 +362,29 @@ const saveCashier = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
-        refno: Joi.string().required(),
-        PartnerBank: Joi.string().required(),
-        PartnerBankbranch: Joi.string().required(),
-        PartnerAccountno: Joi.string().required(),
-        AmityBank: Joi.string().required(),
-        AmityBankBranch: Joi.string().required(),
-        AmityAccountno: Joi.string().required(),
+        
         Amt: Joi.number().required(),
         // createdate: Joi.date().required(),
-        // createtime: Joi.string().required(),
-        // createusercode: Joi.string().required(),
+        createtime: Joi.string().required(),
+        createusercode: Joi.string().required(),
         // updatedate: Joi.date().required(),
-        // updatetime: Joi.string().required(),
-        // updateusercode: Joi.string().required(),
+        updatetime: Joi.string().required(),
+        updateusercode: Joi.string().required(),
         // canceldate: Joi.date().required(),
-        // canceltime: Joi.string().required(),
-        // cancelusercode: Joi.string().required(),
-        // status: Joi.string().valid('I').required()
-    });
+        canceltime: Joi.string().required(),
+        cancelusercode: Joi.string().required(),
+        status: Joi.string().valid('I').required()
+    }
+    if (req.body.receivetype === "Cheque" || req.body.receivetype === "Bank-Transfer" ) {
+        joidata.PartnerBank =  Joi.string().required()
+        joidata.PartnerBankbranch =  Joi.string().required()
+        joidata.PartnerAccountno =  Joi.string().required()
+        joidata.AmityBank =  Joi.string().required()
+        joidata.AmityBankBranch =  Joi.string().required()
+        joidata.AmityAccountno =  Joi.string().required()
+        joidata.refno =  Joi.string().required()
+    }
+    const schema = Joi.object(joidata);
     const {error} = schema.validate(req.body);
     if (error) {
         return res.status(400).json({error: error.details[0].message});

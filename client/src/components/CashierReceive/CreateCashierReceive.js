@@ -253,13 +253,7 @@ const CreateCashierReceive = () => {
             receivefrom: receiveForm,
             receivename: receiveName,
             receivetype: receiveType,
-            refno: refno,
-            PartnerBank: bankPartner,
-            PartnerBankbranch: bankPartner,
-            PartnerAccountno: bankNoPartner,
-            AmityBank: bankAmity,
-            AmityBankBranch: bankBranchAmity,
-            AmityAccountno: bankNo,
+            
             Amt: amount
             // createdate: Joi.date().required(),
             // createtime: Joi.string().required(),
@@ -273,8 +267,7 @@ const CreateCashierReceive = () => {
             // status: Joi.string().valid('I').required()
         }
 
-
-        const schema = Joi.object({
+        const joidata = {
             // keyid: Joi.string().required(),
             billadvisorno: Joi.string().required(),
             cashierreceiveno: Joi.required(),
@@ -287,13 +280,6 @@ const CreateCashierReceive = () => {
             receivefrom: Joi.string().required(),
             receivename: Joi.string().required(),
             receivetype: Joi.string().required(),
-            refno: Joi.string().required(),
-            PartnerBank: Joi.string().required(),
-            PartnerBankbranch: Joi.string().required(),
-            PartnerAccountno: Joi.string().required(),
-            AmityBank: Joi.string().required(),
-            AmityBankBranch: Joi.string().required(),
-            AmityAccountno: Joi.string().required(),
             Amt: Joi.number().required(),
             // createdate: Joi.date().required(),
             // createtime: Joi.string().required(),
@@ -305,7 +291,28 @@ const CreateCashierReceive = () => {
             // canceltime: Joi.string().required(),
             // cancelusercode: Joi.string().required(),
             // status: Joi.string().valid('I').required()
-        });
+        }
+        if (receiveType === "Cheque" || receiveType === "Bank-Transfer" ) {
+            joidata.refno = Joi.string().required()
+            joidata.PartnerBank = Joi.string().required()
+            joidata.PartnerBankbranch = Joi.string().required()
+            joidata.PartnerAccountno = Joi.string().required()
+            joidata.AmityBank = Joi.string().required()
+            joidata.AmityBankBranch = Joi.string().required()
+            joidata.AmityAccountno = Joi.string().required()
+
+            // data
+            data.PartnerBank = bankPartner
+            data.PartnerBankbranch = bankPartner
+            data.PartnerAccountno = bankNoPartner
+            data.AmityBank = bankAmity
+            data.AmityBankBranch = bankBranchAmity
+            data.AmityAccountno = bankNo
+            data.refno = refno
+        }
+        const schema = Joi.object(joidata);
+    
+        
         const { error } = schema.validate(data);
         if (error) {
             console.log(data)

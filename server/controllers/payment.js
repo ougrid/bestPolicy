@@ -89,11 +89,23 @@ const findTransaction = async (req,res) => {
 const findPolicyByPreminDue = async (req,res) => {
 
     const records = await sequelize.query(
-      `select * from static_data."Transactions" tran join static_data."b_jupgrs" pol  on tran."policyNo" = pol."policyNo" and tran."seqNo" = pol."seqNo" 
+      `select t."agentCode", t."insurerCode", 
+      t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
+      (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
+      p."insureeCode",
+      (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
+      (select "entityID" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) ) as insureeName , 
+     
+      j.polid, (select "licenseNo" from static_data."Motors" where id = p."itemList") , (select  "chassisNo" from static_data."Motors" where id = p."itemList"), j.netgrossprem, j.duty, j.tax, j.totalprem, j.commout_rate,
+      j.commout_amt, j.ovout_rate, j.ovout_amt, t.netflag, t.remainamt
+      from static_data."Transactions" t 
+      join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
+      join static_data."Policies" p on p.id = j.polid
+     
       where "transType" = 'PREM-IN' 
-      and txtype2 = '1' and rprefdate isnull and tran."agentCode" = :agentCode and tran."insurerCode" = :insurerCode and billadvisor isnull 
-      and "dueDate"<=:dueDate  and (case when :policyNoAll then true else tran."policyNo" between :policyNoStart and :policyNoStart end)
-      and pol.installmenttype ='A'`,
+      and txtype2 = '1' and rprefdate isnull and t."agentCode" = :agentCode and t."insurerCode" = :insurerCode and billadvisor isnull 
+      and "dueDate"<=:dueDate  and (case when :policyNoAll then true else t."policyNo" between :policyNoStart and :policyNoStart end)
+      and j.installmenttype ='A'`,
           {
             replacements: {
               agentCode:req.body.agentCode,
@@ -184,7 +196,7 @@ const createbilladvisor = async (req,res) =>{
                     policyNo: req.body.detail[i].policyNo,
                     insureeCode: req.body.detail[i].insureeCode,
                     motorid: req.body.detail[i].itemList || null,
-                    grossprem: req.body.detail[i].grossprem,
+                    grossprem: req.body.detail[i].netgrossprem,
                     duty: req.body.detail[i].duty,
                     tax: req.body.detail[i].tax,
                     totalprem: req.body.detail[i].totalprem,
@@ -216,10 +228,12 @@ const createbilladvisor = async (req,res) =>{
                 'END LOOP; '+
               'END $$;',{
                 transaction: t ,
+                raw: true 
               }
               
             )
             await t.commit();
+            await res.json({msg:`created billadvisorNO : ${req.body.bill.billadvisor} success!!` })
         } catch (error) {
           console.log(error);
           await t.rollback();
@@ -227,7 +241,6 @@ const createbilladvisor = async (req,res) =>{
           }
         
         
-        await res.json({msg:`created billadvisorNO : ${req.body.bill.billadvisor} success!!` })
 }
 
 

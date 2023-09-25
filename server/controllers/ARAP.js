@@ -836,7 +836,7 @@ const findAPPremOut = async (req, res) => {
     cond = cond + ` and t."insurerCode" = '${req.body.insurerCode}'`
   }
   if (req.body.agentCode !== null ) {
-    cond = cond + ` and t."agentCode" = '${req.body.insurerCode}'`
+    cond = cond + ` and t."agentCode" = '${req.body.agentCode}'`
   }
   if (req.body.reconcileno !== null ) {
     cond = cond + ` and r.reconcileno = '${req.body.reconcileno}'`
