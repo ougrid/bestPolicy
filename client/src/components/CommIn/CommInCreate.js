@@ -20,30 +20,27 @@ export default function CommInCreate() {
     })
     const [policiesData, setPoliciesData] = useState([])
     const [artype, setArtype] = useState('N')
-  const colsData = [
-    "insurerCode",
-    "advisorCode",
-    "Duedate",
-    "Policyno",
-    "Endorseno",
-    "Invoiceno",
-    "seqno",
-    "customerid",
-    "insuredname",
-    "licenseno",
-    "province",
-    "chassisno",
-    "grossprem",
-    "duty",
-    "tax",
-    "totalamt",
-    "comm-out%",
-    "comm-out-amt",
-    "ov-out%",
-    "ov-out-amt",
-    "[] net",
-    "billpremium",
-  ];
+  const colsData = {
+    insurerCode :"insurerCode",
+    agentCode: "advisorCode",
+    dueDate : "Duedate",
+    policyNo : "Policyno",
+    endorseNo : "Endorseno",
+    invoiceNo : "Invoiceno",
+    seqNo : "seqno",
+    customerid : "customerid",
+    insureename : "insuredname",
+    licenseNo : "licenseno",
+    chassisNo : "chassisno",
+    netgrossprem : "grossprem",
+    duty : "duty",
+    tax : "tax",
+    totalprem : "totalamt",
+    commin_amt : "comm-in%",
+    commin_rate :"comm-in-amt",
+    ovin_amt : "ov-in%",
+    ovin_rate : "ov-in-amt",
+};
   
   
   const handleChange = (e) => {
@@ -57,7 +54,7 @@ export default function CommInCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/araps/getarcommin", filterData)
+        .post(url + "/araps/getarcommin", {...filterData, artype :artype })
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -73,7 +70,8 @@ export default function CommInCreate() {
 
                 // }
                 console.log(res.data);
-                setPoliciesData(res.data)
+                setFilterData(res.data.billdata[0])
+                setPoliciesData(res.data.trans)
                 
                 alert("get t5ransaction for AR Comm in ")
             }
@@ -95,7 +93,7 @@ const saveapcommin = async (e) => {
 };
 
 const submitapcommin = async (e) => {
-  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
+  console.log({master :  {...filterData}, trans : policiesData});
   await axios.post(url + "/araps/submitarcommin", {master :filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);

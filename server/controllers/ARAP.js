@@ -1146,11 +1146,10 @@ const findARCommIn = async (req, res) => {
         -- CASE when t.netflag = 'N' then j.commin_amt else 0 end as commin_amt , 
         -- CASE when t.netflag = 'N' then  j.commin_taxamt else 0 end as  commin_taxamt , 
         -- CASE when t.netflag = 'N' then j.commin_amt + j.commin_taxamt else 0 end as "commin_total", 
-        j.ovin_rate, j.ovin_amt
+        j.ovin_rate, j.ovin_amt, t.netflag
         -- CASE when t.netflag = 'N' then j.ovin_amt else 0 end as ovin_amt , 
         -- CASE when t.netflag = 'N' then  j.ovin_taxamt else 0 end as  ovin_taxamt , 
         -- CASE when t.netflag = 'N' then j.ovin_amt + j.ovin_taxamt else 0 end as "ovin_total",
-        -- t.netflag
         -- CASE when t.netflag = 'N' then j.totalprem - j.commin_taxamt - j.ovin_taxamt else j.totalprem end as "paymentamt"
         from static_data."Transactions" t 
         join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
@@ -1173,8 +1172,8 @@ const findARCommIn = async (req, res) => {
 
   const bill = await sequelize.query(
     'select (select "insurerCode" from static_data."Insurers" where id = insurerno ), ' +
-      '(select "agentCode" from static_data."Agents" where id = advisorno ), *  from static_data.b_jabilladvisors ' +
-      "where active ='Y' and billadvisorno = :billadvisorno ",
+      '(select "agentCode" from static_data."Agents" where id = advisorno ), *  from static_data.b_jaaraps ' +
+      "where status ='A' and dfrpreferno = :billadvisorno ",
     {
       replacements: {
         billadvisorno: req.body.dfrpreferno,
@@ -1417,7 +1416,7 @@ const submitARCommIn = async (req, res) => {
             invoiceNo: req.body.trans[i].invoiceNo,
             seqNo: req.body.trans[i].seqNo,
             netflag: req.body.trans[i].netflag,
-            netamt: req.body.trans[i].paymentamt,
+            netamt: req.body.trans[i].totalprem,
           },
           transaction: t,
           type: QueryTypes.INSERT,

@@ -294,39 +294,48 @@ const submitCashier = async (req, res) => {
     );
     `;
     let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate(),t)
+    const replacevalue ={
+         // keyid: req.body.keyid,
+         billadvisorno: req.body.billadvisorno,
+         cashierreceiveno: cashierreceiveno,
+         cashierdate: req.body.cashierdate,
+         dfrpreferno: null,
+         transactiontype: req.body.transactiontype,
+         insurercode: req.body.insurercode,
+         advisorcode: req.body.advisorcode,
+         customerid: req.body.customerid,
+         receivefrom: req.body.receivefrom,
+         receivename: req.body.receivename,
+         receivetype: req.body.receivetype,
+         refno: null,
+         PartnerBank: null,
+         PartnerBankbranch: null,
+         PartnerAccountno: null,
+         AmityBank: null,
+         AmityBankBranch: null,
+         AmityAccountno: null,
+         Amt: req.body.Amt,
+         createdate: new Date(),
+         createtime: new Date(),
+         createusercode: "testUser",
+         updatedate: new Date(),
+         updatetime: new Date(),
+         updateusercode: "test1234",
+         status: 'I'
+    }
+    if (req.body.receivetype === "Cheque" || req.body.receivetype === "Bank-Transfer" ) {
+        replacevalue.refno = req.body.refno
+         replacevalue.PartnerBank = req.body.PartnerBank
+         replacevalue.PartnerBankbranch = req.body.PartnerBankbranch
+         replacevalue.PartnerAccountno = req.body.PartnerAccountno
+         replacevalue.AmityBank = req.body.AmityBank
+         replacevalue.AmityBankBranch = req.body.AmityBankBranch
+         replacevalue.AmityAccountno = req.body.AmityAccountno
+    }
+
+    
     await sequelize.query(insertQuery, {
-        replacements: {
-            // keyid: req.body.keyid,
-            billadvisorno: req.body.billadvisorno,
-            cashierreceiveno: cashierreceiveno,
-            cashierdate: req.body.cashierdate,
-            dfrpreferno: null,
-            transactiontype: req.body.transactiontype,
-            insurercode: req.body.insurercode,
-            advisorcode: req.body.advisorcode,
-            customerid: req.body.customerid,
-            receivefrom: req.body.receivefrom,
-            receivename: req.body.receivename,
-            receivetype: req.body.receivetype,
-            refno: req.body.refno,
-            PartnerBank: req.body.PartnerBank,
-            PartnerBankbranch: req.body.PartnerBankbranch,
-            PartnerAccountno: req.body.PartnerAccountno,
-            AmityBank: req.body.AmityBank,
-            AmityBankBranch: req.body.AmityBankBranch,
-            AmityAccountno: req.body.AmityAccountno,
-            Amt: req.body.Amt,
-            createdate: new Date(),
-            createtime: new Date(),
-            createusercode: "testUser",
-            updatedate: new Date(),
-            updatetime: new Date(),
-            updateusercode: "test1234",
-            // canceldate: null,
-            // canceltime: req.body.canceltime,
-            // cancelusercode: req.body.cancelusercode,
-            status: 'I'
-        },
+        replacements:replacevalue,
         transaction: t,
         type: QueryTypes.INSERT
     })
