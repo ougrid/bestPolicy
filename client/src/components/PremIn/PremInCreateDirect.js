@@ -24,6 +24,8 @@ export default function PremInCreateDirect() {
     })
   const [policiesData, setPoliciesData] = useState([])
   const colsData = {
+    
+    select : "select",
     insurerCode: "insurerCode",
     agentCode: "advisorCode",
     dueDate:"Duedate",
@@ -58,6 +60,24 @@ export default function PremInCreateDirect() {
     }));
   };
   
+  const changestatementtype = (e) => {
+    // e.preventDefault();
+    console.log(e.target.name);
+    const array = policiesData
+    array[e.target.id] = { ...policiesData[e.target.id], [e.target.name]: e.target.checked }
+    setPoliciesData(array)
+    // const array2 = billpremiumData
+    // if (e.target.checked) {
+    //     array2[e.target.id] = array[e.target.id].totalprem - array[e.target.id].commout_amt - array[e.target.id].ovout_amt
+
+    // } else {
+    //     array2[e.target.id] = array[e.target.id].totalprem
+    // }
+    // setBillpremiumData(array2)
+    // console.log(array2);
+
+};
+
   const submitFilter = (e) => {
     e.preventDefault();
     
@@ -158,7 +178,7 @@ export default function PremInCreateDirect() {
     master.whtovin = master.ovin * wht
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
-    console.log(master);
+    console.log({ master: master, trans: policiesData });
     await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: policiesData }).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
@@ -336,7 +356,7 @@ export default function PremInCreateDirect() {
         </div>
       </form>
       <div>
-        <PremInTable cols={colsData} rows={policiesData} />
+        <PremInTable cols={colsData} rows={policiesData}  setPoliciesData={setPoliciesData}/>
         <button className="btn btn-primary">Export To Excel</button>
         <button className="btn btn-warning" onClick={(e) => savearpremin(e)}>save</button>
         <button className="btn btn-success" onClick={(e) => submitarpremin(e)}>submit</button>

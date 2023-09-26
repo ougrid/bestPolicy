@@ -21,6 +21,7 @@ export default function CommInCreate() {
     const [policiesData, setPoliciesData] = useState([])
     const [artype, setArtype] = useState('N')
   const colsData = {
+    select : "select",
     insurerCode :"insurerCode",
     agentCode: "advisorCode",
     dueDate : "Duedate",
@@ -252,7 +253,7 @@ const submitapcommin = async (e) => {
         </div>
       </form>
       <div>
-        <PremInTable cols={colsData} rows={policiesData} />
+        <PremInTable cols={colsData} rows={policiesData} handleChange={handleChange}/>
         <button className="btn btn-primary">Export To Excel</button>
         <button className="btn btn-warning" onClick={(e)=>saveapcommin(e)}>save</button>
         <button className="btn btn-success" onClick={(e)=>submitapcommin(e)}>submit</button>

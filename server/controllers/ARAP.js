@@ -518,7 +518,7 @@ const findARPremInDirect = async (req, res) => {
     cond = cond + ` and j."invioceNo" = '${req.body.invoiceNoEnd}'`
   }
   const trans = await sequelize.query(
-    `select t."agentCode", t."insurerCode", 
+    `select true as select, t."agentCode", t."insurerCode", 
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -762,7 +762,7 @@ const submitARPreminDirect = async (req, res) => {
         set dfrpreferno = :dfrpreferno ,
           rprefdate = :rprefdate ,
           "premin-dfrpreferno" = :dfrpreferno,
-          "premin-rprefdate" = :rprefdate,
+          "premin-rprefdate" = :rprefdate
         where "transType" in ('COMM-OUT','OV-OUT')
           and status = 'N'
           and "insurerCode" = :insurerCode
@@ -1135,7 +1135,7 @@ const findARCommIn = async (req, res) => {
   
   //wait rewrite when clear reconcile process
   const trans = await sequelize.query(
-    `select  t."insurerCode", t."agentCode",
+    `select  true as select, t."insurerCode", t."agentCode",
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -1496,7 +1496,7 @@ const findAPCommOut = async (req, res) => {
     cond = cond + ` and t."insurerCode" = '${req.body.insurerCode}'`
   }
   if (req.body.agentCode !== null) {
-    cond = cond + ` and t."agentCode" = '${req.body.insurerCode}'`
+    cond = cond + ` and t."agentCode" = '${req.body.agentCode}'`
   }
   if (req.body.policyNostart !== null) {
     cond = cond + ` and p."policyNo" >= '${req.body.policyNostart}'`
@@ -1510,7 +1510,7 @@ const findAPCommOut = async (req, res) => {
   
   //wait rewrite when clear reconcile process
   const trans = await sequelize.query(
-    `select  t."agentCode",
+    `select  true as select , t."insurerCode", t."agentCode",
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -1670,7 +1670,7 @@ const submitAPCommOut = async (req, res) => {
       '(select taxno, deducttaxrate from static_data."Agents" where "agentCode" = :agentCode )',
       {
         replacements: {
-          agentCode: req.body.trans[i].agentCode,
+          agentCode: req.body.master.agentCode,
         },
         transaction: t,
         type: QueryTypes.SELECT,
@@ -1701,8 +1701,8 @@ const submitAPCommOut = async (req, res) => {
     for (let i = 0; i < req.body.trans.length; i++) {
       //insert to deteil of jaarapds
       await sequelize.query(
-        `insert into static_data.b_jaarapds (keyidm, polid, "policyNo", "endorseNo", "invoiceNo", "seqNo", netflag, netamt) 
-              values( :keyidm , (select id from static_data."Policies" where "policyNo" = :policyNo ), :policyNo, :endorseNo, :invoiceNo, :seqNo, :netflag, :netamt)`,
+        `insert into static_data.b_jaarapds (keyidm, polid, "policyNo", "endorseNo", "invoiceNo", "seqNo") 
+              values( :keyidm , (select id from static_data."Policies" where "policyNo" = :policyNo limit 1), :policyNo, :endorseNo, :invoiceNo, :seqNo)`,
         {
           replacements: {
             keyidm: arCommOut[0][0].id,
@@ -1710,8 +1710,8 @@ const submitAPCommOut = async (req, res) => {
             endorseNo: req.body.trans[i].endorseNo,
             invoiceNo: req.body.trans[i].invoiceNo,
             seqNo: req.body.trans[i].seqNo,
-            netflag: req.body.trans[i].netflag,
-            netamt: req.body.trans[i].paymentamt,
+            // netflag: req.body.trans[i].netflag,
+            // netamt: req.body.trans[i].paymentamt,
           },
           transaction: t,
           type: QueryTypes.INSERT,

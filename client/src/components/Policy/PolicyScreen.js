@@ -429,9 +429,10 @@ const PolicyScreen = (props) => {
     <div>
       <h1 className="text-center">สร้างรายการกรมธรรม์</h1>
       {/* policy table */}
+
       <div className="row form-group form-inline ">
         <div className="col-1"></div>
-        <div className="col-2 form-group  ">
+        {/* <div className="col-2 form-group  ">
           <label class="form-label ">
             เลขที่กรมธรรม์<span class="text-danger"> *</span>
           </label>
@@ -442,7 +443,7 @@ const PolicyScreen = (props) => {
             name={`policyNo`}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         <div class="col-2 form-group ">
           <label class="form-label">

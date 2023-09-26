@@ -215,7 +215,7 @@ const handleClose = (e) =>{
        
 <div className="d-flex justify-content-center">
 
-        <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button>
+        {/* <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button> */}
         <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Save Draft</button>
 </div>
       </form>

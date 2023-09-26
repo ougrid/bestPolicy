@@ -834,7 +834,7 @@ const draftPolicyList = async (req, res) => {
 
       //insert new car or select
       let cars = [{id: null}]
-      if (req.body[i].class === 'Motor') {
+      if (req.body[i].class === 'MO') {
         cars = await sequelize.query(
           'WITH inserted AS ( '+
           'INSERT INTO static_data."Motors" ("brand", "voluntaryCode", "model", "specname", "licenseNo", "motorprovinceID", "chassisNo", "modelYear") '+
@@ -877,23 +877,30 @@ const draftPolicyList = async (req, res) => {
         type: QueryTypes.SELECT
       }
     )
-    
-
-      if(req.body[i][`commin_rate`] === null && req.body[i][`ovin_rate`] === null){
+    //undefined comm/ov in
+      if(req.body[i][`commin_rate`] === undefined || req.body[i][`commin_rate`] === null ){
         req.body[i][`commin_rate`] = commov[0].rateComIn
         req.body[i][`commin_amt`] = commov[0].rateComIn * req.body[i][`netgrossprem`]
+      }
+      if(req.body[i][`ovin_rate`]  === undefined || req.body[i][`ovin_rate`]  === null ){
         req.body[i][`ovin_rate`] = commov[0].rateOVIn_1
         req.body[i][`ovin_amt`] = commov[0].rateOVIn_1 * req.body[i][`netgrossprem`] 
       }
+
       req.body[i][`commin_taxamt`] = req.body[i][`commin_amt`] *7/100
       req.body[i][`ovin_taxamt`] =  req.body[i][`ovin_amt`] *7/100
+      
 
-      if(req.body[i][`commout1_rate`] === null && req.body[i][`ovout1_rate`] === null){
-        req.body[i][`commout1_rate`] = commov[0].rateComOut
-        req.body[i][`commout1_amt`] = commov[0].rateComOut * req.body[i][`netgrossprem`]
-        req.body[i][`ovout1_rate`] = commov[0].rateOVOut_1
-        req.body[i][`ovout1_amt`] = commov[0].rateOVOut_1 * req.body[i][`netgrossprem`]
-      }
+      //undefined comm/ov out agent 1 
+    if(req.body[i][`commout1_rate`] === undefined || req.body[i][`commout1_rate`] === null ){
+      req.body[i][`commout1_rate`] = commov[0].rateComOut
+      req.body[i][`commout1_amt`] = commov[0].rateComOut * req.body[i][`netgrossprem`]
+    }  
+    if(req.body[i][`ovout1_rate`] === undefined || req.body[i][`ovout1_rate`] === null ){
+      req.body[i][`ovout1_rate`] = commov[0].rateOVOut_1
+      req.body[i][`ovout1_amt`] = commov[0].rateOVOut_1 * req.body[i][`netgrossprem`]
+    }  
+
       //check agentcode2
       if( req.body[i][`agentCode2`] ){
         const commov2 = await sequelize.query(
@@ -933,7 +940,7 @@ const draftPolicyList = async (req, res) => {
         req.body[i][`ovout_rate`] = req.body[i][`ovout1_rate`]
         req.body[i][`ovout_amt`] = req.body[i][`ovout1_amt`]
       }
-
+     
     //get application no
     const currentDate = new Date();
     req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw',currentDate,t);
@@ -1002,15 +1009,15 @@ const draftPolicyList = async (req, res) => {
 
     })
     await t.commit();
-    await res.json({ status: 'success' })
-
+    
   } catch (error) {
     console.log(error);
     await t.rollback();
   }
+  
+}
 
-  }
-
+await res.json({ status: 'success' })
 
 
 };
@@ -1100,13 +1107,13 @@ if (!req.body[i].installment) {
     await t.commit();
     // If the execution reaches this line, an error was thrown.
     // We rollback the transaction.
-    await res.json({ status: 'success' })
-    } catch (error) {
-      console.log(error);
-      await t.rollback();
-      }
-    
-    }
+  } catch (error) {
+    console.log(error);
+    await t.rollback();
+  }
+  
+}
+await res.json({ status: 'success' })
     
 
 

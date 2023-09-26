@@ -1,34 +1,16 @@
 import React ,{  useEffect,useState }from "react";
 
-export default function PremInTable({ cols, rows ,handlechange}) {
+export default function PremInTable({ cols, rows ,setPoliciesData}) {
   const [colData, setColData] = useState([])
-  //old
-  // const colsElement = cols.map((item, index) => {
-  //   return (
-  //     <th key={index} scope="col">
-  //       {item}
-  //     </th>
-  //   );
-  // });
-  // const getRecord = (item) => {
-  //   // console.log(item);
-  //   const _arr = [];
-  //   for (const [key, value] of Object.entries(item)) {
-  //     if (key ==='select') {
-  //       _arr.push(<td><input type="checkbox" defaultChecked  /></td>);
-  //     }
-  //     _arr.push(<td>{value}</td>);
-  //   }
-  //   return _arr;
-  // };
-  
-  // const rowsElement = rows.map((item, index) => {
-  //   return (
-  //     <tr key={index} scope="row">
-  //       {getRecord(item)}
-  //     </tr>
-  //   );
-  // });
+
+  const changestatementtype = (e) => {
+    // e.preventDefault();
+    console.log(e.target.name);
+    const array = rows
+    array[e.target.id] = { ...rows[e.target.id], [e.target.name]: e.target.checked }
+    setPoliciesData(array)
+
+};
 
 
   //new
@@ -45,19 +27,23 @@ export default function PremInTable({ cols, rows ,handlechange}) {
 };
   // }, []);
  
-  const getRecord2 = (item) => {
+  const getRecord2 = (item,index) => {
     // console.log(item);
     const _arr = [];
     for (const [keym, valuem] of Object.entries(cols)) {
       
       if (keym in item ) {
         if (keym ==='select') {
-          _arr.push(<td><input type="checkbox" defaultChecked  onChange={handlechange}/></td>);
+          _arr.push(<td><input type="checkbox" defaultChecked  name="select" id={index} onChange={changestatementtype}/></td>);
+        }else if(keym ==='select'){
+
+          _arr.push(<td>{item[`${keym}`]}</td>)
         }else{
 
           _arr.push(<td>{item[`${keym}`]}</td>)
         }
       }
+    
     }
     
     return _arr;
@@ -67,7 +53,7 @@ export default function PremInTable({ cols, rows ,handlechange}) {
   const rowsElement2 = rows.map((item, index) => {
     return (
       <tr key={index} scope="row">
-        {getRecord2(item)}
+        {getRecord2(item,index)}
       </tr>
     );
   });

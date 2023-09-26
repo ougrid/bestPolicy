@@ -60,20 +60,20 @@ export default function CommOutCreate() {
     licenseNo: "licenseno",
     // province: "province", // nodata
     chassisNo: "chassisno",
-    netgrossprem: "grossprem",
+    netgrossprem: "netgrossprem",
     duty: "duty",
     tax: "tax",
     totalprem: "totalamt",
-    commin_rate: "comm-in%",
-    commin_amt: "comm-in-amt",
-    commin_taxamt: "vat-comm-in",
-    commin_total: "comm-in-total",
-    ovin_rate: "ov-in%",
-    ovin_amt: "ov-in-amt",
-    ovin_taxamt: "vat-ov-in",
-    ovin_total: "ov-in-total",
-    netflag: "[] net",
-    paymentamt: "billpremium",
+    commout_rate: "comm-out%",
+    commout_amt: "comm-out-amt",
+    // commout_taxamt: "vat-comm-out",
+    // commout_total: "comm-out-total",
+    ovout_rate: "ov-out%",
+    ovout_amt: "ov-out-amt",
+    // ovout_taxamt: "vat-ov-out",
+    // ovout_total: "ov-out-total",
+    'premin-rprefdate': "premin-rprefdate",
+    'premin-dfrpreferno': "premin-dfrpreferno",
 
 };
   const handleClose = (e) => {
@@ -82,31 +82,24 @@ export default function CommOutCreate() {
    const editCard = (e) => {
     console.log(policiesData);
         setHidecard([true, 1])
-        let totalprem = 0
-        let commin_amt = 0
-        let commin_taxamt = 0
-        let ovin_amt = 0
-        let ovin_taxamt = 0
+      
+        let commout_amt = 0
+       
+        let ovout_amt = 0
+       
         let paymentamt = 0
         for (let i = 0; i < policiesData.length; i++) {
             if (policiesData[i].select) {
-              totalprem = totalprem + policiesData[i].totalprem
-              commin_amt = commin_amt + policiesData[i].commin_amt
-              commin_taxamt = commin_taxamt + policiesData[i].commin_taxamt
-              ovin_amt = ovin_amt + policiesData[i].ovin_amt
-              ovin_taxamt = ovin_taxamt + policiesData[i].ovin_taxamt
-              paymentamt = paymentamt + policiesData[i].paymentamt
-                }
-
+              commout_amt = commout_amt + policiesData[i].commout_amt
+              ovout_amt = ovout_amt + policiesData[i].ovout_amt
             }
-            filterData.netprem = totalprem
-            filterData.commin = commin_amt
-            filterData.vatcommin = commin_taxamt
-            filterData.ovin = ovin_amt
-            filterData.vatovin = ovin_taxamt
-            filterData.whtovin = parseFloat((ovin_amt*wht).toFixed(2))
-            filterData.whtcommin = parseFloat((commin_amt).toFixed(2))
-            filterData.actualvalue = paymentamt
+            }
+            filterData.commout = commout_amt
+            filterData.ovout = ovout_amt
+            filterData.whtcommout = parseFloat((commout_amt*wht/100).toFixed(2))
+            filterData.whtovout = parseFloat((ovout_amt*wht/100).toFixed(2))
+            filterData.actualvalue = (filterData.commout + filterData.ovout - filterData.whtcommout - filterData.whtovout).toFixed(2)
+            
         
 
         // const total = {
@@ -125,8 +118,9 @@ export default function CommOutCreate() {
     
     setFilterData((prevState) => ({
         ...prevState,
-        [e.target.name]: e.target.value,
+        [e.target.name]: e.target,
     }));
+    console.log(filterData);
 };
   const submitFilter = (e) => {
     e.preventDefault();
@@ -309,37 +303,37 @@ const submitapcommout = async (e) => {
                             <label class="col-form-label">เลขที่ใบวางบิล</label>
                         </div>
                         <div class="col-6"> {filterData.billadvisor}</div>
-                    </div> */}
+                    </div>
                     <div class="row">
                         <div class="col-6">
                             <label class="col-form-label">totalpremium</label>
                             </div>
                         <div class="col-6">
                            <label class="col-form-label">{filterData.netprem}</label></div>
+                    </div> */}
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="col-form-label">comm-out</label>
+                        </div>
+                        <div class="col-6"> <label class="col-form-label">{filterData.commout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">comm-in</label>
+                            <label class="col-form-label">WHT3 comm-out</label>
                         </div>
-                        <div class="col-6"> <label class="col-form-label">{filterData.commin}</label></div>
+                        <div class="col-6"> <label class="col-form-label">{filterData.whtcommout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">VAT comm-in</label>
+                            <label class="col-form-label">ov-out</label>
                         </div>
-                        <div class="col-6"> <label class="col-form-label">{filterData.vatcommin}</label></div>
+                        <div class="col-6"> <label class="col-form-label">{filterData.ovout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">ov-in</label>
+                            <label class="col-form-label">WHT3 ov-out</label>
                         </div>
-                        <div class="col-6"> <label class="col-form-label">{filterData.ovin}</label></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <label class="col-form-label">VAT ov-in</label>
-                        </div>
-                        <div class="col-6"> <label class="col-form-label">{filterData.vatovin}</label></div>
+                        <div class="col-6"> <label class="col-form-label">{filterData.whtovout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
@@ -354,7 +348,7 @@ const submitapcommout = async (e) => {
                 </Modal.Footer>
             </Modal>
       <div>
-        <PremInTable cols={cols2Data} rows={policiesData} handleChange={handleChange}/>
+        <PremInTable cols={cols2Data} rows={policiesData} setPoliciesData={setPoliciesData}/>
         <button className="btn btn-primary">Export To Excel</button>
         <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >confirm</button>
        
