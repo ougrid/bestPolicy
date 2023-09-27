@@ -5,7 +5,7 @@ const CommOVOut = require("../models").CommOVOut;
 const Insuree = require("../models").Insuree;
 const { throws } = require("assert");
 const process = require('process');
-const runningno = require('./lib/runningno');
+const {getRunNo,getCurrentDate} = require("./lib/runningno");
 const account =require('./lib/runningaccount')
 // const Package = require("../models").Package;
 // const User = require("../models").User;
@@ -169,7 +169,7 @@ const createTransection = async (policy,t) => {
             // totalprem: policy.totalprem,
             commamt: jupgr.insurer[i].commin_amt,
             commtaxamt: jupgr.insurer[i].commin_taxamt,
-            totalamt: jupgr.insurer[i].totalprem,
+            totalamt: jupgr.insurer[i].commin_amt,
             duedate: jupgr.insurer[i].dueDate,
             netgrossprem: jupgr.insurer[i].netgrossprem,
             duty: jupgr.insurer[i].duty,
@@ -880,11 +880,11 @@ const draftPolicyList = async (req, res) => {
     //undefined comm/ov in
       if(req.body[i][`commin_rate`] === undefined || req.body[i][`commin_rate`] === null ){
         req.body[i][`commin_rate`] = commov[0].rateComIn
-        req.body[i][`commin_amt`] = commov[0].rateComIn * req.body[i][`netgrossprem`]
+        req.body[i][`commin_amt`] = commov[0].rateComIn * req.body[i][`netgrossprem`]/100
       }
       if(req.body[i][`ovin_rate`]  === undefined || req.body[i][`ovin_rate`]  === null ){
         req.body[i][`ovin_rate`] = commov[0].rateOVIn_1
-        req.body[i][`ovin_amt`] = commov[0].rateOVIn_1 * req.body[i][`netgrossprem`] 
+        req.body[i][`ovin_amt`] = commov[0].rateOVIn_1 * req.body[i][`netgrossprem`] /100
       }
 
       req.body[i][`commin_taxamt`] = req.body[i][`commin_amt`] *7/100
@@ -894,11 +894,11 @@ const draftPolicyList = async (req, res) => {
       //undefined comm/ov out agent 1 
     if(req.body[i][`commout1_rate`] === undefined || req.body[i][`commout1_rate`] === null ){
       req.body[i][`commout1_rate`] = commov[0].rateComOut
-      req.body[i][`commout1_amt`] = commov[0].rateComOut * req.body[i][`netgrossprem`]
+      req.body[i][`commout1_amt`] = commov[0].rateComOut * req.body[i][`netgrossprem`]/100
     }  
     if(req.body[i][`ovout1_rate`] === undefined || req.body[i][`ovout1_rate`] === null ){
       req.body[i][`ovout1_rate`] = commov[0].rateOVOut_1
-      req.body[i][`ovout1_amt`] = commov[0].rateOVOut_1 * req.body[i][`netgrossprem`]
+      req.body[i][`ovout1_amt`] = commov[0].rateOVOut_1 * req.body[i][`netgrossprem`]/100
     }  
 
       //check agentcode2
@@ -920,9 +920,9 @@ const draftPolicyList = async (req, res) => {
         )
        if(req.body[i][`commout2_rate`] === null && req.body[i][`ovout2_rate`] === null ){
         req.body[i][`commout2_rate`] = commov2[0].rateComOut
-        req.body[i][`commout2_amt`] = commov2[0].rateComOut * req.body[i][`netgrossprem`]
+        req.body[i][`commout2_amt`] = commov2[0].rateComOut * req.body[i][`netgrossprem`]/100
         req.body[i][`ovout2_rate`] = commov2[0].rateOVOut_1
-        req.body[i][`ovout2_amt`] = commov2[0].rateOVOut_1 * req.body[i][`netgrossprem`]
+        req.body[i][`ovout2_amt`] = commov2[0].rateOVOut_1 * req.body[i][`netgrossprem`]/100
        }
        req.body[i][`commout_rate`] = req.body[i][`commout1_rate`] + req.body[i][`commout2_rate`] 
         req.body[i][`commout_amt`] = req.body[i][`commout1_amt`] +req.body[i][`commout2_amt`]
@@ -942,8 +942,8 @@ const draftPolicyList = async (req, res) => {
       }
      
     //get application no
-    const currentDate = new Date();
-    req.body[i].applicationNo = 'APP' + await runningno.getRunNo('app',null,null,'kw',currentDate,t);
+    const currentdate = getCurrentDate()
+    req.body[i].applicationNo = 'APP' + await getRunNo('app',null,null,'kw',currentdate,t);
     console.log(req.body[i].applicationNo);
 
       //insert policy
@@ -1128,11 +1128,12 @@ const createjupgr = async (policy,t) => {
   const insurer =  policy.installment.insurer 
   const arrIns =[]
   const arrAds = []
-  policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
-  policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
+  const currentdate = getCurrentDate()
+  policy.invoiceNo = 'INV' + await getRunNo('inv',null,null,'kwan',currentdate,t);
+  policy.taxInvoiceNo = 'tAXINV' + await getRunNo('taxinv',null,null,'kwan',currentdate,t);
 if (policy.installment.advisor.length === 0 ) {
-  policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
-  policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
+  policy.invoiceNo = 'INV' + await getRunNo('inv',null,null,'kwan',currentdate,t);
+  policy.taxInvoiceNo = 'tAXINV' + await getRunNo('taxinv',null,null,'kwan',currentdate,t);
   const ads = await sequelize.query(
     `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
     specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 
@@ -1243,8 +1244,8 @@ if (policy.installment.insurer.length === 0 ) {
     //console.log(policy);
      // installment advisor 
      for (let i = 0; i < advisor.length; i++) {
-      policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
-  policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
+      policy.invoiceNo = 'INV' + await getRunNo('inv',null,null,'kwan',currentdate,t);
+  policy.taxInvoiceNo = 'tAXINV' + await getRunNo('taxinv',null,null,'kwan',currentdate,t);
      //insert jupgr
     const ads = await sequelize.query(
       `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
@@ -1342,8 +1343,8 @@ if (policy.installment.insurer.length === 0 ) {
       // installment advisor2 
    if (policy.agentCode2) {
     
-    policy.invoiceNo = 'INV' + await runningno.getRunNo('inv',null,null,'kwan','2023-09-05',t);
-    policy.taxInvoiceNo = 'tAXINV' + await runningno.getRunNo('taxinv',null,null,'kwan','2023-09-05',t);
+    policy.invoiceNo = 'INV' + await getRunNo('inv',null,null,'kwan',currentdate,t);
+    policy.taxInvoiceNo = 'tAXINV' + await getRunNo('taxinv',null,null,'kwan',currentdate,t);
      await sequelize.query(
        `insert into static_data.b_jupgrs ("policyNo", "endorseNo", "invoiceNo", "taxInvoiceNo", "installmenttype", "seqNo", grossprem, 
        specdiscrate, specdiscamt, netgrossprem, tax, duty, totalprem, commin_rate, commin_amt, commin_taxamt, ovin_rate, ovin_amt, ovin_taxamt, 

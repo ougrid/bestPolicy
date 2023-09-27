@@ -35,7 +35,8 @@ submit arprem-in
 	
 ภาพรวมflow การตัดหนี้ ( 2 advisor จะมีเพิ่มแค่ จ่ายหนี้ COMM-OUT ของ advisorคนที่ 2 เพิ่มมาอย่างเดียว)
 สรุปการ gen เลขใบวางบิล สร้างเฉพาะจ่ายที่ amity, cashierrecive สร้างเฉพาะ PREM-IN, COMM-IN
-
+PREM-IN select netflag -> ออกใบวางบิล , จ่ายเงินประกันตรง
+PREM-OUT select netflag -> statment ค่าเบี้ยส่งประกัน , 
 	case 1 จ่ายเงินที่ amity แบบ gross /gross
 	-> 1.ออกใบวางบิล (billadvisor B001) netflag = gross
 	-> 2.รับเงิน PREM-IN (cashierrecieve PREM-IN CASH001)
@@ -66,13 +67,13 @@ submit arprem-in
 	-> 5.จ่ายเงินตัดหนี้ COMM-OUT (อัพเดท status _ARAP dfrpreferno = APNO02 where txtype = COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw  เก็บ transaction ใน b_jaaraps
 	
 	case 5 จ่ายเงินที่ประกัน แบบ gross /(gross เสมอ)
-	-> 1.จ่ายเงินที่ประกันโดยตรง ตัดหนี้ PREM-IN,PREM-OUT (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, PREM-OUT) เก็บ transaction ใน b_jaaraps
+	-> 1.จ่ายเงินที่ประกันโดยตรง ตัดหนี้ PREM-IN,PREM-OUT (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, PREM-OUT) netflag = gross เก็บ transaction ใน b_jaaraps
 	-> 2.รับเงิน COMM-IN (cashierrecieve COMM-IN CASH002)
 	-> 3.ตัดหนี้ COMM-IN filter by APNO001 (อัพเดท status _ARAP dfrpreferno = ARNO02 where txtype = COMM-IN, OV-IN) เก็บ transaction ใน b_jaaraps
 	-> 4.จ่ายเงินตัดหนี้ COMM-OUT (อัพเดท status _ARAP dfrpreferno = APNO02 where txtype = COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw  เก็บ transaction ใน b_jaaraps
 
 	case 6 จ่ายเงินที่ประกัน แบบ net /(gross เสมอ)
-	-> 1.จ่ายเงินที่ประกันโดยตรง ตัดหนี้ PREM-IN,PREM-OUT (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, PREM-OUT, COMM-OUT, OV-OUT) เก็บ transaction เก็บ WHT COMM/OV OUT ใน b_jatw  ใน b_jaaraps
+	-> 1.จ่ายเงินที่ประกันโดยตรง ตัดหนี้ PREM-IN,PREM-OUT (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, PREM-OUT, COMM-OUT, OV-OUT) netflag = net เก็บ transaction เก็บ WHT COMM/OV OUT ใน b_jatw  ใน b_jaaraps
 	-> 2.รับเงิน COMM-IN (cashierrecieve COMM-IN CASH002)
 	-> 3.ตัดหนี้ COMM-IN filter by APNO001 (อัพเดท status _ARAP dfrpreferno = ARNO02 where txtype = COMM-IN, OV-IN) เก็บ transaction ใน b_jaaraps
 

@@ -21,7 +21,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
     },
 });
 const Joi = require('joi');
-const {getRunNo} = require("./lib/runningno");
+const {getRunNo,getCurrentDate} = require("./lib/runningno");
 
 const test = (req, res) => {
 
@@ -142,8 +142,23 @@ const createCashier = async (req, res) => {
 }
 
 const findDataByBillAdvisoryNo = async (req, res) => {
+    let insertQuery =''
+    if (req.query.txtype === 'premin') {
+        insertQuery = 
+        `SELECT *, (select "t_firstName"||' '||"t_lastName"  from static_data."Entities" e where e.id = a."entityID") as receivename 
+        FROM static_data.b_jabilladvisors b join static_data."Agents" A on b."advisorno" = A."id"  join static_data."Insurers" I on B."insurerno" = I."id" 
+        WHERE 1=1 AND billadvisorno = :filter;`;    
+    } else{
+        insertQuery = 
+        `SELECT  (select "t_ogName"  from static_data."Entities" e where e.id = I."entityID") as receivename , 
+        (bj.commin + bj.ovin + bj.whtcommin + bj.whtovin) as amt  ,*
+        FROM static_data."Transactions" t   join static_data."Agents" A on t."agentCode" = A."agentCode"  
+        join static_data."Insurers" I on t."insurerCode"  = I."insurerCode"  
+        join static_data.b_jaaraps bj on bj.dfrpreferno  = t.dfrpreferno 
+        WHERE  bj.dfrpreferno  = :filter limit 1`
+    }
     const schema = Joi.object({
-        billadvisorno: Joi.string().required(),
+        filter: Joi.string().required(),
     });
     const {error} = schema.validate(req.body);
     if (error) {
@@ -151,13 +166,11 @@ const findDataByBillAdvisoryNo = async (req, res) => {
     }
 
 
-    const insertQuery = `SELECT * FROM static_data.b_jabilladvisors b join static_data."Agents" A on b."advisorno" = A."id"  join static_data."Insurers" I on B."insurerno" = I."id" WHERE 1=1 AND billadvisorno = :billadvisorno;
-
-`;
+    
     await sequelize.query(insertQuery, {
         replacements: {
             // keyid: req.body.keyid,
-            billadvisorno: req.body.billadvisorno,
+            filter: req.body.filter,
         },
         type: QueryTypes.SELECT
     })
@@ -230,8 +243,9 @@ const findbill = async (req, res) => {
 const submitCashier = async (req, res) => {
     let joidata = {
         // keyid: Joi.string().required(),
+        Amt: Joi.number().required(),
         billadvisorno: Joi.string().required(),
-        cashierreceiveno: Joi.string().required(),
+        // cashierreceiveno: Joi.string().required(),
         // cashierdate: Joi.date().required(),
         dfrpreferno: Joi.string().required(),
         transactiontype: Joi.string().required(),
@@ -241,8 +255,7 @@ const submitCashier = async (req, res) => {
         receivefrom: Joi.string().required(),
         receivename: Joi.string().required(),
         receivetype: Joi.string().required(),
-        
-        Amt: Joi.number().required(),
+        dfrpreferno: Joi.string().required(),
         // createdate: Joi.date().required(),
         // createtime: Joi.string().required(),
         // createusercode: Joi.string().required(),
@@ -281,7 +294,7 @@ const submitCashier = async (req, res) => {
         customerid, receivefrom, receivename, receivetype,
         "partnerBank", "partnerBankbranch", "partnerAccountno",
         "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status , refno
+        amt, "createdAt", createusercode, status , refno,dfrpreferno
     )
     VALUES
     (
@@ -290,10 +303,11 @@ const submitCashier = async (req, res) => {
         :customerid, :receivefrom, :receivename, :receivetype,
         :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
         :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status ,:refno
+        :Amt, :createdate, :createusercode, :status ,:refno,:dfrpreferno
     );
     `;
-    let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate(),t)
+    const cuurentdate = getCurrentDate()
+    let cashierreceiveno = await getRunNo('cash',null,null,'kw',cuurentdate,t)
     const replacevalue ={
          // keyid: req.body.keyid,
          billadvisorno: req.body.billadvisorno,
@@ -321,7 +335,8 @@ const submitCashier = async (req, res) => {
          updatedate: new Date(),
          updatetime: new Date(),
          updateusercode: "test1234",
-         status: 'I'
+         status: 'I',
+         dfrpreferno:req.body.dfrpreferno
     }
     if (req.body.receivetype === "Cheque" || req.body.receivetype === "Bank-Transfer" ) {
         replacevalue.refno = req.body.refno
@@ -406,7 +421,7 @@ const saveCashier = async (req, res) => {
         customerid, receivefrom, receivename, receivetype,
         "partnerBank", "partnerBankbranch", "partnerAccountno",
         "amityBank", "amityBankbranch", "amityAccountno",
-        amt, "createdAt", createusercode, status, refno
+        amt, "createdAt", createusercode, status, refno,dfrpreferno
     )
     VALUES
     (
@@ -415,7 +430,7 @@ const saveCashier = async (req, res) => {
         :customerid, :receivefrom, :receivename, :receivetype,
         :PartnerBank, :PartnerBankbranch, :PartnerAccountno,
         :AmityBank, :AmityBankBranch, :AmityAccountno,
-        :Amt, :createdate, :createusercode, :status, :refno
+        :Amt, :createdate, :createusercode, :status, :refno,:dfrpreferno
     );
     `;
     await sequelize.query(insertQuery, {
@@ -449,7 +464,8 @@ const saveCashier = async (req, res) => {
             // canceldate: null,
             // canceltime: req.body.canceltime,
             // cancelusercode: req.body.cancelusercode,
-            status: 'I'
+            status: 'I',
+            dfrpreferno: req.body.dfrpreferno
         },
         type: QueryTypes.INSERT
     })
@@ -620,8 +636,8 @@ const editSubmitBill = async (req, res) => {
   WHERE
     id=:id
   `;
-    console.log(getCurrentDate())
-    let cashierreceiveno = await getRunNo('cash',null,null,'kw',getCurrentDate())
+  const cuurentdate = getRunNo.getCurrentDate()
+    let cashierreceiveno = await getRunNo('cash',null,null,'kw',cuurentdate,t)
     await sequelize.query(updateQuery, {
         replacements: {
             id:req.body.id,
@@ -661,14 +677,14 @@ const editSubmitBill = async (req, res) => {
         });
 
 }
-function getCurrentDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-    const day = String(today.getDate()).padStart(2, '0');
-    let result = `${year}-${month}-${day}`
-    return result.toString();
-}
+// function getCurrentDate() {
+//     const today = new Date();
+//     const year = today.getFullYear();
+//     const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+//     const day = String(today.getDate()).padStart(2, '0');
+//     let result = `${year}-${month}-${day}`
+//     return result.toString();
+// }
 const updateCashierReceiveNo = async (cashierreceiveno,billadvisorno) => {
     try {
         await sequelize.transaction(async (transaction) => {

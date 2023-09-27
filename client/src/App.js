@@ -73,7 +73,7 @@ function App() {
           <Route path="bill/createbill" element={<CreateBillAdvisor />} />
           <Route path="bill/editbill/:billno" element={<EditBillAdvisor />} />
           <Route path="cashier/findcashier" element={<FindCashierReceive />} />
-          <Route path="cashier/createcashier" element={<CreateCashierReceive />} />
+          <Route path="cashier/createcashier/:txtype" element={<CreateCashierReceive />} />
           <Route path="cashier/editcashier" element={<EditCashierReceive />} />
           <Route path="premin/find" element={<PremInSreach/>} />
           <Route path="premin/create" element={<PremInCreate />} />

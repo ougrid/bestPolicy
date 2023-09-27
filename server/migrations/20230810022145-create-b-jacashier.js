@@ -18,7 +18,7 @@ module.exports = {
       cashierdate: {
         type: Sequelize.STRING
       },
-      ARNO: {
+      dfrpreferno: {
         type: Sequelize.STRING
       },
       transactiontype: {

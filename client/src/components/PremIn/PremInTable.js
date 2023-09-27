@@ -1,74 +1,114 @@
-import React ,{  useEffect,useState }from "react";
+import React, { useEffect, useRef  } from "react";
+import "./PremInTable.css";
+import $ from "jquery"; // Import jQuery
+import "datatables.net"; // Import DataTables
 
-export default function PremInTable({ cols, rows ,setPoliciesData}) {
-  const [colData, setColData] = useState([])
+export default function PremInTable({
+  cols,
+  rows,
+  setPoliciesData,
+  checknetflag,
+}) {
+
+  // const tableRef = useRef(null);
 
   const changestatementtype = (e) => {
-    // e.preventDefault();
     console.log(e.target.name);
-    const array = rows
-    array[e.target.id] = { ...rows[e.target.id], [e.target.name]: e.target.checked }
-    setPoliciesData(array)
-
-};
-
-
-  //new
-  // useEffect(() => { 
-    const getColname =  (cols) => {
-  const _arr = [];
-  // console.log(item);
-  for (const [key, value] of Object.entries(cols)) {
-    _arr.push(<th key={key} scope="col">
-    {value}
-  </th>);
-  }
-  return(_arr)
-};
-  // }, []);
- 
-  const getRecord2 = (item,index) => {
-    // console.log(item);
-    const _arr = [];
-    for (const [keym, valuem] of Object.entries(cols)) {
-      
-      if (keym in item ) {
-        if (keym ==='select') {
-          _arr.push(<td><input type="checkbox" defaultChecked  name="select" id={index} onChange={changestatementtype}/></td>);
-        }else if(keym ==='select'){
-
-          _arr.push(<td>{item[`${keym}`]}</td>)
-        }else{
-
-          _arr.push(<td>{item[`${keym}`]}</td>)
-        }
+    const updatedRows = rows.map((row, index) => {
+      if (index === e.target.id) {
+        return { ...row, [e.target.name]: e.target.checked };
       }
-    
-    }
-    
-    return _arr;
+      return row;
+    });
+    setPoliciesData(updatedRows);
   };
 
-  const colsElement = getColname(cols)
-  const rowsElement2 = rows.map((item, index) => {
-    return (
-      <tr key={index} scope="row">
-        {getRecord2(item,index)}
-      </tr>
-    );
-  });
+  const changenetflag = (e) => {
+    const updatedRows = rows.map((row, index) => {
+      if (index === e.target.id) {
+        row.netflag = e.target.checked ? "N" : "G";
+      }
+      return row;
+    });
+    setPoliciesData(updatedRows);
+  };
+  // useEffect(() => {
+  //   // Check if DataTables is already initialized on the table
+  //   if (!$.fn.DataTable.isDataTable(tableRef.current)) {
+  //     // Initialize DataTables
+  //     $(tableRef.current).DataTable({
+  //       scrollX: true,
+  //       // ... other DataTables options ...
+  //     });
+  //   }
+
+  //   // Return a cleanup function
+  //   return () => {
+  //     // Destroy the DataTable instance when the component unmounts
+  //     if ($.fn.DataTable.isDataTable(tableRef.current)) {
+  //       $(tableRef.current).DataTable().destroy();
+  //     }
+  //   };
+  // }, [rows]); 
+  const getColname = (cols) => {
+    return Object.entries(cols).map(([key, value]) => (
+      <th className="sortable-column" key={key} scope="col">
+        {value}
+      </th>
+    ));
+  };
+
+  const getRecord2 = (item, index) => {
+    return Object.entries(cols).map(([keym, valuem]) => {
+      if (keym === "select") {
+        return (
+          <td key={keym}>
+            <input
+              type="checkbox"
+              defaultChecked
+              name="select"
+              id={index}
+              onChange={changestatementtype}
+            />
+          </td>
+        );
+      } else if (keym === "netflag" && checknetflag) {
+        return (
+          <td key={keym}>
+            <input
+              type="checkbox"
+              defaultChecked
+              name="netflag"
+              id={index}
+              onChange={changenetflag}
+            />
+          </td>
+        );
+      }
+      return <td key={keym}>{item[keym]}</td>;
+    });
+  };
+
+  const colsElement = getColname(cols);
+  const rowsElement2 = rows.map((item, index) => (
+    <tr key={index} scope="row">
+      {getRecord2(item, index)}
+    </tr>
+  ));
 
   return (
-    <table class="table " style={{ fontSize: "12px" }}>
-      {/* <thead>
-        <tr>{colsElement}</tr>
-      </thead>
-      <tbody>{rowsElement}</tbody> */}
+    <div id="contable">
+    <table
+      id="dtHorizontalExample"
+      className="table table-striped table-bordered table-sm"
+      cellSpacing="0"
+      width="100%"
+    >
       <thead>
         <tr>{colsElement}</tr>
       </thead>
-      
       <tbody>{rowsElement2}</tbody>
     </table>
+    </div>
   );
 }

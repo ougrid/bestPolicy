@@ -5,7 +5,7 @@ const CommOVOut = require("../models").CommOVOut;
 const b_jabilladvisor = require("../models").b_jabilladvisor;
 const b_jabilladvisordetail = require("../models").b_jabilladvisordetail;
 const process = require("process");
-const runningno = require("./lib/runningno");
+const {getRunNo,getCurrentDate} = require("./lib/runningno");
 require("dotenv").config();
 // const Package = require("../models").Package;
 // const User = require("../models").User;
@@ -147,10 +147,10 @@ const submitARPremin = async (req, res) => {
   try {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
+    const cuurentdate = getCurrentDate()
     req.body.master.arno =
       "ARNO" +
-      (await runningno.getRunNo("arno", null, null, "kw", "2023-09-05",t));
+      (await getRunNo("arno", null, null, "kw", cuurentdate,t));
 
     //insert into b_jaaraps
     const arPremIn = await sequelize.query(
@@ -185,7 +185,7 @@ const submitARPremin = async (req, res) => {
 
     //update arno to b_jacashier
     await sequelize.query(
-      `update static_data.b_jacashiers set "ARNO" = :arno where cashierreceiveno = :cashierreceiveno `,
+      `update static_data.b_jacashiers set "dfrpreferno" = :arno where cashierreceiveno = :cashierreceiveno `,
       {
         replacements: {
           arno: req.body.master.arno,
@@ -332,8 +332,7 @@ const saveARPremin = async (req, res) => {
   try {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
-    // req.body.master.arno = "ARNO" +(await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
+  
     const arPremIn = await sequelize.query(
       `insert into static_data.b_jaaraps (billadvisorno, cashierreceiveno, cashieramt, insurerno, advisorno, type, transactiontype, actualvalue, diffamt, status, 
             createusercode )
@@ -525,7 +524,7 @@ const findARPremInDirect = async (req, res) => {
         (select "entityID" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) ) as insureeName , 
        
         j.polid, (select "licenseNo" from static_data."Motors" where id = p."itemList") , (select  "chassisNo" from static_data."Motors" where id = p."itemList"), j.netgrossprem, j.duty, j.tax, j.totalprem, j.commout_rate,
-        j.commout_amt, j.ovout_rate, j.ovout_amt, t.netflag, t.remainamt, j.commin_amt, j.ovin_amt
+        j.commout_amt, j.ovout_rate, j.ovout_amt, 'N' as netflag, t.remainamt, j.commin_amt, j.ovin_amt
         from static_data."Transactions" t 
         join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
         join static_data."Policies" p on p.id = j.polid
@@ -548,8 +547,6 @@ const saveARPreminDirect = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
-    // req.body.master.arno = "ARNO" +(await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
     
     //insert to master jaarap
     const arPremIn = await sequelize.query(
@@ -660,10 +657,10 @@ const submitARPreminDirect = async (req, res) => {
   try {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
+    const cuurentdate = getCurrentDate()
     req.body.master.arno =
       "ARNO" +
-      (await runningno.getRunNo("arno", null, null, "kw", "2023-09-05",t));
+      (await getRunNo("arno", null, null, "kw", cuurentdate,t));
 
     //insert into b_jaaraps
     const arPremIn = await sequelize.query(
@@ -891,8 +888,6 @@ const saveAPPremOut = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
-    // req.body.master.arno = "ARNO" +(await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
     
     //insert to master jaarap
     const arPremIn = await sequelize.query(
@@ -964,10 +959,10 @@ const submitAPPremOut = async (req, res) => {
   try {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
+    const cuurentdate = getCurrentDate()
     req.body.master.apno =
       "APNO" +
-      (await runningno.getRunNo("apno", null, null, "kw", "2023-09-05",t));
+      (await getRunNo("apno", null, null, "kw", cuurentdate,t));
 
     //insert into b_jaaraps
     const arPremIn = await sequelize.query(
@@ -1192,8 +1187,6 @@ const saveARCommIn = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
-    // req.body.master.arno = "ARNO" +(await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
     
     //insert to master jaarap COMM-IN
     const arCommIn = await sequelize.query(
@@ -1317,10 +1310,10 @@ const submitARCommIn = async (req, res) => {
   try {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
+    const cuurentdate = getCurrentDate()
     req.body.master.arno =
       "ARNO" +
-      (await runningno.getRunNo("arno", null, null, "kw", "2023-09-05",t));
+      (await getRunNo("arno", null, null, "kw", cuurentdate,t));
 
     //insert to master jaarap COMM-IN
     const arCommIn = await sequelize.query(
@@ -1392,7 +1385,7 @@ const submitARCommIn = async (req, res) => {
 
  //update arno to b_jacashier
  await sequelize.query(
-  `update static_data.b_jacashiers set "ARNO" = :arno where cashierreceiveno = :cashierreceiveno `,
+  `update static_data.b_jacashiers set "dfrpreferno" = :arno where cashierreceiveno = :cashierreceiveno `,
   {
     replacements: {
       arno: req.body.master.arno,
@@ -1548,8 +1541,6 @@ const saveAPCommOut = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
-    // req.body.master.arno = "ARNO" +(await runningno.getRunNo("arno", null, null, "kw", "2023-09-05"));
     
     //insert to master jaarap COMM-OUT
     const arCommOut = await sequelize.query(
@@ -1625,10 +1616,10 @@ const submitAPCommOut = async (req, res) => {
   try {
     //insert to master jaarap
     const billdate = new Date().toISOString().split("T")[0];
-    // const billno = 'B' +  Date.now()
+    const cuurentdate = getCurrentDate()
     req.body.master.apno =
       "APNO" +
-      (await runningno.getRunNo("apno", null, null, "kw", "2023-09-05",t));
+      (await getRunNo("apno", null, null, "kw", cuurentdate,t));
 
     //insert to master jaarap COMM-OUT
     const arCommOut = await sequelize.query(

@@ -6,50 +6,58 @@ const config = require("../../config.json");
 export default function PremInCreateDirect() {
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
-  const vat = config.vat;
+  const vat = config.tax;
   const [filterData, setFilterData] = useState(
     {
-      
+
       "insurerCode": null,
       "agentCode": null,
       "dueDate": null,
-      "policyNoStart" : null,
-      "policyNoEnd" : null,
-      "endorseNoStart" : null,
-      "endorseNoEnd" : null,
-      "invoiceNoStart" : null,
-      "invoiceNoEnd" : null,
+      "policyNoStart": null,
+      "policyNoEnd": null,
+      "endorseNoStart": null,
+      "endorseNoEnd": null,
+      "invoiceNoStart": null,
+      "invoiceNoEnd": null,
+      cashieramt: 0,
+      netprem: 0,
+      commin: 0,
+      ovin: 0,
+      vatcommin: 0,
+      vatovin: 0,
+      commout: 0,
+      ovout: 0,
 
 
     })
   const [policiesData, setPoliciesData] = useState([])
   const colsData = {
-    
-    select : "select",
+
+    select: "select",
     insurerCode: "insurerCode",
     agentCode: "advisorCode",
-    dueDate:"Duedate",
-    policyNo:"Policyno",
-    endorseNo:"Endorseno",
-    invoiceNo:"Invoiceno",
+    dueDate: "Duedate",
+    policyNo: "Policyno",
+    endorseNo: "Endorseno",
+    invoiceNo: "Invoiceno",
     seqNo: "seqno",
-    customerid:"customerid",
-    insureename:"insuredname",
-    licenseNo:"licenseno",
+    customerid: "customerid",
+    insureename: "insuredname",
+    licenseNo: "licenseno",
     // "province",
-    chassisNo:"chassisno",
-    netgrossprem:"grossprem",
-    duty:"duty",
-    tax:"tax",
-    totalprem:"totalamt",
-    commout_rate:"comm-out%",
-    commout_amt:"comm-out-amt",
-    ovout_rate:"ov-out%",
-    ovout_amt:"ov-out-amt",
-    netflag:"[] net",
-    remainamt:"billpremium",
+    chassisNo: "chassisno",
+    netgrossprem: "grossprem",
+    duty: "duty",
+    tax: "tax",
+    totalprem: "totalamt",
+    commout_rate: "comm-out%",
+    commout_amt: "comm-out-amt",
+    ovout_rate: "ov-out%",
+    ovout_amt: "ov-out-amt",
+    netflag: "[] net",
+    remainamt: "billpremium",
 
-};
+  };
 
 
   const handleChange = (e) => {
@@ -59,7 +67,7 @@ export default function PremInCreateDirect() {
       [e.target.name]: e.target.value,
     }));
   };
-  
+
   const changestatementtype = (e) => {
     // e.preventDefault();
     console.log(e.target.name);
@@ -76,35 +84,35 @@ export default function PremInCreateDirect() {
     // setBillpremiumData(array2)
     // console.log(array2);
 
-};
+  };
 
   const submitFilter = (e) => {
     e.preventDefault();
-    
-      axios
-        .post(url + "/araps/getartransdirect", filterData)
-        .then((res) => {
-          if (res.status === 201) {
-            console.log(res.data);
-            alert("dont find policy");
 
-          } else {
+    axios
+      .post(url + "/araps/getartransdirect", filterData)
+      .then((res) => {
+        if (res.status === 201) {
+          console.log(res.data);
+          alert("dont find policy");
+
+        } else {
 
 
-            console.log(res.data);
-            // const data = { ...filterData, amt: res.data[0].amt }
-            // setFilterData(data)
-            
-            setPoliciesData(res.data)
+          console.log(res.data);
+          // const data = { ...filterData, amt: res.data[0].amt }
+          // setFilterData(data)
 
-          }
-        })
-        .catch((err) => {
+          setPoliciesData(res.data)
 
-          alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
+        }
+      })
+      .catch((err) => {
 
-        });
-    
+        alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
+
+      });
+
 
   };
   //apis
@@ -119,7 +127,7 @@ export default function PremInCreateDirect() {
   }
 
   const savearpremin = async (e) => {
-    
+
     const master = filterData
 
     for (let i = 0; i < policiesData.length; i++) {
@@ -127,8 +135,8 @@ export default function PremInCreateDirect() {
       master.netprem = master.netprem + policiesData[i].totalprem;
       master.commin = master.commin + policiesData[i].commin_amt;
       master.ovin = master.ovin + policiesData[i].ovin_amt;
-      master.vatcommin = master.vatcommin  + policiesData[i].commin_amt*vat;
-      master.vatovin = master.vatovin + policiesData[i].ovin_amt*vat;
+      master.vatcommin = master.vatcommin + policiesData[i].commin_amt * vat;
+      master.vatovin = master.vatovin + policiesData[i].ovin_amt * vat;
       if (policiesData[i].netflag === 'N') {
         master.commout = master.commout + policiesData[i].commout_amt;
         master.ovout = master.ovout + policiesData[i].ovout_amt;
@@ -154,17 +162,21 @@ export default function PremInCreateDirect() {
 
   const submitarpremin = async (e) => {
     const master = filterData
-
+    const selecteddata = []
     for (let i = 0; i < policiesData.length; i++) {
-      master.cashieramt = master.cashieramt + policiesData[i].netamt;
-      master.netprem = master.netprem + policiesData[i].totalprem;
-      master.commin = master.commin + policiesData[i].commin_amt;
-      master.ovin = master.ovin + policiesData[i].ovin_amt;
-      master.vatcommin = master.vatcommin  + policiesData[i].commin_amt*vat;
-      master.vatovin = master.vatovin + policiesData[i].ovin_amt*vat;
-      if (policiesData[i].netflag === 'N') {
-        master.commout = master.commout + policiesData[i].commout_amt;
-        master.ovout = master.ovout + policiesData[i].ovout_amt;
+      if (policiesData[i].select) {
+
+        master.cashieramt = master.cashieramt + policiesData[i].netamt;
+        master.netprem = master.netprem + policiesData[i].totalprem;
+        master.commin = master.commin + policiesData[i].commin_amt;
+        master.ovin = master.ovin + policiesData[i].ovin_amt;
+        master.vatcommin = master.vatcommin + policiesData[i].commin_amt * vat;
+        master.vatovin = master.vatovin + policiesData[i].ovin_amt * vat;
+        if (policiesData[i].netflag === 'N') {
+          master.commout = master.commout + policiesData[i].commout_amt;
+          master.ovout = master.ovout + policiesData[i].ovout_amt;
+        }
+        selecteddata.push(policiesData[i])
       }
     }
     // master.cashieramt = policiesData.reduce((acc, curr) => acc + curr.netamt, 0);
@@ -178,10 +190,10 @@ export default function PremInCreateDirect() {
     master.whtovin = master.ovin * wht
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
-    console.log({ master: master, trans: policiesData });
-    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: policiesData }).then((res) => {
+    console.log({ master: master, trans: selecteddata });
+    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: selecteddata }).then((res) => {
       alert("save account recive successed!!!");
-      // window.location.reload(false);
+      window.location.reload(false);
     });
   };
 
@@ -207,7 +219,7 @@ export default function PremInCreateDirect() {
           </div>
           <div className="col-4 ">
 
-          <button className="btn btn-success" onClick={submitFilter}>SEARCH</button>
+            <button className="btn btn-success" onClick={submitFilter}>SEARCH</button>
           </div>
         </div>
         {/* advisorCode  */}
@@ -352,11 +364,11 @@ export default function PremInCreateDirect() {
           </div>
         </div> */}
         <div className="row my-3">
-          
+
         </div>
       </form>
       <div>
-        <PremInTable cols={colsData} rows={policiesData}  setPoliciesData={setPoliciesData}/>
+        <PremInTable cols={colsData} rows={policiesData} setPoliciesData={setPoliciesData} checknetflag={true} />
         <button className="btn btn-primary">Export To Excel</button>
         <button className="btn btn-warning" onClick={(e) => savearpremin(e)}>save</button>
         <button className="btn btn-success" onClick={(e) => submitarpremin(e)}>submit</button>

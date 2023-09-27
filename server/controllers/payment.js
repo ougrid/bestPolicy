@@ -5,7 +5,7 @@ const CommOVOut = require("../models").CommOVOut;
 const b_jabilladvisor = require('../models').b_jabilladvisor;
 const b_jabilladvisordetail = require('../models').b_jabilladvisordetail;
 const process = require('process');
-const runningno = require('./lib/runningno');
+const {getRunNo,getCurrentDate} = require("./lib/runningno");
 require('dotenv').config();
 // const Package = require("../models").Package;
 // const User = require("../models").User;
@@ -161,8 +161,8 @@ const createbilladvisor = async (req,res) =>{
   
       //insert to master jabilladvisor
       const billdate = new Date().toISOString().split('T')[0]
-      // const billno = 'B' +  Date.now()
-      req.body.bill.billadvisor = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05',t);
+      const currentdate = getCurrentDate()
+      req.body.bill.billadvisor = 'BILL' + await getRunNo('bill',null,null,'kw',currentdate,t);
       const billadvisors = await sequelize.query(
         'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active ) ' +
         'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode limit 1), '+
@@ -290,8 +290,8 @@ const editbilladvisor = async (req,res) =>{
   //insert new bill to master jabilladvisor
   const t = await sequelize.transaction();
   try{
-
-    req.body.bill.billadvisorno = 'BILL' + await runningno.getRunNo('bill',null,null,'kw','2023-09-05',t);
+    const currentdate = getCurrentDate()
+    req.body.bill.billadvisorno = 'BILL' + await getRunNo('bill',null,null,'kw',currentdate,t);
   const billadvisors = await sequelize.query(
     'INSERT INTO static_data.b_jabilladvisors (insurerno, advisorno, billadvisorno, billdate, createusercode, amt, cashierreceiptno, active, old_keyid ) ' +
     'VALUES ((select id from static_data."Insurers" where "insurerCode" = :insurerCode), '+
@@ -405,7 +405,7 @@ const editbilladvisor = async (req,res) =>{
 const createcashier = async (req,res) =>{
   //deaw ma tum tor
   const cashier = await sequelize.query(
-    'insert into static_data.b_jacashiers (billadvisorno, cashierreceiven, cashierdate, ARNO, transactiontype, insurercode,advisorcode, customerid, '+
+    'insert into static_data.b_jacashiers (billadvisorno, cashierreceiven, cashierdate, dfrpreferno, transactiontype, insurercode,advisorcode, customerid, '+
     'receivefrom, receivename, receivetype, "partnerBank", "partnerBankbranch", "partnerAccountno", amt, createusercode, "amityBank", "amityBankbranch", "amityAccountno") '+
     'values ()',
         {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Modal from 'react-bootstrap/Modal';
@@ -31,8 +31,10 @@ const Joi = require('joi');
 const CreateCashierReceive = () => {
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
+    const { txtype } = useParams();
 
-    const [billAdvisorNo, setBillAdvisorNo] = useState("")
+    const [billAdvisorNo, setBillAdvisorNo] = useState("-")
+    const [dfrpreferno, setDfrpreferno] = useState("-");
     const [Insurer, setInsurer] = useState("");
     const [Advisor, setAdvisor] = useState("")
     const [Customer, setCustomer] = useState("");
@@ -79,23 +81,29 @@ const CreateCashierReceive = () => {
         console.log(billAdvisorNo)
 
         let data = JSON.stringify({
-            "billadvisorno": billAdvisorNo
+            "filter": txtype === 'premin' ? billAdvisorNo : dfrpreferno
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo", data, {
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo?txtype=" + txtype, data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
             }
         })
             .then((response) => {
-                // console.log(response);
+                console.log(response);
                 setInsurer(response.data[0].insurerCode)
                 setInsurerReadOnly(true)
                 setAdvisoryReadOnly(true)
                 setAdvisor(response.data[0].agentCode)
                 setTransactionTypeReadOnly(true)
                 setReceiveFromReadOnly(true)
-                setReceiveForm("Advisor")
+                if (txtype === 'premin') {
+                    setReceiveForm("Advisor")
+                } else {
+                    setReceiveForm("Insurer")
+                }
+                setReceiveName(response.data[0].receivename)
+                setAmount(response.data[0].amt)
 
 
             })
@@ -107,6 +115,7 @@ const CreateCashierReceive = () => {
     }
 
     useEffect(() => {
+        console.log(txtype);
         let data = {}
         axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBrand", data, {
             headers: {
@@ -141,6 +150,13 @@ const CreateCashierReceive = () => {
             .catch((error) => {
                 console.log(error);
             });
+
+        if (txtype === 'premin') {
+            setTransactionType('PREM-IN')
+        } else if (txtype === 'commin') {
+            setReceiveForm('Insurer')
+            setTransactionType('COMM-IN')
+        }
     }, []);
 
 
@@ -243,9 +259,10 @@ const CreateCashierReceive = () => {
         let data = {
             // keyid: Joi.string().required(),
             billadvisorno: billAdvisorNo,
-            cashierreceiveno: cashierReceiptNo,
+            dfrpreferno: dfrpreferno,
+            // cashierreceiveno: cashierReceiptNo,
             cashierdate: cashierDate,
-            dfrpreferno: "1111",
+            dfrpreferno: dfrpreferno,
             transactiontype: transactionType,
             insurercode: Insurer,
             advisorcode: Advisor,
@@ -253,7 +270,7 @@ const CreateCashierReceive = () => {
             receivefrom: receiveForm,
             receivename: receiveName,
             receivetype: receiveType,
-            
+
             Amt: amount
             // createdate: Joi.date().required(),
             // createtime: Joi.string().required(),
@@ -269,10 +286,10 @@ const CreateCashierReceive = () => {
 
         const joidata = {
             // keyid: Joi.string().required(),
-            billadvisorno: Joi.string().required(),
-            cashierreceiveno: Joi.required(),
+            billadvisorno: Joi.string(),
+            // cashierreceiveno: Joi.required(),
             cashierdate: Joi.date().required(),
-            dfrpreferno: Joi.string().required(),
+            dfrpreferno: Joi.string(),
             transactiontype: Joi.string().required(),
             insurercode: Joi.string().required(),
             advisorcode: Joi.string().required(),
@@ -292,7 +309,7 @@ const CreateCashierReceive = () => {
             // cancelusercode: Joi.string().required(),
             // status: Joi.string().valid('I').required()
         }
-        if (receiveType === "Cheque" || receiveType === "Bank-Transfer" ) {
+        if (receiveType === "Cheque" || receiveType === "Bank-Transfer") {
             joidata.refno = Joi.string().required()
             joidata.PartnerBank = Joi.string().required()
             joidata.PartnerBankbranch = Joi.string().required()
@@ -311,8 +328,8 @@ const CreateCashierReceive = () => {
             data.refno = refno
         }
         const schema = Joi.object(joidata);
-    
-        
+
+
         const { error } = schema.validate(data);
         if (error) {
             console.log(data)
@@ -321,8 +338,8 @@ const CreateCashierReceive = () => {
             setShow(true)
             return
         }
-
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/submitCasheir", data, {
+        console.log(data);  
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/submitCasheir?txtype=" + txtype, data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
@@ -347,7 +364,7 @@ const CreateCashierReceive = () => {
     const handleSave = () => {
         const schema = Joi.object({
             // keyid: Joi.string().required(),
-            billadvisorno: Joi.string().required(),
+            // billadvisorno: Joi.string().required(),
             // cashierreceiveno: Joi.string().required(),
             // cashierdate: Joi.date().required(),
             // dfrpreferno: Joi.string().required(),
@@ -379,6 +396,7 @@ const CreateCashierReceive = () => {
         });
         let data = {
             // keyid: Joi.string().required(),
+            dfrpreferno: dfrpreferno,
             billadvisorno: billAdvisorNo,
             // cashierreceiveno: Joi.string().required(),
             // cashierdate: Joi.date().required(),
@@ -480,20 +498,40 @@ const CreateCashierReceive = () => {
                 <div className="row justify-content-center">
                     <div className="col-lg-6">
                         <form>
-                            <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการ Cashier ใหม่</h2>
-
+                            {txtype === 'premin' ?
+                                <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการ Cashier PREM-IN ใหม่</h2>
+                                :
+                                <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการ Cashier COMM-IN ใหม่</h2>
+                            }
                             {/* Bill Advisor No */}
-                            <div className="row mb-3">
-                                <div className="col-4">
-                                    <label htmlFor="billAdvisorNo" className="form-label">Bill Advisor No</label>
+                            {txtype === 'premin' ?
+                                <div className="row mb-3">
+                                    <div className="col-4">
+                                        <label htmlFor="billAdvisorNo" className="form-label">Bill Advisor No</label>
+                                    </div>
+                                    <div className="col-7">
+                                        <input type="text" required id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control" />
+                                    </div>
+                                    <div className="col-1 text-center">
+                                        <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
+                                    </div>
                                 </div>
-                                <div className="col-7">
-                                    <input type="text" required id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control" />
+                                :
+
+                                <div className="row mb-3">
+                                    <div className="col-4">
+                                        <label htmlFor="dfrpreferno" className="form-label">เลขที่รายการที่ลูกค้าจ่ายเงินที่ประกัน</label>
+                                    </div>
+                                    <div className="col-7">
+                                        <input type="text" required id="dfrpreferno" value={dfrpreferno} onChange={(e) => setDfrpreferno(e.target.value)} className="form-control" />
+                                    </div>
+                                    <div className="col-1 text-center">
+                                        <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
+                                    </div>
                                 </div>
-                                <div className="col-1 text-center">
-                                    <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
-                                </div>
-                            </div>
+                            }
+
+
 
                             {/* Insurer */}
                             <div className="row mb-3">
@@ -501,7 +539,13 @@ const CreateCashierReceive = () => {
                                     <label htmlFor="Insurer" className="form-label">Insurer</label>
                                 </div>
                                 <div className="col-7">
-                                    <input type="text" id="Insurer" required value={Insurer} readOnly={insurerReadOnly} onChange={(e) => setInsurer(e.target.value)} className="form-control" />
+                                    <input type="text" id="Insurer" required value={Insurer} readOnly={insurerReadOnly}
+                                        disabled={receiveFromReadOnly}
+                                        style={{
+                                            backgroundColor: receiveFromReadOnly ? 'grey' : 'white',
+                                            color: receiveFromReadOnly ? 'white' : null
+                                        }}
+                                        onChange={(e) => setInsurer(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                             {/* Advisor */}
@@ -510,7 +554,12 @@ const CreateCashierReceive = () => {
                                     <label htmlFor="Advisor" className="form-label">Advisor</label>
                                 </div>
                                 <div className="col-7">
-                                    <input type="text" id="Advisor" required value={Advisor} readOnly={advisoryReadOnly} onChange={(e) => setAdvisor(e.target.value)} className="form-control" />
+                                    <input type="text" id="Advisor" required value={Advisor} readOnly={advisoryReadOnly}
+                                        disabled={receiveFromReadOnly}
+                                        style={{
+                                            backgroundColor: receiveFromReadOnly ? 'grey' : 'white',
+                                            color: receiveFromReadOnly ? 'white' : null
+                                        }} onChange={(e) => setAdvisor(e.target.value)} className="form-control" />
                                 </div>
                             </div>
 
@@ -525,14 +574,14 @@ const CreateCashierReceive = () => {
                             </div>
 
                             {/* Cashier Receipt No */}
-                            <div className="row mb-3">
+                            {/* <div className="row mb-3">
                                 <div className="col-4">
                                     <label htmlFor="cashierReceiptNo" className="form-label">Cashier Receipt No</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="number" id="cashierReceiptNo" required value={cashierReceiptNo} onChange={(e) => setCashierReceiptNo(e.target.value)} className="form-control" />
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Cashier Date */}
                             <div className="row mb-3">
@@ -550,16 +599,33 @@ const CreateCashierReceive = () => {
                                     <label htmlFor="receiveForm" className="form-label">Receive Form</label>
                                 </div>
                                 <div className="col-7">
-                                    <select type="text" id="receiveForm" value={receiveForm} onChange={(e) => setReceiveForm(e.target.value)}
-                                        className="form-control"
-                                        disabled={receiveFromReadOnly}
-                                        style={{ backgroundColor: receiveFromReadOnly ? 'grey' : 'white' }}
-                                    >
-                                        <option value="" disabled>Select Transaction Type</option>
-                                        <option value="Advisor">Advisor</option>
-                                        <option value="Insurer">Insurer</option>
-                                        <option value="Customer">Customer</option>
-                                    </select>
+                                    {txtype === 'premin' ?
+                                        <select type="text" id="receiveForm" value={receiveForm} onChange={(e) => setReceiveForm(e.target.value)}
+                                            className="form-control"
+                                            disabled={receiveFromReadOnly}
+                                            style={{
+                                                backgroundColor: receiveFromReadOnly ? 'grey' : 'white',
+                                                color: receiveFromReadOnly ? 'white' : null
+                                            }}
+
+                                        >
+                                            <option value="" disabled>Select Transaction Type</option>
+                                            <option value="Advisor">Advisor</option>
+
+                                            <option value="Customer">Customer</option>
+                                        </select>
+                                        :
+                                        <select type="text" id="receiveForm" value={receiveForm} onChange={(e) => setReceiveForm(e.target.value)}
+                                            className="form-control" disabled
+
+                                            style={{ backgroundColor: 'grey', color: 'white' }}
+
+                                        >
+                                            <option value="" disabled>Select Transaction Type</option>
+
+                                            <option value="Insurer">Insurer</option>
+
+                                        </select>}
                                 </div>
                             </div>
 
@@ -569,7 +635,13 @@ const CreateCashierReceive = () => {
                                     <label htmlFor="receiveName" className="form-label">Receive Name</label>
                                 </div>
                                 <div className="col-7">
-                                    <input type="text" id="receiveName" value={receiveName} required onChange={(e) => setReceiveName(e.target.value)} className="form-control" />
+                                    <input type="text" id="receiveName" value={receiveName} required
+                                        disabled={receiveFromReadOnly}
+                                        style={{
+                                            backgroundColor: receiveFromReadOnly ? 'grey' : 'white',
+                                            color: receiveFromReadOnly ? 'white' : null
+                                        }}
+                                        onChange={(e) => setReceiveName(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                             {/* Receive Type */}
@@ -600,8 +672,8 @@ const CreateCashierReceive = () => {
                                         value={transactionType}
                                         onChange={(e) => setTransactionType(e.target.value)}
                                         className="form-control"
-                                        disabled={transactionTypeReadOnly}
-                                        style={{ backgroundColor: transactionTypeReadOnly ? 'grey' : 'white' }}
+                                        disabled
+                                        style={{ backgroundColor: 'grey', color: 'white' }}
                                     >
                                         <option value="" disabled>Select Transaction Type</option>
                                         <option value="PREM-IN">PREM-IN</option>
@@ -625,7 +697,7 @@ const CreateCashierReceive = () => {
                                         </div>
                                     </div>
 
-                                    
+
                                     {/* Bank Partner */}
                                     <div className="row mb-3">
                                         <div className="col-4">
@@ -797,7 +869,13 @@ const CreateCashierReceive = () => {
                                     <label htmlFor="amount" className="form-label">Amount</label>
                                 </div>
                                 <div className="col-7">
-                                    <input type="text" id="amount" required value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control" />
+                                    <input type="text" id="amount" required value={amount}
+                                        disabled={receiveFromReadOnly}
+                                        style={{
+                                            backgroundColor: receiveFromReadOnly ? 'grey' : 'white',
+                                            color: receiveFromReadOnly ? 'white' : null
+                                        }}
+                                        onChange={(e) => setAmount(e.target.value)} className="form-control" />
                                 </div>
                             </div>
 

@@ -75,7 +75,8 @@ function Nav() {
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/cashier/findcashier">ค้นหารายการ</a></li>
-              <li><a class="dropdown-item" href="/cashier/createcashier">สร้างรายการใหม่</a></li>
+              <li><a class="dropdown-item" href="/cashier/createcashier/premin">สร้างรายการรับเงิน Premin</a></li>
+              <li><a class="dropdown-item" href="/cashier/createcashier/commin">สร้างรายการรับเงิน Commin</a></li>
               <li><a class="dropdown-item" href="/cashier/editcashier">แก้ไขรายการ</a></li>
             </ul>
           </div>
