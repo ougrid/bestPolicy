@@ -111,7 +111,7 @@ namespace report.Controllers
                 worksheet.Cell(currentRow, 30).Value = "comm-out-amt";
                 worksheet.Cell(currentRow, 31).Value = "ov-out%";
                 worksheet.Cell(currentRow, 32).Value = "[]net";
-                worksheet.Cell(currentRow, 32).Value = "billpremium";
+                worksheet.Cell(currentRow, 32).Value = "billpremium ";
 
 
                 foreach (var record in records)
