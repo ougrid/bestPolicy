@@ -42,39 +42,39 @@ module.exports = {
       rateComOut: {
         type: Sequelize.FLOAT
       },
-      amountComOut: {
-        type: Sequelize.FLOAT
-      },
+      // amountComOut: {
+      //   type: Sequelize.FLOAT
+      // },
       rateOVOut_1: {
         type: Sequelize.FLOAT
       },
-      amountOVOut_1: {
-        type: Sequelize.FLOAT
-      },
-      rateOVOut_2: {
-        type: Sequelize.FLOAT
-      },
-      amountOVOut_2: {
-        type: Sequelize.FLOAT
-      },
-      rateOVOut_3: {
-        type: Sequelize.FLOAT
-      },
-      amountOVOut_3: {
-        type: Sequelize.FLOAT
-      },
-      rateOVOut_4: {
-        type: Sequelize.FLOAT
-      },
-      amountOVOut_4: {
-        type: Sequelize.FLOAT
-      },
-      rateOVOut_5: {
-        type: Sequelize.FLOAT
-      },
-      amountOVOut_5: {
-        type: Sequelize.FLOAT
-      },
+      // amountOVOut_1: {
+      //   type: Sequelize.FLOAT
+      // },
+      // rateOVOut_2: {
+      //   type: Sequelize.FLOAT
+      // },
+      // amountOVOut_2: {
+      //   type: Sequelize.FLOAT
+      // },
+      // rateOVOut_3: {
+      //   type: Sequelize.FLOAT
+      // },
+      // amountOVOut_3: {
+      //   type: Sequelize.FLOAT
+      // },
+      // rateOVOut_4: {
+      //   type: Sequelize.FLOAT
+      // },
+      // amountOVOut_4: {
+      //   type: Sequelize.FLOAT
+      // },
+      // rateOVOut_5: {
+      //   type: Sequelize.FLOAT
+      // },
+      // amountOVOut_5: {
+      //   type: Sequelize.FLOAT
+      // },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

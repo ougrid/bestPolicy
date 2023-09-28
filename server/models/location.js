@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     telNum_3: DataTypes.STRING,
     locationType: DataTypes.CHAR,
     entityID:  DataTypes.INTEGER,
-    note:  DataTypes.STRING,
+    // note:  DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Location',

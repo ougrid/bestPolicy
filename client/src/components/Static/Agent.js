@@ -26,7 +26,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Agent = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [agentData, setAgentData] = useState({ entityID: null });
   const [entityData, setEntityData] = useState({ personType: "P" });
@@ -93,7 +93,7 @@ const Agent = () => {
 
                 const array = []
                 province.data.forEach(ele => {
-                    array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+                    array.push(<option key={ele.id} value={ele.id}>{ele.class} : {ele.subClass}</option>)
                 });
                 setInsureTypeDD(array)
 
@@ -247,7 +247,13 @@ const removeRow = (e) => {
 };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault({
+      agent: agentData,
+      entity: entityData,
+      location: locationData,
+      commOVOut:comOvOutData
+    });
+    console.log();
     axios
       .post(url + "/persons/agentnew", {
         agent: agentData,
@@ -305,7 +311,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เครดิตเทอมค่าเบี้ย <span class="text-danger"> *</span></label>
             <InputBtn
                 className="form-control"
-              type="text"
+              type="number"
               required
               // placeholder="InsurerCode"
               name="premCreditT"
@@ -316,7 +322,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เครดิตเทอมค่าcomm/ov <span class="text-danger"> *</span></label>
             <InputBtn
                 className="form-control"
-              type="text"
+              type="number"
               required
               // placeholder="InsurerCode"
               name="commovCreditT"
@@ -348,7 +354,7 @@ const removeRow = (e) => {
                   onChange={changeEntity}
                 >
                   <option selected value="P">บุคคล</option>
-                  <option value="C">นิติบุคคล</option>
+                  <option value="O">นิติบุคคล</option>
                 </select>
               </div>
               <div class="col-1"></div>
@@ -404,7 +410,43 @@ const removeRow = (e) => {
          
           
         </div>
-
+        <div class="row">
+          <div class="col-2 "></div>
+          <div class="col-2">
+            <label class="form-label ">
+              จดทะเบียน vat
+            </label>
+            <InputBtn
+              type="checkbox"
+              name="vatflag"
+              onChange={(e) =>
+                setAgentData({ ...agentData, vatflag: e.target.checked })
+              }
+            />
+          </div>
+          <div class="col-2">
+            <label class="form-label ">
+              เลขที่จดทะเบียน
+            </label>
+            <InputBtn
+              className="form-control"
+              type="text"
+              name="taxno"
+              onChange={changeAgent}
+            />
+          </div>
+          <div class="col-2">
+            <label class="form-label ">
+              อัตราภาษีหัก ณ ที่จ่าย
+            </label>
+            <InputBtn
+              className="form-control"
+              type='number'
+              name="deducttaxrate"
+              onChange={changeAgent}
+            />
+          </div>
+        </div>
 
         {/* location table */}
         <div class="row">

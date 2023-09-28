@@ -15,10 +15,10 @@ namespace report.Models
         public string lastVersion { get; set; } = null!;
         public DateTime actDate { get; set; } 
         public DateTime expDate { get; set; } 
-        public float prem { get; set; } 
+        public float netgrossprem { get; set; } 
         public float duty { get; set; } 
-        public float stamp { get; set; } 
-        public float total { get; set; } 
+        public float tax { get; set; } 
+        public float totalprem { get; set; } 
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
     }

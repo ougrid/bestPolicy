@@ -1,6 +1,8 @@
 // const apm = require('elastic-apm-node').start();
 
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 require("dotenv").config();
 
 const methodOverride = require("method-override");
@@ -17,6 +19,7 @@ const corsOptions = {
   origin: process.env.alloworigin,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+
 
 //middleware-every request goes through it
 app.use(cors(corsOptions));
@@ -45,6 +48,7 @@ app.use("/v1/static/tambons", routes.tambons);
 app.use("/v1/static/titles", routes.titles);
 app.use("/v1/static/mt_brands", routes.MT_Brands);
 app.use("/v1/static/mt_models", routes.MT_Models);
+app.use("/v1/static/bank", routes.banks);
 
 app.use("/v1/locations", routes.locations);
 app.use("/v1/persons", routes.persons);
@@ -52,83 +56,39 @@ app.use("/v1/auth", routes.auth);
 app.use("/v1/insures", routes.insures);
 app.use("/v1/policies", routes.policies);
 app.use("/v1/payments", routes.payments);
+app.use("/v1/bills", routes.bills);
 // app.use("/v1/reports", routes.reports);
+app.use("/v1/getrunno", routes.runno);  
+app.use("/v1/araps", routes.arap);  
 
-// app.use("/v1/insures", routes.insures);
-// app.use("/sendmail", routes.sendmail);
+const options ={
+  key:  fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.cert'),
+}
 
-// const morgan = require('morgan');
-//
-// morgan.token('param', function (req, res) { return JSON.stringify(req.params) });
-// app.use(morgan(':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time :param'));
-//
-//
-// const client = require('prom-client');
-//
-// const collectDefaultMetrics = client.collectDefaultMetrics;
-// collectDefaultMetrics({ timeout: 5000 });
-//
-// const counter = new client.Counter({
-//     name: 'node_request_operations_total',
-//     help: 'The total number of processed requests'
+// app.listen(port, () => {
+//     console.log(`App running on http://localhost:${port}
+//                 --- env config ---
+//                 DB_USERNAME = ${process.env.DB_USERNAME}
+//                 DB_PASSWORD = ${process.env.DB_PASSWORD}
+//                 DB_NAME     = ${process.env.DB_NAME}
+//                 DB_HOST     = ${process.env.DB_HOST}
+//                 DB_DIALECT  = ${process.env.DB_DIALECT}
+//                 DB_PORT     = ${process.env.DB_PORT}
+//                 secretkey   = ${process.env.secretkey}
+//                 alloworigin = ${process.env.alloworigin}`);
 // });
-//
-// app.use((req, res, next) => {
-//     counter.inc();
-//     next();
-// });
-//
-// app.get('/metrics', (req, res) => {
-//     res.set('Content-Type', client.register.contentType);
-//     res.end(client.register.metrics());
-// });
-//
-// app.get('/', (req, res) => {
-//     res.send('Hello World!');
-// });
-//
-// const { Client } = require('@elastic/elasticsearch')
-// const client = new Client({ node: process.env.ELKPath })
-//
-// app.use((req, res, next) => {
-//     client.index({
-//         index: 'my-index',
-//         body: {
-//             // your log data
-//         }
-//     }, (err, result) => {
-//         if (err) console.log(err);
-//     });
-//     next();
-// });
-//
-// const http = require('http')
-// const winston = require('winston')
-// const ecsFormat = require('@elastic/ecs-winston-format')
-//
-// const logger = winston.createLogger({
-//     level: 'debug',
-//     format: ecsFormat({ convertReqRes: true }),
-//     transports: [
-//         //new winston.transports.Console(),
-//         new winston.transports.File({
-//             //path to log file
-//             filename: 'logs/log.json',
-//             level: 'debug'
-//         })
-//     ]
-// })
-//
-// const server = http.createServer(handler)
-// server.listen(3000, () => {
-//     logger.info('listening at http://localhost:3000')
-// })
-//
-// function handler (req, res) {
-//     res.setHeader('Foo', 'Bar')
-//     res.end('ok')
-//     logger.info('handled request', { req, res })
-// }
-app.listen(port, () => {
-    console.log(`App running on http://localhost:${port}`);
+const server = https.createServer(options, app);
+
+server.listen(port, () => {
+  console.log(`App running on https://localhost:${port}
+              --- env config ---
+              DB_USERNAME = ${process.env.DB_USERNAME}
+              DB_PASSWORD = ${process.env.DB_PASSWORD}
+              DB_NAME     = ${process.env.DB_NAME}
+              DB_HOST     = ${process.env.DB_HOST}
+              DB_DIALECT  = ${process.env.DB_DIALECT}
+              DB_PORT     = ${process.env.DB_PORT}
+              secretkey   = ${process.env.secretkey}
+              alloworigin = ${process.env.alloworigin}`);
 });

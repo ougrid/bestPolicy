@@ -5,7 +5,7 @@ import { Container } from "../StylesPages/PagesLayout";
 const config = require("../../config.json");
 
 const PackagesDetails = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [packages, setPackages] = useState([]);
   useEffect(() => {
     axios.get(url + "/packages").then((res) => {

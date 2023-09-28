@@ -1,7 +1,11 @@
-﻿using ClosedXML.Excel;
+﻿using AspNetCore.Reporting;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using report.Models;
 using report.Services;
+using System.Data;
 
 namespace report.Controllers
 {
@@ -12,10 +16,12 @@ namespace report.Controllers
     {
         private readonly ITransactionService _transactionService;
         private readonly IPolicyService _policyService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ReportController(ITransactionService transactionService, IPolicyService policyService)
+        public ReportController(ITransactionService transactionService, IPolicyService policyService,  IWebHostEnvironment webHostEnvironment)
         {
             _transactionService = transactionService;
+            this._webHostEnvironment = webHostEnvironment;
             _policyService = policyService;
         }
         [Route("[controller]")]
@@ -117,10 +123,10 @@ namespace report.Controllers
                     //worksheet.Cell(currentRow, 8).Value = "เลที่ใบกำกับภาษี";
                     //worksheet.Cell(currentRow, 9).Value = "เลขตัวถัง";
                     worksheet.Cell(currentRow, 10).Value = record.policyNo ;
-                    worksheet.Cell(currentRow, 11).Value = record.prem;
+                    worksheet.Cell(currentRow, 11).Value = record.netgrossprem;
                     worksheet.Cell(currentRow, 12).Value = record.duty;
-                    worksheet.Cell(currentRow, 13).Value = record.stamp;
-                    worksheet.Cell(currentRow, 14).Value = record.total;
+                    worksheet.Cell(currentRow, 13).Value = record.tax;
+                    worksheet.Cell(currentRow, 14).Value = record.totalprem;
                     //worksheet.Cell(currentRow, 15).Value = "เลขที่กรมธรรม์ (พรบ.)";
                     //worksheet.Cell(currentRow, 16).Value = "เบี้ย พรบ.";
                     //worksheet.Cell(currentRow, 17).Value = "อากร พรบ.";
@@ -142,12 +148,55 @@ namespace report.Controllers
 
                     return File(
                         content,
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "billing"+ dateNow + ".xlsx");
+                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "billing" + dateNow + ".xlsx");
+                    
                 }
             }
 
 
+        }
+
+
+        [Route("[controller]/billpdf")]
+        [HttpPost]
+        public IActionResult Export()
+        {
+            var dt = new DataTable();
+            dt = GetBillList();
+            string mimetype = "";
+            int extension = 1;
+
+            var baseDirectory = AppContext.BaseDirectory;
+            //var path = $"{this._webHostEnvironment.WebRootPath}\\Reports\\rpMotor3.rdlc";
+            var path = Path.Combine(baseDirectory, "Reports", "rpMotor3.rdlc");
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            parameters.Add("insuree_fullname", "บริษัท ออโต้บลิส จำกัด");
+            LocalReport lr = new LocalReport(path);
+            //lr.AddDataSource("dsEmployee", dt);
+            var result = lr.Execute(RenderType.Pdf, extension, parameters, mimetype);
+            return File(result.MainStream, "application/pdf") ;
+        }
+        private DataTable GetBillList()
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("EmpId");
+            dt.Columns.Add("EmpName");
+            dt.Columns.Add("Department");
+            dt.Columns.Add("BirthDate");
+            DataRow row;
+
+            for (int i = 1; i < 100; i++)
+            {
+                row = dt.NewRow();
+                row["EmpId"] = i;
+                row["EmpName"] = i.ToString() + " Empl";
+                row["Department"] = "XXYY";
+                row["BirthDate"] = DateTime.Now.AddDays(-10000);
+                dt.Rows.Add(row);
+            }
+            return dt;
         }
 
         [Route("[controller]/json")]

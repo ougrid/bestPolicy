@@ -50,9 +50,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.CHAR
       },
-      note: {
-        type: Sequelize.STRING
-      },
       entityID: {
         allowNull: false,
         type: Sequelize.INTEGER
@@ -60,6 +57,19 @@ module.exports = {
       stamentType: {
         defaultValue:"Gross",
         type: Sequelize.STRING
+      },
+      vatflag: {
+        defaultValue:"N",
+        type: Sequelize.STRING
+      },
+      deducttaxrate: {
+        type: Sequelize.INTEGER
+      },
+      taxno: {
+        type: Sequelize.STRING
+      },
+      contactPersonID: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         defaultValue: new Date(),

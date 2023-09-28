@@ -9,17 +9,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      voluntarycode: {
+      voluntaryCode: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      brandID: {
+      brand: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
-      modelID: {
+      model: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       specname: {
         type: Sequelize.STRING

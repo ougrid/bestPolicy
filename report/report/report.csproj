@@ -10,15 +10,32 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.102.0" />
-    <PackageReference Include="Dapper" Version="2.0.143" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-    <PackageReference Include="Npgsql" Version="7.0.4" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <None Remove="Reports\rpMotor3.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Reports\" />
+    <Content Include="Reports\rpMotor3.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
+    <PackageReference Include="ClosedXML" Version="0.102.0" />
+    <PackageReference Include="Dapper" Version="2.0.143" />
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms" Version="150.1586.0" />
+    <PackageReference Include="Microsoft.ReportViewer.Common" Version="10.0.40219.1" />
+    <PackageReference Include="Microsoft.ReportViewer.WebForms" Version="10.0.40219.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
+    <PackageReference Include="Npgsql" Version="7.0.4" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.18" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
   </ItemGroup>
 
 </Project>

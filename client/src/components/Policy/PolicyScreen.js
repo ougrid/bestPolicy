@@ -7,8 +7,10 @@ import { async } from "q";
 const config = require("../../config.json");
 
 const PolicyScreen = (props) => {
- 
-  const url = config.url;
+
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+  const tax = config.tax;
+  const duty = config.duty;
 
   //import excel
   const [formData, setFormData] = useState({});
@@ -26,7 +28,6 @@ const PolicyScreen = (props) => {
 
   const handleChange = async (e) => {
     e.preventDefault();
-
     //set dropdown subclass when class change
     if (e.target.name === "class") {
       const array = [];
@@ -42,52 +43,55 @@ const PolicyScreen = (props) => {
       setInsureSubClassDD(array);
     }
     //  set totalprem
-    if (
-      formData.duty !== null &&
-      formData.tax !== null &&
-      formData.grossprem !== null
-    ) {
-      const newTotalPrem =
-        parseFloat(formData.grossprem) -
-        parseFloat(formData.duty) -
-        parseFloat(formData.tax);
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-        totalprem: newTotalPrem,
-      }));
-    } else {
-      if (e.target.name === 'commIn%') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          commInamt: (formData[`commIn%`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'ovIn%') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          ovInamt: (formData[`ovIn%`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'commOut%') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          commOutamt: (formData[`commOut%`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'ovOut%') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          ovOutamt: (formData[`ovOut%`] * formData[`grossprem`]) / 100
-        }));
-      }
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-      }));
-    }
-
+    // if (
+    //   formData.duty !== null &&
+    //   formData.tax !== null &&
+    //   formData.grossprem !== null
+    // ) {
+    //   const newTotalPrem =
+    //     parseFloat(formData.netgrossprem) +
+    //     parseFloat(formData.duty) +
+    //     parseFloat(formData.tax);
+    //   setFormData((prevState) => ({
+    //     ...prevState,
+    //     [e.target.name]: e.target.value,
+    //     totalprem: newTotalPrem,
+    //   }));
+    // } else {
+    //   if (e.target.name === 'commin_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'ovin_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'commout_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'ovout_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   }
+    //   setFormData((prevState) => ({
+    //     ...prevState,
+    //     [e.target.name]: e.target.value,
+    //   }));
+    // }
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
     //set dropdown title follow to personType
     if (e.target.name === "personType") {
       if (e.target.value === "P") {
@@ -134,9 +138,6 @@ const PolicyScreen = (props) => {
     }
     //get com/ov setup
 
-    console.log(formData.insurerCode !== null &&
-      formData.class !== null &&
-      formData.subClass !== null);
   };
 
   const getDistrict = (provincename) => {
@@ -167,12 +168,12 @@ const PolicyScreen = (props) => {
         const array = [];
         model.data.forEach((ele) => {
           array.push(
-            <option  value={ele.MODEL} >
+            <option value={ele.MODEL} >
               {ele.MODEL}
             </option>
           );
         });
-        setMotormodelDD (array);
+        setMotormodelDD(array);
       })
       .catch((err) => {
         // alert("cant get aumphur");
@@ -181,20 +182,26 @@ const PolicyScreen = (props) => {
   const getcommov = (e) => {
     e.preventDefault();
     //get comm  ov setup
+    let i =1
+    if(e.target.name === 'btn_comm1'){
+      i =1
+    }else if(e.target.name === 'btn_comm2'){
+      i =2
+    }
     axios
       .post(url + "/insures/getcommov", formData)
       .then((res) => {
         console.log(res.data);
         setFormData((prevState) => ({
           ...prevState,
-          [`commIn%`]: res.data[0].rateComIn,
-          [`ovIn%`]: res.data[0].rateOVIn_1,
-          [`commOut%`]: res.data[0].rateComOut,
-          [`ovOut%`]: res.data[0].rateOVOut_1,
-          [`commInamt`]: res.data[0].rateComIn * formData[`grossprem`] / 100,
-          [`ovInamt`]: res.data[0].rateOVIn_1 * formData[`grossprem`] / 100,
-          [`commOutamt`]: res.data[0].rateComOut * formData[`grossprem`] / 100,
-          [`ovOutamt`]: res.data[0].rateOVOut_1 * formData[`grossprem`] / 100,
+          [`commin_rate`]: res.data[0].rateComIn,
+          [`ovin_rate`]: res.data[0].rateOVIn_1,
+          [`commout${i}_rate`]: res.data[0].rateComOut,
+          [`ovout${i}_rate`]: res.data[0].rateOVOut_1,
+          [`commin_amt`]: res.data[0].rateComIn * formData[`grossprem`] / 100,
+          [`ovin_amt`]: res.data[0].rateOVIn_1 * formData[`grossprem`] / 100,
+          [`commout${i}_amt`]: res.data[0].rateComOut * formData[`grossprem`] / 100,
+          [`ovout${i}_amt`]: res.data[0].rateOVOut_1 * formData[`grossprem`] / 100,
 
         }));
       })
@@ -202,19 +209,19 @@ const PolicyScreen = (props) => {
         // alert("cant get aumphur");
       });
 
-    // if (formData[`commIn%`] == null && formData[`ovIn%`] == null ) {
+    // if (formData[`commin_rate`] == null && formData[`ovin_rate`] == null ) {
     //   setFormData((prevState) => ({
     //     ...prevState,
-    //     [`commIn%`]: 10,
-    //     [`ovIn%`]: 15,
+    //     [`commin_rate`]: 10,
+    //     [`ovin_rate`]: 15,
     //   }));
 
     // }
-    //  if (formData[`commOut%`] == null && formData[`ovOut%`] == null){
+    //  if (formData[`commout_rate`] == null && formData[`ovout_rate`] == null){
     //   setFormData((prevState) => ({
     //     ...prevState,
-    //     [`commOut%`]: 10,
-    //     [`ovOut%`]: 15,
+    //     [`commout_rate`]: 10,
+    //     [`ovout_rate`]: 15,
     //   }));
     // }
 
@@ -254,34 +261,51 @@ const PolicyScreen = (props) => {
 
   const handleSubmit = async (e) => {
     const data = []
-     
-      let t_ogName =null
-      let t_firstName = null
-      let t_lastName = null
-      let idCardType = "idcard"
-      let idCardNo =  null
-      let taxNo = null
-      if (formData.personType === 'P'){
-        t_firstName = formData.t_fn
-        t_lastName = formData.t_ln
-        idCardNo = formData.regisNo.toString()
-        data.push({...formData, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType, t_ogName:t_ogName , taxNo:taxNo})
-      }else{
-        t_ogName = formData.t_fn
-        
-        taxNo = formData.regisNo.toString()
-        data.push({...formData, t_ogName:t_ogName , taxNo:taxNo, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType})
-      }
-    
+
+    let t_ogName = null
+    let t_firstName = null
+    let t_lastName = null
+    let idCardType = "idcard"
+    let idCardNo = null
+    let taxNo = null
+    if (formData.personType === 'P') {
+      t_firstName = formData.t_fn
+      t_lastName = formData.t_ln
+      idCardNo = formData.regisNo.toString()
+      data.push({ ...formData, t_firstName: t_firstName, t_lastName: t_lastName, idCardNo: idCardNo, idCardType: idCardType, t_ogName: t_ogName, taxNo: taxNo })
+    } else {
+      t_ogName = formData.t_fn
+
+      taxNo = formData.regisNo.toString()
+      data.push({ ...formData, t_ogName: t_ogName, taxNo: taxNo, t_firstName: t_firstName, t_lastName: t_lastName, idCardNo: idCardNo, idCardType: idCardType })
+    }
+    data[0].specdiscamt = document.getElementsByName('specdiscamt')[0].value
+    data[0].netgrossprem = document.getElementsByName('grossprem')[0].value - document.getElementsByName('specdiscamt')[0].value
+    data[0].tax = document.getElementsByName('tax')[0].value
+    data[0].duty = document.getElementsByName('duty')[0].value
+    data[0].totalprem = document.getElementsByName('totalprem')[0].value 
+    data[0].commin_amt = document.getElementsByName('commin_amt')[0].value 
+    data[0].ovin_amt = document.getElementsByName('ovin_amt')[0].value 
+    data[0].commout1_amt = document.getElementsByName('commout1_amt')[0].value 
+    data[0].ovout1_amt = document.getElementsByName('ovout1_amt')[0].value 
+    if (document.getElementsByName('commout2_amt')[0]) {
+      data[0].commout2_amt = document.getElementsByName('commout2_amt')[0].value 
+    }
+    if (document.getElementsByName('ovout2_amt')[0]) {
+      
+      data[0].ovout2_amt = document.getElementsByName('ovout2_amt')[0].value 
+    }
+    data[0].commout_amt = document.getElementsByName('commout_amt')[0].value 
+    data[0].ovout_amt = document.getElementsByName('ovout_amt')[0].value 
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policynew/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     });
   };
 
-  
+
   useEffect(() => {
     //get province
     axios
@@ -331,14 +355,23 @@ const PolicyScreen = (props) => {
         // window.location.reload();
         // localStorage.setItem("jwt", token);
 
-        const array = [];
-        insuretype.data.forEach((ele) => {
-          array.push(
-            <option key={ele.id} value={ele.class}>
-              {ele.class}
-            </option>
-          );
-        });
+        // const array = [];
+        // insuretype.data.forEach((ele) => {
+        //   array.push(
+        //     <option key={ele.id} value={ele.class}>
+        //       {ele.class}
+        //     </option>
+        //   );
+        // });
+
+        const uniqueClasses = [...new Set(insuretype.data.map(ele => ele.class))];
+
+        const array = uniqueClasses.map((className, index) => (
+          <option key={index} value={className}>
+            {className}
+          </option>
+        ));
+
         setInsureTypeDD(insuretype.data);
         setInsureClassDD(array);
       })
@@ -396,9 +429,10 @@ const PolicyScreen = (props) => {
     <div>
       <h1 className="text-center">สร้างรายการกรมธรรม์</h1>
       {/* policy table */}
+
       <div className="row form-group form-inline ">
         <div className="col-1"></div>
-        <div className="col-2 form-group  ">
+        {/* <div className="col-2 form-group  ">
           <label class="form-label ">
             เลขที่กรมธรรม์<span class="text-danger"> *</span>
           </label>
@@ -409,7 +443,7 @@ const PolicyScreen = (props) => {
             name={`policyNo`}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         <div class="col-2 form-group ">
           <label class="form-label">
@@ -459,7 +493,7 @@ const PolicyScreen = (props) => {
 
         <div class="col-2 form-group ">
           <label class="form-label px-3">
-            รหัสผู้แนะนำ<span class="text-danger"> *</span>
+            รหัสผู้แนะนำ 1<span class="text-danger"> *</span>
           </label>
           <input
             className="form-control"
@@ -471,6 +505,21 @@ const PolicyScreen = (props) => {
         </div>
 
         <div class="col-2 form-group ">
+          <label class="form-label px-3">
+            รหัสผู้แนะนำ 2<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            defaultValue={formData.agentCode2}
+            name={`agentCode2`}
+            onChange={handleChange}
+          />
+        </div>
+        <div class="col-2 form-group ">
+          <div className="row">
+            
+          <div className="col form-group">
           <label class="form-label ">
             Class<span class="text-danger"> *</span>
           </label>
@@ -484,9 +533,8 @@ const PolicyScreen = (props) => {
             </option>
             {insureClassDD}
           </select>
-        </div>
-
-        <div class="col-2">
+          </div>
+          <div className="col form-group">
           <label class="form-label ">
             Subclass<span class="text-danger"> *</span>
           </label>
@@ -500,7 +548,13 @@ const PolicyScreen = (props) => {
             </option>
             {insureSubClassDD}
           </select>
+          </div>
+          
+          </div>
+         
         </div>
+
+       
       </div>
       {/* policy table */}
 
@@ -522,30 +576,71 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            ภาษี<span class="text-danger"> *</span>
+            ส่วนลด % 
           </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData.tax}
-            name={`tax`}
-            onChange={handleChange}
-          />
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={parseFloat(formData[`specdiscrate`])}
+                name={`specdiscrate`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || ""}
+                name={`specdiscamt`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+
         </div>
 
         <div class="col-2">
-          <label class="form-label ">
-            ค่าแสตมอากรณ์<span class="text-danger"> *</span>
+          <div className="row">
+            <div className="col">
+            <label class="form-label ">
+            ค่าแสตมอากรณ์
           </label>
           <input
             className="form-control"
             type="number"
             step={0.1}
-            value={formData.duty}
+            disabled
+            // netgrossprem * tax 
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
+            //value={formData.duty}
             name={`duty`}
             onChange={handleChange}
           />
+            </div>
+            <div className="col">
+            <label class="form-label ">
+            ภาษี
+          </label>
+          <input
+            className="form-control"
+            type="number"
+            step={0.1}
+            disabled
+            // netgrossprem * tax 
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * tax).toFixed(2)) || ""}
+            //value={formData.tax}
+            name={`tax`}
+            onChange={handleChange}
+          />
+            </div>
+            
+          </div>
+          
         </div>
 
         <div class="col-2">
@@ -556,9 +651,8 @@ const PolicyScreen = (props) => {
             type="number" // Use an input element for displaying numbers
             className="form-control"
             // value={formData.totalprem} // Display the totalprem value from the state
-            value={parseFloat(formData.grossprem) -
-              parseFloat(formData.duty) -
-              parseFloat(formData.tax)}
+            //value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
             step={0.1}
             name={`totalprem`}
             readOnly
@@ -570,121 +664,265 @@ const PolicyScreen = (props) => {
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            comm_in%<span class="text-danger"> *</span>
+            comm_in% <span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`commIn%`]}
-            name={`commIn%`}
-            onChange={(e) => handleChange(e)}
-          />
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commin_rate`]}
+                name={`commin_rate`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={parseFloat((formData[`commin_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2))|| ""}
+                name={`commin_amt`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+
         </div>
+
+
         <div class="col-2">
           <label class="form-label ">
-            จำนวนเงิน<span class="text-danger"> *</span>
+            OV_in % <span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            value={(formData[`commIn%`] * formData[`grossprem`]) / 100 || ""}
-            name={`commInamt`}
-            onChange={(e) => handleChange(e)}
-          />
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovin_rate`]}
+                name={`ovin_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovin_amt`}
+                value={parseFloat((formData[`ovin_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
         </div>
 
         <div class="col-2">
           <label class="form-label ">
-            OV_in %<span class="text-danger"> *</span>
+            comm_out% (1)<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`ovIn%`]}
-            name={`ovIn%`}
-            onChange={handleChange}
-          />
-        </div>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commout1_rate`]}
+                name={`commout1_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                value={parseFloat((formData[`commout1_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                name={`commout1_amt`}
+                onChange={handleChange}
+              />
+            </div>
 
+          </div>
+        </div>
         <div class="col-2">
           <label class="form-label ">
-            จำนวนเงิน<span class="text-danger"> *</span>
+            OV_out % (1)<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            name={`ovInamt`}
-            value={(formData[`ovIn%`] * formData[`grossprem`]) / 100 || ""}
-            onChange={handleChange}
-          />
+
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovout1_rate`]}
+                name={`ovout1_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout1_amt`}
+                //value={(formData[`ovout1_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`ovout1_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
         </div>
+        <div class="col-1 align-bottom">
+        
+          <button type="button" name="btn_comm1" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
+        </div>
+
 
       </div>
 
-      <div className="row">
+      <div class="row">
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            comm_out%<span class="text-danger"> *</span>
+            comm_out% (2)<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`commOut%`]}
-            name={`commOut%`}
-            onChange={handleChange}
-          />
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`commout2_rate`]}
+                name={`commout2_rate`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                //value={(formData[`commin2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`commout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                name={`commout2_amt`}
+                onChange={(e) => handleChange(e)}
+              />
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="col-2">
+          <label class="form-label ">
+            OV_out % (2)<span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={formData[`ovout2_rate`]}
+                name={`ovout2_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout2_amt`}
+                //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={parseFloat((formData[`ovout2_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
         </div>
 
         <div class="col-2">
-          <label class="form-label ">จำนวนเงิน</label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            value={(formData[`commOut%`] * formData[`grossprem`]) / 100 || ""}
-            name={`commOutamt`}
-            onChange={handleChange}
-          />
+          <label class="form-label ">
+            comm_out% (sum)<span class="text-danger"> *</span>
+          </label>
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1}
+                value={parseFloat(formData[`commout1_rate`] || 0)  + parseFloat(formData[`commout2_rate`] || 0)}
+                name={`commout_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                // value={parseFloat((formData[`commout_rate`]  * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ""}
+                value={((document.getElementsByName(`commout_rate`)[0] ? document.getElementsByName(`commout_rate`)[0].value: 0) * ((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ''}
+                name={`commout_amt`}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
         </div>
         <div class="col-2">
           <label class="form-label ">
-            OV_out %<span class="text-danger"> *</span>
+            OV_out % (sum)<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`ovOut%`]}
-            name={`ovOut%`}
-            onChange={handleChange}
-          />
+
+          <div className="row">
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                step={0.1} 
+                value={parseFloat(formData[`ovout1_rate`] || 0)  + parseFloat(formData[`ovout2_rate`] || 0)}
+                name={`ovout_rate`}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col">
+              <input
+                className="form-control"
+                type="number"
+                disabled
+                step={0.1}
+                name={`ovout_amt`}
+                //value={(formData[`ovout2_rate`] * formData[`grossprem`]) / 100 || ""}
+                value={((document.getElementsByName(`ovout_rate`)[0] ? document.getElementsByName(`ovout_rate`)[0].value: 0) * ((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000 ).toFixed(2)) || ''}
+                onChange={handleChange}
+              />
+            </div>
+
+          </div>
         </div>
-        <div class="col-2">
-          <label class="form-label ">จำนวนเงิน</label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            name={`ovOutamt`}
-            value={(formData[`ovOut%`] * formData[`grossprem`]) / 100 || ""}
-            onChange={handleChange}
-          />
+        <div class="col-1 align-bottom">
+
+          <button type="button" name="btn_comm2" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
         </div>
 
-        <div class="col-2 align-bottom">
 
-          <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
-        </div>
       </div>
       {/* entity table */}
       <div class="row">
@@ -702,7 +940,7 @@ const PolicyScreen = (props) => {
               {formData.personType}
             </option>
             <option value="P">บุคคล</option>
-            <option value="C">นิติบุคคล</option>
+            <option value="O">นิติบุคคล</option>
           </select>
         </div>
 
@@ -904,7 +1142,7 @@ const PolicyScreen = (props) => {
         </div>
       </div>
       {/* motor table */}
-      {formData.class === "Motor" ? (
+      {formData.class === "MO" ? (
         <>
           <div class="row">
             <div className="col-1"></div>
@@ -1011,7 +1249,7 @@ const PolicyScreen = (props) => {
         <button className="p-2 btn btn-primary" name="saveChange" onClick={handleSubmit}>
           submit
         </button>
-        
+
       </div>
     </div>
   );

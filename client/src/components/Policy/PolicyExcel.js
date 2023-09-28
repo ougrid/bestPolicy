@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PolicyList from "./PolicyList";
+import PolicyListV2 from "./PolicyListV2";
 import jwt_decode from "jwt-decode";
 import {
   HeaderProfile,
@@ -15,7 +16,7 @@ import { InputBtn } from "../StylesPages/LoginStyles";
 const config = require("../../config.json");
 
 const PolicyExcel = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [profile, setProfile] = useState({});
   // var decoded = jwt_decode(localStorage.getItem("jwt"));
   // useEffect(() => {
@@ -130,7 +131,7 @@ const PolicyExcel = () => {
       </Border> */}
 
       <h2 className="text-center">Add New Policy</h2>
-      <PolicyList userId={profile.id} />
+      <PolicyListV2 userId={profile.id} />
     </>
   );
 };

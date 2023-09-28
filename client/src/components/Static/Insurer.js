@@ -26,14 +26,14 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Insurer = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [insurerData, setInsurerData] = useState({
     entityID: null,
     deductTaxRate: 3,
   });
   const [entityData, setEntityData] = useState({
-    personType: "C",
+    personType: "O",
     ogType: "ประกันภัย",
   });
   const [locationData, setLocationData] = useState({

@@ -48,10 +48,14 @@ module.exports = {
       invioceNo: {
         type: Sequelize.STRING
       },
-      taxInvioceNo: {
+      taxInvoiceNo: {
         type: Sequelize.STRING
       },
-      seqNo: {
+      seqNoins: {
+        defaultValue : 1,
+        type: Sequelize.INTEGER
+      },
+      seqNoagt: {
         defaultValue : 1,
         type: Sequelize.INTEGER
       },
@@ -64,6 +68,18 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       grossprem: {
+        allowNull: false,
+        type: Sequelize.FLOAT
+      },
+      specdiscrate: {
+        defaultValue:0,
+        type: Sequelize.FLOAT
+      },
+      specdiscamt: {
+        defaultValue:0,
+        type: Sequelize.FLOAT
+      },
+      netgrossprem: {
         allowNull: false,
         type: Sequelize.FLOAT
       },
@@ -101,6 +117,34 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      agentCode2: {
+        type: Sequelize.STRING
+      },
+      commout1_rate: {
+        type: Sequelize.FLOAT
+      },
+      commout1_amt: {
+        type: Sequelize.FLOAT
+      },
+      ovout1_rate: {
+        type: Sequelize.FLOAT
+      },
+      ovout1_amt: {
+        type: Sequelize.FLOAT
+      },
+      
+      commout2_amt: {
+        type: Sequelize.FLOAT
+      },
+      ovout2_rate: {
+        type: Sequelize.FLOAT
+      },
+      ovout2_amt: {
+        type: Sequelize.FLOAT
+      },
+      commout2_rate: {
+        type: Sequelize.FLOAT
+      },
       commout_rate: {
         type: Sequelize.FLOAT
       },
@@ -122,7 +166,21 @@ module.exports = {
         allowNull: false,
         type: Sequelize.CHAR
       },
-      
+      applicationNo: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      status: {
+        defaultValue: 'I',
+        allowNull: false,
+        type: Sequelize.CHAR
+      },
+      issueDate :{
+        type: Sequelize.DATE
+      },
+      policyType:{
+        type: Sequelize.STRING
+      },
       createdAt: {
         defaultValue: new Date(),
         allowNull: false,

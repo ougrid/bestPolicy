@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Motor.init({
     voluntaryCode: DataTypes.STRING,
-    brandID: DataTypes.INTEGER,
-    modelID: DataTypes.INTEGER,
+    brand: DataTypes.STRING,
+    model: DataTypes.STRING,
     specname: DataTypes.STRING,
     licenseNo: DataTypes.STRING,
     motorprovinceID: DataTypes.INTEGER,

@@ -24,7 +24,7 @@ module.exports = {
       },
       // password expire date
       pwExpDate: {
-        defaultValue: new Date()+60,
+        
         allowNull: false,
         type: Sequelize.DATEONLY
       },

@@ -26,7 +26,7 @@ module.exports = {
       // i = in or o = out
     
       txtype2: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       // 1  , -1
       subType: {
@@ -53,6 +53,9 @@ module.exports = {
       agentCode: {
         type: Sequelize.STRING
       },
+      agentCode2: {
+        type: Sequelize.STRING
+      },
       insurerCode: {
         type: Sequelize.STRING
       },
@@ -60,17 +63,17 @@ module.exports = {
         allowNull:false,
         type: Sequelize.STRING
       },
-      endoseNo: {
+      endorseNo: {
         type: Sequelize.STRING
       },
       receiptno: {
         type: Sequelize.STRING
       },
-      seqno:{
+      seqNo:{
         defaultValue: 1,
         type: Sequelize.INTEGER
       },
-      grossprem: {
+      netgrossprem: {
         type: Sequelize.FLOAT
       },
       duty: {
@@ -103,13 +106,13 @@ module.exports = {
       "premin-rprefdate": {
         type: Sequelize.DATEONLY
       },
-      "premin-rprefdate-dfrpreferno": {
+      "premin-dfrpreferno": {
         type: Sequelize.STRING
       },
       "premout-rprefdate": {
         type: Sequelize.DATEONLY
       },
-      "premout-rprefdate-dfrpreferno": {
+      "premout-dfrpreferno": {
         type: Sequelize.STRING
       },
       dueDate:{
