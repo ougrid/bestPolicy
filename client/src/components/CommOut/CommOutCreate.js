@@ -114,14 +114,13 @@ export default function CommOutCreate() {
         // setPoliciesRender({ net: net, gross: gross, total: total })
     };
   
-  const handleChange = (e) => {
+    const handleChange = (e) => {
     
-    setFilterData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target,
-    }));
-    console.log(filterData);
-};
+      setFilterData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+      }));
+  };
   const submitFilter = (e) => {
     e.preventDefault();
     console.log(filterData);
@@ -149,7 +148,7 @@ export default function CommOutCreate() {
             }
         })
         .catch((err) => {
-
+          alert("Something went wrong, Try Again.");
             // alert("create snew insuree fail");
 
         });
@@ -159,7 +158,8 @@ export default function CommOutCreate() {
 const saveapcommout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
   await axios.post(url + "/araps/saveapcommout", {master : filterData, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!");
+    alert("save account recive successed!!!")
+    .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };
@@ -167,15 +167,17 @@ const saveapcommout = async (e) => {
 const submitapcommout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
   await axios.post(url + "/araps/submitapcommout", {master :filterData, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!");
+    alert("save account recive successed!!!")
+    .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };
 
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
         <h1>จ่ายเงินค่า comm-out, ov-out ให้กับ advisor</h1>
+       
        
         {/* insurerCode  */}
         <div className="row my-3">
@@ -193,8 +195,8 @@ const submitapcommout = async (e) => {
             />
           </div>
         </div>
-        {/* advisorCode  */}
-        <div className="row my-3">
+       {/* advisorCode  */}
+       <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
             advisorCode
           </label>

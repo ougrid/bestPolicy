@@ -80,13 +80,13 @@ export default function PremInPaid() {
         }
     })
     .catch((err) => {
-
-         alert("error");
+ alert("Something went wrong, Try Again.")
+      
 
     });
   }
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>searchHandler(e)}>
         <h1>แสดงรายการที่รับชำระหนี้</h1>
         {/* BillAdvisorNo */}

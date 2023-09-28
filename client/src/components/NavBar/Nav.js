@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
 import { Link, redirect, useNavigate } from "react-router-dom";
-
+import logoamity from './amity_3.webp'
 import {
   NavBar,
   NavLogo,
@@ -38,7 +38,7 @@ function Nav() {
           <NavLogo to="/">
             <ImgLogo 
               style={{ height: "70px" }}
-              src="/amitylogo.png"
+              src={logoamity}
             />
           </NavLogo>
         
@@ -183,7 +183,7 @@ function Nav() {
         <NavLogo to="/">
           <img
             style={{ height: "70px" }}
-            src="amitylogo.png"
+            src={logoamity}
           />
         </NavLogo>
         <NavMenu showToggle={showToggle}>

@@ -57,7 +57,7 @@ const InsureType = () => {
   };
 
   return (
-    <>
+    <div>
       {/* <BackdropBox1> */}
       <form className="container-fluid text-left" onSubmit={handleSubmit}>
         {/* insurer table */}
@@ -134,7 +134,7 @@ const InsureType = () => {
           First time here ? Let's sign up
         </Link> */}
       {/* </BackdropBox1> */}
-    </>
+    </div>
   );
 };
 

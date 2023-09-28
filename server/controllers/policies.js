@@ -1013,6 +1013,9 @@ const draftPolicyList = async (req, res) => {
   } catch (error) {
     console.log(error);
     await t.rollback();
+    await res.status(500).json(error);
+    return "fail"
+    
   }
   
 }
@@ -1110,6 +1113,7 @@ if (!req.body[i].installment) {
   } catch (error) {
     console.log(error);
     await t.rollback();
+    await res.status(500).json(error);
   }
   
 }

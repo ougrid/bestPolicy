@@ -94,9 +94,9 @@ function App() {
           <Route path="reports/tax" element={<ReportฺTax />} />
         </Routes>
       </main>
-      {/* <footer>
+      <footer>
         <Footer />
-      </footer> */}
+      </footer>
     </div>
   );
 }

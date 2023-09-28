@@ -152,7 +152,7 @@ export default function PremOutCreate() {
             }
         })
         .catch((err) => {
-
+     alert("Something went wrong, Try Again.")
             // alert("create snew insuree fail");
 
         });
@@ -164,7 +164,7 @@ const savearpremout = async (e) => {
   await axios.post(url + "/araps/saveappremout", {master : filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
-  });
+  }).catch((err)=>{ alert("Something went wrong, Try Again.");});
 };
 
 const submitarpremout = async (e) => {
@@ -172,11 +172,11 @@ const submitarpremout = async (e) => {
   await axios.post(url + "/araps/submitappremout", {master :filterData, trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
-  });
+  }).catch((err)=>{ alert("Something went wrong, Try Again.");});
 };
 
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
         <h1>Stament ค่าเบี้ยส่ง insurer</h1>
        

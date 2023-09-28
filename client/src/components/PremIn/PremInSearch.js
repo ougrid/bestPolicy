@@ -84,13 +84,13 @@ export default function PremInSearch() {
             }
         })
         .catch((err) => {
-
+          alert("Something went wrong, Try Again.")
             // alert("create snew insuree fail");
 
         });
 };
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>searchHandler(e)}>
         <h1>ค้นหารายการ</h1>
         {/* BillAdvisorNo */}

@@ -121,6 +121,7 @@ const newInsurer = async (req, res) => {
   } catch (error) {
     console.log(error);
     await t.rollback();
+    await res.status(500).json(error);
   }
 };
 
@@ -158,6 +159,7 @@ const newAgent = async (req, res) => {
   } catch (error) {
     console.log(error);
     await t.rollback();
+    await res.status(500).json(error);
   }
 };
 

@@ -114,6 +114,7 @@ const EditCashierReceive = (props) => {
             })
 
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
 
@@ -135,6 +136,7 @@ const EditCashierReceive = (props) => {
             })
 
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
 
@@ -152,6 +154,7 @@ const EditCashierReceive = (props) => {
             })
 
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
     }, []);
@@ -173,6 +176,7 @@ const EditCashierReceive = (props) => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -195,6 +199,7 @@ const EditCashierReceive = (props) => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -217,6 +222,7 @@ const EditCashierReceive = (props) => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -239,6 +245,7 @@ const EditCashierReceive = (props) => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -293,6 +300,7 @@ const EditCashierReceive = (props) => {
                 }
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
 
@@ -340,6 +348,7 @@ const EditCashierReceive = (props) => {
                 }
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
 
@@ -370,6 +379,7 @@ const EditCashierReceive = (props) => {
 
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
     }
@@ -398,6 +408,7 @@ const EditCashierReceive = (props) => {
                 setTableData(response.data)
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
     }
@@ -796,7 +807,7 @@ const EditCashierReceive = (props) => {
 
                 </Modal.Footer>
             </Modal>
-        <div className="container" style={{marginTop:"30px",marginBottom:"30px"}}>
+        <div className="container" style={{paddingTop:"30px",paddingBottom:"30px"}}>
             <div className="row justify-content-center">
                 <div className="col-lg-10">
                     <form>
