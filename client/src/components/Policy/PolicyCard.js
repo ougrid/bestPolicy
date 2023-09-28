@@ -204,6 +204,7 @@ const PolicyCard = (props) => {
         }));
       })
       .catch((err) => {
+        alert("Something went wrong, Try Again.");
         // alert("cant get aumphur");
       });
 

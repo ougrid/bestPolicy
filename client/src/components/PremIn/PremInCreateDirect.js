@@ -108,8 +108,8 @@ export default function PremInCreateDirect() {
         }
       })
       .catch((err) => {
-
-        alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
+        alert("Something went wrong, Try Again.");
+        // alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
 
       });
 
@@ -157,7 +157,7 @@ export default function PremInCreateDirect() {
     await axios.post(url + "/araps/savearpremindirect", { master: master, trans: policiesData }).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
   const submitarpremin = async (e) => {
@@ -194,11 +194,11 @@ export default function PremInCreateDirect() {
     await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: selecteddata }).then((res) => {
       alert("save account recive successed!!!");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e) => createHandler(e)}>
         <h1>สร้างรายการตัดหนี้ (advisor จ่ายตรงให้บริษัทประกัน)</h1>
 

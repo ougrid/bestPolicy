@@ -78,7 +78,7 @@ const Login = () => {
           <LoginBtn type="submit">Login</LoginBtn>
         </form>
 
-        <Link to="/signup" style={NormalText}>
+        <Link to="/signup" style={{color: '#05276B'}}>
           First time here ? Let's sign up
         </Link>
       </BackdropBox1>

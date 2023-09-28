@@ -109,7 +109,7 @@ const ReportEndorse = () => {
     }
 
     return (
-        <div className="container" style={{ marginTop: "30px", marginBottom: "30px" }}>
+        <div className="container" style={{ paddingTop: "30px", paddingBottom: "30px" }}>
             <div className="row justify-content-center">
                 <div className="col-lg-10">
                     <form>

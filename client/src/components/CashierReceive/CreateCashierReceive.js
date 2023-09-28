@@ -110,6 +110,7 @@ const CreateCashierReceive = () => {
 
             .catch((error) => {
                 console.log(error);
+                alert("Something went wrong, Try Again.");
             });
 
     }
@@ -132,6 +133,7 @@ const CreateCashierReceive = () => {
 
             .catch((error) => {
                 console.log(error);
+                alert("Something went wrong, Try Again.");
             });
 
         axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBrand?" + "type=I", data, {
@@ -149,6 +151,7 @@ const CreateCashierReceive = () => {
 
             .catch((error) => {
                 console.log(error);
+                alert("Something went wrong, Try Again.");
             });
 
         if (txtype === 'premin') {
@@ -177,6 +180,7 @@ const CreateCashierReceive = () => {
 
                 .catch((error) => {
                     console.log(error);
+                    alert("Something went wrong, Try Again.");
                 });
 
 
@@ -198,6 +202,7 @@ const CreateCashierReceive = () => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -220,6 +225,7 @@ const CreateCashierReceive = () => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -242,6 +248,7 @@ const CreateCashierReceive = () => {
                 })
 
                 .catch((error) => {
+                    alert("Something went wrong, Try Again.");
                     console.log(error);
                 });
 
@@ -357,6 +364,7 @@ const CreateCashierReceive = () => {
                 }
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
 
@@ -447,6 +455,7 @@ const CreateCashierReceive = () => {
                 }
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
 
@@ -475,6 +484,7 @@ const CreateCashierReceive = () => {
 
             })
             .catch((error) => {
+                alert("Something went wrong, Try Again.");
                 console.log(error);
             });
     }
@@ -494,7 +504,7 @@ const CreateCashierReceive = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <div className="container" style={{ marginTop: "30px", marginBottom: "30px" }}>
+            <div className="container" style={{ paddingTop: "30px", paddingBottom: "30px" }}>
                 <div className="row justify-content-center">
                     <div className="col-lg-6">
                         <form>

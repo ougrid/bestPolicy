@@ -2,10 +2,10 @@ import styled from "styled-components";
 
 export const FooterBody = styled.div `
     background: #0f0e9f;
-    height: auto;
+    height: 200px;
     width: 100%
     display: flex;
-    padding: 0.2rem calc((100vw - 1000px) / 2);
+    padding: 0.2rem calc((100vw - 1700px) / 2);
 `
 
 export const FooterGrid = styled.div `

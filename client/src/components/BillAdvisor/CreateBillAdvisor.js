@@ -189,11 +189,11 @@ const CreateBillAdvisor = () => {
                     console.log(res.data);
                     setPoliciesData(res.data)
                     setBillpremiumData(array)
-                    alert("create new insuree success")
+                    alert("find data success")
                 }
             })
             .catch((err) => {
-
+                alert("Something went wrong, Try Again.");
                 // alert("create snew insuree fail");
 
             });
@@ -227,13 +227,13 @@ const CreateBillAdvisor = () => {
             })
             .catch((err) => {
 
-                alert("create new insuree fail");
+                alert("create billadvisor fail");
 
             });
     };
 
     return (
-        <>
+        <div>
 
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
@@ -616,7 +616,7 @@ const CreateBillAdvisor = () => {
                 </Modal.Footer>
             </Modal>
 
-        </>
+        </div>
     );
 };
 

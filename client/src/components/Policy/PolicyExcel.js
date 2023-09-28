@@ -61,7 +61,7 @@ const PolicyExcel = () => {
     </section>
   );
   return (
-    <>
+    <div>
       {/* <Border>
         <HeaderProfile>Welcome {profile.firstname}</HeaderProfile>
         <form
@@ -132,7 +132,7 @@ const PolicyExcel = () => {
 
       <h2 className="text-center">Add New Policy</h2>
       <PolicyListV2 userId={profile.id} />
-    </>
+    </div>
   );
 };
 

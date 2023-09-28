@@ -706,6 +706,7 @@ const updateCashierReceiveNo = async (cashierreceiveno,billadvisorno) => {
         });
     } catch (error) {
         console.error("Error updating the record:", error);
+        res.status(500).json(error);
     }
 };
 module.exports = {

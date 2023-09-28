@@ -244,6 +244,9 @@ const Insurer = () => {
   };
 
   return (
+    <div>
+
+    
     <CenterPage>
       {/* <BackdropBox1> */}
       <form className="container-fluid text-left" onSubmit={handleSubmit}>
@@ -713,6 +716,7 @@ const Insurer = () => {
         </Link> */}
       {/* </BackdropBox1> */}
     </CenterPage>
+    </div>
   );
 };
 

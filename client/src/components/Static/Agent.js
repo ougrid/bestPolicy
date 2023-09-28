@@ -253,7 +253,12 @@ const removeRow = (e) => {
       location: locationData,
       commOVOut:comOvOutData
     });
-    console.log();
+    console.log({
+      agent: agentData,
+      entity: entityData,
+      location: locationData,
+      commOVOut:comOvOutData
+    });
     axios
       .post(url + "/persons/agentnew", {
         agent: agentData,
@@ -550,7 +555,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เบอร์มือถือ<span class="text-danger"> *</span></label>
             <InputBtn
             className="form-control"
-              type="number"
+              type="text"
               name="telNum_2"
               onChange={changeLocation}
             />
@@ -560,7 +565,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
             <InputBtn
             className="form-control"
-              type="number"
+              type="text"
               name="telNum_1"
               onChange={changeLocation}
             />
@@ -569,7 +574,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เบอร์โทรสาร<span class="text-danger"> *</span></label>
             <InputBtn
             className="form-control"
-              type="number"
+              type="text"
               name="telNum_3"
               onChange={changeLocation}
             />

@@ -74,11 +74,11 @@ export default function CommInCreate() {
                 setFilterData(res.data.billdata[0])
                 setPoliciesData(res.data.trans)
                 
-                alert("get t5ransaction for AR Comm in ")
+                alert("get transaction for AR Comm in ")
             }
         })
         .catch((err) => {
-
+          alert("Something went wrong, Try Again.");
             // alert("create snew insuree fail");
 
         });
@@ -87,8 +87,10 @@ export default function CommInCreate() {
 
 const saveapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/savearcommin", {master : filterData, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!");
+  await axios.post(url + "/araps/savearcommin", {master : filterData, trans : policiesData})
+  .then((res) => {
+    alert("save account recive successed!!!")
+    .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };
@@ -96,13 +98,14 @@ const saveapcommin = async (e) => {
 const submitapcommin = async (e) => {
   console.log({master :  {...filterData}, trans : policiesData});
   await axios.post(url + "/araps/submitarcommin", {master :filterData, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!");
+    alert("save account recive successed!!!")
+    .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };
 
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center">
       <form onSubmit={(e)=>submitFilter(e)}>
         <h1>ตัดหนี้ Comm/ov-in</h1>
        

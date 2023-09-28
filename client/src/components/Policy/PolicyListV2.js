@@ -123,7 +123,7 @@ const UserCarList = (props) => {
     await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
 

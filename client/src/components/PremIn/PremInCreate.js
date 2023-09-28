@@ -74,11 +74,11 @@ export default function PremInCreate() {
                 console.log(res.data);
                 setPoliciesData(res.data)
                 
-                alert("create new insuree success")
+                alert("find data success")
             }
         })
         .catch((err) => {
-
+          alert("Something went wrong, Try Again.");
             // alert("create snew insuree fail");
 
         });
@@ -102,8 +102,8 @@ const getData = (e) => {
         }
     })
     .catch((err) => {
-
-         alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
+      alert("Something went wrong, Try Again.");
+        //  alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
 
     });
   }else if (e.target.name === 'bill-btn'){
@@ -125,8 +125,8 @@ const getData = (e) => {
         }
     })
     .catch((err) => {
-
-         alert("dont find billadvisorNo : " + filterData.billadvisorno);
+      alert("Something went wrong, Try Again.");
+        //  alert("dont find billadvisorNo : " + filterData.billadvisorno);
 
     });
 
@@ -141,6 +141,7 @@ const getData = (e) => {
         //do search api logic
       }).catch(()=>{
         alert('error but created in test')
+        // alert("Something went wrong, Try Again.");
       })
     }
 
@@ -171,7 +172,7 @@ const savearpremin = async (e) => {
    trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
-  });
+  }).catch((err)=>{ alert("Something went wrong, Try Again.");});
 };
 
 const submitarpremin = async (e) => {
@@ -197,13 +198,13 @@ const submitarpremin = async (e) => {
 
   console.log({master :  data, trans : policiesData});
   await axios.post(url + "/araps/submitarpremin", {master : data, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!");
+    alert("save account recive successed!!!").catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };
 
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center">
       <form onSubmit={(e)=>createHandler(e)}>
         <h1>สร้างรายการตัดหนี้</h1>
         {/* billadvisorno */}

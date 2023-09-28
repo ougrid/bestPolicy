@@ -237,6 +237,7 @@ const createbilladvisor = async (req,res) =>{
         } catch (error) {
           console.log(error);
           await t.rollback();
+          await res.status(500).json(error);
 
           }
         
@@ -398,6 +399,7 @@ const editbilladvisor = async (req,res) =>{
      } catch (error) {
       console.log(error);
       await t.rollback();
+      await res.status(500).json(error);
       }
     await res.json({msg:"success!!"})
 }

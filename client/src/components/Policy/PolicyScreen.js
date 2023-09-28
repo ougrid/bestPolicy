@@ -206,6 +206,7 @@ const PolicyScreen = (props) => {
         }));
       })
       .catch((err) => {
+        alert("Something went wrong, Try Again.");
         // alert("cant get aumphur");
       });
 
@@ -302,7 +303,7 @@ const PolicyScreen = (props) => {
     await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
 
@@ -584,7 +585,7 @@ const PolicyScreen = (props) => {
                 className="form-control"
                 type="number"
                 step={0.1}
-                value={parseFloat(formData[`specdiscrate`])}
+                value={parseFloat(formData[`specdiscrate`]) }
                 name={`specdiscrate`}
                 onChange={(e) => handleChange(e)}
               />
@@ -595,7 +596,7 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || ""}
+                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || 0}
                 name={`specdiscamt`}
                 onChange={(e) => handleChange(e)}
               />
