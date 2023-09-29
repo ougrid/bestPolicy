@@ -1,7 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PremInTable from "./PremInTable";
 import axios from 'axios'
+const config = require("../../config.json");
 export default function PremInSearch() {
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+  const [filterData, setFilterData] = useState(
+    {
+      billadvisorno : null,
+      insurercode : null,
+      advisorcode : null,
+      cashierreceiveno : null,
+      refno : null,
+      arno : null,
+      ardatestart : null,
+      ardateend : null,
+      arcreateusercode : null,
+    })
+    const [policiesData, setPoliciesData] = useState([])
   const colData = [
     "Billadvisorno",
     "insurercode",
@@ -16,23 +31,28 @@ export default function PremInSearch() {
     "DiffAmt",
     "status",
   ];
-  const rowData = [
-    {
-      Billadvisorno: Math.floor(Math.random() * 9000) + 1000,
-      insurercode: Math.floor(Math.random() * 900) + 100,
-      advisorcode: Math.floor(Math.random() * 9000) + 1000,
-      CashierReceiptNo: Math.floor(Math.random() * 90000) + 10000,
-      CashierDate: "2023-08-28",
-      CashierAmt: Math.floor(Math.random() * 901) + 100,
-      ARNO: Math.floor(Math.random() * 9000) + 1000,
-      ARDate: "2023-08-29",
-      ARcreateusercode: Math.floor(Math.random() * 900) + 100,
-      ActualValue: Math.floor(Math.random() * 1001) + 500,
-      DiffAmt: Math.floor(Math.random() * 101),
-      status: "Pending",
-    },
-    // Add more objects as needed
-  ];
+  const colData2 = {
+    billadvisorno: "Billadvisorno",
+    insurercode :"insurercode",
+    advisorcode:  "advisorcode",
+    cashierreceiveno:  "CashierReceiptNo",
+    cashierdate:  "CashierDate",
+    cashieramt: "CashierAmt",
+    ARNO : "ARNO",
+    ARDate : "ARDate",
+    ARcreateusercode: "ARcreateusercode",
+    actualvalue: "ActualValue",
+    diffamt:  "DiffAmt",
+    status : "status",
+  };
+  
+  const handleChange = (e) => {
+    
+    setFilterData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+    }));
+};
   //apis
   const searchHandler=(e)=>{
     e.preventDefault();
@@ -43,35 +63,63 @@ export default function PremInSearch() {
       alert('error')
     })
   }
+  const submitFilter = (e) => {
+    e.preventDefault();
+    // console.log(filterData);
+    axios
+        .post(url + "/araps/getarpremindata", filterData)
+        .then((res) => {
+            if (res.status === 201) {
+                console.log(res.data);
+                alert("not found policy")
+
+            } else {
+
+
+                // const array = []
+               console.log(res.data);
+                setPoliciesData(res.data)
+                
+                alert("find arno success")
+            }
+        })
+        .catch((err) => {
+          alert("Something went wrong, Try Again.")
+            // alert("create snew insuree fail");
+
+        });
+};
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>searchHandler(e)}>
         <h1>ค้นหารายการ</h1>
         {/* BillAdvisorNo */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="billAdvisorNo">
+          <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
             BillAdvisorNo
           </label>
           <div className="col-4">
             <input
               className="form-control"
               type="text"
-              name="billAdvisorNo"
-              id="billAdvisorNo"
+              name="billadvisorno"
+              id="billadvisorno"
+              onChange={handleChange}
             />
           </div>
         </div>
         {/* Insurercode  */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="Insurercode">
+          <label class="col-sm-2 col-form-label" htmlFor="insurercode">
             Insurercode
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="Insurercode"
-              id="Insurercode"
+              name="insurercode"
+              id="insurercode"
+              onChange={handleChange}
             />
           </div>
           <div class="col-4 form-check d-flex align-items-center text-center  ">
@@ -92,15 +140,16 @@ export default function PremInSearch() {
         </div>
         {/* Advisorcode  */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="Advisorcode">
+          <label class="col-sm-2 col-form-label" htmlFor="advisorcode">
             Advisorcode
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="Advisorcode"
-              id="Advisorcode"
+              name="advisorcode"
+              id="advisorcode"
+              onChange={handleChange}
             />
           </div>
           <div class="col-4 form-check d-flex align-items-center text-center  ">
@@ -121,15 +170,16 @@ export default function PremInSearch() {
         </div>
         {/* CashierReceiveNo */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="CashierReceiveNo">
+          <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
             CashierReceiveNo
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="CashierReceiveNo"
-              id="CashierReceiveNo"
+              name="cashierreceiveno"
+              id="cashierreceiveno"
+              onChange={handleChange}
             />
           </div>
           <div class="col-4 form-check d-flex align-items-center text-center  ">
@@ -150,15 +200,16 @@ export default function PremInSearch() {
         </div>
         {/* Refno */}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="Refno">
+          <label class="col-sm-2 col-form-label" htmlFor="refno">
             Refno
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="Refno"
-              id="Refno"
+              name="refno"
+              id="refno"
+              onChange={handleChange}
             />
           </div>
           <div class="col-4 form-check d-flex align-items-center text-center  ">
@@ -177,17 +228,79 @@ export default function PremInSearch() {
             </div>
           </div>
         </div>
-        {/* AR createusercode */}
-        <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="ARcreateusercode">
-            AR createusercode
+       {/* ARNO  */}
+       <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="arno">
+            ARNO
           </label>
           <div className="col-4 ">
             <input
               className="form-control"
               type="text"
-              name="ARcreateusercode"
-              id="ARcreateusercode"
+              name="arno"
+              id="arno"
+              onChange={handleChange}
+            />
+          </div>
+          <div class="col-4 form-check d-flex align-items-center text-center  ">
+            <div>
+              <input
+                class="form-check-input "
+                type="checkbox"
+                value=""
+                id="flexCheckChecked"
+                checked
+              />
+              <label class="form-check-label" for="flexCheckChecked">
+                All
+              </label>
+            </div>
+          </div>
+        </div>
+        {/* ARDATE*/}
+        <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="ardate">
+            ARDATE
+          </label>
+          <div className="col-5 " id="ardate">
+            <label class="col-sm-2 col-form-label" htmlFor="ardatestart">
+              From
+            </label>
+            <input
+              className="form-control"
+              type="date"
+              name="ardatestart"
+              id="ardatestart"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="col-5 ">
+            <label class="col-sm-2 col-form-label" htmlFor="ardateend">
+              To
+            </label>
+            <input
+              className="form-control"
+              type="date"
+              name="ardateend"
+              id="ardateend"
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        
+         {/* ARcreateusercode */}
+         <div className="row my-3">
+          <label class="col-sm-2 col-form-label" htmlFor="arcreateusercode">
+            ARcreateusercode
+          </label>
+          <div className="col-4 ">
+            <input
+              className="form-control"
+              type="text"
+              name="arcreateusercode"
+              id="arcreateusercode"
+              onChange={handleChange}
             />
           </div>
           <div class="col-4 form-check d-flex align-items-center text-center  ">
@@ -206,69 +319,12 @@ export default function PremInSearch() {
             </div>
           </div>
         </div>
-        {/* ARDATE*/}
         <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="ARcreateusercode">
-            ARDATE
-          </label>
-          <div className="col-5 " id="ARcreateusercode">
-            <label class="col-sm-2 col-form-label" htmlFor="ARcreateusercode">
-              From
-            </label>
-            <input
-              className="form-control"
-              type="date"
-              name="ARcreateusercode"
-              id="ARcreateusercode"
-            />
-          </div>
-
-          <div className="col-5 ">
-            <label class="col-sm-2 col-form-label" htmlFor="ARcreateusercode">
-              To
-            </label>
-            <input
-              className="form-control"
-              type="date"
-              name="ARcreateusercode"
-              id="ARcreateusercode"
-            />
-          </div>
-        </div>
-        {/* ARcreateusercode  */}
-        <div className="row my-3">
-          <label class="col-sm-2 col-form-label" htmlFor="Insurercode">
-            Insurercode
-          </label>
-          <div className="col-4 ">
-            <input
-              className="form-control"
-              type="text"
-              name="Insurercode"
-              id="Insurercode"
-            />
-          </div>
-          <div class="col-4 form-check d-flex align-items-center text-center  ">
-            <div>
-              <input
-                class="form-check-input "
-                type="checkbox"
-                value=""
-                id="flexCheckChecked"
-                checked
-              />
-              <label class="form-check-label" for="flexCheckChecked">
-                All
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="row my-3">
-          <button className="btn btn-success">Search</button>
+          <button className="btn btn-success" onClick={submitFilter}>Search</button>
         </div>
       </form>
       <div>
-        <PremInTable cols={colData} rows={rowData} />
+        <PremInTable cols={colData2} rows={policiesData} />
       </div>
     </div>
   );

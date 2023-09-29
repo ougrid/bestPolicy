@@ -27,7 +27,7 @@ const NormalText = {
 
 const EditBillAdvisor = (props) => {
     const params = useParams()
-    const url = config.url;
+    const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -85,7 +85,7 @@ const EditBillAdvisor = (props) => {
                 alert("found it") 
             }
         })
-        .catch((err) => { });
+        .catch((err) => {  alert("Something went wrong, Try Again."); });
 
         // get agent all
         axios
@@ -233,11 +233,11 @@ const EditBillAdvisor = (props) => {
                     // console.log(array);
                     // setPoliciesData(...res.data, ...policiesData)
                     // setBillpremiumData(array)
-                    alert("create new insuree success")
+                    alert("find data success")
                 }
             })
             .catch((err) => {
-
+                alert("Something went wrong, Try Again.");
                 // alert("create snew insuree fail");
 
             });
@@ -266,17 +266,17 @@ const EditBillAdvisor = (props) => {
                 // window.location.reload();
                 // localStorage.setItem("jwt", token);
                 console.log(res.data);
-                alert("create new insuree success")
+                alert("edit billadvisor success")
             })
             .catch((err) => {
-
-                alert("create new insuree fail");
+                alert("Something went wrong, Try Again.");
+                // alert("create new insuree fail");
 
             });
     };
 
     return (
-        <>
+        <div>
 
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
@@ -655,7 +655,7 @@ const EditBillAdvisor = (props) => {
                 </Modal.Footer>
             </Modal>
 
-        </>
+        </div>
     );
 };
 

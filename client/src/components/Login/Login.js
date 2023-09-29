@@ -26,7 +26,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Login = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState("");
 
@@ -78,7 +78,7 @@ const Login = () => {
           <LoginBtn type="submit">Login</LoginBtn>
         </form>
 
-        <Link to="/signup" style={NormalText}>
+        <Link to="/signup" style={{color: '#05276B'}}>
           First time here ? Let's sign up
         </Link>
       </BackdropBox1>

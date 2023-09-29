@@ -10,7 +10,7 @@ import Pagination from "./Pagination";
 const config = require("../../config.json");
 
 const UserCarList = (props) => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [row, setRow] = useState(0);
   const [hidecard, setHidecard] = useState([false,0]);
   //import excel
@@ -123,7 +123,7 @@ const UserCarList = (props) => {
     await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
 
@@ -215,7 +215,7 @@ const handleClose = (e) =>{
        
 <div className="d-flex justify-content-center">
 
-        <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button>
+        {/* <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button> */}
         <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Save Draft</button>
 </div>
       </form>

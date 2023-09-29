@@ -1,0 +1,88 @@
+flow
+ 
+window.globalConfig.BEST_POLICY_V1_BASE_URL
+
+ขั้นตอนบันทึกกรมธรรม์
+save draft 
+	=>insert into -> entity -> insuree -> location -> motor (if motor type) -> policy status 'I'
+		-> getrunningno 'app' (application number)
+edit 
+	=>update -> policy status 'I' to 'A'
+	=>insert into -> jupgr -> transaction -> ลงผังบัญชี b_jugltxes
+
+ออกใบวางบิล  
+bill
+	=> insert into ->b_jabilladvisors (master table) -> b_jabilladvisordetails (child)
+	=> update -> policy table  (SET billadvisor,netflag WHERE polid  and "seqNo"  )
+
+advisor -> insurer
+
+ขั้นตอนรับเงิน prem-in
+advisor -> amity
+
+
+save cashier
+	=> insert into -> b_jacashiers status = 'I'
+submit cashier
+	=> insert into -> b_jacashiers status = 'A'
+
+save arprem-in
+	=> insert into -> b_jaaraps (master) status 'I' -> b_jaaraps (child) -> b_jatw (if netflag = 'N' ) 
+submit arprem-in
+	=> insert into -> b_jaaraps (master) status 'I' gen dfrpreferno and rprefdate -> b_jaaraps (child) -> b_jatw (if netflag = 'N' ) 
+	=> update b_jacashiers (set dfrpreferno) ->transaction (set dfrpreferno, rprefdate, prem-in-rpreferno, prem-in-rprefdate, where premin)
+	=> if netflag = 'N' update ->transaction (set dfrpreferno, rprefdate, prem-in-rpreferno, prem-in-rprefdate, where commout, ovout)
+	
+ภาพรวมflow การตัดหนี้ ( 2 advisor จะมีเพิ่มแค่ จ่ายหนี้ COMM-OUT ของ advisorคนที่ 2 เพิ่มมาอย่างเดียว)
+สรุปการ gen เลขใบวางบิล สร้างเฉพาะจ่ายที่ amity, cashierrecive สร้างเฉพาะ PREM-IN, COMM-IN
+PREM-IN select netflag -> ออกใบวางบิล , จ่ายเงินประกันตรง
+PREM-OUT select netflag -> statment ค่าเบี้ยส่งประกัน , 
+	case 1 จ่ายเงินที่ amity แบบ gross /gross
+	-> 1.ออกใบวางบิล (billadvisor B001) netflag = gross
+	-> 2.รับเงิน PREM-IN (cashierrecieve PREM-IN CASH001)
+	-> 3.ตัดหนี้ PREM-IN (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN) เก็บ transaction ใน b_jaaraps
+	-> 4.statment ค่าเบี้ยส่งบ.ประกัน (ตัดหนี้ PREM-OUT) netflag = gross (อัพเดท status _ARAP dfrpreferno = APNO01 where txtype = PREM-OUT) เก็บ transaction ใน b_jaaraps
+	-> 5.รับเงิน COMM-IN (cashierrecieve COMM-IN CASH002)
+	-> 6.ตัดหนี้ COMM-IN filter by APNO001 (อัพเดท status _ARAP dfrpreferno = ARNO02 where txtype = COMM-IN, OV-IN) เก็บ transaction ใน b_jaaraps
+	-> 7.จ่ายเงินตัดหนี้ COMM-OUT (อัพเดท status _ARAP dfrpreferno = APNO02 where txtype = COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw  เก็บ transaction ใน b_jaaraps
+
+	case 2 จ่ายเงินที่ amity แบบ gross /net
+	-> 1-3 เหมือน case 1
+	-> 4.statment ค่าเบี้ยส่งบ.ประกัน (ตัดหนี้ PREM-OUT) netflag = net (อัพเดท status _ARAP dfrpreferno = APNO01 where txtype in (PREM-OUT, COMM-IN, OV-IN)) เก็บ transaction ใน b_jaaraps
+	-> 5.จ่ายเงินตัดหนี้ COMM-OUT (อัพเดท status _ARAP dfrpreferno = APNO02 where txtype = COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw  เก็บ transaction ใน b_jaaraps
+	
+	case 3 จ่ายเงินที่ amity แบบ net /gross
+	-> 1.ออกใบวางบิล (billadvisor B001) netflag = net
+	-> 2.รับเงิน PREM-IN (cashierrecieve PREM-IN CASH001)
+	-> 3.ตัดหนี้ PREM-IN (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw เก็บ transaction ใน b_jaaraps
+	-> 4.statment ค่าเบี้ยส่งบ.ประกัน (ตัดหนี้ PREM-OUT) netflag = gross (อัพเดท status _ARAP dfrpreferno = APNO01 where txtype = PREM-OUT) เก็บ transaction ใน b_jaaraps
+	-> 5.รับเงิน COMM-IN (cashierrecieve COMM-IN CASH002)
+	-> 6.ตัดหนี้ COMM-IN filter by APNO001 (อัพเดท status _ARAP dfrpreferno = ARNO02 where txtype = COMM-IN, OV-IN) เก็บ transaction ใน b_jaaraps
+	
+	case 4 จ่ายเงินที่ amity แบบ net /net
+	-> 1.ออกใบวางบิล (billadvisor B001) netflag = net
+	-> 2.รับเงิน PREM-IN (cashierrecieve PREM-IN CASH001)
+	-> 3.ตัดหนี้ PREM-IN (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw เก็บ transaction ใน b_jaaraps
+	-> 4.statment ค่าเบี้ยส่งบ.ประกัน (ตัดหนี้ PREM-OUT) netflag = net (อัพเดท status _ARAP dfrpreferno = APNO01 where txtype in (PREM-OUT, COMM-IN, OV-IN)) เก็บ transaction ใน b_jaaraps
+	-> 5.จ่ายเงินตัดหนี้ COMM-OUT (อัพเดท status _ARAP dfrpreferno = APNO02 where txtype = COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw  เก็บ transaction ใน b_jaaraps
+	
+	case 5 จ่ายเงินที่ประกัน แบบ gross /(gross เสมอ)
+	-> 1.จ่ายเงินที่ประกันโดยตรง ตัดหนี้ PREM-IN,PREM-OUT (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, PREM-OUT) netflag = gross เก็บ transaction ใน b_jaaraps
+	-> 2.รับเงิน COMM-IN (cashierrecieve COMM-IN CASH002)
+	-> 3.ตัดหนี้ COMM-IN filter by APNO001 (อัพเดท status _ARAP dfrpreferno = ARNO02 where txtype = COMM-IN, OV-IN) เก็บ transaction ใน b_jaaraps
+	-> 4.จ่ายเงินตัดหนี้ COMM-OUT (อัพเดท status _ARAP dfrpreferno = APNO02 where txtype = COMM-OUT, OV-OUT) เก็บ WHT COMM/OV OUT ใน b_jatw  เก็บ transaction ใน b_jaaraps
+
+	case 6 จ่ายเงินที่ประกัน แบบ net /(gross เสมอ)
+	-> 1.จ่ายเงินที่ประกันโดยตรง ตัดหนี้ PREM-IN,PREM-OUT (อัพเดท status _ARAP dfrpreferno = ARNO01 where txtype = PREM-IN, PREM-OUT, COMM-OUT, OV-OUT) netflag = net เก็บ transaction เก็บ WHT COMM/OV OUT ใน b_jatw  ใน b_jaaraps
+	-> 2.รับเงิน COMM-IN (cashierrecieve COMM-IN CASH002)
+	-> 3.ตัดหนี้ COMM-IN filter by APNO001 (อัพเดท status _ARAP dfrpreferno = ARNO02 where txtype = COMM-IN, OV-IN) เก็บ transaction ใน b_jaaraps
+
+	
+-> statment ค่าเบี้ยส่งบ.ประกัน (ตัดหนี้ PREM-OUT) netflag = net (อัพเดท status _ARAP dfrpreferno = APNO01 where txtype in (PREM-OUT,COMM-IN, OV-IN) )
+
+
+
+	->ต้องออกใบวางบิล (billadvisor) เฉพาะเคส advisor จ่ายให้ amity ต้องเลือก ว่าจ่ายแบบ net หรือ gross ที่ step นี้ 
+	-> จ่ายตรงที่บริษัทประกันจะไม่มี เลขที่ใบวางบิล ต้องเลือก ว่าจ่ายแบบ net หรือ gross ที่ step นี้ 
+	-> ขั้นตอนการรับเงิน prem-in (cashier recieve PREM-IN) สร้างเฉพาะเคสที่จ่ายเงินที่ Amity เท่านั้น
+	

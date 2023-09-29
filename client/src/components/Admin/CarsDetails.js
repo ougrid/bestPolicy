@@ -5,7 +5,7 @@ import { Container } from "../StylesPages/PagesLayout";
 const config = require("../../config.json");
 
 const CarsDetails = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [cars, setCars] = useState([]);
   useEffect(() => {
     axios.get(url + "/cars").then((res) => {

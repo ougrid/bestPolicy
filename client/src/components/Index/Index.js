@@ -17,7 +17,7 @@ const config = require("../../config.json");
 const Index = (props) => {
   const [packages, setPackages] = useState([]);
   const [filterPack, setFilterPack] = useState([])
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   // useEffect(() => {
   //   axios.get(url + "/packages").then((res) => {
   //     let pack = res.data.map((item) => {
@@ -46,9 +46,10 @@ const Index = (props) => {
 
 
   return (
-    <Container>
-      <h1>Car Insurance Packages</h1>
-      <form onSubmit={handleClick} >
+    <div className="container">
+      <h1 style={{paddingTop: '20vh'}}>Amity Safety Lively</h1>
+      <h1>อะมิตี้ ชีวิตดีทุกวัน</h1>
+      {/* <form onSubmit={handleClick} >
       <BtnSelect name="filter">
         <option id="Option" value={null}>All</option>
         <option id="Option" value={1}>First Class</option>
@@ -112,8 +113,8 @@ const Index = (props) => {
             <li>If your vehicle is over 7 years</li>
           </ul>
         </div>
-      </Carousel>
-    </Container>
+      </Carousel> */}
+    </div>
   );
 };
 

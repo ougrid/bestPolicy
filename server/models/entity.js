@@ -42,7 +42,6 @@ module.exports = (sequelize, DataTypes) => {
     // เลขที่ ภพ 20
     pk20: DataTypes.STRING,
     //ชื่อสาขา กรณี เป็น สาขาย่อย ,
-    note: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Entity',

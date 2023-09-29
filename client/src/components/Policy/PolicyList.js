@@ -10,7 +10,7 @@ import Pagination from "./Pagination";
 const config = require("../../config.json");
 
 const UserCarList = (props) => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [row, setRow] = useState(0);
   const [hidecard, setHidecard] = useState([false,0]);
   //import excel
@@ -123,7 +123,7 @@ const UserCarList = (props) => {
     await axios.post(url + "/policies/policynew/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
   const handleDraft = async (e) => {
@@ -152,7 +152,7 @@ const UserCarList = (props) => {
     await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
   const newRow = (e) => {

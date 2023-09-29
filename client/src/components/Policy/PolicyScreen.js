@@ -8,7 +8,7 @@ const config = require("../../config.json");
 
 const PolicyScreen = (props) => {
 
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax;
   const duty = config.duty;
 
@@ -43,52 +43,55 @@ const PolicyScreen = (props) => {
       setInsureSubClassDD(array);
     }
     //  set totalprem
-    if (
-      formData.duty !== null &&
-      formData.tax !== null &&
-      formData.grossprem !== null
-    ) {
-      const newTotalPrem =
-        parseFloat(formData.grossprem) -
-        parseFloat(formData.duty) -
-        parseFloat(formData.tax);
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-        totalprem: newTotalPrem,
-      }));
-    } else {
-      if (e.target.name === 'commin_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'ovin_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'commout_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
-        }));
-      } else if (e.target.name === 'ovout_rate') {
-        setFormData((prevState) => ({
-          ...prevState,
-          [e.target.name]: e.target.value,
-          ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
-        }));
-      }
-      setFormData((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-      }));
-    }
-
+    // if (
+    //   formData.duty !== null &&
+    //   formData.tax !== null &&
+    //   formData.grossprem !== null
+    // ) {
+    //   const newTotalPrem =
+    //     parseFloat(formData.netgrossprem) +
+    //     parseFloat(formData.duty) +
+    //     parseFloat(formData.tax);
+    //   setFormData((prevState) => ({
+    //     ...prevState,
+    //     [e.target.name]: e.target.value,
+    //     totalprem: newTotalPrem,
+    //   }));
+    // } else {
+    //   if (e.target.name === 'commin_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'ovin_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'commout_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   } else if (e.target.name === 'ovout_rate') {
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       [e.target.name]: e.target.value,
+    //       ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
+    //     }));
+    //   }
+    //   setFormData((prevState) => ({
+    //     ...prevState,
+    //     [e.target.name]: e.target.value,
+    //   }));
+    // }
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
     //set dropdown title follow to personType
     if (e.target.name === "personType") {
       if (e.target.value === "P") {
@@ -203,6 +206,7 @@ const PolicyScreen = (props) => {
         }));
       })
       .catch((err) => {
+        alert("Something went wrong, Try Again.");
         // alert("cant get aumphur");
       });
 
@@ -299,7 +303,7 @@ const PolicyScreen = (props) => {
     await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
-    });
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
 
@@ -352,14 +356,23 @@ const PolicyScreen = (props) => {
         // window.location.reload();
         // localStorage.setItem("jwt", token);
 
-        const array = [];
-        insuretype.data.forEach((ele) => {
-          array.push(
-            <option key={ele.id} value={ele.class}>
-              {ele.class}
-            </option>
-          );
-        });
+        // const array = [];
+        // insuretype.data.forEach((ele) => {
+        //   array.push(
+        //     <option key={ele.id} value={ele.class}>
+        //       {ele.class}
+        //     </option>
+        //   );
+        // });
+
+        const uniqueClasses = [...new Set(insuretype.data.map(ele => ele.class))];
+
+        const array = uniqueClasses.map((className, index) => (
+          <option key={index} value={className}>
+            {className}
+          </option>
+        ));
+
         setInsureTypeDD(insuretype.data);
         setInsureClassDD(array);
       })
@@ -417,9 +430,10 @@ const PolicyScreen = (props) => {
     <div>
       <h1 className="text-center">สร้างรายการกรมธรรม์</h1>
       {/* policy table */}
+
       <div className="row form-group form-inline ">
         <div className="col-1"></div>
-        <div className="col-2 form-group  ">
+        {/* <div className="col-2 form-group  ">
           <label class="form-label ">
             เลขที่กรมธรรม์<span class="text-danger"> *</span>
           </label>
@@ -430,7 +444,7 @@ const PolicyScreen = (props) => {
             name={`policyNo`}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         <div class="col-2 form-group ">
           <label class="form-label">
@@ -571,7 +585,7 @@ const PolicyScreen = (props) => {
                 className="form-control"
                 type="number"
                 step={0.1}
-                value={parseFloat(formData[`specdiscrate`])}
+                value={parseFloat(formData[`specdiscrate`]) }
                 name={`specdiscrate`}
                 onChange={(e) => handleChange(e)}
               />
@@ -582,7 +596,7 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || ""}
+                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || 0}
                 name={`specdiscamt`}
                 onChange={(e) => handleChange(e)}
               />
@@ -927,7 +941,7 @@ const PolicyScreen = (props) => {
               {formData.personType}
             </option>
             <option value="P">บุคคล</option>
-            <option value="C">นิติบุคคล</option>
+            <option value="O">นิติบุคคล</option>
           </select>
         </div>
 
@@ -1129,7 +1143,7 @@ const PolicyScreen = (props) => {
         </div>
       </div>
       {/* motor table */}
-      {formData.class === "Motor" ? (
+      {formData.class === "MO" ? (
         <>
           <div class="row">
             <div className="col-1"></div>

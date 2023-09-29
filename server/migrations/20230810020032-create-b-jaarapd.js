@@ -17,13 +17,26 @@ module.exports = {
         allowNull:false,
         type: Sequelize.INTEGER
       },
+      policyNo: {
+        allowNull:false,
+        type: Sequelize.STRING
+      },
       customerid: {
         type: Sequelize.INTEGER
       },
       netflag: {
         type: Sequelize.STRING
       },
-      billpremium: {
+      endorseNo: {
+        type: Sequelize.STRING
+      },
+      invoiceNo: {
+        type: Sequelize.STRING
+      },
+      seqNo: {
+        type: Sequelize.INTEGER
+      },
+      netamt: {
         type: Sequelize.FLOAT
       },
       createdAt: {

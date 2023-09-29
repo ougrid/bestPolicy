@@ -8,7 +8,7 @@ export const NavBar = styled.nav `
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 0.2rem calc((100vw - 1000px) / 2);
+    padding: 0.2rem calc((100vw - 1700px) / 2);
     @media screen and (max-width: 768px) {
         width: auto;
     }    
@@ -18,6 +18,7 @@ export const NavLogo = styled(Link) `
     display: flex;
     justify-content: center;
     padding-bottom: 5px;
+    background-color : #299AE5;
     @media screen and (max-width: 768px) {
         padding-left: 20px;
     }

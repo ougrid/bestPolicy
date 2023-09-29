@@ -25,7 +25,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Payment = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [paymentData, setPaymentData] = useState({});
   const [filterData, setFilterData] = useState({});

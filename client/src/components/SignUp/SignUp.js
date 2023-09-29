@@ -16,7 +16,7 @@ const config = require("../../config.json");
 const SignUp = (props) => {
   const navigate = useNavigate();
   const [signUpData, setSignUpData] = useState({});
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
 
   const handleChange = (e) => {
     setSignUpData((prevState) => ({

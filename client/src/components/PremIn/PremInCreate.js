@@ -4,7 +4,8 @@ import axios from "axios";
 const config = require("../../config.json");
 
 export default function PremInCreate() {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+  const wht = config.wht;
   const [filterData, setFilterData] = useState(
     {
         "billadvisorno": null,
@@ -16,30 +17,31 @@ export default function PremInCreate() {
 
     })
     const [policiesData, setPoliciesData] = useState([])
-  const colsData = [
-    "insurerCode",
-    "advisorCode",
-    "Duedate",
-    "Policyno",
-    "Endorseno",
-    "Invoiceno",
-    "seqno",
-    "customerid",
-    "insuredname",
-    "licenseno",
-    "province",
-    "chassisno",
-    "grossprem",
-    "duty",
-    "tax",
-    "totalamt",
-    "comm-out%",
-    "comm-out-amt",
-    "ov-out%",
-    "ov-out-amt",
-    "[] net",
-    "billpremium",
-  ];
+  const colsData = {
+    insurerCode: "insurerCode",
+    agentCode: "advisorCode",
+    dueDate:"Duedate",
+    policyNo:"Policyno",
+    endorseNo:"Endorseno",
+    invoiceNo:"Invoiceno",
+    seqNo: "seqno",
+    customerid:"customerid",
+    insureename:"insuredname",
+    licenseNo:"licenseno",
+    // "province",
+    chassisNo:"chassisno",
+    netgrossprem:"grossprem",
+    duty:"duty",
+    tax:"tax",
+    totalprem:"totalamt",
+    commout_rate:"comm-out%",
+    commout_amt:"comm-out-amt",
+    ovout_rate:"ov-out%",
+    ovout_amt:"ov-out-amt",
+    netflag:"[] net",
+    remainamt:"billpremium",
+
+};
   
   
   const handleChange = (e) => {
@@ -62,21 +64,21 @@ export default function PremInCreate() {
             } else {
 
 
-                const array = []
-                for (let i = 0; i < res.data.length; i++) {
-                    // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
-                    array.push(res.data[i].totalprem)
+                // const array = []
+                // for (let i = 0; i < res.data.length; i++) {
+                //     // console.log(statementtypeData[i].statementtype == null? res.data[i].totalprem -res.data[i].commout_amt-res.data[i].ovout_amt: res.data[i].totalprem);
+                //     array.push(res.data[i].totalprem)
 
-                }
-                console.log(array);
+                // }
+                // console.log(array);
                 console.log(res.data);
                 setPoliciesData(res.data)
                 
-                alert("create new insuree success")
+                alert("find data success")
             }
         })
         .catch((err) => {
-
+          alert("Something went wrong, Try Again.");
             // alert("create snew insuree fail");
 
         });
@@ -100,8 +102,8 @@ const getData = (e) => {
         }
     })
     .catch((err) => {
-
-         alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
+      alert("Something went wrong, Try Again.");
+        //  alert("dont find cashierreceiveno : " + filterData.cashierreceiveno);
 
     });
   }else if (e.target.name === 'bill-btn'){
@@ -116,14 +118,15 @@ const getData = (e) => {
 
             const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
             setFilterData(data)
+            console.log(res.data.trans);
             setPoliciesData(res.data.trans)
             
             
         }
     })
     .catch((err) => {
-
-         alert("dont find billadvisorNo : " + filterData.billadvisorno);
+      alert("Something went wrong, Try Again.");
+        //  alert("dont find billadvisorNo : " + filterData.billadvisorno);
 
     });
 
@@ -138,27 +141,70 @@ const getData = (e) => {
         //do search api logic
       }).catch(()=>{
         alert('error but created in test')
+        // alert("Something went wrong, Try Again.");
       })
     }
 
 const savearpremin = async (e) => {
-  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/savearpremin", {master : {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData}).then((res) => {
+  let commout = 0
+  let ovout = 0 
+  let netflag = 'G'
+  for (let i = 0; i < policiesData.length; i++) {
+    if (policiesData[i].netflag === 'N') {
+      netflag = 'N'
+      commout = commout + policiesData[i].commout_amt
+      ovout = ovout + policiesData[i].ovout_amt
+    }
+    
+  }
+  const whtcommout = commout * wht
+  const whtovout = ovout * wht
+  const data = filterData 
+  data.diffamt = document.getElementsByName('DiffAmt')[0].value
+  data.commout = commout
+  data.ovout = ovout
+  data.whtcommout = whtcommout
+  data.whtovout = whtovout
+
+  console.log({master :  data, trans : policiesData});
+  await axios.post(url + "/araps/savearpremin",
+   {master : data, 
+   trans : policiesData}).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
-  });
+  }).catch((err)=>{ alert("Something went wrong, Try Again.");});
 };
 
 const submitarpremin = async (e) => {
-  console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/submitarpremin", {master : {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!");
+  let commout = 0
+  let ovout = 0 
+  let netflag = 'G'
+  for (let i = 0; i < policiesData.length; i++) {
+    if (policiesData[i].netflag === 'N') {
+      netflag = 'N'
+      commout = commout + policiesData[i].commout_amt
+      ovout = ovout + policiesData[i].ovout_amt
+    }
+    
+  }
+  const whtcommout = commout * wht
+  const whtovout = ovout * wht
+  const data = filterData 
+  data.diffamt = document.getElementsByName('DiffAmt')[0].value
+  data.commout = commout
+  data.ovout = ovout
+  data.whtcommout = whtcommout
+  data.whtovout = whtovout
+
+  console.log({master :  data, trans : policiesData});
+  await axios.post(url + "/araps/submitarpremin", {master : data, trans : policiesData}).then((res) => {
+    alert("save account recive successed!!!").catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };
 
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center">
       <form onSubmit={(e)=>createHandler(e)}>
         <h1>สร้างรายการตัดหนี้</h1>
         {/* billadvisorno */}

@@ -8,6 +8,7 @@ router.post("/findDataByBillAdvisoryNo",ctrl.bill.findDataByBillAdvisoryNo);
 router.post("/findbill",ctrl.bill.findbill);
 router.post("/saveCasheir",ctrl.bill.saveCashier);
 router.post("/submitCasheir",ctrl.bill.submitCashier);
-
+router.post("/editsaveCasheir",ctrl.bill.editSaveBill);
+router.post("/editsubmitCasheir",ctrl.bill.editSubmitBill);
 
 module.exports = router;
