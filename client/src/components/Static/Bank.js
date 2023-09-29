@@ -48,7 +48,8 @@ const Bank = () => {
     }
 
     return(
-        <div className="container" style={{marginTop:"30px",marginBottom:"30px"}}>
+        <div className="container" style={{paddingTop: "30px", paddingBottom: "30px" }}>
+            <h1 className="text-center">ธนาคาร</h1>
             <div className="row justify-content-center">
                 <div className="col-lg-6">
                     <form>

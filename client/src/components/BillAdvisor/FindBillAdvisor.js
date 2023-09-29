@@ -26,7 +26,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindBillAdvisor = () => {
-    const url = config.url;
+    const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -147,7 +147,7 @@ const FindBillAdvisor = () => {
                 // alert("create new insuree success")
             })
             .catch((err) => {
-
+                alert("Something went wrong, Try Again.");
                 // alert("create snew insuree fail");
 
             });
@@ -175,7 +175,7 @@ const FindBillAdvisor = () => {
     };
 
     return (
-        <>
+        <div>
 
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
@@ -342,7 +342,7 @@ const FindBillAdvisor = () => {
           First time here ? Let's sign up
         </Link> */}
             {/* </BackdropBox1> */}
-        </>
+        </div>
     );
 };
 

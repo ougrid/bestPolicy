@@ -7,7 +7,7 @@ import axios from "axios";
 const config = require("../../config.json");
 
 export default function PremInPaid() {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [filterData, setFilterData] = useState(
     {
         "billadvisorno": null,
@@ -18,115 +18,32 @@ export default function PremInPaid() {
 
     })
     const [policiesData, setPoliciesData] = useState([])
-  const colData = [
-    "InsurerCode",
-    "AdvisorCode",
-    "Duedate",
-    "Policyno",
-    "Endorseno",
-    "Invoiceno",
-    "seqno",
-    "customerid",
-    "insuredname",
-    "licenseno",
-    "province",
-    "chassisno",
-    "grossprem",
-    "duty",
-    "tax",
-    "totalamt",
-    "comm-in%",
-    "comm-in-amt",
-    "vat-comm-in",
-    "comm-in + vat-comm_in",
-    "ov-in%",
-    "ov-in amt",
-    "vat-comm-in",
-    "ov-in  + vat-ov_in",
-  ];
-  const rowData = [
-    {
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    {
-      InsurerCode: "INS" + Math.floor(Math.random() * 1000),
-      AdvisorCode: "ADV" + Math.floor(Math.random() * 1000),
-      Duedate: "2023-09-15",
-      Policyno: "POL" + Math.floor(Math.random() * 10000),
-      Endorseno: "END" + Math.floor(Math.random() * 100),
-      Invoiceno: "INV" + Math.floor(Math.random() * 1000),
-      seqno: Math.floor(Math.random() * 100),
-      customerid: "CUST" + Math.floor(Math.random() * 1000),
-      insuredname: "John Doe",
-      licenseno: "ABC123",
-      province: "California",
-      chassisno: "CHS" + Math.floor(Math.random() * 1000),
-      grossprem: Math.random() * 1000,
-      duty: Math.random() * 100,
-      tax: Math.random() * 50,
-      totalamt: Math.random() * 1500,
-      "comm-out%": Math.random() * 10,
-      "comm-out-amt": Math.random() * 100,
-    },
-    // Add more objects as needed
-  ];
+    const colData = {
+      insurerCode: "insurerCode",
+      agentCode: "advisorCode",
+      dueDate:"Duedate",
+      policyNo:"Policyno",
+      endorseNo:"Endorseno",
+      invoiceNo:"Invoiceno",
+      seqNo: "seqno",
+      customerid:"customerid",
+      insureename:"insuredname",
+      licenseNo:"licenseno",
+      // "province",
+      chassisNo:"chassisno",
+      netgrossprem:"grossprem",
+      duty:"duty",
+      tax:"tax",
+      totalprem:"totalamt",
+      commout_rate:"comm-out%",
+      commout_amt:"comm-out-amt",
+      ovout_rate:"ov-out%",
+      ovout_amt:"ov-out-amt",
+      netflag:"[] net",
+      remainamt:"billpremium",
+  
+  };
+  
   const { type } = useParams();
   //apis 
   const searchHandler=(e)=>{
@@ -148,27 +65,28 @@ export default function PremInPaid() {
     axios
     .post(url + "/araps/getartrans", filterData)
     .then((res) => {
+      console.log(res.data);
         if (res.status === 201) {
             console.log(res.data);
-            alert("dont find billadvisorNo : " + filterData.billadvisorno);
+            alert("dont find policy");
 
         } else {
 
-            const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
-            setFilterData(data)
+            // const data = {...filterData , agentCode : res.data.billdata[0].agentCode, insurerCode : res.data.billdata[0].insurerCode,  actualvalue  : res.data.billdata[0].amt}
+            // setFilterData(data)
             setPoliciesData(res.data.trans)
             
             
         }
     })
     .catch((err) => {
-
-         alert("dont find billadvisorNo : " + filterData.billadvisorno);
+ alert("Something went wrong, Try Again.")
+      
 
     });
   }
   return (
-    <div className="container d-fle justify-content-center my-5">
+    <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>searchHandler(e)}>
         <h1>แสดงรายการที่รับชำระหนี้</h1>
         {/* BillAdvisorNo */}
@@ -302,7 +220,7 @@ export default function PremInPaid() {
         </div>
       </form>
       <div>
-        <PremInTable cols={colData} rows={rowData} />
+        <PremInTable cols={colData} rows={policiesData} />
         <button className="btn btn-primary">Export To Excel</button>
       </div>
     </div>

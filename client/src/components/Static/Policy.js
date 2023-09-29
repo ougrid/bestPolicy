@@ -25,7 +25,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Policy = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
 
   const [policyData, setPolicyData] = useState({ itemList: null });
@@ -167,7 +167,7 @@ const Policy = () => {
         </div>
 
         {/* motor table */}
-        {policyData.insureType === "Motor" ? (
+        {policyData.insureType === "MO" ? (
           <>
             <div class="row">
               <div class="col">

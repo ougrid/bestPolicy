@@ -18,7 +18,7 @@ module.exports = {
       cashierdate: {
         type: Sequelize.STRING
       },
-      ARNO: {
+      dfrpreferno: {
         type: Sequelize.STRING
       },
       transactiontype: {
@@ -64,6 +64,12 @@ module.exports = {
         type: Sequelize.FLOAT
       },
       createusercode: {
+        type: Sequelize.STRING
+      },
+      refno: {
+        type: Sequelize.STRING
+      },
+      status: {
         type: Sequelize.STRING
       },
       updateusercode: {

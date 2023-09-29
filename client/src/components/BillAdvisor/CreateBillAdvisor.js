@@ -26,7 +26,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateBillAdvisor = () => {
-    const url = config.url;
+    const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -121,7 +121,7 @@ const CreateBillAdvisor = () => {
             whtcom: net.whtcom,
             ov_out: net.ov_out,
             whtov: net.whtov,
-            billprem: net.prem + gross.prem + net.comm_out + net.whtcom + net.ov_out + net.whtov
+            billprem: net.prem + gross.prem - net.comm_out + net.whtcom - net.ov_out + net.whtov
         }
         setPoliciesRender({ net: net, gross: gross, total: total })
     };
@@ -189,11 +189,11 @@ const CreateBillAdvisor = () => {
                     console.log(res.data);
                     setPoliciesData(res.data)
                     setBillpremiumData(array)
-                    alert("create new insuree success")
+                    alert("find data success")
                 }
             })
             .catch((err) => {
-
+                alert("Something went wrong, Try Again.");
                 // alert("create snew insuree fail");
 
             });
@@ -227,13 +227,13 @@ const CreateBillAdvisor = () => {
             })
             .catch((err) => {
 
-                alert("create new insuree fail");
+                alert("create billadvisor fail");
 
             });
     };
 
     return (
-        <>
+        <div>
 
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
@@ -387,7 +387,7 @@ const CreateBillAdvisor = () => {
                             <th scope="col">licenseno</th>
                             <th scope="col">province</th>
                             <th scope="col">chassino</th>
-                            <th scope="col">grossprem</th>
+                            <th scope="col">netgrossprem</th>
                             <th scope="col">duty</th>
                             <th scope="col">tax</th>
                             <th scope="col">totalamt</th>
@@ -412,11 +412,11 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.invoiceNo}</td>
                                 <td>{ele.seqNo}</td>
                                 <td>{ele.insureeCode}</td>
-                                <td>{ele.insureeName}</td>
+                                <td>{ele.insureename}</td>
                                 <td>{ele.licenseNo}</td>
                                 <td>{ele.motorprovinceID}</td>
                                 <td>{ele.chassisNo}</td>
-                                <td>{ele.grossprem}</td>
+                                <td>{ele.netgrossprem}</td>
                                 <td>{ele.duty}</td>
                                 <td>{ele.tax}</td>
                                 <td>{ele.totalprem}</td>
@@ -616,7 +616,7 @@ const CreateBillAdvisor = () => {
                 </Modal.Footer>
             </Modal>
 
-        </>
+        </div>
     );
 };
 

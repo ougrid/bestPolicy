@@ -20,12 +20,11 @@ module.exports = {
       customerid: {
         type: Sequelize.INTEGER
       },
-      motorid: {
-        type: Sequelize.INTEGER
-      },
       grossprem: {
         type: Sequelize.FLOAT
       },
+      
+      
       duty: {
         type: Sequelize.FLOAT
       },
@@ -55,6 +54,12 @@ module.exports = {
       },
       updateusercode: {
         type: Sequelize.STRING
+      },
+      motorid: {
+        type: Sequelize.INTEGER
+      },
+      seqno: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         defaultValue: new Date(),

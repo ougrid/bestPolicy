@@ -26,7 +26,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Agent = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [agentData, setAgentData] = useState({ entityID: null });
   const [entityData, setEntityData] = useState({ personType: "P" });
@@ -93,7 +93,7 @@ const Agent = () => {
 
                 const array = []
                 province.data.forEach(ele => {
-                    array.push(<option key={ele.id} value={ele.id}>{ele.insureType} : {ele.class}</option>)
+                    array.push(<option key={ele.id} value={ele.id}>{ele.class} : {ele.subClass}</option>)
                 });
                 setInsureTypeDD(array)
 
@@ -247,7 +247,18 @@ const removeRow = (e) => {
 };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault({
+      agent: agentData,
+      entity: entityData,
+      location: locationData,
+      commOVOut:comOvOutData
+    });
+    console.log({
+      agent: agentData,
+      entity: entityData,
+      location: locationData,
+      commOVOut:comOvOutData
+    });
     axios
       .post(url + "/persons/agentnew", {
         agent: agentData,
@@ -305,7 +316,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เครดิตเทอมค่าเบี้ย <span class="text-danger"> *</span></label>
             <InputBtn
                 className="form-control"
-              type="text"
+              type="number"
               required
               // placeholder="InsurerCode"
               name="premCreditT"
@@ -316,7 +327,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เครดิตเทอมค่าcomm/ov <span class="text-danger"> *</span></label>
             <InputBtn
                 className="form-control"
-              type="text"
+              type="number"
               required
               // placeholder="InsurerCode"
               name="commovCreditT"
@@ -348,7 +359,7 @@ const removeRow = (e) => {
                   onChange={changeEntity}
                 >
                   <option selected value="P">บุคคล</option>
-                  <option value="C">นิติบุคคล</option>
+                  <option value="O">นิติบุคคล</option>
                 </select>
               </div>
               <div class="col-1"></div>
@@ -414,7 +425,7 @@ const removeRow = (e) => {
               type="checkbox"
               name="vatflag"
               onChange={(e) =>
-                setAgentData({ ...entityData, vatflag: e.target.checked })
+                setAgentData({ ...agentData, vatflag: e.target.checked })
               }
             />
           </div>
@@ -544,7 +555,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เบอร์มือถือ<span class="text-danger"> *</span></label>
             <InputBtn
             className="form-control"
-              type="number"
+              type="text"
               name="telNum_2"
               onChange={changeLocation}
             />
@@ -554,7 +565,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
             <InputBtn
             className="form-control"
-              type="number"
+              type="text"
               name="telNum_1"
               onChange={changeLocation}
             />
@@ -563,7 +574,7 @@ const removeRow = (e) => {
                 <label class="form-label ">เบอร์โทรสาร<span class="text-danger"> *</span></label>
             <InputBtn
             className="form-control"
-              type="number"
+              type="text"
               name="telNum_3"
               onChange={changeLocation}
             />

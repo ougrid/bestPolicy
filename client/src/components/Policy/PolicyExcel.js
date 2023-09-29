@@ -16,7 +16,7 @@ import { InputBtn } from "../StylesPages/LoginStyles";
 const config = require("../../config.json");
 
 const PolicyExcel = () => {
-  const url = config.url;
+  const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [profile, setProfile] = useState({});
   // var decoded = jwt_decode(localStorage.getItem("jwt"));
   // useEffect(() => {
@@ -61,7 +61,7 @@ const PolicyExcel = () => {
     </section>
   );
   return (
-    <>
+    <div>
       {/* <Border>
         <HeaderProfile>Welcome {profile.firstname}</HeaderProfile>
         <form
@@ -132,7 +132,7 @@ const PolicyExcel = () => {
 
       <h2 className="text-center">Add New Policy</h2>
       <PolicyListV2 userId={profile.id} />
-    </>
+    </div>
   );
 };
 

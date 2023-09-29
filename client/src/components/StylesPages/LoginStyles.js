@@ -1,20 +1,24 @@
 import styled from "styled-components";
-
+import amitybanner from './image/hero-banner-1.png'
 
 export const BackgroundImg1 = styled.div`
-    background-image: url(https://images.unsplash.com/photo-1498084393753-b411b2d26b34?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80);
-    height: 100vh;
-    background-size: cover;
+    background-image: url(${amitybanner});
+    // width:1;
+    height: 525px;
+    overflow:visible;
+    // background-size: cover;
     background-repeat: no-repeat;
     z-index: -10;
 `
 export const Header = styled.h2`
-    color: white;
+
+color: #05276B;
     margin-top: 0;
     padding-top: 28px;
     z-index: 10;
 `
 export const InputBtn = styled.input`
+text-align: center;
     border: none;
     border-radius: 5px;
     background: #DED5FE;
@@ -26,6 +30,7 @@ export const InputBtn = styled.input`
 
 `
 export const LoginBtn = styled.button`
+color: white;
     border: none;
     height: 35px;
     width: 200px;
@@ -33,14 +38,17 @@ export const LoginBtn = styled.button`
     margin-bottom: 15px;
     border-radius: 5px;
     background: #3A0CD2;
-    color: white;
+   
     cursor: pointer;
     z-index: 10;
 `
 export const NormalText = styled.p`
-    color: white;
+    padding: 10 px;
+    color: #05276B;
 `
 export const BackdropBox1 = styled.div`
+text-align: center;
+color: #05276B;
     position: relative;
     top: 130px;
     height: 290px;

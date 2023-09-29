@@ -79,9 +79,9 @@ const getRunNo = async (runtype,paramclass,subclass,usercode,effdate,t) => {
           //condition.EffectiveDate = EffectiveDate;
           condition = condition + ` and "EffectiveDate" = '${EffectiveDate}'`
         } else {
-          condition.EffectiveDate = sequelize.where(sequelize.fn('YEAR', sequelize.col('EffectiveDate')), EffectiveDate.getFullYear());
+          condition.EffectiveDate = ` and EXTRACT(YEAR FROM "EffectiveDate") = '${EffectiveDate.split('-')[0]}'` 
           if (basis === 'M') {
-            condition.EffectiveDate = sequelize.and(condition.EffectiveDate, sequelize.where(sequelize.fn('MONTH', sequelize.col('EffectiveDate')), EffectiveDate.getMonth() + 1));
+            condition.EffectiveDate = ` and EXTRACT(YEAR FROM "EffectiveDate") = '${EffectiveDate.split('-')[0]}'  AND EXTRACT(MONTH FROM "EffectiveDate") = '${EffectiveDate.split('-')[1]}'  `
           }
         }
       }
@@ -164,8 +164,18 @@ const testRunno =  async (req,res) =>{
     const result = await getRunNo(req.body,{})
    await res.json({result: result})
 }
+
+const  getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+  const day = String(today.getDate()).padStart(2, '0');
+  let result = `${year}-${month}-${day}`
+  return result.toString();
+}
 module.exports = {
 getRunNo,
-testRunno
+testRunno,
+getCurrentDate
 
 };

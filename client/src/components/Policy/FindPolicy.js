@@ -28,7 +28,7 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindPolicy = () => {
-    const url = config.url;
+    const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -152,7 +152,7 @@ const FindPolicy = () => {
                 // window.location.reload();
                 // localStorage.setItem("jwt", token);
                 console.log(res.data);
-                alert("create new insuree success")
+                alert("find data success")
                 const array = []
                 setExportPolicyData(res.data)
                 // for (let i = 0; i < res.data.length; i++) {
@@ -198,7 +198,7 @@ const FindPolicy = () => {
             })
             .catch((err) => {
 
-                alert("create new insuree fail");
+                alert("Something went wrong, Try Again.");
 
             });
     };
@@ -210,7 +210,7 @@ const FindPolicy = () => {
         await axios.post(url + "/policies/policyedit/batch", data).then((res) => {
           alert("policy batch updated");
           //window.location.reload(false);
-        });
+        }).catch((err)=>{ alert("Something went wrong, Try Again.");});
       };
       const editCard =(e) =>{
         console.log(policiesData[e.target.id]);
@@ -222,7 +222,7 @@ const FindPolicy = () => {
     }
 
     return (
-        <>
+        <div>
 <Modal  size="xl" show={hidecard[0]} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title >แก้ไขกรมธรรม์</Modal.Title>
@@ -586,7 +586,7 @@ const FindPolicy = () => {
                                 <td>{ele.taxInvioceNo}</td>
                                 <td>{ele.netgrossprem}</td>
                                 <td>{ele.duty}</td>
-                                <td>{ele.stamp}</td>
+                                <td>{ele.tax}</td>
                                 <td>{ele.totalprem}</td>
                                 <td>{ele.commin_amt}</td>
                                 <td>{ele.ovin_amt}</td>
@@ -613,7 +613,7 @@ const FindPolicy = () => {
           First time here ? Let's sign up
         </Link> */}
             {/* </BackdropBox1> */}
-        </>
+        </div>
     );
 };
 

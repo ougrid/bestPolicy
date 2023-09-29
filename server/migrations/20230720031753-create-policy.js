@@ -48,7 +48,7 @@ module.exports = {
       invioceNo: {
         type: Sequelize.STRING
       },
-      taxInvioceNo: {
+      taxInvoiceNo: {
         type: Sequelize.STRING
       },
       seqNoins: {

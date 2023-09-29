@@ -12,23 +12,26 @@ module.exports = {
       keyidm: {
         type: Sequelize.INTEGER
       },
-      "comm-outamt": {
+      "commout_amt": {
         type: Sequelize.FLOAT
       },
       whtrate: {
         type: Sequelize.FLOAT
       },
-      "whtcomm-outamt": {
+      "whtcommout_amt": {
         type: Sequelize.FLOAT
       },
-      "ov-outamt": {
+      "ovout_amt": {
         type: Sequelize.FLOAT
       },
-      "whtov-outamt": {
+      "whtovout_amt": {
         type: Sequelize.FLOAT
       },
       taxid: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
+      },
+      advisorcode: {
+        type: Sequelize.STRING
       },
       createdAt: {
         defaultValue: new Date(),

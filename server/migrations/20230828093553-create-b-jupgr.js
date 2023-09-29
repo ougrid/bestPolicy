@@ -13,13 +13,17 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      polid: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       endorseNo: {
         type: Sequelize.STRING
       },
       invioceNo: {
         type: Sequelize.STRING
       },
-      taxInvioceNo: {
+      taxInvoiceNo: {
         type: Sequelize.STRING
       },
       // 'I' = insurer , 'A' = advisor 

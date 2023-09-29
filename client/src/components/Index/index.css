@@ -1,3 +1,4 @@
+
 .slider {
     border-radius: 30px;
     background-color: #0f0e9f;
@@ -45,6 +46,19 @@ ul li {
     background-color: #0f0e9f !important;
 }
 
-h1 {
+.container h1 {
+   margin:0;
+   padding: 15px;
+    text-align: center;
     color: #0f0e9f;
+}
+div.container{
+    padding: 3rem 2rem;
+    max-width: 960px;
+    /* height: 68vh;   */
+    margin: 0 auto; 
+    object-fit: fill;
+    padding-top: 0;
+
+    /* z-index: -10; */
 }
