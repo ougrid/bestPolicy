@@ -6,7 +6,7 @@ const fs = require('fs');
 require("dotenv").config();
 
 const methodOverride = require("method-override");
-const bodyParser = require("body-parser").json();
+const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const nodemailer = require('nodemailer');
@@ -23,7 +23,8 @@ const corsOptions = {
 
 //middleware-every request goes through it
 app.use(cors(corsOptions));
-app.use(bodyParser);
+// app.use(bodyParser);
+app.use(bodyParser.json({ limit: '200kb' }));
 app.use(cookieParser());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
