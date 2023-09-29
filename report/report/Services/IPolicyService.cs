@@ -12,5 +12,7 @@ namespace report.Services
         //Task<bool> DeleteEmployee(int key);
 
         Task<List<Transaction>> GetPolicyListByPremIn(Transaction data);
+        Task<List<Transaction>> GetPolicyListByPremInDeduct(Transaction data);
+        Task<List<Transaction>> GetPolicyListByPremInBalance(Transaction data);
     }
 }

@@ -108,5 +108,21 @@ namespace report.Services
             return policyList;
 
         }
+
+        public async Task<List<Transaction>> GetPolicyListByPremInBalance(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
+        {
+            string insurerCode = data.insurerCode;
+            string agentCode = data.agentCode;
+
+            List<Transaction> policyList = await _dbService.GetAll<Transaction>("<query/>"
+            ,
+                new
+                {
+                    insurerCode = insurerCode,
+                    agentCode = agentCode
+                });
+            return policyList;
+
+        }
     }
 }
