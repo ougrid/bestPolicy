@@ -5,6 +5,13 @@ const https = require('https');
 const fs = require('fs');
 require("dotenv").config();
 
+//for log file
+const logger = require('./logger'); // Import your Winston logger
+console.log = (...args) => logger.info(args.join(' '));
+console.error = (...args) => logger.error(args.join(' '));
+console.warn = (...args) => logger.warn(args.join(' '));
+
+
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser").json();
 const jwt = require("jsonwebtoken");
@@ -20,6 +27,24 @@ const corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
+
+//for validate token
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.TOKEN_SECRET , (err, user) => {
+    console.log(err)
+
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+
+    next()
+  })
+}
 
 //middleware-every request goes through it
 app.use(cors(corsOptions));
@@ -53,7 +78,7 @@ app.use("/v1/static/bank", routes.banks);
 app.use("/v1/locations", routes.locations);
 app.use("/v1/persons", routes.persons);
 app.use("/v1/auth", routes.auth);
-app.use("/v1/insures", routes.insures);
+app.use("/v1/insures",authenticateToken, routes.insures);
 app.use("/v1/policies", routes.policies);
 app.use("/v1/payments", routes.payments);
 app.use("/v1/bills", routes.bills);
@@ -61,34 +86,37 @@ app.use("/v1/bills", routes.bills);
 app.use("/v1/getrunno", routes.runno);  
 app.use("/v1/araps", routes.arap);  
 
-const options ={
-  key:  fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.cert'),
-}
 
-// app.listen(port, () => {
-//     console.log(`App running on http://localhost:${port}
-//                 --- env config ---
-//                 DB_USERNAME = ${process.env.DB_USERNAME}
-//                 DB_PASSWORD = ${process.env.DB_PASSWORD}
-//                 DB_NAME     = ${process.env.DB_NAME}
-//                 DB_HOST     = ${process.env.DB_HOST}
-//                 DB_DIALECT  = ${process.env.DB_DIALECT}
-//                 DB_PORT     = ${process.env.DB_PORT}
-//                 secretkey   = ${process.env.secretkey}
-//                 alloworigin = ${process.env.alloworigin}`);
-// });
-const server = https.createServer(options, app);
 
-server.listen(port, () => {
-  console.log(`App running on https://localhost:${port}
-              --- env config ---
-              DB_USERNAME = ${process.env.DB_USERNAME}
-              DB_PASSWORD = ${process.env.DB_PASSWORD}
-              DB_NAME     = ${process.env.DB_NAME}
-              DB_HOST     = ${process.env.DB_HOST}
-              DB_DIALECT  = ${process.env.DB_DIALECT}
-              DB_PORT     = ${process.env.DB_PORT}
-              secretkey   = ${process.env.secretkey}
-              alloworigin = ${process.env.alloworigin}`);
+app.listen(port, () => {
+    console.log(`App running on http://localhost:${port}
+                --- env config ---
+                DB_USERNAME = ${process.env.DB_USERNAME}
+                DB_PASSWORD = ${process.env.DB_PASSWORD}
+                DB_NAME     = ${process.env.DB_NAME}
+                DB_HOST     = ${process.env.DB_HOST}
+                DB_DIALECT  = ${process.env.DB_DIALECT}
+                DB_PORT     = ${process.env.DB_PORT}
+                secretkey   = ${process.env.secretkey}
+                alloworigin = ${process.env.alloworigin}`);
 });
+
+// const options ={
+//   key:  fs.readFileSync('server.key'),
+//   cert: fs.readFileSync('server.cert'),
+// }
+
+// const server = https.createServer(options, app);
+
+// server.listen(port, () => {
+//   console.log(`App running on https://localhost:${port}
+//               --- env config ---
+//               DB_USERNAME = ${process.env.DB_USERNAME}
+//               DB_PASSWORD = ${process.env.DB_PASSWORD}
+//               DB_NAME     = ${process.env.DB_NAME}
+//               DB_HOST     = ${process.env.DB_HOST}
+//               DB_DIALECT  = ${process.env.DB_DIALECT}
+//               DB_PORT     = ${process.env.DB_PORT}
+//               secretkey   = ${process.env.secretkey}
+//               alloworigin = ${process.env.alloworigin}`);
+// });
