@@ -16,6 +16,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,6 +27,10 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const EditBillAdvisor = (props) => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const params = useParams()
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
@@ -58,7 +63,7 @@ const EditBillAdvisor = (props) => {
         console.log(params.billno);
         // get pol in billno
         axios
-        .post(url + "/payments/findpolicybyBill",{billadvisor: params.billno})
+        .post(url + "/payments/findpolicybyBill",{billadvisor: params.billno}, headers)
         .then((res) => {
             console.log(res.data);
             if (res.status === 201) {
@@ -89,7 +94,7 @@ const EditBillAdvisor = (props) => {
 
         // get agent all
         axios
-            .get(url + "/persons/agentall")
+            .get(url + "/persons/agentall", headers)
             .then((agent) => {
                 const array = [];
                 agent.data.forEach((ele) => {
@@ -105,7 +110,7 @@ const EditBillAdvisor = (props) => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -202,7 +207,7 @@ const EditBillAdvisor = (props) => {
         e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/payments/findpolicyinDue", filterData)
+            .post(url + "/payments/findpolicyinDue", filterData, headers)
             .then((res) => {
                 if (res.status === 201) {
                     console.log(res.data);
@@ -258,7 +263,7 @@ const EditBillAdvisor = (props) => {
         console.log(array);
         console.log({ bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
         axios
-            .post(url + "/payments/editbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
+            .post(url + "/payments/editbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array }, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);

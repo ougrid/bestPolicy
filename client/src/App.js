@@ -10,7 +10,7 @@ import Login from "./components/Login/Login";
 import React from "react";
 import Admin from "./components/Admin/Admin";
 import SignUp from "./components/SignUp/SignUp";
-import Packages from "./components/Packages/Packages";
+
 import PolicyExcel from "./components/Policy/PolicyExcel";
 import PolicyScreen from "./components/Policy/PolicyScreen";
 import Footer from "./components/Footer/Footer";
@@ -46,6 +46,7 @@ import ReportฺARAPInsurer from "./components/Reports/ReportฺARAPInsurer";
 import ReportฺTax from "./components/Reports/ReportฺTax";
 import { type } from "@testing-library/user-event/dist/type";
 
+
 function App() {
   return (
     <div className="App">
@@ -56,16 +57,15 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/payment" element={<Payment />} />
+          {/* <Route path="/admin" element={<Admin />} /> */}
+          {/* <Route path="/signup" element={<SignUp />} /> */}
+          {/* <Route path="/payment" element={<Payment />} /> */}
           <Route path="/insurer" element={<Insurer />} />
           <Route path="/insuretype" element={<InsureType />} />
           <Route path="/agent" element={<Agent />} />
-          <Route path="/static" element={<Static />} />
+          {/* <Route path="/static" element={<Static />} /> */}
           <Route path="/bank" element={<Bank />} />
-          <Route path="/static/:name" element={<Static />} />
-          <Route path="/packages/:id" element={<Packages />} />
+          {/* <Route path="/static/:name" element={<Static />} /> */}
           <Route path="/findpolicy" element={<FindPolicy />} />
           <Route path="/policyexcel" element={<PolicyExcel />} />
           <Route path="/policyscreen" element={<PolicyScreen />} />
@@ -83,6 +83,7 @@ function App() {
           <Route path="premout/create" element={<PremOutCreate />} />
           <Route path="commin/create" element={<CommInCreate />} />
           <Route path="commout/create" element={<CommOutCreate />} />
+          {/* w8 api report */}
           <Route path="reports/policy" element={<ReportPolicy />} />
           <Route path="reports/endorse" element={<ReportEndorse />} />
           <Route path="reports/invoice" element={<ReportInvoice />} />

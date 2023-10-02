@@ -16,6 +16,7 @@ import {
   LoginBtn,
   BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -28,6 +29,10 @@ const NormalText = {
 const Insurer = () => {
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const [insurerData, setInsurerData] = useState({
     entityID: null,
     deductTaxRate: 3,
@@ -90,7 +95,7 @@ const Insurer = () => {
   const getDistrict = (provinceID) => {
     //get distric in province selected
     axios
-      .get(url + "/static/amphurs/" + provinceID)
+      .get(url + "/static/amphurs/" + provinceID, headers)
       .then((distric) => {
         const array = [];
         distric.data.forEach((ele) => {
@@ -108,7 +113,7 @@ const Insurer = () => {
   const getSubDistrict = (districID) => {
     //get tambons in distric selected
     axios
-      .get(url + "/static/tambons/" + districID)
+      .get(url + "/static/tambons/" + districID, headers)
       .then((subdistric) => {
         const arraySub = [];
         const arrayZip = [];
@@ -135,7 +140,7 @@ const Insurer = () => {
   useEffect(() => {
     //get province
     axios
-      .get(url + "/static/provinces/all")
+      .get(url + "/static/provinces/all", headers)
       .then((province) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -154,7 +159,7 @@ const Insurer = () => {
         setProvinceDD(array);
         // get title
         axios
-          .get(url + "/static/titles/company/all")
+          .get(url + "/static/titles/company/all", headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
@@ -173,7 +178,7 @@ const Insurer = () => {
 
     //get insureType
     axios
-      .get(url + "/insures/insuretypeall")
+      .get(url + "/insures/insuretypeall", headers)
       .then((province) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -202,7 +207,7 @@ const Insurer = () => {
         entity: entityData,
         location: locationData,
         commOVIn: comOvInData,
-      })
+      }, headers)
       .then((res) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -216,7 +221,7 @@ const Insurer = () => {
             insurer: insurerData,
             entity: entityData,
             location: locationData,
-          })
+          }, headers)
           .then((res) => {
             // let token = res.data.jwt;
             // let decode = jwt_decode(token);

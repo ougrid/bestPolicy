@@ -16,6 +16,7 @@ import {
   LoginBtn,
   BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,6 +27,10 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const Agent = () => {
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [agentData, setAgentData] = useState({ entityID: null });
@@ -45,7 +50,7 @@ const Agent = () => {
   useEffect(() => {
     //get province
     axios
-      .get(url + "/static/provinces/all")
+      .get(url + "/static/provinces/all", headers)
       .then((province) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -60,7 +65,7 @@ const Agent = () => {
         setProvinceDD(array)
 
         axios
-          .get(url + "/static/titles/person/all")
+          .get(url + "/static/titles/person/all", headers)
           .then((title) => {
             const array2 = []
             title.data.forEach(ele => {
@@ -83,7 +88,7 @@ const Agent = () => {
 
     // get all insuretype
     axios
-            .get(url + "/insures/insuretypeall")
+            .get(url + "/insures/insuretypeall", headers)
             .then((province) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -106,7 +111,7 @@ const Agent = () => {
 
     // get all insurer
     axios
-    .get(url + "/persons/insurerall")
+    .get(url + "/persons/insurerall", headers)
     .then((insurer) => {
         
 
@@ -145,7 +150,7 @@ const Agent = () => {
     if (e.target.name === 'personType') {
       if (e.target.value === 'P') {
         axios
-          .get(url + "/static/titles/person/all")
+          .get(url + "/static/titles/person/all", headers)
           .then((title) => {
             const array2 = []
             title.data.forEach(ele => {
@@ -157,7 +162,7 @@ const Agent = () => {
           });
       }else{
         axios
-        .get(url + "/static/titles/company/all")
+        .get(url + "/static/titles/company/all", headers)
         .then((title) => {
           const array2 = []
           title.data.forEach(ele => {
@@ -191,7 +196,7 @@ const Agent = () => {
   const getDistrict = (provinceID) => {
     //get distric in province selected
     axios
-      .get(url + "/static/amphurs/" + provinceID)
+      .get(url + "/static/amphurs/" + provinceID, headers)
       .then((distric) => {
         const array = []
         distric.data.forEach(ele => {
@@ -210,7 +215,7 @@ const Agent = () => {
   const getSubDistrict = (districID) => {
     //get tambons in distric selected
     axios
-      .get(url + "/static/tambons/" + districID)
+      .get(url + "/static/tambons/" + districID, headers)
       .then((subdistric) => {
         const arraySub = []
         const arrayZip = []
@@ -265,7 +270,7 @@ const removeRow = (e) => {
         entity: entityData,
         location: locationData,
         commOVOut:comOvOutData
-      })
+      }, headers)
       .then((res) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);

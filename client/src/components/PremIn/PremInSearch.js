@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import PremInTable from "./PremInTable";
 import axios from 'axios'
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 export default function PremInSearch() {
+  const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [filterData, setFilterData] = useState(
     {
@@ -67,7 +73,7 @@ export default function PremInSearch() {
     e.preventDefault();
     // console.log(filterData);
     axios
-        .post(url + "/araps/getarpremindata", filterData)
+        .post(url + "/araps/getarpremindata", filterData, headers)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);

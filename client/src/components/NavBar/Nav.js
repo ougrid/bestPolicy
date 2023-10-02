@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
 import { Link, redirect, useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 import logoamity from './amity_3.webp'
 import {
   NavBar,
@@ -15,8 +16,10 @@ import {
 function Nav() {
   const navigate = useNavigate();
   const [showToggle, setShowToggle] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const handleLogOut = (e) => {
-    localStorage.removeItem("jwt");
+    
+    removeCookie("jwt")
   };
 
   const admin = (
@@ -26,7 +29,7 @@ function Nav() {
   );
 
   
-  if (localStorage.getItem("jwt") !== null) {
+  if (cookies["jwt"] !== undefined) {
     // const decoded = jwt_decode(localStorage.getItem("jwt"));
     return (
       // Use React Fragment

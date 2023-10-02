@@ -18,6 +18,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -28,6 +29,10 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindPolicy = () => {
+    const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -65,7 +70,7 @@ const FindPolicy = () => {
     useEffect(() => {
         //get province
         axios
-            .get(url + "/static/provinces/all")
+            .get(url + "/static/provinces/all", headers)
             .then((province) => {
                 const array = []
                 province.data.forEach(ele => {
@@ -79,7 +84,7 @@ const FindPolicy = () => {
 
         // get insuretype all
         axios
-            .get(url + "/insures/insuretypeall")
+            .get(url + "/insures/insuretypeall", headers)
             .then((insuretype) => {
                 const array = [];
                 insuretype.data.forEach((ele) => {
@@ -95,7 +100,7 @@ const FindPolicy = () => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -144,7 +149,7 @@ const FindPolicy = () => {
         // e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/policies/policygetlist", filterData)
+            .post(url + "/policies/policygetlist", filterData, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -207,7 +212,7 @@ const FindPolicy = () => {
        
         console.log(data);
         e.preventDefault();
-        await axios.post(url + "/policies/policyedit/batch", data).then((res) => {
+        await axios.post(url + "/policies/policyedit/batch", data, headers).then((res) => {
           alert("policy batch updated");
           //window.location.reload(false);
         }).catch((err)=>{ alert("Something went wrong, Try Again.");});

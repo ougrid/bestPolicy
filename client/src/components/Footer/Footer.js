@@ -12,7 +12,7 @@ function Footer() {
       <FooterGrid>
         <FooterGridBox>
             <img to="/"
-            style={{ height: "50px", 'margin-left': '20px'}}
+            style={{ height: "50px", 'marginLeft': '20px'}}
             src={logoamity}
             />
             <FooterTxt><MdLocationOn style={{fontSize: "20px", color: "#e1251b"}}/> 67/213 ม.3 ซ.คลองหลวง 17 ต.คลองหนึ่ง อ.คลองหลวง ปทุมธานี 12120</FooterTxt> 

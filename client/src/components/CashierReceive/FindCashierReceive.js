@@ -16,6 +16,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,6 +27,10 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindCashierReceive = () => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: {'Content-Type': 'application/json', Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
 
@@ -55,11 +60,7 @@ const FindCashierReceive = () => {
         let data = JSON.stringify({
             "billadvisorno": billAdvisorNo
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findDataByBillAdvisoryNo",data,{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findDataByBillAdvisoryNo",data,headers)
             .then((response) => {
                 // console.log(response.data);
                 if (response.data[0])

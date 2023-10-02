@@ -17,6 +17,7 @@ import {
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
 import {Button, Form} from "react-bootstrap";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -27,6 +28,11 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const EditCashierReceive = (props) => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const searchButtonRef = useRef(null);
@@ -94,12 +100,7 @@ const EditCashierReceive = (props) => {
         let data = JSON.stringify({
             "billadvisorno": billAdvisorNo
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findDataByBillAdvisoryNo",data,{
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findDataByBillAdvisoryNo",data, headers)
             .then((response) => {
                 // console.log(response);
                 setInsurer(response.data[0].insurerCode)
@@ -122,12 +123,7 @@ const EditCashierReceive = (props) => {
 
     useEffect(() => {
         let data={}
-        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBrand",data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBrand",data, headers)
             .then((response) => {
                 console.log(response.data);
                 setBankAmityBrandData(response.data)
@@ -140,12 +136,7 @@ const EditCashierReceive = (props) => {
                 console.log(error);
             });
 
-        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankPartnerBrand?"+"type=I",data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankPartnerBrand?"+"type=I",data, headers)
             .then((response) => {
                 console.log(response.data);
                 setBankPartnerBrandData(response.data)
@@ -163,12 +154,7 @@ const EditCashierReceive = (props) => {
     useEffect(() => {
         let data={}
         if (bankAmity!="")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBranch?brand="+bankAmity,data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBranch?brand="+bankAmity,data, headers)
                 .then((response) => {
                     console.log(response.data);
                     setBankAmityBranchData(response.data)
@@ -186,12 +172,7 @@ const EditCashierReceive = (props) => {
         let data={}
         console.log(bankBranchAmity)
         if (bankBranchAmity!="")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBranch?branch="+bankBranchAmity+"&brand="+bankAmity,data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBranch?branch="+bankBranchAmity+"&brand="+bankAmity,data, headers)
                 .then((response) => {
                     // console.log(response.data);
                     setBankAmityNoData(response.data)
@@ -209,12 +190,7 @@ const EditCashierReceive = (props) => {
     useEffect(() => {
         let data={}
         if (bankPartner!="")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankPartnerBranch?brand="+bankPartner+"&type=I",data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankPartnerBranch?brand="+bankPartner+"&type=I",data, headers)
                 .then((response) => {
                     console.log(response.data);
                     setBankPartnerBranchData(response.data)
@@ -232,12 +208,7 @@ const EditCashierReceive = (props) => {
         let data={}
         console.log(bankBranchAmity)
         if (bankBranchPartner!="")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBranch?branch="+bankBranchPartner+"&brand="+bankPartner+"&type=I",data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/BankAmityBranch?branch="+bankBranchPartner+"&brand="+bankPartner+"&type=I",data, headers)
                 .then((response) => {
                     // console.log(response.data);
                     setBankPartnerNoData(response.data)
@@ -276,12 +247,7 @@ const EditCashierReceive = (props) => {
             AmityAccountno: bankNo,
             Amt: amount,
         }
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/editsubmitCasheir",data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/editsubmitCasheir",data, headers)
             .then((response) => {
 
                 if (response.status==200) {
@@ -328,12 +294,7 @@ const EditCashierReceive = (props) => {
             AmityAccountno: bankNo,
             Amt: amount
         }
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/editsaveCasheir",data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/editsaveCasheir",data, headers)
             .then((response) => {
                 console.log(response)
                 if (response.status==200) {
@@ -360,11 +321,7 @@ const EditCashierReceive = (props) => {
         let data = JSON.stringify({
             "billadvisorno": billAdvisorNo
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findDataByBillAdvisoryNo",data,{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findDataByBillAdvisoryNo",data, headers)
             .then((response) => {
                 // console.log(response.data);
                 if (response.data[0])
@@ -398,11 +355,7 @@ const EditCashierReceive = (props) => {
             "toDate":toDate,
             "dfrpreferno":dfrpreferno
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findbill",data,{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/bills/findbill",data, headers)
             .then((response) => {
                 // console.log(response.data);
                 setTableData(response.data)

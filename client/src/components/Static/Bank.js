@@ -15,10 +15,15 @@ import Policy from "./Policy";
 import ExportFile from "./ExportFile"
 import Payment from "./Payment";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 
 const Bank = () => {
-
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+      headers: { 'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${cookies["jwt"]}` }
+  };
     const [bankBrand, setBankBrand] = useState('')
     const [bankBranch, setBankBranch] = useState('')
     const [bankNo, setBankNo] = useState('')
@@ -34,11 +39,7 @@ const Bank = () => {
             "type":bankOf,
             "code":bankOfCode
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/bank",data,{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL+"/static/bank/bank", data, headers)
             .then((response) => {
                 console.log(JSON.stringify(response.data));
             })

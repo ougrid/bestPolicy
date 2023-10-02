@@ -1,37 +1,50 @@
-const { createLogger, format, transports } = require('winston');
-const fs = require('fs');
-const path = require('path');
+const winston = require('winston');
+const expressWinston = require('express-winston');
 
-// Specify the log directory path
-const logDirectory = path.join(__dirname, 'logs');
-
-// Ensure the log directory exists
-if (!fs.existsSync(logDirectory)) {
-  fs.mkdirSync(logDirectory);
-}
-
-// Specify the log file path
-const logFilePath = path.join(logDirectory, 'app.log');
-
-
-// Create a writable stream to the log file
-const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
-
-// Create a Winston logger
-const logger = createLogger({
+// Create a custom Winston logger
+const logger = winston.createLogger({
   level: 'info',
-  format: format.combine(
-    format.timestamp(),
-    format.printf(({ timestamp, level, message }) => {
-      return `${timestamp} [${level}]: ${message}`;
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} [${level.toUpperCase()}]: ${message}`;
     })
   ),
   transports: [
-    new transports.Console(), // Log to the console
-    new transports.Stream({
-      stream: logStream, // Log to the file
-    }),
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'logs/app.log' }),
   ],
 });
 
-module.exports = logger;
+// Middleware to log request and response details, including remote IP
+const requestLogger = expressWinston.logger({
+  transports: [
+    // new winston.transports.Console(),
+    new winston.transports.File({ filename: 'logs/request.log' }),
+  ],
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  meta: true, // Include all metadata fields
+  msg: 'HTTP {{req.method}} {{req.url}}', // Log request method and URL
+  expressFormat: true, // Use Express.js's default log format
+  colorize: false, // Disable colorization of console output
+  dynamicMeta: (req, res) => {
+    const httpRequest = {};
+    const meta = {};
+    if (req) {
+      meta.httpRequest = httpRequest;
+      httpRequest.requestMethod = req.method;
+      httpRequest.requestUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+      httpRequest.protocol = `HTTP/${req.httpVersion}`;
+      httpRequest.remoteIp = req.ip; // Include remote IP address
+      httpRequest.requestSize = req.socket.bytesRead;
+      httpRequest.userAgent = req.get('User-Agent');
+      httpRequest.referrer = req.get('Referrer');
+    }
+    return meta;
+  },
+});
+
+module.exports = { logger, requestLogger };

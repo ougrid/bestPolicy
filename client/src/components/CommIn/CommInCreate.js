@@ -1,9 +1,15 @@
 import React, { useEffect, useState }  from "react";
 import PremInTable from "../PremIn/PremInTable";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 export default function CommInCreate() {
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+  headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [filterData, setFilterData] = useState(
     {
@@ -55,7 +61,7 @@ export default function CommInCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/araps/getarcommin", {...filterData, artype :artype })
+        .post(url + "/araps/getarcommin", {...filterData, artype :artype }, headers)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -87,7 +93,7 @@ export default function CommInCreate() {
 
 const saveapcommin = async (e) => {
   console.log({master :  {...filterData, diffamt: document.getElementsByName('DiffAmt')[0].value}, trans : policiesData});
-  await axios.post(url + "/araps/savearcommin", {master : filterData, trans : policiesData})
+  await axios.post(url + "/araps/savearcommin", {master : filterData, trans : policiesData}, headers)
   .then((res) => {
     alert("save account recive successed!!!")
     .catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -97,7 +103,7 @@ const saveapcommin = async (e) => {
 
 const submitapcommin = async (e) => {
   console.log({master :  {...filterData}, trans : policiesData});
-  await axios.post(url + "/araps/submitarcommin", {master :filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/submitarcommin", {master :filterData, trans : policiesData}, headers).then((res) => {
     alert("save account recive successed!!!")
     .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);

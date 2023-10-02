@@ -7,9 +7,15 @@ import PolicyCard from "./PolicyCard";
 import Modal from 'react-bootstrap/Modal';
 import { async } from "q";
 import Pagination from "./Pagination";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 const UserCarList = (props) => {
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [row, setRow] = useState(0);
   const [hidecard, setHidecard] = useState([false,0]);
@@ -120,7 +126,7 @@ const UserCarList = (props) => {
     }
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data, headers).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});

@@ -16,6 +16,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,6 +27,10 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateBillAdvisor = () => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -58,7 +63,7 @@ const CreateBillAdvisor = () => {
 
         // get agent all
         axios
-            .get(url + "/persons/agentall")
+            .get(url + "/persons/agentall", headers)
             .then((agent) => {
                 const array = [];
                 agent.data.forEach((ele) => {
@@ -74,7 +79,7 @@ const CreateBillAdvisor = () => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -170,7 +175,7 @@ const CreateBillAdvisor = () => {
         e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/payments/findpolicyinDue", filterData)
+            .post(url + "/payments/findpolicyinDue", filterData, headers)
             .then((res) => {
                 if (res.status === 201) {
                     console.log(res.data);
@@ -215,7 +220,7 @@ const CreateBillAdvisor = () => {
         console.log(Date.now)
     
         axios
-            .post(url + "/payments/createbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
+            .post(url + "/payments/createbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array }, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);

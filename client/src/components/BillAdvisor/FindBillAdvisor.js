@@ -16,6 +16,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,6 +27,11 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindBillAdvisor = () => {
+    
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -50,7 +56,7 @@ const FindBillAdvisor = () => {
     useEffect(() => {
         //get province
         axios
-            .get(url + "/static/provinces/all")
+            .get(url + "/static/provinces/all", headers)
             .then((province) => {
                 const array = []
                 province.data.forEach(ele => {
@@ -64,7 +70,7 @@ const FindBillAdvisor = () => {
 
         // get agent all
         axios
-            .get(url + "/persons/agentall")
+            .get(url + "/persons/agentall", headers)
             .then((agent) => {
                 const array = [];
                 agent.data.forEach((ele) => {
@@ -80,7 +86,7 @@ const FindBillAdvisor = () => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -130,7 +136,7 @@ const FindBillAdvisor = () => {
         e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/payments/findbill", filterData)
+            .post(url + "/payments/findbill", filterData, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);

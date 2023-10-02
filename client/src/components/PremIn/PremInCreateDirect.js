@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import PremInTable from "./PremInTable";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 export default function PremInCreateDirect() {
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+  headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const vat = config.tax;
@@ -90,7 +96,7 @@ export default function PremInCreateDirect() {
     e.preventDefault();
 
     axios
-      .post(url + "/araps/getartransdirect", filterData)
+      .post(url + "/araps/getartransdirect", filterData, headers)
       .then((res) => {
         if (res.status === 201) {
           console.log(res.data);
@@ -154,7 +160,7 @@ export default function PremInCreateDirect() {
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
     console.log(master);
-    await axios.post(url + "/araps/savearpremindirect", { master: master, trans: policiesData }).then((res) => {
+    await axios.post(url + "/araps/savearpremindirect", { master: master, trans: policiesData }, headers).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -191,7 +197,7 @@ export default function PremInCreateDirect() {
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
     console.log({ master: master, trans: selecteddata });
-    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: selecteddata }).then((res) => {
+    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: selecteddata }, headers).then((res) => {
       alert("save account recive successed!!!");
       window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});

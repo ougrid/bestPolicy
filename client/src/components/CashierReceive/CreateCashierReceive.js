@@ -17,6 +17,7 @@ import {
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
 import { Button } from "react-bootstrap";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -29,6 +30,11 @@ const Joi = require('joi');
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateCashierReceive = () => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const { txtype } = useParams();
@@ -83,12 +89,7 @@ const CreateCashierReceive = () => {
         let data = JSON.stringify({
             "filter": txtype === 'premin' ? billAdvisorNo : dfrpreferno
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo?txtype=" + txtype, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo?txtype=" + txtype, data, headers)
             .then((response) => {
                 console.log(response);
                 setInsurer(response.data[0].insurerCode)
@@ -118,12 +119,7 @@ const CreateCashierReceive = () => {
     useEffect(() => {
         console.log(txtype);
         let data = {}
-        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBrand", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBrand", data, headers)
             .then((response) => {
                 console.log(response.data);
                 setBankAmityBrandData(response.data)
@@ -136,12 +132,7 @@ const CreateCashierReceive = () => {
                 alert("Something went wrong, Try Again.");
             });
 
-        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBrand?" + "type=I", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBrand?" + "type=I", data, headers)
             .then((response) => {
                 console.log(response.data);
                 setBankPartnerBrandData(response.data)
@@ -166,12 +157,7 @@ const CreateCashierReceive = () => {
     useEffect(() => {
         let data = {}
         if (bankAmity != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?brand=" + bankAmity, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?brand=" + bankAmity, data, headers)
                 .then((response) => {
                     console.log(response.data);
                     setBankAmityBranchData(response.data)
@@ -189,12 +175,7 @@ const CreateCashierReceive = () => {
         let data = {}
         console.log(bankBranchAmity)
         if (bankBranchAmity != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchAmity + "&brand=" + bankAmity, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchAmity + "&brand=" + bankAmity, data, headers)
                 .then((response) => {
                     // console.log(response.data);
                     setBankAmityNoData(response.data)
@@ -212,12 +193,7 @@ const CreateCashierReceive = () => {
     useEffect(() => {
         let data = {}
         if (bankPartner != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBranch?brand=" + bankPartner + "&type=I", data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBranch?brand=" + bankPartner + "&type=I", data, headers)
                 .then((response) => {
                     console.log(response.data);
                     setBankPartnerBranchData(response.data)
@@ -235,12 +211,7 @@ const CreateCashierReceive = () => {
         let data = {}
         console.log(bankBranchAmity)
         if (bankBranchPartner != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchPartner + "&brand=" + bankPartner + "&type=I", data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchPartner + "&brand=" + bankPartner + "&type=I", data, headers)
                 .then((response) => {
                     // console.log(response.data);
                     setBankPartnerNoData(response.data)
@@ -346,12 +317,7 @@ const CreateCashierReceive = () => {
             return
         }
         console.log(data);  
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/submitCasheir?txtype=" + txtype, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/submitCasheir?txtype=" + txtype, data, headers)
             .then((response) => {
 
                 if (response.status == 200) {
@@ -440,12 +406,7 @@ const CreateCashierReceive = () => {
             setModalText(error)
             return
         }
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/saveCasheir", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/saveCasheir", data, headers)
             .then((response) => {
                 console.log(response)
                 if (response.status == 200) {
@@ -465,11 +426,7 @@ const CreateCashierReceive = () => {
         let data = JSON.stringify({
             "billadvisorno": billAdvisorNo
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo", data, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo", data, headers)
             .then((response) => {
                 // console.log(response.data);
                 if (response.data[0]) {

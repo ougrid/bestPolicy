@@ -2,9 +2,15 @@ import React, { useEffect, useState }  from "react";
 import PremInTable from "../PremIn/PremInTable";
 import axios from "axios";
 import Modal from 'react-bootstrap/Modal';
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 export default function CommOutCreate() {
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+  headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const [filterData, setFilterData] = useState(
@@ -125,7 +131,7 @@ export default function CommOutCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/araps/getapcommout", filterData)
+        .post(url + "/araps/getapcommout", filterData, headers)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -157,7 +163,7 @@ export default function CommOutCreate() {
 
 const saveapcommout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
-  await axios.post(url + "/araps/saveapcommout", {master : filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/saveapcommout", {master : filterData, trans : policiesData}, headers).then((res) => {
     alert("save account recive successed!!!")
     .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
@@ -166,7 +172,7 @@ const saveapcommout = async (e) => {
 
 const submitapcommout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
-  await axios.post(url + "/araps/submitapcommout", {master :filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/submitapcommout", {master :filterData, trans : policiesData}, headers).then((res) => {
     alert("save account recive successed!!!")
     .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);

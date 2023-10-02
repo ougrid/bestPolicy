@@ -4,10 +4,17 @@ import { useEffect, useState } from "react";
 import { CenterPage } from "../StylesPages/AdminStyles";
 import { Container } from "../StylesPages/PagesLayout";
 import { async } from "q";
+import Select from 'react-select';
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 const PolicyScreen = (props) => {
 
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax;
   const duty = config.duty;
@@ -96,7 +103,7 @@ const PolicyScreen = (props) => {
     if (e.target.name === "personType") {
       if (e.target.value === "P") {
         axios
-          .get(url + "/static/titles/person/all")
+          .get(url + "/static/titles/person/all",headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
@@ -111,7 +118,7 @@ const PolicyScreen = (props) => {
           .catch((err) => { });
       } else {
         axios
-          .get(url + "/static/titles/company/all")
+          .get(url + "/static/titles/company/all",headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
@@ -140,18 +147,43 @@ const PolicyScreen = (props) => {
 
   };
 
+  const changeProvince = (e) =>{
+    setFormData((prevState) => ({
+      ...prevState,
+      province: e.value,
+    }));
+      getDistrict(e.value);
+    
+    
+  }
+  const changeDistrict = (e) =>{
+    setFormData((prevState) => ({
+      ...prevState,
+      district: e.value,
+    }));
+      getSubDistrict(e.value);
+  }
+  const changeMotorBrand = (e) =>{
+    setFormData((prevState) => ({
+      ...prevState,
+      brandname: e.value,
+    }));
+      getMotormodel(e.value);
+  }
+
   const getDistrict = (provincename) => {
     //get distric in province selected
     axios
-      .post(url + "/static/amphurs/search", { provincename: provincename })
+      .post(url + "/static/amphurs/search", { provincename: provincename },headers)
       .then((distric) => {
         const array = [];
         distric.data.forEach((ele) => {
-          array.push(
-            <option id={ele.amphurid} value={ele.t_amphurname} value2={ele.t_amphurname}>
-              {ele.t_amphurname}
-            </option>
-          );
+          // array.push(
+          //   <option id={ele.amphurid} value={ele.t_amphurname} value2={ele.t_amphurname}>
+          //     {ele.t_amphurname}
+          //   </option>
+          // );
+          array.push({label: ele.t_amphurname, value: ele.t_amphurname})
         });
         setDistricDD(array);
       })
@@ -163,15 +195,16 @@ const PolicyScreen = (props) => {
   const getMotormodel = (brandname) => {
     //get distric in province selected
     axios
-      .post(url + "/static/mt_models/search", { brandname: brandname })
+      .post(url + "/static/mt_models/search", { brandname: brandname },headers)
       .then((model) => {
         const array = [];
         model.data.forEach((ele) => {
-          array.push(
-            <option value={ele.MODEL} >
-              {ele.MODEL}
-            </option>
-          );
+          // array.push(
+          //   <option value={ele.MODEL} >
+          //     {ele.MODEL}
+          //   </option>
+          // );
+          array.push({label: ele.MODEL, value: ele.MODEL})
         });
         setMotormodelDD(array);
       })
@@ -179,6 +212,37 @@ const PolicyScreen = (props) => {
         // alert("cant get aumphur");
       });
   };
+  const getSubDistrict = (amphurname) => {
+    //get tambons in distric selected
+    axios
+      .post(url + "/static/tambons/search", { amphurname: amphurname },headers)
+      .then((subdistric) => {
+        const arraySub = [];
+        const arrayZip = [];
+        const zip = [];
+        subdistric.data.forEach((ele) => {
+          // arraySub.push(
+          //   <option id={ele.tambonid} value={ele.t_tambonname}>
+          //     {ele.t_tambonname}
+          //   </option>
+          // );
+          arraySub.push({label: ele.t_tambonname, value: ele.t_tambonname})
+          zip.push(ele.postcodeall.split("/"));
+        });
+        const uniqueZip = [...new Set(...zip)];
+        console.log(uniqueZip);
+        uniqueZip.forEach((zip) => {
+          // arrayZip.push(<option value={zip}>{zip}</option>);
+          arrayZip.push({label: zip, value: zip})
+        });
+        setSubDistricDD(arraySub);
+        setZipCodeDD(arrayZip);
+      })
+      .catch((err) => {
+        // alert("cant get tambons");
+      });
+  };
+
   const getcommov = (e) => {
     e.preventDefault();
     //get comm  ov setup
@@ -189,7 +253,7 @@ const PolicyScreen = (props) => {
       i =2
     }
     axios
-      .post(url + "/insures/getcommov", formData)
+      .post(url + "/insures/getcommov", formData,headers)
       .then((res) => {
         console.log(res.data);
         setFormData((prevState) => ({
@@ -229,36 +293,6 @@ const PolicyScreen = (props) => {
 
   }
 
-
-
-  const getSubDistrict = (amphurname) => {
-    //get tambons in distric selected
-    axios
-      .post(url + "/static/tambons/search", { amphurname: amphurname })
-      .then((subdistric) => {
-        const arraySub = [];
-        const arrayZip = [];
-        const zip = [];
-        subdistric.data.forEach((ele) => {
-          arraySub.push(
-            <option id={ele.tambonid} value={ele.t_tambonname}>
-              {ele.t_tambonname}
-            </option>
-          );
-          zip.push(ele.postcodeall.split("/"));
-        });
-        const uniqueZip = [...new Set(...zip)];
-        console.log(uniqueZip);
-        uniqueZip.forEach((zip) => {
-          arrayZip.push(<option value={zip}>{zip}</option>);
-        });
-        setSubDistricDD(arraySub);
-        setZipCodeDD(arrayZip);
-      })
-      .catch((err) => {
-        // alert("cant get tambons");
-      });
-  };
 
   const handleSubmit = async (e) => {
     const data = []
@@ -300,7 +334,7 @@ const PolicyScreen = (props) => {
     data[0].ovout_amt = document.getElementsByName('ovout_amt')[0].value 
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data,headers).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -308,9 +342,10 @@ const PolicyScreen = (props) => {
 
 
   useEffect(() => {
-    //get province
+    
+    // get province
     axios
-      .get(url + "/static/provinces/all")
+      .get(url + "/static/provinces/all",headers)
       .then((province) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -320,16 +355,18 @@ const PolicyScreen = (props) => {
 
         const array = [];
         province.data.forEach((ele) => {
-          array.push(
-            <option value={ele.t_provincename} >
-              {ele.t_provincename}
-            </option>
-          );
+          // array.push(
+          //   <option value={ele.t_provincename} >
+          //     {ele.t_provincename}
+          //   </option>
+          // );
+
+          array.push({label:ele.t_provincename, value:ele.t_provincename})
         });
         setProvinceDD(array);
         // get title
         axios
-          .get(url + "/static/titles/company/all")
+          .get(url + "/static/titles/company/all",headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
@@ -348,7 +385,7 @@ const PolicyScreen = (props) => {
 
     //get insureType
     axios
-      .get(url + "/insures/insuretypeall")
+      .get(url + "/insures/insuretypeall",headers)
       .then((insuretype) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -380,7 +417,7 @@ const PolicyScreen = (props) => {
 
     //get insurer
     axios
-      .get(url + "/persons/insurerall")
+      .get(url + "/persons/insurerall",headers)
       .then((insurer) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -404,7 +441,7 @@ const PolicyScreen = (props) => {
 
     //get motor brand
     axios
-      .get(url + "/static/mt_brands/all")
+      .get(url + "/static/mt_brands/all",headers)
       .then((brands) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -414,11 +451,12 @@ const PolicyScreen = (props) => {
 
         const array = [];
         brands.data.forEach((ele) => {
-          array.push(
-            <option key={ele.id} value={ele.BRANDNAME}>
-              {ele.BRANDNAME}
-            </option>
-          );
+          // array.push(
+          //   <option key={ele.id} value={ele.BRANDNAME}>
+          //     {ele.BRANDNAME}
+          //   </option>
+          // );
+          array.push({label:ele.BRANDNAME, value:ele.BRANDNAME})
         });
         setMotorbrandDD(array);
       })
@@ -1085,37 +1123,56 @@ const PolicyScreen = (props) => {
           <label class="form-label ">
             จังหวัด<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <Typeahead
             className="form-control"
-            name={`province`}
+            labelKey={`province`}
             onChange={handleChange}
-          >
-            <option value={formData.province} disabled selected hidden>
+            options={provinceDD}
+            search
+          /> */}
+          <Select
+          // className="form-control"
+          name={`province`}
+          onChange={ (e) =>changeProvince(e)}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+            {/* <option value={formData.province} disabled selected hidden>
               {formData.province}
             </option>
-            {provinceDD}
-          </select>
+            {provinceDD} */}
+          
         </div>
         <div class="col-2">
           <label class="form-label ">
             อำเภอ<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`district`}
             onChange={handleChange}
+            search
           >
             <option value={formData.district} disabled selected hidden>
               {formData.district}
             </option>
             {districDD}
-          </select>
+          </select> */}
+
+          <Select
+          // className="form-control"
+          name={`district`}
+          onChange={ (e) =>changeDistrict(e)}
+          options={districDD}
+          />
+
         </div>
         <div class="col-2">
           <label class="form-label ">
             ตำบล<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`subdistrict`}
             onChange={handleChange}
@@ -1124,13 +1181,24 @@ const PolicyScreen = (props) => {
               {formData.subdistrict}
             </option>
             {subDistricDD}
-          </select>
+          </select> */}
+
+          <Select
+          // className="form-control"
+          name={`subdistrict`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            subdistrict: e.value,
+          }))}
+          options={subDistricDD}
+          />
+
         </div>
         <div class="col-2">
           <label class="form-label ">
             รหัสไปรษณี<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`zipcode`}
             onChange={handleChange}
@@ -1139,7 +1207,17 @@ const PolicyScreen = (props) => {
               {formData.zipcode}
             </option>
             {zipcodeDD}
-          </select>
+          </select> */}
+        <Select
+          // className="form-control"
+          name={`zipcode`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            zipcode: e.value,
+          }))}
+          options={zipcodeDD}
+          />
+
         </div>
       </div>
       {/* motor table */}
@@ -1164,7 +1242,7 @@ const PolicyScreen = (props) => {
                 ยี่ห้อรถยนต์<span class="text-danger"> *</span>
               </label>
 
-              <select
+              {/* <select
                 className="form-control"
                 name={`brandname`}
                 onChange={handleChange}
@@ -1173,13 +1251,22 @@ const PolicyScreen = (props) => {
                   {formData.brandname}
                 </option>
                 {motorbrandDD}
-              </select>
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
             </div>
             <div class="col-2">
               <label class="form-label ">
                 รุ่น<span class="text-danger"> *</span>
               </label>
-              <select
+
+              {/* <select
                 className="form-control"
                 name={`modelname`}
                 onChange={handleChange}
@@ -1188,7 +1275,17 @@ const PolicyScreen = (props) => {
                   {formData.modelname}
                 </option>
                 {motormodelDD}
-              </select>
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
 
             </div>
             <div class="col-2">

@@ -1,9 +1,15 @@
 import React, { useEffect, useState }  from "react";
 import PremInTable from "./PremInTable";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 export default function PremInCreate() {
+  const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const [filterData, setFilterData] = useState(
@@ -55,7 +61,7 @@ export default function PremInCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/payments/findpolicyinDue", filterData)
+        .post(url + "/payments/findpolicyinDue", filterData, headers)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -87,7 +93,7 @@ const getData = (e) => {
   e.preventDefault();
   if (e.target.name === 'cashier-btn') {
     axios
-    .post(url + "/araps/getcashierdata", filterData)
+    .post(url + "/araps/getcashierdata", filterData, headers, headers)
     .then((res) => {
         if (res.status === 201) {
             console.log(res.data);
@@ -108,7 +114,7 @@ const getData = (e) => {
     });
   }else if (e.target.name === 'bill-btn'){
     axios
-    .post(url + "/araps/getbilldata", filterData)
+    .post(url + "/araps/getbilldata", filterData, headers)
     .then((res) => {
         if (res.status === 201) {
             console.log(res.data);
@@ -169,7 +175,8 @@ const savearpremin = async (e) => {
   console.log({master :  data, trans : policiesData});
   await axios.post(url + "/araps/savearpremin",
    {master : data, 
-   trans : policiesData}).then((res) => {
+   trans : policiesData}, headers)
+   .then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -197,8 +204,10 @@ const submitarpremin = async (e) => {
   data.whtovout = whtovout
 
   console.log({master :  data, trans : policiesData});
-  await axios.post(url + "/araps/submitarpremin", {master : data, trans : policiesData}).then((res) => {
-    alert("save account recive successed!!!").catch((err)=>{ alert("Something went wrong, Try Again.");});
+  await axios.post(url + "/araps/submitarpremin", {master : data, trans : policiesData}, headers)
+  .then((res) => {
+    alert("save account recive successed!!!")
+    .catch((err)=>{ alert("Something went wrong, Try Again.");});
     // window.location.reload(false);
   });
 };

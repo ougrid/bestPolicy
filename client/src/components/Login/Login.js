@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { useCookies } from "react-cookie";
+
+
 import {
   BrowserRouter,
   Routes,
@@ -29,7 +32,7 @@ const Login = () => {
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState("");
-
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const handleChange = (e) => {
     setLoginData((prevState) => ({
       ...prevState,
@@ -46,7 +49,9 @@ const Login = () => {
         let decode = jwt_decode(token);
         navigate("/");
         window.location.reload();
-        localStorage.setItem("jwt", token);
+        // localStorage.setItem("jwt", token);
+        setCookie("jwt", token)
+        
       })
       .catch((err) => {
         if (err.response.status === 401) {
@@ -54,6 +59,7 @@ const Login = () => {
         } else if (err.response.status === 404) {
           alert("Wrong Username");
         }
+        // console.log(err);
       });
   };
 

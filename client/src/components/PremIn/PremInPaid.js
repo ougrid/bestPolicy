@@ -3,10 +3,15 @@ import React, { useEffect, useState}  from "react";
 import { useParams} from "react-router-dom";
 import PremInTable from "./PremInTable";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
 export default function PremInPaid() {
+  const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [filterData, setFilterData] = useState(
     {
@@ -63,7 +68,7 @@ export default function PremInPaid() {
       setFilterData(data)
     }
     axios
-    .post(url + "/araps/getartrans", filterData)
+    .post(url + "/araps/getartrans", filterData, headers)
     .then((res) => {
       console.log(res.data);
         if (res.status === 201) {
