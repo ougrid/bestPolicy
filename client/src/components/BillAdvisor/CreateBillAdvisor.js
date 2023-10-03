@@ -249,7 +249,7 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Insurer</label>
+                        <label class="col-form-label">รหัสบริษัทประกัน</label>
 
                     </div>
                     <div class="col-2 ">
@@ -276,7 +276,7 @@ const CreateBillAdvisor = () => {
                     </div>
                     <div class="col align-self-end ">
                         <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg" >Search</button>
+                            <button type="submit" class="btn btn-primary btn-lg" >ค้นหา</button>
                         </div>
                     </div>
 
@@ -286,7 +286,7 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Advisor</label>
+                        <label class="col-form-label">รหัสผู้แนะนำ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -337,11 +337,11 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Policy No.</label>
+                        <label class="col-form-label">เลขกรมธรรม์</label>
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">form</label>
+                        <label class="col-form-label">จากวันที่</label>
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
@@ -350,7 +350,7 @@ const CreateBillAdvisor = () => {
                         </div>
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">to</label>
+                        <label class="col-form-label">ถึงวันที่</label>
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
@@ -380,26 +380,26 @@ const CreateBillAdvisor = () => {
                     <thead>
                         <tr>
                             <th scope="col"><input type="checkbox" name="select" onClick={selectAll} />select</th>
-                            <th scope="col">InsurerCode</th>
-                            <th scope="col">AdvisorCode</th>
+                            <th scope="col">รหัสบริษัทประกัน</th>
+                            <th scope="col">รหัสผู้แนะนำ</th>
                             <th scope="col">Duedate</th>
-                            <th scope="col">Policyno</th>
-                            <th scope="col">Endorseno</th>
-                            <th scope="col">Invoiceno</th>
+                            <th scope="col">เลขกรมธรรม์</th>
+                            <th scope="col">เลขสลักหลัง</th>
+                            <th scope="col">เลขใบแจ้งหนี้</th>
                             <th scope="col">seqno</th>
-                            <th scope="col">customerid</th>
-                            <th scope="col">insuredname</th>
-                            <th scope="col">licenseno</th>
-                            <th scope="col">province</th>
-                            <th scope="col">chassino</th>
-                            <th scope="col">netgrossprem</th>
-                            <th scope="col">duty</th>
-                            <th scope="col">tax</th>
-                            <th scope="col">totalamt</th>
+                            <th scope="col">idผู้อาประกัน</th>
+                            <th scope="col">ชื่อผู้เอาประกัน</th>
+                            <th scope="col">เลขทะเบียนรถ</th>
+                            <th scope="col">จังหวัดที่จดทะเบียน</th>
+                            <th scope="col">เลขคัชซี</th>
+                            <th scope="col">เบี้ยประกัน</th>
+                            <th scope="col">อากร</th>
+                            <th scope="col">ภาษี</th>
+                            <th scope="col">เบี้ยประกันรวม</th>
                             <th scope="col">comm-out%</th>
-                            <th scope="col">comm-out-amt</th>
+                            <th scope="col">จำนวนเงิน</th>
                             <th scope="col">ov-out%</th>
-                            <th scope="col">ov-out-amt</th>
+                            <th scope="col">จำนวนเงิน</th>
                             <th scope="col"><input type="checkbox" name="statementtype"  onClick={selectAll} />net</th>
                             {/* <th scope="col">billpremium</th> */}
 
@@ -442,7 +442,7 @@ const CreateBillAdvisor = () => {
 
                 <div className="d-flex justify-content-center">
                     {/* <LoginBtn type="submit">confirm</LoginBtn> */}
-                    <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >confirm</button>
+                    <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >ยืนยัน</button>
                 </div>
             </form>
 

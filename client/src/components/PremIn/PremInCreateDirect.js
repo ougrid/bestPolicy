@@ -39,27 +39,27 @@ export default function PremInCreateDirect() {
   const [policiesData, setPoliciesData] = useState([])
   const colsData = {
 
-    select: "select",
-    insurerCode: "insurerCode",
-    agentCode: "advisorCode",
+    select: "เลือก",
+    insurerCode: "รหัสบริษัทประกัน",
+    agentCode: "รหัสผู้แนะนำ",
     dueDate: "Duedate",
-    policyNo: "Policyno",
-    endorseNo: "Endorseno",
-    invoiceNo: "Invoiceno",
+    policyNo: "เลขกรมธรรม์",
+    endorseNo: "เลขสลักหลัง",
+    invoiceNo: "เลขใบแจ้งหนี้",
     seqNo: "seqno",
-    customerid: "customerid",
-    insureename: "insuredname",
-    licenseNo: "licenseno",
+    customerid: "id",
+    insureename: "ชื่อ ผู้เอาประกัน",
+    licenseNo: "เลขทะเบียนรถ",
     // "province",
-    chassisNo: "chassisno",
-    netgrossprem: "grossprem",
-    duty: "duty",
-    tax: "tax",
-    totalprem: "totalamt",
+    chassisNo: "เลขคัชซี",
+    netgrossprem: "เบี้ยประกัน",
+    duty: "อากร",
+    tax: "ภาษี",
+    totalprem: "เบี้ยประกันรวม",
     commout_rate: "comm-out%",
-    commout_amt: "comm-out-amt",
+    commout_amt: "จำนวน",
     ovout_rate: "ov-out%",
-    ovout_amt: "ov-out-amt",
+    ovout_amt: "จำนวน",
     netflag: "[] net",
     remainamt: "billpremium",
 
@@ -211,7 +211,7 @@ export default function PremInCreateDirect() {
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -225,13 +225,13 @@ export default function PremInCreateDirect() {
           </div>
           <div className="col-4 ">
 
-            <button className="btn btn-success" onClick={submitFilter}>SEARCH</button>
+            <button className="btn btn-success" onClick={submitFilter}>ค้นหา</button>
           </div>
         </div>
         {/* advisorCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -247,7 +247,7 @@ export default function PremInCreateDirect() {
         {/* policyno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            policyno
+            เลขที่กรมธรรม์
           </label>
 
           <div className="col-4">
@@ -260,7 +260,7 @@ export default function PremInCreateDirect() {
             />
           </div>
           <label class="col-sm-1 col-form-label" htmlFor="billadvisorno">
-            to
+            ถึง
           </label>
           <div className="col-4">
             <input
@@ -276,7 +276,7 @@ export default function PremInCreateDirect() {
         {/* endorseno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            endorseno
+            เลขสลักหลัง
           </label>
 
           <div className="col-4">
@@ -289,7 +289,7 @@ export default function PremInCreateDirect() {
             />
           </div>
           <label class="col-sm-1 col-form-label" htmlFor="billadvisorno">
-            to
+            ถึง
           </label>
           <div className="col-4">
             <input
@@ -305,7 +305,7 @@ export default function PremInCreateDirect() {
         {/* invoiceno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            invoiceno
+            เลขใบแจ้งหนี้
           </label>
 
           <div className="col-4">
@@ -318,7 +318,7 @@ export default function PremInCreateDirect() {
             />
           </div>
           <label class="col-sm-1 col-form-label" htmlFor="billadvisorno">
-            to
+            ถึง
           </label>
           <div className="col-4">
             <input

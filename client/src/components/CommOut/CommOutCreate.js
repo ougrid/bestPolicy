@@ -53,33 +53,33 @@ export default function CommOutCreate() {
     "billpremium",
   ];
   const cols2Data = {
-    select : "select",
-    insurerCode:"insurerCode",
-    agentCode:"advisorCode",
+    select : "เลือก",
+    insurerCode:"รหัสบริษัทประกัน",
+    agentCode:"รหัสผู้แนะนำ",
     dueDate:"Duedate",
-    policyNo:"Policyno",
-    endorseNo: "Endorseno",
-    invoiceNo: "Invoiceno",
+    policyNo:"เลขกรมธรรม์",
+    endorseNo: "เลขสลักหลัง",
+    invoiceNo: "เลขใบแจ้งหนี้",
     seqNo: "seqno",
-    customerid: "customerid",
-    insureename:  "insuredname",
-    licenseNo: "licenseno",
+    customerid: "id",
+    insureename:  "ชื่อ ผู้เอาประกัน",
+    licenseNo: "เลขทะเบียนรถ",
     // province: "province", // nodata
-    chassisNo: "chassisno",
-    netgrossprem: "netgrossprem",
-    duty: "duty",
-    tax: "tax",
-    totalprem: "totalamt",
+    chassisNo: "เลขคัชซี",
+    netgrossprem: "เบี้ยประกัน",
+    duty: "อากร",
+    tax: "ภาษี",
+    totalprem: "เบี้ยประกันรวม",
     commout_rate: "comm-out%",
-    commout_amt: "comm-out-amt",
+    commout_amt: "จำนวน",
     // commout_taxamt: "vat-comm-out",
     // commout_total: "comm-out-total",
     ovout_rate: "ov-out%",
-    ovout_amt: "ov-out-amt",
+    ovout_amt: "จำนวน",
     // ovout_taxamt: "vat-ov-out",
     // ovout_total: "ov-out-total",
-    'premin-rprefdate': "premin-rprefdate",
-    'premin-dfrpreferno': "premin-dfrpreferno",
+    'premin-rprefdate': "วันที่รับ premin",
+    'premin-dfrpreferno': "เลขตัดหนี้ premin",
 
 };
   const handleClose = (e) => {
@@ -182,13 +182,13 @@ const submitapcommout = async (e) => {
   return (
     <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
-        <h1>จ่ายเงินค่า comm-out, ov-out ให้กับ advisor</h1>
+        <h1>จ่ายเงินค่า comm-out, ov-out ให้กับผู้แนะนำ</h1>
        
        
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -204,7 +204,7 @@ const submitapcommout = async (e) => {
        {/* advisorCode  */}
        <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -220,11 +220,11 @@ const submitapcommout = async (e) => {
           {/* PolicyNo*/}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="policyNo">
-            PolicyNo
+            เลขกรมธรรม์
           </label>
           <div className="col-4 " id="policyNo">
             <label class="col-sm-2 col-form-label" htmlFor="policyNostart">
-              From
+              จาก
             </label>
             <input
               className="form-control"
@@ -237,7 +237,7 @@ const submitapcommout = async (e) => {
 
           <div className="col-4 ">
             <label class="col-sm-2 col-form-label" htmlFor="policyNoend">
-              To
+              ถึง
             </label>
             <input
               className="form-control"
@@ -252,11 +252,11 @@ const submitapcommout = async (e) => {
         {/* Effectivedate*/}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="effDate">
-           Effective Date
+           วันที่ คุ้มครอง
           </label>
           <div className="col-4 " id="effDate">
             <label class="col-sm-2 col-form-label" htmlFor="effDatestart">
-              From
+              จาก
             </label>
             <input
               className="form-control"
@@ -269,7 +269,7 @@ const submitapcommout = async (e) => {
 
           <div className="col-4 ">
             <label class="col-sm-2 col-form-label" htmlFor="effDateend">
-              To
+              ถึง
             </label>
             <input
               className="form-control"

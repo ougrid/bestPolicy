@@ -27,26 +27,26 @@ export default function CommInCreate() {
     const [policiesData, setPoliciesData] = useState([])
     const [artype, setArtype] = useState('N')
   const colsData = {
-    select : "select",
-    insurerCode :"insurerCode",
-    agentCode: "advisorCode",
+    select : "เลือก",
+    insurerCode :"รหัสบริษัทประกัน",
+    agentCode: "รหัสผู้แนะนำadvisorCode",
     dueDate : "Duedate",
-    policyNo : "Policyno",
-    endorseNo : "Endorseno",
-    invoiceNo : "Invoiceno",
+    policyNo : "เลขกรมธรรม์",
+    endorseNo : "เลขสลักหลัง",
+    invoiceNo : "เลขใบแจ้งหนี้",
     seqNo : "seqno",
-    customerid : "customerid",
-    insureename : "insuredname",
-    licenseNo : "licenseno",
-    chassisNo : "chassisno",
-    netgrossprem : "grossprem",
-    duty : "duty",
-    tax : "tax",
-    totalprem : "totalamt",
+    customerid : "id",
+    insureename : "ชื่อ ผู้เอาประกัน",
+    licenseNo : "เลขทะเบียนรถ",
+    chassisNo : "เลขคัชซี",
+    netgrossprem : "เบี้ยประกัน",
+    duty : "อากร",
+    tax : "ภาษี",
+    totalprem : "เบี้ยประกันรวม",
     commin_amt : "comm-in%",
-    commin_rate :"comm-in-amt",
+    commin_rate :"จำนวน",
     ovin_amt : "ov-in%",
-    ovin_rate : "ov-in-amt",
+    ovin_rate : "จำนวน",
 };
   
   
@@ -128,7 +128,7 @@ const submitapcommin = async (e) => {
     จ่ายเงินที่ amity
   </label>
 </div>
-<div class="form-check col-2">
+<div class="form-check col-3">
   <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" onChange={(e)=>setArtype('D')}/>
   <label class="form-check-label" for="flexRadioDefault2">
     จ่ายเงินที่ บริษัทประกัน
@@ -164,7 +164,7 @@ const submitapcommin = async (e) => {
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -180,7 +180,7 @@ const submitapcommin = async (e) => {
         {/* advisorCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -196,7 +196,7 @@ const submitapcommin = async (e) => {
           {/* cashierReceiveNo */}
           <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
-          cashierReceiveNo
+          เลขที่รับเงิน
           </label>
           <div className="col-4 ">
             <input
@@ -211,7 +211,7 @@ const submitapcommin = async (e) => {
          {/* cashieramt  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="cashieramt">
-            amt
+            จำนวนเงินที่รับ
           </label>
           <div className="col-4 ">
             <input
@@ -226,7 +226,7 @@ const submitapcommin = async (e) => {
         {/* actualvalue  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
-          ActualValue
+          จำนวนเงินตัดหนี้
           </label>
           <div className="col-4 ">
             <input
@@ -241,7 +241,7 @@ const submitapcommin = async (e) => {
         {/* diff-amt */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="diffamt">
-          Diff-amt
+          ผลต่าง
           </label>
           <div className="col-4 ">
             <input

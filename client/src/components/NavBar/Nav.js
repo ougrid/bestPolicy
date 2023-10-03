@@ -62,7 +62,7 @@ function Nav() {
           
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              Bill Advisor
+              ใบวางบิล
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -73,7 +73,7 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              Cashier Receive
+              รายการรับเงิน
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -85,13 +85,13 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AR PREM-IN
+              ตัดรับค่าเบี้ย
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/premin/find">ค้นหารายการ</a></li>
               <li><a class="dropdown-item" href="/premin/create">สร้างรายการใหม่</a></li>
-              <li><a class="dropdown-item" href="/premin/createdirect">สร้างรายการใหม่ (จ่ายแบบ direct)</a></li>
+              <li><a class="dropdown-item" href="/premin/createdirect">สร้างรายการใหม่ (จ่ายประกันโดยตรง)</a></li>
               <li><a class="dropdown-item" href="/premin/paid/premout">ค้นหารายการ prem-out</a></li>
               <li><a class="dropdown-item" href="/premin/paid/commovout">ค้นหารายการ comm/ov-out</a></li>
               <li><a class="dropdown-item" href="/premin/paid/wht3">ค้นหารายการ WHT 3%</a></li>
@@ -99,7 +99,7 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AP Prem-out
+              ตัดจ่ายค่าเบี้ย
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -108,7 +108,7 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AR Comm-in
+              ตัดรับค่าคอม
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -118,7 +118,7 @@ function Nav() {
 
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AP Comm-out
+              ตัดจ่ายค่าคอม
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -167,7 +167,7 @@ function Nav() {
             </a>
             
             <a class="btn btn-secondary " href="/" role="button" onClick={handleLogOut}>
-              logout
+              ออกจากระบบ
             </a>
               
              

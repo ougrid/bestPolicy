@@ -24,26 +24,26 @@ export default function PremInPaid() {
     })
     const [policiesData, setPoliciesData] = useState([])
     const colData = {
-      insurerCode: "insurerCode",
-      agentCode: "advisorCode",
+      insurerCode: "รหัสบริษัทประกัน",
+      agentCode: "รหัสผู้แนะนำ",
       dueDate:"Duedate",
-      policyNo:"Policyno",
-      endorseNo:"Endorseno",
-      invoiceNo:"Invoiceno",
+      policyNo:"เลขที่กรมธรรม์",
+      endorseNo:"เลขที่สลักหลัง",
+      invoiceNo:"เลขที่ใบวางบิล",
       seqNo: "seqno",
-      customerid:"customerid",
-      insureename:"insuredname",
-      licenseNo:"licenseno",
+      customerid:"id",
+      insureename:"ชื่อ ผู้เอาประกัน",
+      licenseNo:"เลขทะเบียนรถ",
       // "province",
-      chassisNo:"chassisno",
-      netgrossprem:"grossprem",
-      duty:"duty",
-      tax:"tax",
-      totalprem:"totalamt",
+      chassisNo:"เลขคัชซี",
+      netgrossprem:"เบี้ยประกัน",
+      duty:"อากร",
+      tax:"ภาษี",
+      totalprem:"เบี้ยประกันรวม",
       commout_rate:"comm-out%",
-      commout_amt:"comm-out-amt",
+      commout_amt:"จำนวน",
       ovout_rate:"ov-out%",
-      ovout_amt:"ov-out-amt",
+      ovout_amt:"จำนวน",
       netflag:"[] net",
       remainamt:"billpremium",
   
@@ -97,7 +97,7 @@ export default function PremInPaid() {
         {/* BillAdvisorNo */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billAdvisorNo">
-            BillAdvisorNo
+            เลขที่ใบวางบิล
           </label>
           <div className="col-4">
             <input
@@ -111,7 +111,7 @@ export default function PremInPaid() {
         {/* Insurercode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="Insurercode">
-            Insurercode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -140,7 +140,7 @@ export default function PremInPaid() {
         {/* Advisorcode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="Advisorcode">
-            Advisorcode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -169,7 +169,7 @@ export default function PremInPaid() {
         {/* CashierReceiveNo */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="CashierReceiveNo">
-            CashierReceiveNo
+            เลขที่รับเงิน
           </label>
           <div className="col-4 ">
             <input
@@ -198,7 +198,7 @@ export default function PremInPaid() {
         {/* ARNO */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="ARNO">
-            ARNO
+            เลขที่ตัดหนี้
           </label>
           <div className="col-4 ">
             <input className="form-control" type="text" name="ARNO" id="ARNO" />
@@ -221,7 +221,7 @@ export default function PremInPaid() {
         </div>
 
         <div className="row my-3">
-          <button className="btn btn-success">Search</button>
+          <button className="btn btn-success">ค้นหา</button>
         </div>
       </form>
       <div>

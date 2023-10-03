@@ -50,31 +50,31 @@ export default function PremOutCreate() {
     "billpremium",
   ];
   const cols2Data = {
-    select : "select",
-    insurerCode:"insurerCode",
-    agentCode:"advisorCode",
+    select : "เลือก",
+    insurerCode:"รหัสบริษัทประกัน",
+    agentCode:"รหัสผู้แนะนำ",
     dueDate:"Duedate",
-    policyNo:"Policyno",
-    endorseNo: "Endorseno",
-    invoiceNo: "Invoiceno",
+    policyNo:"เลขกรมธรรม์",
+    endorseNo: "เลขสลักหลัง",
+    invoiceNo: "เลขใบแจ้งหนี้",
     seqNo: "seqno",
-    customerid: "customerid",
-    insureename:  "insuredname",
-    licenseNo: "licenseno",
+    customerid: "id",
+    insureename:  "ชื่อ ผู้เอาประกัน",
+    licenseNo: "เลทะเบียนรถ",
     // province: "province", // nodata
-    chassisNo: "chassisno",
-    netgrossprem: "grossprem",
-    duty: "duty",
-    tax: "tax",
-    totalprem: "totalamt",
+    chassisNo: "เลขคัชซี",
+    netgrossprem: "เบี้ยประกัน",
+    duty: "อากร",
+    tax: "ภาษี",
+    totalprem: "เบี้ยประกันรวม",
     commin_rate: "comm-in%",
-    commin_amt: "comm-in-amt",
+    commin_amt: "จำนวน",
     commin_taxamt: "vat-comm-in",
-    commin_total: "comm-in-total",
+    commin_total: "comm-in รวม",
     ovin_rate: "ov-in%",
-    ovin_amt: "ov-in-amt",
+    ovin_amt: "จำนวน",
     ovin_taxamt: "vat-ov-in",
-    ovin_total: "ov-in-total",
+    ovin_total: "ov-in รวม",
     netflag: "[] net",
     paymentamt: "billpremium",
 
@@ -184,12 +184,12 @@ const submitarpremout = async (e) => {
   return (
     <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
-        <h1>Stament ค่าเบี้ยส่ง insurer</h1>
+        <h1>Stament ค่าเบี้ยส่งบริษัทประกัน</h1>
        
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -205,7 +205,7 @@ const submitarpremout = async (e) => {
         {/* advisorCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -253,7 +253,7 @@ const submitarpremout = async (e) => {
        
         
         <div className="row my-3">
-          <input type="submit" className="btn btn-success"/>
+          <input type="submit" className="btn btn-success" value={'ค้นหา'}/>
         </div>
       </form>
       <Modal size='m' show={hidecard[0]} onHide={handleClose}>
@@ -269,7 +269,7 @@ const submitarpremout = async (e) => {
                     </div> */}
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">totalpremium</label>
+                            <label class="col-form-label">เบี้ยประกันรวม</label>
                             </div>
                         <div class="col-6">
                            <label class="col-form-label">{filterData.netprem}</label></div>
@@ -300,7 +300,7 @@ const submitarpremout = async (e) => {
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">paymentamt</label>
+                            <label class="col-form-label">จำนวนเงินที่จ่าย</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.actualvalue}</label></div>
                     </div>
@@ -313,7 +313,7 @@ const submitarpremout = async (e) => {
       <div>
         <PremInTable cols={cols2Data} rows={policiesData} handleChange={handleChange}/>
         <button className="btn btn-primary">Export To Excel</button>
-        <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >confirm</button>
+        <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >ยืนยัน</button>
        
       </div>
     </div>

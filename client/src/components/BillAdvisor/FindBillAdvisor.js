@@ -186,13 +186,13 @@ const FindBillAdvisor = () => {
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
                 {/* insurer table */}
-                <h1 className="text-center">ค้นหา billadvisor</h1>
+                <h1 className="text-center">ค้นหาใบวางบิล</h1>
                 <div class="row">
                     <div class="col-1">
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Insurer</label>
+                        <label class="col-form-label">รหัสบริษัทประกัน</label>
 
                     </div>
                     <div class="col-2 ">
@@ -219,7 +219,7 @@ const FindBillAdvisor = () => {
                     </div>
                     <div class="col align-self-end ">
                         <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg" >Search</button>
+                            <button type="submit" class="btn btn-primary btn-lg" >ค้นหา</button>
                         </div>
                     </div>
 
@@ -229,7 +229,7 @@ const FindBillAdvisor = () => {
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Advisor</label>
+                        <label class="col-form-label">รหัสผู้แนะนำ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -310,13 +310,13 @@ const FindBillAdvisor = () => {
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">InsurerCode</th>
-                            <th scope="col">AdvisorCode</th>
-                            <th scope="col">BillAdvisorNo</th>
-                            <th scope="col">BillDate</th>
-                            <th scope="col">Amt</th>
-                            <th scope="col">createusercode</th>
-                            <th scope="col">EDIT</th>
+                            <th scope="col">รหัสบริษัทประกัน</th>
+                            <th scope="col">รหัสผู้แนะนำ</th>
+                            <th scope="col">เลขที่ใบวางบิล</th>
+                            <th scope="col">วันที่</th>
+                            <th scope="col">จำนวนเงิน</th>
+                            <th scope="col">รหัสผู้สร้าง</th>
+                            <th scope="col">แก้ไข</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -329,7 +329,7 @@ const FindBillAdvisor = () => {
                                 <td>{ele.billdate}</td>
                                 <td>{ele.amt}</td>
                                 <td>{ele.createusercode}</td>
-                                <td><button onClick={() =>navigate('/bill/editbill/' + ele.billadvisorno)}>EDIT</button></td>
+                                <td><button onClick={() =>navigate('/bill/editbill/' + ele.billadvisorno)}>แก้ไข</button></td>
                             </tr>)
 
                         })}
@@ -339,7 +339,7 @@ const FindBillAdvisor = () => {
 
 
                 <div className="d-flex justify-content-center">
-                    <LoginBtn type="submit">confirm</LoginBtn>
+                    <LoginBtn type="submit">ยืนยัน</LoginBtn>
                 </div>
             </form>
 

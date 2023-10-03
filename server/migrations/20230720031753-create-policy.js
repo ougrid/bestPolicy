@@ -157,6 +157,9 @@ module.exports = {
       ovout_amt: {
         type: Sequelize.FLOAT
       },
+      cover_amt: {
+        type: Sequelize.FLOAT
+      },
       createusercode:{
         type:Sequelize.STRING
       },

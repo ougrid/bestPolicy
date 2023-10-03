@@ -509,11 +509,6 @@ const PolicyScreen = (props) => {
             onChange={handleChange}
           />
         </div>
-        <div class="col-3">{/* null */}</div>
-      </div>
-
-      <div class="row">
-        <div className="col-1"></div>
         <div class="col-2 form-group ">
           <label class="form-label px-3">
             บริษัทรับประกัน<span class="text-danger"> *</span>
@@ -529,6 +524,13 @@ const PolicyScreen = (props) => {
             {insurerDD}
           </select>
         </div>
+
+        <div class="col-3">{/* null */}</div>
+      </div>
+
+      <div class="row">
+        <div className="col-1"></div>
+        
 
         <div class="col-2 form-group ">
           <label class="form-label px-3">
@@ -590,9 +592,21 @@ const PolicyScreen = (props) => {
           </div>
           
           </div>
-         
+        
         </div>
-
+        <div class="col-2 form-group ">
+          <label class="form-label px-3">
+            ทุนประกัน<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="number"
+            step={0.1}
+            defaultValue={formData.cover_amt}
+            name={`cover_amt`}
+            onChange={handleChange}
+          />
+        </div>
        
       </div>
       {/* policy table */}
@@ -824,7 +838,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-1 align-bottom">
         
-          <button type="button" name="btn_comm1" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
+          <button type="button" name="btn_comm1" class="btn btn-primary align-bottom form-control" onClick={getcommov} >ค่า comm/ov : ผู้แนะนำคนที่ 1</button>
         </div>
 
 
@@ -958,7 +972,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-1 align-bottom">
 
-          <button type="button" name="btn_comm2" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
+          <button type="button" name="btn_comm2" class="btn btn-primary align-bottom" onClick={getcommov} >ค่า comm/ov : ผู้แนะนำคนที่ 2</button>
         </div>
 
 
@@ -1331,7 +1345,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-2">
           <label class="form-label ">
-            Email<span class="text-danger"> *</span>
+            E-mail<span class="text-danger"> *</span>
           </label>
           <input
             className="form-control"
@@ -1345,7 +1359,7 @@ const PolicyScreen = (props) => {
       <div class="d-flex justify-content-center">
 
         <button className="p-2 btn btn-primary" name="saveChange" onClick={handleSubmit}>
-          submit
+          บันทึก
         </button>
 
       </div>

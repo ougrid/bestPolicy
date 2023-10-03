@@ -137,7 +137,7 @@ const PolicyExcel = () => {
         </form>
       </Border> */}
 
-      <h2 className="text-center">Add New Policy</h2>
+      <h2 className="text-center">บันทึกข้อมูลกรมธรรม์จากไฟล์ excel</h2>
       <PolicyListV2 userId={profile.id} />
     </div>
   );

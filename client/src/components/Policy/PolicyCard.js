@@ -729,6 +729,7 @@ const PolicyCard = (props) => {
                 {insureClassDD}
               </select>
             </div>
+
             <div className="col form-group">
               <label class="form-label ">
                 Subclass
@@ -748,6 +749,20 @@ const PolicyCard = (props) => {
 
           </div>
 
+        </div>
+
+        <div class="col-2">
+          <label class="form-label ">
+            ทุนประกัน<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="number"
+            step={0.1}
+            value={formData.cover_amt}
+            name={`cover_amt`}
+            onChange={(e) => handleChange(e)}
+          />
         </div>
 
       </div>

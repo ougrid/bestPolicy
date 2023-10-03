@@ -103,7 +103,7 @@ const UserCarList = (props) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleDraft = async (e) => {
     const data = []
      for (let i = 0; i < formData.length; i++) {
       let t_ogName =null
@@ -132,6 +132,34 @@ const UserCarList = (props) => {
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});
   };
 
+  const handleSubmit = async (e) => {
+    const data = []
+     for (let i = 0; i < formData.length; i++) {
+      let t_ogName =null
+      let t_firstName = null
+      let t_lastName = null
+      let idCardType = "idcard"
+      let idCardNo =  null
+      let taxNo = null
+      if (formData[i].personType === 'P'){
+        t_firstName = formData[i].t_fn
+        t_lastName = formData[i].t_ln
+        idCardNo = formData[i].regisNo.toString()
+        data.push({...formData[i], t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType, t_ogName:t_ogName , taxNo:taxNo})
+      }else{
+        t_ogName = formData[i].t_fn
+        
+        taxNo = formData[i].regisNo.toString()
+        data.push({...formData[i], t_ogName:t_ogName , taxNo:taxNo, t_firstName:t_firstName, t_lastName :t_lastName, idCardNo:idCardNo, idCardType:idCardType})
+      }
+    }
+    console.log(data);
+    e.preventDefault();
+    await axios.post(url + "/policies/policydraft/batch", data, headers).then((res) => {
+      alert("policy batch Created");
+      window.location.reload(false);
+    }).catch((err)=>{ alert("Something went wrong, Try Again.");});
+  };
 
   const newRow = (e) => {
     e.preventDefault();
@@ -202,8 +230,8 @@ const handleClose = (e) =>{
     <CenterPage>
       <div className="d-flex justify-content-center">
 
-      <button type="button" class="btn btn-primary " onClick={newRow} >add</button>
-      <button type="button" class="btn btn-danger " onClick={removeRow} >Remove</button>
+      {/* <button type="button" class="btn btn-primary " onClick={newRow} >add</button>
+      <button type="button" class="btn btn-danger " onClick={removeRow} >Remove</button> */}
 
       <input type="file" class="btn btn-secondary " id="fileInput" onChange={(e) => handleFileChange(e)} />
       </div>
@@ -222,7 +250,8 @@ const handleClose = (e) =>{
 <div className="d-flex justify-content-center">
 
         {/* <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Create</button> */}
-        <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >Save Draft</button>
+        <button type="button" class="btn btn-primary " onClick={(e)=>handleDraft(e)} >บันทึกคำขอ</button>
+        <button type="button" class="btn btn-primary " onClick={(e)=>handleSubmit(e)} >บันทึกกรมธรรม์</button>
 </div>
       </form>
       

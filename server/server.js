@@ -60,7 +60,7 @@ function authenticateToken(req, res, next) {
 //middleware-every request goes through it
 app.use(cors(corsOptions));
 // app.use(bodyParser);
-app.use(bodyParser.json({ limit: '200kb' }));
+app.use(bodyParser.json({ limit: '200Mb' }));
 app.use(cookieParser());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -119,9 +119,11 @@ app.use("/v1/araps",authenticateToken, routes.arap);
 // });
 
 const options ={
-  cert: fs.readFileSync('./certssl/Certificate_amityinsure.com.crt'),
-   ca: fs.readFileSync("./certssl/intermediateCA_amityinsure.com.cer"),
-  key: fs.readFileSync("./certssl/PRIVATEKEY_amityinsure.com.key"),
+  // cert: fs.readFileSync('./certssl/Certificate_amityinsure.com.crt'),
+  //  ca: fs.readFileSync("./certssl/intermediateCA_amityinsure.com.cer"),
+  // key: fs.readFileSync("./certssl/PRIVATEKEY_amityinsure.com.key"),
+  cert: fs.readFileSync('./certssl/server.cert'),
+  key: fs.readFileSync("./certssl/server.key"),
 }
 
 const server = https.createServer(options, app);

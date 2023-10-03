@@ -24,26 +24,26 @@ export default function PremInCreate() {
     })
     const [policiesData, setPoliciesData] = useState([])
   const colsData = {
-    insurerCode: "insurerCode",
-    agentCode: "advisorCode",
+    insurerCode: "รหัสบริษัทประกัน",
+    agentCode: "รหัสผู้แนะนำ",
     dueDate:"Duedate",
-    policyNo:"Policyno",
-    endorseNo:"Endorseno",
-    invoiceNo:"Invoiceno",
+    policyNo:"เลขกรมธรรม์",
+    endorseNo:"เลขสลักหลัง",
+    invoiceNo:"เลขใบแจ้งหนี้",
     seqNo: "seqno",
-    customerid:"customerid",
-    insureename:"insuredname",
-    licenseNo:"licenseno",
+    customerid:"id",
+    insureename:"ชื่อผู้เอาประกัน",
+    licenseNo:"เลขทะเบียนรถ",
     // "province",
-    chassisNo:"chassisno",
-    netgrossprem:"grossprem",
-    duty:"duty",
-    tax:"tax",
-    totalprem:"totalamt",
+    chassisNo:"เลขคัชซี",
+    netgrossprem:"เบี้ยประกัน",
+    duty:"อากร",
+    tax:"ภาษี",
+    totalprem:"เบี้ยประกันรวม",
     commout_rate:"comm-out%",
-    commout_amt:"comm-out-amt",
+    commout_amt:"จำนวน",
     ovout_rate:"ov-out%",
-    ovout_amt:"ov-out-amt",
+    ovout_amt:"จำนวน",
     netflag:"[] net",
     remainamt:"billpremium",
 
@@ -219,7 +219,7 @@ const submitarpremin = async (e) => {
         {/* billadvisorno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            billadvisorno
+            เลขที่ใบวางบิล_
           </label>
           <div className="col-4">
             <input
@@ -245,7 +245,7 @@ const submitarpremin = async (e) => {
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -261,7 +261,7 @@ const submitarpremin = async (e) => {
         {/* advisorCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -291,7 +291,7 @@ const submitarpremin = async (e) => {
               {/* cashierreceiveno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="cashierreceiveno">
-            cashierreceiveno
+            เลขที่รับเงิน
           </label>
           <div className="col-4 ">
             <input
@@ -312,7 +312,7 @@ const submitarpremin = async (e) => {
         {/* Amt */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="amt">
-            Amt
+            จำนวนเงินที่รับ
           </label>
           <div className="col-4 ">
             <input className="form-control" type="number" name="amt" id="amt" value={filterData.amt} disabled/>
@@ -321,7 +321,7 @@ const submitarpremin = async (e) => {
         {/* actualvalue */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
-            ActualValue
+            จำนวนเงินใบวางบิล
           </label>
           <div className="col-4 ">
             <input
@@ -334,7 +334,7 @@ const submitarpremin = async (e) => {
             />
           </div>
           <label class="col-sm-2 col-form-label" htmlFor="actualvalue">
-            DiffAmt
+            ผลต่าง
           </label>
           <div className="col-4 ">
             <input
@@ -348,7 +348,7 @@ const submitarpremin = async (e) => {
           </div>
         </div>
         <div className="row my-3">
-          <button className="btn btn-success">Create</button>
+          <button className="btn btn-success">สร้างรายการ</button>
         </div>
       </form>
       <div>
