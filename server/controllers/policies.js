@@ -517,6 +517,8 @@ const newPolicyList = async (req, res) => {
 
   for (let i = 0; i < req.body.length; i++) {
     //create entity 
+    const t = await sequelize.transaction();
+  try {
     await sequelize.query(
       'insert into static_data."Entities" ("personType","titleID","t_ogName","t_firstName","t_lastName","idCardType","idCardNo","taxNo") ' +
       'values (:personType, (select "TITLEID" from static_data."Titles" where "TITLETHAIBEGIN" = :title limit 1), :t_ogName, :t_firstName, :t_lastName,:idCardType,:idCardNo,:taxNo) ' +
@@ -532,6 +534,7 @@ const newPolicyList = async (req, res) => {
           idCardNo: req.body[i].idCardNo,
           taxNo: req.body[i].taxNo
         },
+        transaction: t,
         type: QueryTypes.INSERT
       }
     ).then(async (entity) => {
@@ -550,9 +553,9 @@ const newPolicyList = async (req, res) => {
 
           'INSERT INTO static_data."Locations" ("entityID", "t_location_1", "t_location_2", "t_location_3", "t_location_4", "t_location_5", "provinceID", "districtID", "subDistrictID", "zipcode", "telNum_1","locationType") ' +
           'values(:entityID, :t_location_1, :t_location_2,  :t_location_3, :t_location_4, :t_location_5, ' +
-          '(select "provinceid" from static_data.provinces where t_provincename = :province), ' +
-          '(select "amphurid" from static_data."Amphurs" where t_amphurname = :district), ' +
-          '(select "tambonid" from static_data."Tambons" where t_tambonname = :tambon), ' +
+          '(select "provinceid" from static_data.provinces where t_provincename = :province limit 1), ' +
+          '(select "amphurid" from static_data."Amphurs" where t_amphurname = :district limit 1), ' +
+          '(select "tambonid" from static_data."Tambons" where t_tambonname = :tambon limit 1), ' +
           ':zipcode, :tel_1, :locationType) ',
           {
             replacements: {
@@ -569,6 +572,7 @@ const newPolicyList = async (req, res) => {
               tel_1: req.body[i].telNum_1,
               locationType: 'A'
             },
+            transaction: t,
             type: QueryTypes.INSERT
           }
         )
@@ -576,7 +580,7 @@ const newPolicyList = async (req, res) => {
         //select insuree
         const insuree = await sequelize.query(
           'select * FROM static_data."Insurees" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id" WHERE (CASE WHEN ent."personType" = \'P\' THEN "idCardNo" ELSE "taxNo" END) = :idNo ',
-          { replacements: { idNo: req.body[i].personType === "P" ? req.body[i].idCardNo : req.body[i].taxNo }, type: QueryTypes.SELECT })
+          { replacements: { idNo: req.body[i].personType === "P" ? req.body[i].idCardNo : req.body[i].taxNo },  transaction: t, type: QueryTypes.SELECT })
 
         insureeCode = insuree[0].insureeCode
         
@@ -585,7 +589,7 @@ const newPolicyList = async (req, res) => {
 
       //insert new car or select
       let cars = [{id: null}]
-      if (req.body[i].class === 'Motor') {
+      if (req.body[i].class === 'MO') {
         cars = await sequelize.query(
           'WITH inserted AS ( '+
           'INSERT INTO static_data."Motors" ("brand", "voluntaryCode", "model", "specname", "licenseNo", "motorprovinceID", "chassisNo", "modelYear") '+
@@ -603,6 +607,7 @@ const newPolicyList = async (req, res) => {
               motorprovinceID:2,
               modelYear: req.body[i].modelYear,
             },
+            transaction: t,
             type: QueryTypes.SELECT
           }
         )
@@ -623,26 +628,34 @@ const newPolicyList = async (req, res) => {
           subClass: req.body[i].subClass,
           insurerCode: req.body[i].insurerCode,
         },
+        transaction: t,
         type: QueryTypes.SELECT
       }
     )
-    
-
-      if(req.body[i][`commin_rate`] === null && req.body[i][`ovin_rate`] === null){
+    //undefined comm/ov in
+      if(req.body[i][`commin_rate`] === undefined || req.body[i][`commin_rate`] === null ){
         req.body[i][`commin_rate`] = commov[0].rateComIn
-        req.body[i][`commin_amt`] = commov[0].rateComIn * req.body[i][`netgrossprem`]
-        req.body[i][`ovin_rate`] = commov[0].rateOVIn_1
-        req.body[i][`ovin_amt`] = commov[0].rateOVIn_1 * req.body[i][`netgrossprem`] 
+        req.body[i][`commin_amt`] = commov[0].rateComIn * req.body[i][`netgrossprem`]/100
       }
+      if(req.body[i][`ovin_rate`]  === undefined || req.body[i][`ovin_rate`]  === null ){
+        req.body[i][`ovin_rate`] = commov[0].rateOVIn_1
+        req.body[i][`ovin_amt`] = commov[0].rateOVIn_1 * req.body[i][`netgrossprem`] /100
+      }
+
       req.body[i][`commin_taxamt`] = req.body[i][`commin_amt`] *7/100
       req.body[i][`ovin_taxamt`] =  req.body[i][`ovin_amt`] *7/100
+      
 
-      if(req.body[i][`commout1_rate`] === null && req.body[i][`ovout1_rate`] === null){
-        req.body[i][`commout1_rate`] = commov[0].rateComOut
-        req.body[i][`commout1_amt`] = commov[0].rateComOut * req.body[i][`netgrossprem`]
-        req.body[i][`ovout1_rate`] = commov[0].rateOVOut_1
-        req.body[i][`ovout1_amt`] = commov[0].rateOVOut_1 * req.body[i][`netgrossprem`]
-      }
+      //undefined comm/ov out agent 1 
+    if(req.body[i][`commout1_rate`] === undefined || req.body[i][`commout1_rate`] === null ){
+      req.body[i][`commout1_rate`] = commov[0].rateComOut
+      req.body[i][`commout1_amt`] = commov[0].rateComOut * req.body[i][`netgrossprem`]/100
+    }  
+    if(req.body[i][`ovout1_rate`] === undefined || req.body[i][`ovout1_rate`] === null ){
+      req.body[i][`ovout1_rate`] = commov[0].rateOVOut_1
+      req.body[i][`ovout1_amt`] = commov[0].rateOVOut_1 * req.body[i][`netgrossprem`]/100
+    }  
+
       //check agentcode2
       if( req.body[i][`agentCode2`] ){
         const commov2 = await sequelize.query(
@@ -662,9 +675,9 @@ const newPolicyList = async (req, res) => {
         )
        if(req.body[i][`commout2_rate`] === null && req.body[i][`ovout2_rate`] === null ){
         req.body[i][`commout2_rate`] = commov2[0].rateComOut
-        req.body[i][`commout2_amt`] = commov2[0].rateComOut * req.body[i][`netgrossprem`]
+        req.body[i][`commout2_amt`] = commov2[0].rateComOut * req.body[i][`netgrossprem`]/100
         req.body[i][`ovout2_rate`] = commov2[0].rateOVOut_1
-        req.body[i][`ovout2_amt`] = commov2[0].rateOVOut_1 * req.body[i][`netgrossprem`]
+        req.body[i][`ovout2_amt`] = commov2[0].rateOVOut_1 * req.body[i][`netgrossprem`]/100
        }
        req.body[i][`commout_rate`] = req.body[i][`commout1_rate`] + req.body[i][`commout2_rate`] 
         req.body[i][`commout_amt`] = req.body[i][`commout1_amt`] +req.body[i][`commout2_amt`]
@@ -682,26 +695,29 @@ const newPolicyList = async (req, res) => {
         req.body[i][`ovout_rate`] = req.body[i][`ovout1_rate`]
         req.body[i][`ovout_amt`] = req.body[i][`ovout1_amt`]
       }
+     
+    //get application no
+    const currentdate = getCurrentDate()
+    req.body[i].applicationNo = 'APP' + await getRunNo('app',null,null,'kw',currentdate,t);
+    console.log(req.body[i].applicationNo);
 
-    
       //insert policy
       await sequelize.query(
-        'insert into static_data."Policies" ("policyNo","applicationNo","insureeCode","insurerCode","agentCode","agentCode2","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem, ' +
-        'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode, "itemList", "policyDate","status", ' +
-        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, "seqNoins", "seqNoagt",netgrossprem, cover_amt) ' +
+        'insert into static_data."Policies" ("applicationNo","insureeCode","insurerCode","agentCode","agentCode2","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem, ' +
+        'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode, "itemList","status", ' +
+        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, netgrossprem, specdiscrate, specdiscamt, cover_amt) ' +
         // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
-        'values (:policyNo, :applicationNo, :insureeCode, ' +
+        'values ( :applicationNo, :insureeCode, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
         ':agentCode, :agentCode2, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
         ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem, ' +
-        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList ,:policyDate,\'A\', ' +
-        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :seqNoins, :seqNoagt,:netgrossprem, :cover_amt)',
+        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList ,\'I\', ' +
+        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :netgrossprem,  :specdiscrate, :specdiscamt, :cover_amt )',
         {
           replacements: {
-            policyNo: req.body[i].policyNo,
             applicationNo: req.body[i].applicationNo,
-            seqNoins: req.body[i].seqNoins,
-            seqNoagt: req.body[i].seqNoagt,
+            // seqNoins: req.body[i].seqNoins,
+            // seqNoagt: req.body[i].seqNoagt,
             // entityInsuree:
             insureeCode: insureeCode,
             insurerCode: req.body[i].insurerCode,
@@ -712,9 +728,12 @@ const newPolicyList = async (req, res) => {
             actDate: req.body[i].actDate,
             expDate: req.body[i].expDate,
             grossprem: req.body[i].grossprem,
+            netgrossprem: req.body[i].netgrossprem,
             duty: req.body[i].duty,
             tax: req.body[i].tax,
             totalprem: req.body[i].totalprem,
+            specdiscrate: req.body[i][`specdiscrate`],
+            specdiscamt: req.body[i][`specdiscamt`],
             commin_rate: req.body[i][`commin_rate`],
             commin_amt: req.body[i][`commin_amt`],
             ovin_rate: req.body[i][`ovin_rate`],
@@ -733,30 +752,34 @@ const newPolicyList = async (req, res) => {
             commout2_amt: req.body[i][`commout2_amt`],
             ovout2_rate: req.body[i][`ovout2_rate`],
             ovout2_amt: req.body[i][`ovout2_amt`],
-            cover_amt: req.body[i][`cover_amt`],
+            cover_amt:req.body[i][`cover_amt`],
             createusercode: "kwanjai",
             itemList: cars[0].id,
-            netgrossprem: req.body[i].grossprem,
+            policyNo: req.body[i].policyNo,
             policyDate:  new Date().toJSON().slice(0, 10),
             
           },
+          transaction: t,
           type: QueryTypes.INSERT
         }
       )
 
 
     })
-
-    //insert transaction 
-    createTransection(req.body[i])
-
-
+    await t.commit();
     
-
+  } catch (error) {
+    console.log(error);
+    await t.rollback();
+    await res.status(500).json(error);
+    return "fail"
+    
   }
+  
+}
 
+await res.json({ status: 'success' })
 
-  await res.json({ status: 'success' })
 };
 
 const draftPolicyList = async (req, res) => {

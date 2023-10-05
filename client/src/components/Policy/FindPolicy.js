@@ -589,14 +589,14 @@ const FindPolicy = () => {
                                 <td>{ele.seqNo}</td>
                                 <td>{ele.invioceNo}</td>
                                 <td>{ele.taxInvioceNo}</td>
-                                <td>{ele.netgrossprem}</td>
-                                <td>{ele.duty}</td>
-                                <td>{ele.tax}</td>
-                                <td>{ele.totalprem}</td>
-                                <td>{ele.commin_amt}</td>
-                                <td>{ele.ovin_amt}</td>
-                                <td>{ele.commout_amt}</td>
-                                <td>{ele.ovout_amt}</td>
+                                <td>{ele.netgrossprem.toLocaleString()}</td>
+                                <td>{ele.duty.toLocaleString()}</td>
+                                <td>{ele.tax.toLocaleString()}</td>
+                                <td>{ele.totalprem.toLocaleString()}</td>
+                                <td>{ele.commin_amt.toLocaleString()}</td>
+                                <td>{ele.ovin_amt.toLocaleString()}</td>
+                                <td>{ele.commout_amt.toLocaleString()}</td>
+                                <td>{ele.ovout_amt.toLocaleString()}</td>
                             </tr>)
 
                         })}

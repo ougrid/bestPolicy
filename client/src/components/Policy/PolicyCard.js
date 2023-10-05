@@ -658,7 +658,7 @@ const PolicyCard = (props) => {
             className="form-control"
             type="date"
             value={formData.issueDate || ''}
-            name={`issueDate`}
+            name={`npm star`}
             onChange={handleChange}
           />
         </div>

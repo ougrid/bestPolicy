@@ -6,6 +6,8 @@ import { Container } from "../StylesPages/PagesLayout";
 import { async } from "q";
 import Select from 'react-select';
 import { useCookies } from "react-cookie";
+import { number } from "joi";
+import { numberWithCommas} from '../lib/number';
 
 const config = require("../../config.json");
 
@@ -35,6 +37,7 @@ const PolicyScreen = (props) => {
 
   const handleChange = async (e) => {
     e.preventDefault();
+    // console.log(e);
     //set dropdown subclass when class change
     if (e.target.name === "class") {
       const array = [];
@@ -146,6 +149,40 @@ const PolicyScreen = (props) => {
     //get com/ov setup
 
   };
+
+
+  const NumberInputWithCommas =  ({ value, name ,onChange, e}) =>{
+    // Remove commas when displaying the value
+    let displayValue ='';
+    
+    if (value) {
+      displayValue = value.toLocaleString();
+    }
+  
+    const handleChangeN =  (e) => {
+      e.preventDefault()
+      const inputValue = e.target.value;
+      // Remove commas and non-numeric characters
+      const numericValue = inputValue.replace(/[^0-9]/g, '');
+  
+      // Format the numeric value with commas
+      const formattedValue = Number(numericValue).toLocaleString();
+      e.target.value = Number(numericValue).toLocaleString();
+      console.log(e);
+      onChange(e);
+      // console.log(formData);
+    };
+  
+    return (
+      <input
+        type="text"
+        className="form-control numbers"
+        // value={displayValue}
+        name={name}
+        onBlur={(e)=>handleChangeN(e)}
+      />
+    );
+  }
 
   const changeProvince = (e) =>{
     setFormData((prevState) => ({
@@ -617,14 +654,17 @@ const PolicyScreen = (props) => {
           <label class="form-label ">
             ค่าเบี้ย<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
+          {/* <input
+            className="form-control numbers"
+            id="grossprem"
             type="number"
             step={0.1}
-            value={formData.grossprem}
+            value={formData.grossprem}    
             name={`grossprem`}
             onChange={(e) => handleChange(e)}
-          />
+          /> */}
+<NumberInputWithCommas value={formData.grossprem} name={`grossprem`} onChange={handleChange}  />
+
         </div>
 
         <div class="col-2">
