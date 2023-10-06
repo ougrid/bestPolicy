@@ -30,7 +30,7 @@ export default function PremInPaid() {
       policyNo:"เลขที่กรมธรรม์",
       endorseNo:"เลขที่สลักหลัง",
       invoiceNo:"เลขที่ใบวางบิล",
-      seqNo: "seqno",
+      seqNo: "งวด",
       customerid:"id",
       insureename:"ชื่อ ผู้เอาประกัน",
       licenseNo:"เลขทะเบียนรถ",
@@ -39,13 +39,14 @@ export default function PremInPaid() {
       netgrossprem:"เบี้ยประกัน",
       duty:"อากร",
       tax:"ภาษี",
+      withheld:"WHT 1%",
       totalprem:"เบี้ยประกันรวม",
-      commout_rate:"comm-out%",
+      commout_rate:"Comm Out %",
       commout_amt:"จำนวน",
-      ovout_rate:"ov-out%",
+      ovout_rate:"Ov Out %",
       ovout_amt:"จำนวน",
-      netflag:"[] net",
-      remainamt:"billpremium",
+      netflag:"[] Net",
+      remainamt:"รวม (บาท)",
   
   };
   

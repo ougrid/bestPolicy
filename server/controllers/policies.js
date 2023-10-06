@@ -4,6 +4,7 @@ const CommOVIn = require("../models").CommOVIn; //imported fruits array
 const CommOVOut = require("../models").CommOVOut;
 const Insuree = require("../models").Insuree;
 const { throws } = require("assert");
+const config = require("../config.json");
 const process = require('process');
 const {getRunNo,getCurrentDate} = require("./lib/runningno");
 const account =require('./lib/runningaccount')
@@ -17,6 +18,9 @@ const { Op, QueryTypes, Sequelize } = require("sequelize");
 //         res.json(locations);
 //     })
 // }
+const tax =config.tax
+const wht = config.wht
+const withheld = config.withheld
 
 // Replace 'your_database', 'your_username', 'your_password', and 'your_host' with your database credentials
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
@@ -642,8 +646,8 @@ const newPolicyList = async (req, res) => {
         req.body[i][`ovin_amt`] = commov[0].rateOVIn_1 * req.body[i][`netgrossprem`] /100
       }
 
-      req.body[i][`commin_taxamt`] = req.body[i][`commin_amt`] *7/100
-      req.body[i][`ovin_taxamt`] =  req.body[i][`ovin_amt`] *7/100
+      req.body[i][`commin_taxamt`] = req.body[i][`commin_amt`] * tax
+      req.body[i][`ovin_taxamt`] =  req.body[i][`ovin_amt`] * tax
       
 
       //undefined comm/ov out agent 1 
@@ -695,30 +699,34 @@ const newPolicyList = async (req, res) => {
         req.body[i][`ovout_rate`] = req.body[i][`ovout1_rate`]
         req.body[i][`ovout_amt`] = req.body[i][`ovout1_amt`]
       }
-     
+    
+    //cal withheld 1% 
+    if (req.body[i].personType.trim() === 'O') {
+      req.body[i].withheld = (req.body[i].netgrossprem +req.body[i].duty) * withheld
+    }else{
+      req.body[i].withheld
+    }
+    
     //get application no
     const currentdate = getCurrentDate()
     req.body[i].applicationNo = 'APP' + await getRunNo('app',null,null,'kw',currentdate,t);
     console.log(req.body[i].applicationNo);
 
       //insert policy
-      await sequelize.query(
+      const policy = await sequelize.query(
         'insert into static_data."Policies" ("applicationNo","insureeCode","insurerCode","agentCode","agentCode2","insureID","actDate", "expDate" ,grossprem, duty, tax, totalprem, ' +
         'commin_rate, commin_amt, ovin_rate, ovin_amt, commin_taxamt, ovin_taxamt, commout_rate, commout_amt, ovout_rate, ovout_amt, createusercode, "itemList","status", ' +
-        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, netgrossprem, specdiscrate, specdiscamt, cover_amt) ' +
+        'commout1_rate, commout1_amt, ovout1_rate, ovout1_amt, commout2_rate, commout2_amt, ovout2_rate, ovout2_amt, netgrossprem, specdiscrate, specdiscamt, cover_amt, "policyNo", "policyDate", "issueDate", "policyType", withheld ) ' +
         // 'values (:policyNo, (select "insureeCode" from static_data."Insurees" where "entityID" = :entityInsuree), '+
         'values ( :applicationNo, :insureeCode, ' +
         '(select "insurerCode" from static_data."Insurers" where "insurerCode" = :insurerCode), ' +
         ':agentCode, :agentCode2, (select "id" from static_data."InsureTypes" where "class" = :class and  "subClass" = :subClass), ' +
         ':actDate, :expDate, :grossprem, :duty, :tax, :totalprem, ' +
-        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList ,\'I\', ' +
-        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :netgrossprem,  :specdiscrate, :specdiscamt, :cover_amt )',
+        ':commin_rate, :commin_amt, :ovin_rate, :ovin_amt, :commin_taxamt, :ovin_taxamt, :commout_rate, :commout_amt, :ovout_rate, :ovout_amt, :createusercode, :itemList ,\'A\', ' +
+        ' :commout1_rate, :commout1_amt, :ovout1_rate, :ovout1_amt,  :commout2_rate, :commout2_amt, :ovout2_rate, :ovout2_amt, :netgrossprem,  :specdiscrate, :specdiscamt, :cover_amt, :policyNo, :policyDate, :issueDate, :policyType, :withheld) Returning id`',
         {
           replacements: {
             applicationNo: req.body[i].applicationNo,
-            // seqNoins: req.body[i].seqNoins,
-            // seqNoagt: req.body[i].seqNoagt,
-            // entityInsuree:
             insureeCode: insureeCode,
             insurerCode: req.body[i].insurerCode,
             class: req.body[i].class,
@@ -757,17 +765,36 @@ const newPolicyList = async (req, res) => {
             itemList: cars[0].id,
             policyNo: req.body[i].policyNo,
             policyDate:  new Date().toJSON().slice(0, 10),
+            issueDate:  req.body[i][`issueDate`],
+            policyType:  "F",
+            withheld:  "F",
             
           },
           transaction: t,
           type: QueryTypes.INSERT
         }
       )
-
-
+      console.log(policy[0][0].id);
+      //insert jupgr
+      req.body[i].polid = policy[0][0].id
+  //check installment 
+  if (!req.body[i].installment) {
+    req.body[i].installment = {advisor:[], insurer:[]}
+  }
+  
+      await createjupgr(req.body[i],t)
+      
+      //insert transaction 
+      await createTransection(req.body[i],t)
+      // await createTransection(req.body[i],t)
+  
+      // insert  jugltx table -> ลงผังบัญชี
+      await account.insertjugltx('POLICY',req.body[i].policyNo,t )
+  
     })
     await t.commit();
-    
+    // If the execution reaches this line, an error was thrown.
+      // We rollback the transaction.
   } catch (error) {
     console.log(error);
     await t.rollback();

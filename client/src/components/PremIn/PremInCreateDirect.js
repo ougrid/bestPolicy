@@ -46,7 +46,7 @@ export default function PremInCreateDirect() {
     policyNo: "เลขกรมธรรม์",
     endorseNo: "เลขสลักหลัง",
     invoiceNo: "เลขใบแจ้งหนี้",
-    seqNo: "seqno",
+    seqNo: "งวด",
     customerid: "id",
     insureename: "ชื่อ ผู้เอาประกัน",
     licenseNo: "เลขทะเบียนรถ",
@@ -55,13 +55,14 @@ export default function PremInCreateDirect() {
     netgrossprem: "เบี้ยประกัน",
     duty: "อากร",
     tax: "ภาษี",
+    withheld: "WHT 1%",
     totalprem: "เบี้ยประกันรวม",
-    commout_rate: "comm-out%",
+    commout_rate: "Comm Out %",
     commout_amt: "จำนวน",
-    ovout_rate: "ov-out%",
+    ovout_rate: "Ov Out %",
     ovout_amt: "จำนวน",
-    netflag: "[] net",
-    remainamt: "billpremium",
+    netflag: "[] Net",
+    remainamt: "รวม (บาท)",
 
   };
 

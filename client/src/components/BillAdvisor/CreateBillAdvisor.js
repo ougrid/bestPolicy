@@ -32,6 +32,7 @@ const CreateBillAdvisor = () => {
     headers: { Authorization: `Bearer ${cookies["jwt"]}` }
 };
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+    const wht = config.wht
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -107,9 +108,9 @@ const CreateBillAdvisor = () => {
                     net.no++
                     net.prem = net.prem + policiesData[i].totalprem
                     net.comm_out = net.comm_out + policiesData[i].commout_amt
-                    net.whtcom = net.comm_out * 3 / 100
+                    net.whtcom = net.comm_out * wht
                     net.ov_out = net.ov_out + policiesData[i].ovout_amt
-                    net.whtov = net.ov_out * 3 / 100
+                    net.whtov = net.ov_out * wht
                 } else {
                     gross.no++
                     gross.prem = gross.prem + policiesData[i].totalprem
@@ -375,7 +376,7 @@ const CreateBillAdvisor = () => {
                 </div>
             </form>
             <form className="container-fluid " >
-
+            <div className="table-responsive overflow-scroll"  >
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -396,6 +397,7 @@ const CreateBillAdvisor = () => {
                             <th scope="col">อากร</th>
                             <th scope="col">ภาษี</th>
                             <th scope="col">เบี้ยประกันรวม</th>
+                            <th scope="col">ภาษีหัก ณ ที่จ่าย (1%)</th>
                             <th scope="col">comm-out%</th>
                             <th scope="col">จำนวนเงิน</th>
                             <th scope="col">ov-out%</th>
@@ -421,14 +423,15 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.licenseNo}</td>
                                 <td>{ele.motorprovinceID}</td>
                                 <td>{ele.chassisNo}</td>
-                                <td>{ele.netgrossprem}</td>
-                                <td>{ele.duty}</td>
-                                <td>{ele.tax}</td>
-                                <td>{ele.totalprem}</td>
-                                <td>{ele.commout_rate}</td>
-                                <td>{ele.commout_amt}</td>
-                                <td>{ele.ovout_rate}</td>
-                                <td>{ele.ovout_amt}</td>
+                                <td>{ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.totalprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commout_rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovout_rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td><input type="checkbox" name="statementtype" id={i} onClick={changestatementtype} /></td>
                                 {/* <td><input type="number" disabled value={billpremiumData[i]} /></td> */}
                             </tr>)
@@ -438,7 +441,7 @@ const CreateBillAdvisor = () => {
 
                     </tbody>
                 </table>
-
+                </div>
 
                 <div className="d-flex justify-content-center">
                     {/* <LoginBtn type="submit">confirm</LoginBtn> */}
@@ -535,16 +538,16 @@ const CreateBillAdvisor = () => {
                             <tr>
                                 <td>net</td>
                                 <td>{policiesRender.net.no}</td>
-                                <td>{policiesRender.net.prem}</td>
-                                <td>{policiesRender.net.comm_out}</td>
-                                <td>{policiesRender.net.whtcom}</td>
-                                <td>{policiesRender.net.ov_out}</td>
-                                <td>{policiesRender.net.whtov}</td>
+                                <td>{policiesRender.net.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.comm_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.whtcom.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.ov_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.whtov.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>
                             <tr>
                                 <td>gross</td>
                                 <td>{policiesRender.gross.no}</td>
-                                <td>{policiesRender.gross.prem}</td>
+                                <td>{policiesRender.gross.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
@@ -553,11 +556,11 @@ const CreateBillAdvisor = () => {
                             <tr>
                                 <td>รวมทั้งสิ้น</td>
                                 <td>{policiesRender.total.no}</td>
-                                <td>{policiesRender.total.prem}</td>
-                                <td>{policiesRender.total.comm_out}</td>
-                                <td>{policiesRender.total.whtcom}</td>
-                                <td>{policiesRender.total.ov_out}</td>
-                                <td>{policiesRender.total.whtov}</td>
+                                <td>{policiesRender.total.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.comm_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.whtcom.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.ov_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.whtov.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>
                         </tbody>
                     </table>

@@ -89,7 +89,7 @@ const findTransaction = async (req,res) => {
 const findPolicyByPreminDue = async (req,res) => {
 
     const records = await sequelize.query(
-      `select t."agentCode", t."insurerCode", 
+      `select t."agentCode", t."insurerCode",  t."withheld" ,
       t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
       (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
       p."insureeCode",

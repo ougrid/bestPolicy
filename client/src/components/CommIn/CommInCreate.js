@@ -29,12 +29,12 @@ export default function CommInCreate() {
   const colsData = {
     select : "เลือก",
     insurerCode :"รหัสบริษัทประกัน",
-    agentCode: "รหัสผู้แนะนำadvisorCode",
+    agentCode: "รหัสผู้แนะนำ",
     dueDate : "Duedate",
     policyNo : "เลขกรมธรรม์",
     endorseNo : "เลขสลักหลัง",
     invoiceNo : "เลขใบแจ้งหนี้",
-    seqNo : "seqno",
+    seqNo : "งวด",
     customerid : "id",
     insureename : "ชื่อ ผู้เอาประกัน",
     licenseNo : "เลขทะเบียนรถ",
@@ -42,10 +42,11 @@ export default function CommInCreate() {
     netgrossprem : "เบี้ยประกัน",
     duty : "อากร",
     tax : "ภาษี",
+    withheld : "WHT 1%",
     totalprem : "เบี้ยประกันรวม",
-    commin_amt : "comm-in%",
+    commin_amt : "Comm In %",
     commin_rate :"จำนวน",
-    ovin_amt : "ov-in%",
+    ovin_amt : "Ov In %",
     ovin_rate : "จำนวน",
 };
   
@@ -258,7 +259,7 @@ const submitapcommin = async (e) => {
        
         
         <div className="row my-3">
-          <input type="submit" className="btn btn-success"/>
+          <input type="submit"  className="btn btn-success"  value={'ค้นหา'}/>
         </div>
       </form>
       <div>

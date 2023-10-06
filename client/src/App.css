@@ -2,6 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Mitr:wght@400&display=swap");
 :root {
   --header-height: 285px;
+  --bs-modal-width:2000px;
 }
 
 .App {
@@ -53,4 +54,8 @@ table th,table td {
   border: 1px solid black;
   border-collapse: collapse;
   
+}
+
+.my-modal {
+  min-width: 80vw;
 }

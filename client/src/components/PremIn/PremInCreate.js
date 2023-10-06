@@ -30,7 +30,7 @@ export default function PremInCreate() {
     policyNo:"เลขกรมธรรม์",
     endorseNo:"เลขสลักหลัง",
     invoiceNo:"เลขใบแจ้งหนี้",
-    seqNo: "seqno",
+    seqNo: "งวด",
     customerid:"id",
     insureename:"ชื่อผู้เอาประกัน",
     licenseNo:"เลขทะเบียนรถ",
@@ -39,13 +39,14 @@ export default function PremInCreate() {
     netgrossprem:"เบี้ยประกัน",
     duty:"อากร",
     tax:"ภาษี",
+    withheld:"WHT 1%",
     totalprem:"เบี้ยประกันรวม",
-    commout_rate:"comm-out%",
+    commout_rate:"Comm Out %",
     commout_amt:"จำนวน",
-    ovout_rate:"ov-out%",
+    ovout_rate:"Ov Out %",
     ovout_amt:"จำนวน",
-    netflag:"[] net",
-    remainamt:"billpremium",
+    netflag:"[] Net",
+    remainamt:"รวม (บาท)",
 
 };
   
@@ -234,12 +235,12 @@ const submitarpremin = async (e) => {
             <button
             name="bill-btn"
               onClick={getData}
-            >bill data</button>
+            >ค้นหา ข้อมูลใบวางบิล</button>
           </div>
           <div className="col-2">
             <button
               onClick={submitFilter}
-            >FILTER</button>
+            >ค้นหา</button>
           </div>
         </div>
         {/* insurerCode  */}
@@ -306,7 +307,7 @@ const submitarpremin = async (e) => {
             <button
             name="cashier-btn"
               onClick={getData}
-            >Cashier data</button>
+            >ค้นหา ข้อมูลใบรับเงิน</button>
           </div>
         </div>
         {/* Amt */}
@@ -348,7 +349,7 @@ const submitarpremin = async (e) => {
           </div>
         </div>
         <div className="row my-3">
-          <button className="btn btn-success">สร้างรายการ</button>
+          {/* <button className="btn btn-success">สร้างรายการ</button> */}
         </div>
       </form>
       <div>

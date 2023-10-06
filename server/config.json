@@ -2,7 +2,7 @@
     "tax": 0.07,
     "duty": 0.0004,
     "wht":0.03 ,
-    "witheld":0.01
+    "withheld":0.01
 
 }
  

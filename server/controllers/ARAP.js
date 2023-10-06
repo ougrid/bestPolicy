@@ -44,7 +44,7 @@ const getbilldata = async (req, res) => {
     }
   );
   const trans = await sequelize.query(
-    `select t."agentCode", t."insurerCode", 
+    `select t."agentCode", t."insurerCode", t."withheld",
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -461,7 +461,7 @@ const getARtrans = async (req, res) => {
   }
   
   const trans = await sequelize.query(
-    `select t."agentCode", t."insurerCode", 
+    `select t."agentCode", t."insurerCode",  t."withheld" , 
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -519,7 +519,7 @@ const findARPremInDirect = async (req, res) => {
     cond = cond + ` and j."invioceNo" = '${req.body.invoiceNoEnd}'`
   }
   const trans = await sequelize.query(
-    `select true as select, t."agentCode", t."insurerCode", 
+    `select true as select, t."agentCode", t."insurerCode", t."withheld" ,
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -850,7 +850,7 @@ const findAPPremOut = async (req, res) => {
   
   //wait rewrite when clear reconcile process
   const trans = await sequelize.query(
-    `select  'true' as select , t."insurerCode", t."agentCode",
+    `select  'true' as select , t."insurerCode", t."agentCode", t."withheld" ,
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -1138,7 +1138,7 @@ const findARCommIn = async (req, res) => {
   
   //wait rewrite when clear reconcile process
   const trans = await sequelize.query(
-    `select  true as select, t."insurerCode", t."agentCode",
+    `select  true as select, t."insurerCode", t."agentCode", t."withheld" ,
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =
@@ -1513,7 +1513,7 @@ const findAPCommOut = async (req, res) => {
   
   //wait rewrite when clear reconcile process
   const trans = await sequelize.query(
-    `select  true as select , t."insurerCode", t."agentCode",
+    `select  true as select , t."insurerCode", t."agentCode", t."withheld" ,
         t."dueDate", t."policyNo", t."endorseNo", j."invoiceNo", t."seqNo" ,
         (select "id" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) as customerid, 
         (select "t_firstName"||' '||"t_lastName"  as insureeName from static_data."Entities" where id =

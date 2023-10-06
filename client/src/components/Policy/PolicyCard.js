@@ -11,6 +11,7 @@ const PolicyCard = (props) => {
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax
   const duty = config.duty
+  const withheld = config.witheld
 
   //import excel
   const [formData, setFormData] = useState(props.formData);
@@ -273,7 +274,7 @@ const PolicyCard = (props) => {
     if (type === 'insurer') {
       const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
       const netgrossprem = parseFloat(document.getElementsByName(`netgrossprem-${index}`)[0].value)
-      const dutyamt = parseFloat((netgrossprem * duty).toFixed(2))
+      const dutyamt = parseFloat(Math.ceil(netgrossprem * duty))
       const taxamt = parseFloat((netgrossprem * tax).toFixed(2))
       const commin_amt = parseFloat((formData.commin_rate * netgrossprem / 100).toFixed(2))
       const ovin_amt = parseFloat((formData.ovin_rate * netgrossprem / 100).toFixed(2))
@@ -515,16 +516,21 @@ const PolicyCard = (props) => {
 
         }
         else { premperseq = parseFloat((formData.netgrossprem / seqNoins).toFixed(2)) }
-        //cal tax
-        let taxseq = parseFloat((tax * premperseq).toFixed(2))
-
+        
         //cal duty
-        if (flagallowduty) { dutyseq = parseFloat((premperseq * duty).toFixed(2)) }
+        if (flagallowduty) { dutyseq =Math.ceil(premperseq * duty) }
         else {
           if (i === 1) {
-            dutyseq = parseFloat((formData.netgrossprem * duty).toFixed(2))
+            dutyseq = Math.ceil(formData.netgrossprem * duty)
           } else { dutyseq = 0 }
         }
+
+        //cal tax
+        let taxseq = parseFloat((tax * (premperseq + dutyseq)).toFixed(2))
+
+        //cal withheld
+        let withheldseq = parseFloat((withheld * (premperseq + dutyseq)).toFixed(2))
+
         // cal duedate
         if (seqNoinstype === 'M') {
           dueDate.setMonth(dueDate.getMonth() + seqNoinstime)
@@ -543,6 +549,7 @@ const PolicyCard = (props) => {
           commin_taxamt: parseFloat((comminseq * tax).toFixed(2)),
           ovin_amt: ovinseq,
           ovin_taxamt: parseFloat((ovinseq * tax).toFixed(2)),
+          withheld : withheldseq
         })
 
       }
@@ -563,16 +570,21 @@ const PolicyCard = (props) => {
 
         }
         else { premperseq = parseFloat((formData.netgrossprem / seqNoagt).toFixed(2)) }
-        //cal tax
-        let taxseq = parseFloat((tax * premperseq).toFixed(2))
-
+        
         //cal duty
-        if (flagallowduty) { dutyseq = parseFloat((premperseq * duty).toFixed(2)) }
+        if (flagallowduty) { dutyseq =Math.ceil(premperseq * duty) }
         else {
           if (i === 1) {
-            dutyseq = parseFloat((formData.netgrossprem * duty).toFixed(2))
+            dutyseq = Math.ceil(formData.netgrossprem * duty)
           } else { dutyseq = 0 }
         }
+
+        //cal tax
+        let taxseq = parseFloat((tax * (premperseq + dutyseq)).toFixed(2))
+
+        //cal withheld
+        let withheldseq = parseFloat((withheld * (premperseq + dutyseq)).toFixed(2))
+
         // cal duedate
         if (seqNoagttype === 'M') {
           dueDate.setMonth(dueDate.getMonth() + seqNoagttime)
@@ -595,7 +607,9 @@ const PolicyCard = (props) => {
           ovin_amt: ovinseq,
           ovin_taxamt: ovinseq * tax,
           commout1_amt: commoutseq,
-          ovout1_amt: ovoutseq
+          ovout1_amt: ovoutseq,
+          withheld : withheldseq
+          
         })
 
       }
@@ -606,7 +620,7 @@ const PolicyCard = (props) => {
   
   return (
     <div>
-      <h1 className="text-center">กรมธรรม์ฉบับที่ {parseInt(index) + 1}</h1>
+      <h1 className="text-center">ใบคำขอเลขที่ {formData.applicationNo}</h1>
       {/* policy table */}
       <div className="row form-group form-inline ">
         <div className="col-1"></div>
@@ -652,7 +666,7 @@ const PolicyCard = (props) => {
         </div>
         <div className="col-2 form-group  ">
           <label class="form-label ">
-            issueDate<span class="text-danger"> *</span>
+            วันที่ทำสัญญา<span class="text-danger"> *</span>
           </label>
           <input
             className="form-control"
@@ -818,7 +832,7 @@ const PolicyCard = (props) => {
           <div className="row">
             <div className="col">
               <label class="form-label ">
-                duty
+                อากร
               </label>
               <input
                 className="form-control"
@@ -826,7 +840,7 @@ const PolicyCard = (props) => {
                 step={0.1}
                 disabled
                 // netgrossprem * tax 
-                value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
+                value={parseFloat(Math.ceil((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty)) || ""}
                 //value={formData.duty}
                 name={`duty`}
                 onChange={handleChange}
@@ -834,7 +848,7 @@ const PolicyCard = (props) => {
             </div>
             <div className="col">
               <label class="form-label ">
-                tax
+                ภาษี
               </label>
               <input
                 className="form-control"
@@ -865,7 +879,24 @@ const PolicyCard = (props) => {
             value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty + tax)).toFixed(2)) || ""}
             step={0.1}
             name={`totalprem`}
-            readOnly
+            disabled
+          />
+        </div>
+
+        <div class="col-2">
+          <label class="form-label ">
+            ภาษีหัก ณ ที่จ่าย 1 %<span class="text-danger"> *</span>
+          </label>
+          <input
+            type="number" // Use an input element for displaying numbers
+            className="form-control"
+            // value={formData.totalprem} // Display the totalprem value from the state
+            // value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty)*withheld).toFixed(2)) || ""}
+            disabled
+            step={0.1}
+            name={`totalprem`}
+            
           />
         </div>
       </div>
@@ -935,7 +966,7 @@ const PolicyCard = (props) => {
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            comm_in% <span class="text-danger"> *</span>
+            Comm In % <span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -966,7 +997,7 @@ const PolicyCard = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            OV_in % <span class="text-danger"> *</span>
+            Ov In % <span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -996,7 +1027,7 @@ const PolicyCard = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            comm_out% (1)<span class="text-danger"> *</span>
+            Comm Out % (1)<span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -1025,7 +1056,7 @@ const PolicyCard = (props) => {
         </div>
         <div class="col-2">
           <label class="form-label ">
-            OV_out % (1)<span class="text-danger"> *</span>
+            Ov Out % (1)<span class="text-danger"> *</span>
           </label>
 
           <div className="row">
@@ -1127,7 +1158,7 @@ const PolicyCard = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            comm_out% (2)<span class="text-danger"> *</span>
+            Comm Out % (2)<span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -1157,7 +1188,7 @@ const PolicyCard = (props) => {
         </div>
         <div class="col-2">
           <label class="form-label ">
-            OV_out % (2)<span class="text-danger"> *</span>
+            Ov Out % (2)<span class="text-danger"> *</span>
           </label>
 
           <div className="row">
@@ -1188,7 +1219,7 @@ const PolicyCard = (props) => {
         </div>
         <div class="col-2">
           <label class="form-label ">
-            comm_out% (sum)
+            Comm Out % (sum)
           </label>
           <div className="row">
             <div className="col">
@@ -1199,6 +1230,7 @@ const PolicyCard = (props) => {
                 value={formData[`commout_rate`]}
                 name={`commout_rate`}
                 onChange={(e) => handleChange(e)}
+                disabled
               />
             </div>
             <div className="col">
@@ -1211,6 +1243,7 @@ const PolicyCard = (props) => {
                 value={parseFloat((formData[`commout_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 name={`commout_amt`}
                 onChange={(e) => handleChange(e)}
+                
               />
             </div>
           </div>
@@ -1220,7 +1253,7 @@ const PolicyCard = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            OV_out % (sum)
+            Ov Out % (sum)
           </label>
           <div className="row">
             <div className="col">
@@ -1231,6 +1264,7 @@ const PolicyCard = (props) => {
                 value={formData[`ovout_rate`]}
                 name={`ovout_rate`}
                 onChange={handleChange}
+                disabled
               />
             </div>
             <div className="col">
@@ -1243,6 +1277,7 @@ const PolicyCard = (props) => {
                 //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
                 value={parseFloat((formData[`ovout_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 onChange={handleChange}
+                
               />
             </div>
           </div>
@@ -1261,7 +1296,7 @@ const PolicyCard = (props) => {
         <div className="col-2">
 
           <h4 class="form-label ">
-            installment
+            แบ่งงวดชำระ
           </h4>
         </div>
       </div>
@@ -1273,7 +1308,7 @@ const PolicyCard = (props) => {
           <div class="form-check ">
             <input class="form-check-input" type="checkbox" name="installmentInsurer" id="flexCheckDefault" />
             <label class="form-check-label" for="flexCheckChecked">
-              insurer
+              บริษัทประกัน
             </label>
           </div>
         </div>
@@ -1320,7 +1355,7 @@ const PolicyCard = (props) => {
               {formData.seqNoinstype}
             </option>
             <option value="D">วัน</option>
-            <option value="M">เดือน</option>
+            <option value="M" selected>เดือน</option>
           </select>
         </div>
 
@@ -1330,16 +1365,16 @@ const PolicyCard = (props) => {
         <div class="col-2">
 
           <div class="form-check ">
-            <input class="form-check-input" type="checkbox" name="flagallowduty" id="flexCheckDefault" />
+            <input class="form-check-input" type="checkbox" name="flagallowduty" defaultChecked={true} id="flexCheckDefault" />
             <label class="form-check-label" for="flexCheckChecked">
-              allowcate duty
+              แบ่งค่าอากร
             </label>
           </div>
 
         </div>
         <div class="col-2 align-bottom">
 
-          <button type="button" class="btn btn-primary align-bottom" onClick={calinstallment} >calculate installment</button>
+          <button type="button" class="btn btn-primary align-bottom" onClick={calinstallment} >คำนวณ แบ่งงวดชำระ</button>
         </div>
 
       </div>
@@ -1351,7 +1386,7 @@ const PolicyCard = (props) => {
           <div class="form-check ">
             <input class="form-check-input" type="checkbox" name="installmentAdvisor" id="flexCheckDefault" />
             <label class="form-check-label" for="flexCheckChecked">
-              Advisor
+              ผู้แนะนำ
             </label>
           </div>
         </div>
@@ -1398,7 +1433,7 @@ const PolicyCard = (props) => {
               {formData.seqNoagttype}
             </option>
             <option value="D">วัน</option>
-            <option value="M">เดือน</option>
+            <option value="M" selected>เดือน</option>
           </select>
         </div>
         <div className="col-2"></div>
@@ -1411,44 +1446,46 @@ const PolicyCard = (props) => {
 
       </div>
 
-      <table class="table">
+      <table class="table  table-striped">
         <thead>
           <tr>
-            <th scope="col-1">instype</th>
-            <th scope="col-1">seqNo</th>
-            <th scope="col-2">dueDate</th>
-            <th scope="col-2">netgrossprem</th>
-            <th scope="col-1">duty</th>
-            <th scope="col-1">tax</th>
-            <th scope="col-1">commin</th>
-            <th scope="col-1">ovin</th>
-            <th scope="col-1">commout</th>
-            <th scope="col-1">ovout</th>
+            <th scope="col-1">ประเภท</th>
+            <th scope="col-1">แบ่งงวด</th>
+            <th scope="col-2">DueDate</th>
+            <th scope="col-2">เบี้ยประกัน</th>
+            <th scope="col-1">อากร</th>
+            <th scope="col-1">ภาษี</th>
+            <th scope="col-1">WHT 1%</th>
+            <th scope="col-1">Comm in</th>
+            <th scope="col-1">Ov in</th>
+            <th scope="col-1">Comm out</th>
+            <th scope="col-1">Ov out</th>
           </tr>
         </thead>
         <tbody>
           {installment.insurer.map((ele, i) => {
             return (<tr>
-              <th scope="row">insurer</th>
+              <th scope="row">บริษัทประกัน</th>
               <td scope="col-1">{i + 1}</td>
               <td scope="col-2"><input type="date" className="w-100" name={`dueDate-${i}`} defaultValue={ele.dueDate}></input></td>
-              <td scope="col-2"><input type="number" className="w-100" name={`netgrossprem-${i}`} step={.01} defaultValue={ele.netgrossprem}></input></td>
+              <td scope="col-2"><input type="text" className="w-100" name={`netgrossprem-${i}`} defaultValue={ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}></input></td>
               {/* <td scope="col-1"><input type="number" className="w-100" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
               <td scope="col-1"><input type="number" className="w-100" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
               <td scope="col-1"><input type="number" className="w-100" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
               <td scope="col-1"><input type="number" className="w-100" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td> */}
               <td scope="col-1">{ele.duty}</td>
               <td scope="col-1">{ele.tax}</td>
+              <td scope="col-1">{ele.withheld}</td>
               <td scope="col-1">{ele.commin_amt}</td>
               <td scope="col-1">{ele.ovin_amt}</td>
               <td scope="col-1"></td>
               <td scope="col-1"></td>
-              <td scope="col-1"><button onClick={e=>editInstallment(e,'insurer', i)}>Edit</button></td>
+              <td scope="col-1"><button onClick={e=>editInstallment(e,'insurer', i)}>แก้ไข</button></td>
             </tr>)
           })}
           {installment.advisor.map((ele, i) => {
             return (<tr>
-              <th scope="row">advisor</th>
+              <th scope="row">ผู้แนะนำ</th>
               <td>{i + 1}</td>
               <td scope="col-2"><input type="date" name={`dueDate-${i}`} defaultValue={ele.dueDate}></input></td>
               <td scope="col-2"><input type="number" name={`netgrossprem-${i}`} step={.01} defaultValue={ele.netgrossprem}></input></td>
@@ -1460,23 +1497,25 @@ const PolicyCard = (props) => {
               <td scope="col-1"><input type="number" name={`ovout1_amt-${i}`} step={.01} defaultValue={ele.ovout1_amt}></input></td> */}
               <td scope="col-1">{ele.duty}</td>
               <td scope="col-1">{ele.tax}</td>
+              <td scope="col-1">{ele.withheld}</td>
               <td scope="col-1">{ele.commin_amt}</td>
               <td scope="col-1">{ele.ovin_amt}</td>
               <td scope="col-1">{ele.commout1_amt}</td>
               <td scope="col-1">{ele.ovout1_amt}</td>
-              <td scope="col-1"><button onClick={e=>editInstallment(e,'advisor', i)}>Edit</button></td>
+              <td scope="col-1"><button onClick={e=>editInstallment(e,'advisor', i)}>แก้ไข</button></td>
             </tr>)
           })}
           {installment.insurer.length > 0 ?
             <tr>
-              <th scope="row">Summary Insurer</th>
+              <th scope="row">รวม บริษัทประกัน</th>
               <td></td>
               <td></td>
-              <td scope="col-1">{ installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0)}</td>
+              <td scope="col-1">{ installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
               <td></td>
               <td></td>
             </tr>
@@ -1484,29 +1523,31 @@ const PolicyCard = (props) => {
 
           {installment.advisor.length > 0 ?
             <tr>
-              <th scope="row">Summary Advisor</th>
+              <th scope="row">รวม ผู้แนะนำ</th>
               <td></td>
               <td></td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commout1_amt.toFixed(2)), 0)}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovout1_amt.toFixed(2)), 0)}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
             </tr>
             : null}
 
 
           <tr>
-            <th scope="row">This Policy</th>
+            <th scope="row">กรมธรรม์</th>
             <td></td>
             <td></td>
-            <td>{formData.netgrossprem}</td>
-            <td>{formData.duty}</td>
-            <td>{formData.tax}</td>
-            <td>{formData.commin_amt}</td>
-            <td>{formData.ovin_amt}</td>
+            <td>{formData.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            <td>{formData.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            <td>{formData.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            <td>{formData.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            <td>{formData.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            <td>{formData.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
             <td></td>
             <td></td>
           </tr>
@@ -1836,10 +1877,10 @@ const PolicyCard = (props) => {
       <div class="d-flex justify-content-center">
 
         <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, { ...formData, installment: installment })}>
-          Save Changes
+          บันทึก
         </button>
         <button className="p-2 btn btn-secondary " name="closed" onClick={e => props.setFormData(e)}>
-          Close
+          ปิด
         </button>
       </div>
     </div>

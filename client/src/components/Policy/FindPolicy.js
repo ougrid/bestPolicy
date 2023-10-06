@@ -228,7 +228,7 @@ const FindPolicy = () => {
 
     return (
         <div>
-<Modal  size="xl" show={hidecard[0]} onHide={handleClose}>
+<Modal  size="xl" fullscreen='xxl-down' show={hidecard[0]} onHide={handleClose} dialogClassName="my-modal">
         <Modal.Header closeButton>
           <Modal.Title >แก้ไขกรมธรรม์</Modal.Title>
         </Modal.Header>
@@ -246,7 +246,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">InsurerCode</label>
+                        <label class="col-form-label">รหัสบริษัทประกัน</label>
 
                     </div>
                     <div class="col-2 ">
@@ -283,7 +283,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">PolicyNo</label>
+                        <label class="col-form-label">เลขกรมธรรม์</label>
 
                     </div>
                     <div class="col-2 ">
@@ -304,7 +304,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">PolicyStaus</label>
+                        <label class="col-form-label">สถานะกรมธรรม์</label>
 
                     </div>
                     <div class="col-2 ">
@@ -326,13 +326,13 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Class/subclass</label>
+                        <label class="col-form-label">Class/Subclass</label>
 
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
                             <select name={`insureID`} class="form-control" onChange={handleChange} >
-                                <option disabled selected hidden>class/subclass</option>
+                                <option disabled selected hidden>Class/Subclass</option>
                                 {insureTypeDD}
                             </select>
                             <div class="input-group-append">
@@ -359,7 +359,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Createdate</label>
+                        <label class="col-form-label">วันที่เอาเข้าระบบ</label>
 
                     </div>
 
@@ -394,7 +394,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Effectivedate</label>
+                        <label class="col-form-label">วันคุ้มครอง</label>
 
                     </div>
                     <div class="col-2 ">
@@ -433,7 +433,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">createusercode</label>
+                        <label class="col-form-label">รหัสผู้เอาเข้าระบบ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -486,7 +486,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">advisorcode</label>
+                        <label class="col-form-label">รหัสผู้แนะนำ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -533,15 +533,15 @@ const FindPolicy = () => {
                     <thead>
                         <tr>
                             <th scope="col">ลำดับ</th>
-                            <th scope="col">selected</th>
-                            <th scope="col">edit</th>
+                            <th scope="col">เลือก</th>
+                            <th scope="col">แก้ไข</th>
                             <th scope="col">บริษัทรับประกัน</th>
                             <th scope="col">เลขที่ใบคำขอ</th>
                             <th scope="col">เลขที่กรมธรรม์</th>
                             <th scope="col">ผู้แนะนำ 1</th>
                             <th scope="col">ผู้แนะนำ 2</th>
-                            <th scope="col">class</th>
-                            <th scope="col">subclass</th>
+                            <th scope="col">Class</th>
+                            <th scope="col">Subclass</th>
                             <th scope="col">วันที่สร้าง</th>
                             <th scope="col">วันที่คุ้มครอง-สิ้นสุด</th>
                             <th scope="col">ชื่อผู้เอาประกัน</th>
@@ -555,10 +555,11 @@ const FindPolicy = () => {
                             <th scope="col">อากร</th>
                             <th scope="col">ภาษี</th>
                             <th scope="col">เบี้ยรวม</th>
-                            <th scope="col">commin amt</th>
-                            <th scope="col">ovin amt</th>
-                            <th scope="col">commout amt</th>
-                            <th scope="col">ovout amt</th>
+                            <th scope="col">WHT 1%</th>
+                            <th scope="col">ค่า Commin (บาท)</th>
+                            <th scope="col">ค่า Ovin (บาท)</th>
+                            <th scope="col">ค่า Commout (บาท)</th>
+                            <th scope="col">ค่า Ovout (บาท)</th>
 
                         </tr>
                     </thead>
@@ -589,14 +590,15 @@ const FindPolicy = () => {
                                 <td>{ele.seqNo}</td>
                                 <td>{ele.invioceNo}</td>
                                 <td>{ele.taxInvioceNo}</td>
-                                <td>{ele.netgrossprem.toLocaleString()}</td>
-                                <td>{ele.duty.toLocaleString()}</td>
-                                <td>{ele.tax.toLocaleString()}</td>
-                                <td>{ele.totalprem.toLocaleString()}</td>
-                                <td>{ele.commin_amt.toLocaleString()}</td>
-                                <td>{ele.ovin_amt.toLocaleString()}</td>
-                                <td>{ele.commout_amt.toLocaleString()}</td>
-                                <td>{ele.ovout_amt.toLocaleString()}</td>
+                                <td>{ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.totalprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>)
 
                         })}
@@ -606,8 +608,8 @@ const FindPolicy = () => {
                 </div>
                 <div className="d-flex justify-content-center">
 
-                    <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>export to excel</button>
-                    <button type="button" class="btn btn-primary btn-lg" onClick={handleSubmit}>save Policy</button>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>Export to Excel</button>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={handleSubmit}>บันทึกกรมธรรม์</button>
 
 
                 </div>

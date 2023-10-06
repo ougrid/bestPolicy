@@ -57,7 +57,7 @@ export default function PremOutCreate() {
     policyNo:"เลขกรมธรรม์",
     endorseNo: "เลขสลักหลัง",
     invoiceNo: "เลขใบแจ้งหนี้",
-    seqNo: "seqno",
+    seqNo: "งวด",
     customerid: "id",
     insureename:  "ชื่อ ผู้เอาประกัน",
     licenseNo: "เลทะเบียนรถ",
@@ -66,17 +66,18 @@ export default function PremOutCreate() {
     netgrossprem: "เบี้ยประกัน",
     duty: "อากร",
     tax: "ภาษี",
+    withheld: "WHT 1%",
     totalprem: "เบี้ยประกันรวม",
-    commin_rate: "comm-in%",
+    commin_rate: "Comm In%",
     commin_amt: "จำนวน",
-    commin_taxamt: "vat-comm-in",
-    commin_total: "comm-in รวม",
-    ovin_rate: "ov-in%",
+    commin_taxamt: "Vat Comm In",
+    commin_total: "Comm In รวม",
+    ovin_rate: "Ov In%",
     ovin_amt: "จำนวน",
-    ovin_taxamt: "vat-ov-in",
-    ovin_total: "ov-in รวม",
-    netflag: "[] net",
-    paymentamt: "billpremium",
+    ovin_taxamt: "Vat Ov In",
+    ovin_total: "Ov In รวม",
+    netflag: "[] Net",
+    paymentamt: "รวม (บาท)",
 
 };
   const handleClose = (e) => {
@@ -258,7 +259,7 @@ const submitarpremout = async (e) => {
       </form>
       <Modal size='m' show={hidecard[0]} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title >Summary</Modal.Title>
+                    <Modal.Title >สรุปค่าเบี้ยรวมจ่ายบริษัทประกัน</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* <div class="row">
@@ -276,31 +277,31 @@ const submitarpremout = async (e) => {
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">comm-in</label>
+                            <label class="col-form-label">Comm In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.commin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">VAT comm-in</label>
+                            <label class="col-form-label">VAT Comm In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.vatcommin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">ov-in</label>
+                            <label class="col-form-label">Ov In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.ovin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">VAT ov-in</label>
+                            <label class="col-form-label">VAT Ov In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.vatovin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">จำนวนเงินที่จ่าย</label>
+                            <label class="col-form-label">จำนวนเงินที่จ่าย (บาท)</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.actualvalue}</label></div>
                     </div>
@@ -311,7 +312,7 @@ const submitarpremout = async (e) => {
                 </Modal.Footer>
             </Modal>
       <div>
-        <PremInTable cols={cols2Data} rows={policiesData} handleChange={handleChange}/>
+        <PremInTable cols={cols2Data} rows={policiesData} handleChange={handleChange} checknetflag={true}/>
         <button className="btn btn-primary">Export To Excel</button>
         <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >ยืนยัน</button>
        

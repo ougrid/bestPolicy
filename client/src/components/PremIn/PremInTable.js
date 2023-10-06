@@ -85,7 +85,7 @@ export default function PremInTable({
           </td>
         );
       }
-      return <td key={keym}>{item[keym]}</td>;
+      return <td key={keym}>{typeof(item[keym]) === 'number'? item[keym].toLocaleString(undefined, { minimumFractionDigits: 2 }) : item[keym]}</td>;
     });
   };
 

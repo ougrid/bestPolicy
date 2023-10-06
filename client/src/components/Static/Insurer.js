@@ -12,7 +12,7 @@ import {
 } from "react-router-dom";
 import {
   Header,
-  InputBtn,
+  input,
   LoginBtn,
   BackdropBox1,
 } from "../StylesPages/LoginStyles";
@@ -261,9 +261,9 @@ const Insurer = () => {
           <div class="col-2 "></div>
           <div class="col-2 ">
             <label class="form-label ">
-              InsurerCode<span class="text-danger"> *</span>
+              รหัสบริษัทประกัน<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               required
@@ -276,7 +276,7 @@ const Insurer = () => {
             <label class="form-label ">
               รหัส คปภ.<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               required
@@ -305,7 +305,7 @@ const Insurer = () => {
             <label class="form-label ">
               อัตราภาษี<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               defaultValue={3}
               type="number"
@@ -321,7 +321,7 @@ const Insurer = () => {
           <div class="col-2 "></div>
           <div class="col-2">
             <label class="form-label ">
-              Stament type<span class="text-danger"> *</span>
+              ประเภทการชำระ<span class="text-danger"> *</span>
             </label>
             <select
               className="form-control"
@@ -338,7 +338,7 @@ const Insurer = () => {
             <label class="form-label ">
             เลขที่ทะเบียน<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               required
@@ -350,7 +350,7 @@ const Insurer = () => {
             <label class="form-label ">
             วันที่จดทะเบียน<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="date"
               required
@@ -362,7 +362,7 @@ const Insurer = () => {
             <label class="form-label ">
             วันที่จดทะเบียนหมดอายุ<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="date"
               required
@@ -395,7 +395,7 @@ const Insurer = () => {
             <label class="form-label ">
               ชื่อ<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               required
@@ -407,7 +407,7 @@ const Insurer = () => {
             <label class="form-label ">
               เครดิตเทอมค่าเบี้ย<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="number"
               name="premCreditT"
@@ -417,9 +417,9 @@ const Insurer = () => {
 
           <div class="col-2">
             <label class="form-label ">
-              เครดิตเทอมค่าcomm/ov<span class="text-danger"> *</span>
+              เครดิตเทอมค่า Comm/Ov<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="number"
               name="commovCreditT"
@@ -436,7 +436,7 @@ const Insurer = () => {
             <label class="form-label ">
               จดทะเบียน vat<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               type="checkbox"
               name="vatRegis"
               onChange={(e) =>
@@ -448,7 +448,7 @@ const Insurer = () => {
             <label class="form-label ">
               เลขที่ ภพ.20<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="pk20"
@@ -459,7 +459,7 @@ const Insurer = () => {
             <label class="form-label ">
               สาขา<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="branch"
@@ -478,7 +478,7 @@ const Insurer = () => {
             <label class="form-label ">
               บ้านเลขที่<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               required
@@ -490,7 +490,7 @@ const Insurer = () => {
             <label class="form-label ">
               หมู่บ้านอาคาร<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="t_location_2"
@@ -501,7 +501,7 @@ const Insurer = () => {
             <label class="form-label ">
               หมู่<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="t_location_3"
@@ -512,7 +512,7 @@ const Insurer = () => {
             <label class="form-label ">
               ซอย<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="t_location_4"
@@ -527,7 +527,7 @@ const Insurer = () => {
             <label class="form-label ">
               ถนน<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="t_location_5"
@@ -603,7 +603,7 @@ const Insurer = () => {
             <label class="form-label ">
               Email<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="email"
@@ -614,7 +614,7 @@ const Insurer = () => {
             <label class="form-label ">
               เบอร์โทรศัพท์<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="number"
               name="telNum_1"
@@ -625,7 +625,7 @@ const Insurer = () => {
             <label class="form-label ">
               เบอร์มือถือ<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="number"
               name="telNum_2"
@@ -636,7 +636,7 @@ const Insurer = () => {
             <label class="form-label ">
               เบอร์โทรสาร<span class="text-danger"> *</span>
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="number"
               name="telNum_3"

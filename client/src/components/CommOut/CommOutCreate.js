@@ -60,8 +60,8 @@ export default function CommOutCreate() {
     policyNo:"เลขกรมธรรม์",
     endorseNo: "เลขสลักหลัง",
     invoiceNo: "เลขใบแจ้งหนี้",
-    seqNo: "seqno",
-    customerid: "id",
+    seqNo: "งวด",
+    customerid: "ID",
     insureename:  "ชื่อ ผู้เอาประกัน",
     licenseNo: "เลขทะเบียนรถ",
     // province: "province", // nodata
@@ -69,17 +69,18 @@ export default function CommOutCreate() {
     netgrossprem: "เบี้ยประกัน",
     duty: "อากร",
     tax: "ภาษี",
+    withheld: "WHT 1%",
     totalprem: "เบี้ยประกันรวม",
-    commout_rate: "comm-out%",
+    commout_rate: "Comm Out %",
     commout_amt: "จำนวน",
     // commout_taxamt: "vat-comm-out",
     // commout_total: "comm-out-total",
-    ovout_rate: "ov-out%",
+    ovout_rate: "Ov Out %",
     ovout_amt: "จำนวน",
     // ovout_taxamt: "vat-ov-out",
     // ovout_total: "ov-out-total",
-    'premin-rprefdate': "วันที่รับ premin",
-    'premin-dfrpreferno': "เลขตัดหนี้ premin",
+    'premin-rprefdate': "วันที่รับ Prem In",
+    'premin-dfrpreferno': "เลขตัดหนี้ Prem In",
 
 };
   const handleClose = (e) => {
@@ -102,8 +103,8 @@ export default function CommOutCreate() {
             }
             filterData.commout = commout_amt
             filterData.ovout = ovout_amt
-            filterData.whtcommout = parseFloat((commout_amt*wht/100).toFixed(2))
-            filterData.whtovout = parseFloat((ovout_amt*wht/100).toFixed(2))
+            filterData.whtcommout = parseFloat((commout_amt* wht).toFixed(2))
+            filterData.whtovout = parseFloat((ovout_amt* wht).toFixed(2))
             filterData.actualvalue = (filterData.commout + filterData.ovout - filterData.whtcommout - filterData.whtovout).toFixed(2)
             
         
@@ -182,7 +183,7 @@ const submitapcommout = async (e) => {
   return (
     <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
-        <h1>จ่ายเงินค่า comm-out, ov-out ให้กับผู้แนะนำ</h1>
+        <h1>จ่ายเงินค่า Comm/Ov Out ให้กับผู้แนะนำ</h1>
        
        
         {/* insurerCode  */}
@@ -298,12 +299,12 @@ const submitapcommout = async (e) => {
        
         
         <div className="row my-3">
-          <input type="submit" className="btn btn-success"/>
+          <input type="submit" className="btn btn-success"  value={'ค้นหา'}/>
         </div>
       </form>
       <Modal size='m' show={hidecard[0]} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title >Summary</Modal.Title>
+                    <Modal.Title >สรุปการจ่ายค่า Comm/Ov ให้กับผู้แนะนำ</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* <div class="row">
@@ -321,31 +322,31 @@ const submitapcommout = async (e) => {
                     </div> */}
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">comm-out</label>
+                            <label class="col-form-label">Comm Out</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.commout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">WHT3 comm-out</label>
+                            <label class="col-form-label">WHT 3% Comm Out</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.whtcommout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">ov-out</label>
+                            <label class="col-form-label">Ov Out</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.ovout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">WHT3 ov-out</label>
+                            <label class="col-form-label">WHT 3% Ov Out</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.whtovout}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">paymentamt</label>
+                            <label class="col-form-label">จำนวนเงินที่จ่าย (บาท)</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.actualvalue}</label></div>
                     </div>
@@ -358,7 +359,7 @@ const submitapcommout = async (e) => {
       <div>
         <PremInTable cols={cols2Data} rows={policiesData} setPoliciesData={setPoliciesData}/>
         <button className="btn btn-primary">Export To Excel</button>
-        <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >confirm</button>
+        <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >ยืนยัน</button>
        
       </div>
     </div>

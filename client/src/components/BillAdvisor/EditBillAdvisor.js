@@ -33,6 +33,7 @@ const EditBillAdvisor = (props) => {
 };
     const params = useParams()
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+    const wht = config.wht
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -138,9 +139,9 @@ const EditBillAdvisor = (props) => {
                     net.no++
                     net.prem = net.prem + policiesData[i].totalprem
                     net.comm_out = net.comm_out + policiesData[i].commout_amt
-                    net.whtcom = net.comm_out * 3 / 100
+                    net.whtcom = net.comm_out * wht
                     net.ov_out = net.ov_out + policiesData[i].ovout_amt
-                    net.whtov = net.ov_out * 3 / 100
+                    net.whtov = net.ov_out * wht
                 } else {
                     gross.no++
                     gross.prem = gross.prem + policiesData[i].totalprem

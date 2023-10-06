@@ -327,7 +327,7 @@ const FindBillAdvisor = () => {
                                 <td>{ele.agentCode}</td>
                                 <td>{ele.billadvisorno}</td>
                                 <td>{ele.billdate}</td>
-                                <td>{ele.amt}</td>
+                                <td>{ele.amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td>{ele.createusercode}</td>
                                 <td><button onClick={() =>navigate('/bill/editbill/' + ele.billadvisorno)}>แก้ไข</button></td>
                             </tr>)
