@@ -44,6 +44,7 @@ import ReportฺARAPAdvisor from "./components/Reports/ReportฺARAPAdvisor";
 import ReportฺARAPDirect from "./components/Reports/ReportฺARAPDirect";
 import ReportฺARAPInsurer from "./components/Reports/ReportฺARAPInsurer";
 import ReportฺTax from "./components/Reports/ReportฺTax";
+import EndorseScreen from "./components/Policy/EndorseScreen";
 import { type } from "@testing-library/user-event/dist/type";
 
 
@@ -69,6 +70,7 @@ function App() {
           <Route path="/findpolicy" element={<FindPolicy />} />
           <Route path="/policyexcel" element={<PolicyExcel />} />
           <Route path="/policyscreen" element={<PolicyScreen />} />
+          <Route path="/endorse" element={<EndorseScreen />} />
           <Route path="bill/findbill" element={<FindBillAdvisor />} />
           <Route path="bill/createbill" element={<CreateBillAdvisor />} />
           <Route path="bill/editbill/:billno" element={<EditBillAdvisor />} />

@@ -30,9 +30,8 @@
     "xslx": "^1.0.0"
   },
   "scripts": {
-    "start": "set HTTPS=true&&set SSL_CRT_FILE=./cert/Certificate_amityinsure.com.crt&&set SSL_KEY_FILE=./cert/PRIVATEKEY_amityinsure.com.key&&set SSL_CA_FILE=./cert/intermediateCA_amityinsure.com.cer&&react-scripts start",
-    
-    "build": "set HTTPS=true&&set SSL_CRT_FILE=./cert/Certificate_amityinsure.com.pem&&set SSL_KEY_FILE=./cert/PRIVATEKEY_amityinsure.com.key&&set SSL_CA_FILE=./cert/intermediateCA_amityinsure.com.cer&&react-scripts build",
+    "start":"react-scripts start",
+    "build":"react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
