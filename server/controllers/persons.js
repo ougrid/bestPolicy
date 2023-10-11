@@ -194,6 +194,44 @@ const newAgentGroup = (req, res) => {
     res.json(agentGroup);
   });
 };
+
+const findAgent = async (req, res) =>{
+  try {
+    
+
+  //insert to deteil of jatw 
+  let cond = ''
+  if (req.body.agentCode !== '') {
+    cond = cond + ` and "agentCode" like '%${req.body.agentCode}%' `
+  }
+  if (req.body.firstname !== '') {
+    cond = cond + ` and (e."t_firstName" like '%${req.body.firstname}%' or e."t_ogName" like '%${req.body.firstname}%') `
+  }
+  if (req.body.lastname !== '') {
+    cond = cond + ` and e."t_lastName"  like '%${req.body.lastname}%' `
+  }
+    const agents = await sequelize.query(
+      ` select a."agentCode" ,
+      (case when e."personType" = 'O' then t."TITLETHAIBEGIN"||' '||e."t_ogName" else t."TITLETHAIBEGIN"||' '||e."t_firstName"||' '||e."t_lastName"  end) as "fullName" ,
+      e."personType"
+      from static_data."Agents" a 
+      join static_data."Entities" e on a."entityID"  = e.id 
+      join static_data."Titles" t on t."TITLEID"  = e."titleID" 
+      where true ${cond} `,
+      {
+        
+        type: QueryTypes.SELECT,
+      }
+      
+    ); 
+   
+    await res.json(agents);
+  } catch (error) {
+    console.log(error);
+    await res.status(500).json({ msg: "internal server error" });
+  }
+
+}
 module.exports = {
   //   showAll,
   getEntityByid,
@@ -209,5 +247,6 @@ module.exports = {
   getAgentGroupByid,
   newAgentGroup,
   getInsurerAll,
+  findAgent,
   // removeCar,AgentditCar,
 };

@@ -52,52 +52,7 @@ const EndorseScreen = (props) => {
       });
       setInsureSubClassDD(array);
     }
-    //  set totalprem
-    // if (
-    //   formData.duty !== null &&
-    //   formData.tax !== null &&
-    //   formData.grossprem !== null
-    // ) {
-    //   const newTotalPrem =
-    //     parseFloat(formData.netgrossprem) +
-    //     parseFloat(formData.duty) +
-    //     parseFloat(formData.tax);
-    //   setFormData((prevState) => ({
-    //     ...prevState,
-    //     [e.target.name]: e.target.value,
-    //     totalprem: newTotalPrem,
-    //   }));
-    // } else {
-    //   if (e.target.name === 'commin_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'ovin_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'commout_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'ovout_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   }
-    //   setFormData((prevState) => ({
-    //     ...prevState,
-    //     [e.target.name]: e.target.value,
-    //   }));
-    // }
+    
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -340,7 +295,7 @@ const EndorseScreen = (props) => {
         setFormData(res.data);
       })
       .catch((err) => {
-        alert("Something went wrong, Try Again."+ err);
+        alert(err.response.data);
         // alert("cant get aumphur");
       });
    
@@ -519,25 +474,11 @@ const EndorseScreen = (props) => {
 
   return (
     <div>
-      <h1 className="text-center">สลักหลังยกเลิกกรมธรรม์</h1>
+      <h1 className="text-center">สลักหลังกรมธรรม์</h1>
       {/* policy table */}
 
       <div className="row my-3 ">
         <div className="col-1"></div>
-        {/* <div className="col-2 form-group  ">
-          <label class="form-label ">
-            เลขที่กรมธรรม์<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="text"
-            value={formData.policyNo || ''}
-            name={`policyNo`}
-            onChange={handleChange}
-          />
-        </div> */}
-
-        
           
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
           เลขที่กรมธรรม์ 
@@ -563,18 +504,22 @@ const EndorseScreen = (props) => {
 
       <div className="row form-group form-inline ">
         <div className="col-1"></div>
-        {/* <div className="col-2 form-group  ">
+        <div className="col-2 form-group  ">
           <label class="form-label ">
-            เลขที่กรมธรรม์<span class="text-danger"> *</span>
+            ประเภทสลักหลัง<span class="text-danger"> *</span>
           </label>
-          <input
+          <select
             className="form-control"
-            type="text"
-            value={formData.policyNo || ''}
-            name={`policyNo`}
+            name={`endorseType`}
             onChange={handleChange}
-          />
-        </div> */}
+          >
+            <option  selected disabled hidden>
+              เลือกประเภทสลักหลัง
+            </option>
+            <option  value={'cancle'}>ยกเลิกกรมธรรม์</option>
+            <option  value={'edit'}>แก้ไขส่วนลด</option>
+          </select>
+        </div>
 
         <div class="col-2 form-group ">
           <label class="form-label">
@@ -709,7 +654,7 @@ const EndorseScreen = (props) => {
           <label class="form-label ">
             ค่าเบี้ย<span class="text-danger"> *</span>
           </label>
-          {/* <input
+          <input
             className="form-control numbers"
             id="grossprem"
             type="number"
@@ -717,8 +662,8 @@ const EndorseScreen = (props) => {
             value={formData.grossprem}    
             name={`grossprem`}
             onChange={(e) => handleChange(e)}
-          /> */}
-<NumberInputWithCommas value={formData.grossprem} name={`grossprem`} onChange={handleChange}  />
+          />
+{/* <NumberInputWithCommas value={formData.grossprem} name={`grossprem`} onChange={handleChange}  /> */}
 
         </div>
 

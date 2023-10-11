@@ -15,6 +15,7 @@ router.get('/agentall', ctrl.persons.getAgentAll);
 router.post('/usernew', ctrl.persons.newUser);
 router.get('/userget/:id', ctrl.persons.getUserByid);
 router.post('/agentgroupnew', ctrl.persons.newAgentGroup);
+router.post('/findagent', ctrl.persons.findAgent);
 router.get('/agentgroupget/:id', ctrl.persons.getAgentGroupByid);
 
 // router.post('/', ctrl.cars.postCar);

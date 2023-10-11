@@ -581,7 +581,7 @@ const FindPolicy = () => {
                                 <td>{ele.agentCode2}</td>
                                 <td>{ele.class}</td>
                                 <td>{ele.subClass}</td>
-                                <td>{ele.createdAt}</td>
+                                <td>{ele.createdAt.split('T')[0]}</td>
                                 <td>{ele.actDate} - {ele.expDate}</td>
                                 <td>{ele.insureeCode}</td>
                                 <td>{ele.licenseNo}</td>
@@ -606,6 +606,8 @@ const FindPolicy = () => {
                     </tbody>
                 </table>
                 </div>
+
+
                 <div className="d-flex justify-content-center">
 
                     <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>Export to Excel</button>

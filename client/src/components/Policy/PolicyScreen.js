@@ -6,8 +6,11 @@ import { Container } from "../StylesPages/PagesLayout";
 import { async } from "q";
 import Select from 'react-select';
 import { useCookies } from "react-cookie";
-import { number } from "joi";
+import { date, number } from "joi";
 import { numberWithCommas} from '../lib/number';
+import {BiSearchAlt } from "react-icons/bi";
+import Modal from 'react-bootstrap/Modal';
+import ModalSearchAgent from "./ModalSearchAgent";
 
 const config = require("../../config.json");
 
@@ -20,9 +23,22 @@ const PolicyScreen = (props) => {
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax;
   const duty = config.duty;
-
+  const withheld = config.witheld;
+  let datenow = new Date()
+  datenow = datenow.toISOString().substring(0, 10);
+  
   //import excel
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    grossprem:0,
+    specdiscamt:0,
+    netgrossprem:0,
+    duty :0,
+    tax:0,
+    totalprem:0,
+    withheld:0,
+    agentCode:'',
+    agentCode2:'',
+  });
   const [provinceDD, setProvinceDD] = useState([]);
   const [districDD, setDistricDD] = useState([]);
   const [subDistricDD, setSubDistricDD] = useState([]);
@@ -34,70 +50,44 @@ const PolicyScreen = (props) => {
   const [insurerDD, setInsurerDD] = useState([]);
   const [motorbrandDD, setMotorbrandDD] = useState([]);
   const [motormodelDD, setMotormodelDD] = useState([]);
+  const [hidecard, setHidecard] = useState([false,0]);
+
+  //for modal
+  const editCard =(e) =>{
+    // console.log(policiesData[e.target.id]);
+    setHidecard([true,e.target.name])
+   
+  };
+  const handleChangeCard =  (e,name,data) => {
+   
+    
+    
+      if (name === 'btn-agent1') {
+        const newdata  =  formData
+        newdata.agentCode = data
+        // setFormData((prevState) => ({
+        //   ...prevState,
+        //   agentCode: data,
+        // }))
+        document.getElementsByName('agentCode')[0].value = data
+        setFormData({...formData,agentCode:data})
+      }else if  (name === 'btn-agent2') {
+        document.getElementsByName('agentCode2')[0].value = data
+        setFormData({...formData,agentCode2:data})
+      } 
+      setHidecard([false,0])
+    
+    
+  };
+  const handleClose = (e) =>{
+        setHidecard([false,0])
+      }
+  //end modal
 
   const handleChange = async (e) => {
     e.preventDefault();
     // console.log(e);
-    //set dropdown subclass when class change
-    if (e.target.name === "class") {
-      const array = [];
-      insureTypeDD.forEach((ele) => {
-        if (e.target.value === ele.class) {
-          array.push(
-            <option key={ele.id} value={ele.subClass}>
-              {ele.subClass}
-            </option>
-          );
-        }
-      });
-      setInsureSubClassDD(array);
-    }
-    //  set totalprem
-    // if (
-    //   formData.duty !== null &&
-    //   formData.tax !== null &&
-    //   formData.grossprem !== null
-    // ) {
-    //   const newTotalPrem =
-    //     parseFloat(formData.netgrossprem) +
-    //     parseFloat(formData.duty) +
-    //     parseFloat(formData.tax);
-    //   setFormData((prevState) => ({
-    //     ...prevState,
-    //     [e.target.name]: e.target.value,
-    //     totalprem: newTotalPrem,
-    //   }));
-    // } else {
-    //   if (e.target.name === 'commin_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'ovin_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'commout_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'ovout_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   }
-    //   setFormData((prevState) => ({
-    //     ...prevState,
-    //     [e.target.name]: e.target.value,
-    //   }));
-    // }
+    
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -111,10 +101,12 @@ const PolicyScreen = (props) => {
             const array2 = [];
             title.data.forEach((ele) => {
               array2.push(
-                <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
-                  {ele.TITLETHAIBEGIN}
-                </option>
+                // <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
+                //   {ele.TITLETHAIBEGIN}
+                // </option>
+                {label: ele.TITLETHAIBEGIN, value: ele.TITLETHAIBEGIN}
               );
+              
             });
             setTitleDD(array2);
           })
@@ -126,12 +118,18 @@ const PolicyScreen = (props) => {
             const array2 = [];
             title.data.forEach((ele) => {
               array2.push(
-                <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
-                  {ele.TITLETHAIBEGIN}
-                </option>
+                // <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
+                //   {ele.TITLETHAIBEGIN}
+                // </option>
+                {label: ele.TITLETHAIBEGIN, value: ele.TITLETHAIBEGIN}
               );
             });
             setTitleDD(array2);
+            const withheldamt = parseFloat(((formData.netgrossprem + formData.duty) * withheld).toFixed(2))
+            setFormData((prevState) => ({
+              ...prevState,
+              withheld: withheldamt,
+            }));
           })
           .catch((err) => { });
       }
@@ -146,11 +144,159 @@ const PolicyScreen = (props) => {
     } else if (e.target.name === "brandname") {
       getMotormodel(e.target.value);
     }
-    //get com/ov setup
+    //set dropdown subclass when class change
+    if (e.target.name === "class") {
+      const array = [];
+      insureTypeDD.forEach((ele) => {
+        if (e.target.value === ele.class) {
+          array.push(
+            <option key={ele.id} value={ele.subClass}>
+              {ele.subClass}
+            </option>
+          );
+        }
+      });
+      setInsureSubClassDD(array);
+    }
 
   };
 
+  const handleChangeActdate =  (e) => {
+    e.preventDefault();
+    console.log(e.target.value);
+    console.log( typeof(e.target.value));
+    const originalDate = new Date(e.target.value);
 
+    // Add one year (365 days) to the date
+    originalDate.setFullYear(originalDate.getFullYear() + 1);
+
+    // Convert the updated Date object back to a string
+    const updatedDateString = originalDate.toISOString().substring(0, 10);
+    
+
+    setFormData((prevState) => ({
+      ...prevState,
+      actDate: e.target.value,
+      expDate: updatedDateString
+    }));
+ 
+
+  };
+
+  function validateDate(e) {
+    e.preventDefault();
+    let mindate = new Date()
+    let maxdate = new Date()
+    if (e.target.name === 'actDate') {
+      mindate.setFullYear(mindate.getFullYear() - 3)
+      maxdate.setFullYear(maxdate.getFullYear() + 3)    
+    }else if (e.target.name === 'expDate'){
+      mindate.setFullYear(mindate.getFullYear() - 4)
+      maxdate.setFullYear(maxdate.getFullYear() + 4)   
+    }
+  
+    const inputDate = new Date(e.target.value);
+    let actdate =''
+    let expdate = ''
+  
+    if (inputDate < mindate) {
+       actdate = mindate.toISOString().substring(0, 10)
+      mindate.setFullYear(mindate.getFullYear() + 1)
+       expdate = mindate.toISOString().substring(0, 10)
+    } else if (inputDate > maxdate) {
+       actdate = maxdate.toISOString().substring(0, 10)
+      maxdate.setFullYear(maxdate.getFullYear() + 1)
+       expdate = maxdate.toISOString().substring(0, 10)
+    }else {
+      actdate = e.target.value
+      inputDate.setFullYear(inputDate.getFullYear() + 1)
+      expdate = inputDate.toISOString().substring(0, 10)
+    }
+
+    if (e.target.name === 'actDate') {
+      setFormData((prevState) => ({
+        ...prevState,
+        actDate: actdate,
+        expDate: expdate
+      }));
+      // document.getElementsByName("actDate")[0].value = actdate
+    }else if (e.target.name === 'expDate'){
+      setFormData((prevState) => ({
+        ...prevState,
+        expDate: actdate
+      }));
+      // document.getElementsByName("expDate")[0].value = actdate
+    }
+  }
+  const handleChangePrem = async (e) => {
+    e.preventDefault();
+    // console.log(e);
+    
+    //  set totalprem
+    if (e.target.name === 'grossprem') {
+      const netgrosspremamt = e.target.value - formData.specdiscamt
+      const dutyamt =Math.ceil( netgrosspremamt * duty)
+      const taxamt = parseFloat(((netgrosspremamt + dutyamt) * tax).toFixed(2))
+      const totalpremamt = netgrosspremamt + dutyamt + taxamt
+      setFormData((prevState) => ({
+        ...prevState,
+        grossprem: e.target.value,
+        netgrossprem: netgrosspremamt,
+        duty: dutyamt,
+        tax: taxamt, 
+        totalprem: totalpremamt,
+      }));
+    } else if(e.target.name === 'specdiscrate')
+    {
+      const specdiscamt =parseFloat( (e.target.value * formData.grossprem/100).toFixed(2))
+      const netgrosspremamt = formData.grossprem - specdiscamt
+      const dutyamt =Math.ceil( netgrosspremamt * duty)
+      const taxamt = parseFloat(((netgrosspremamt + dutyamt) * tax).toFixed(2))
+      const totalpremamt = netgrosspremamt + dutyamt + taxamt
+      setFormData((prevState) => ({
+        ...prevState,
+        specdiscrate: e.target.value,
+        specdiscamt: specdiscamt,
+        netgrossprem: netgrosspremamt,
+        duty: dutyamt,
+        tax: taxamt, 
+        totalprem: totalpremamt,
+      }));
+    } 
+    else  {
+      if (e.target.name === 'commin_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
+        }));
+      } else if (e.target.name === 'ovin_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
+        }));
+      } else if (e.target.name === 'commout_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
+        }));
+      } else if (e.target.name === 'ovout_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
+        }));
+      }
+      setFormData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
+    }
+  };
+
+ 
   const NumberInputWithCommas =  ({ value, name ,onChange, e}) =>{
     // Remove commas when displaying the value
     let displayValue ='';
@@ -503,6 +649,16 @@ const PolicyScreen = (props) => {
 
   return (
     <div>
+      <Modal  size="l" show={hidecard[0]} onHide={handleClose} >
+        <Modal.Header closeButton>
+          <Modal.Title >ค้นหาผู้แนะนำ</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {<ModalSearchAgent name ={hidecard[1]} formData={formData} setFormData ={handleChangeCard}/>}
+        </Modal.Body>
+       
+      </Modal>
+
       <h1 className="text-center">สร้างรายการกรมธรรม์</h1>
       {/* policy table */}
 
@@ -528,9 +684,11 @@ const PolicyScreen = (props) => {
           <input
             className="form-control"
             type="date"
-            defaultValue={formData.actDate}
+            
+            value={formData.actDate}
             name={`actDate`}
-            onChange={handleChange}
+            onChange={handleChangeActdate}
+            onBlur={(e)=>validateDate(e)}
           />
         </div>
 
@@ -541,9 +699,11 @@ const PolicyScreen = (props) => {
           <input
             className="form-control"
             type="date"
-            defaultValue={formData.expDate}
+            
+            value={formData.expDate}
             name={`expDate`}
             onChange={handleChange}
+            onBlur={(e)=>validateDate(e)}
           />
         </div>
         <div class="col-2 form-group ">
@@ -573,26 +733,37 @@ const PolicyScreen = (props) => {
           <label class="form-label px-3">
             รหัสผู้แนะนำ 1<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.agentCode}
-            name={`agentCode`}
-            onChange={handleChange}
-          />
+          <div class="input-group mb-3">              
+            <input
+              className="form-control"
+              type="text"
+              value={formData.agentCode}
+              name={`agentCode`}
+              onChange={handleChange}
+            />
+          <div class="input-group-append">
+              <button class="btn btn-primary" type="button" name="btn-agent1" onClick={(e)=>editCard(e)}><BiSearchAlt style={{fontSize: "30px", color: "white"}}/></button>
+            </div>
+       </div>
         </div>
 
         <div class="col-2 form-group ">
           <label class="form-label px-3">
             รหัสผู้แนะนำ 2<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.agentCode2}
-            name={`agentCode2`}
-            onChange={handleChange}
-          />
+          <div class="input-group mb-3">              
+            <input
+              className="form-control"
+              type="text"
+              value={formData.agentCode2}
+              name={`agentCode2`}
+              onChange={handleChange}
+            />
+          <div class="input-group-append">
+              <button class="btn btn-primary" type="button" name="btn-agent2" onClick={(e)=>editCard(e)}><BiSearchAlt style={{fontSize: "30px", color: "white"}}/></button>
+            </div>
+       </div>
+        
         </div>
         <div class="col-2 form-group ">
           <div className="row">
@@ -654,16 +825,16 @@ const PolicyScreen = (props) => {
           <label class="form-label ">
             ค่าเบี้ย<span class="text-danger"> *</span>
           </label>
-          {/* <input
+          <input
             className="form-control numbers"
             id="grossprem"
             type="number"
             step={0.1}
             value={formData.grossprem}    
             name={`grossprem`}
-            onChange={(e) => handleChange(e)}
-          /> */}
-<NumberInputWithCommas value={formData.grossprem} name={`grossprem`} onChange={handleChange}  />
+            onChange={(e) => handleChangePrem(e)}
+          />
+{/* <NumberInputWithCommas value={formData.grossprem} name={`grossprem`} onChange={handleChange}  /> */}
 
         </div>
 
@@ -679,7 +850,7 @@ const PolicyScreen = (props) => {
                 step={0.1}
                 value={parseFloat(formData[`specdiscrate`]) }
                 name={`specdiscrate`}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => handleChangePrem(e)}
               />
             </div>
             <div className="col">
@@ -688,7 +859,8 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || 0}
+                // value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || 0}
+                value={formData.specdiscamt}
                 name={`specdiscamt`}
                 onChange={(e) => handleChange(e)}
               />
@@ -709,8 +881,8 @@ const PolicyScreen = (props) => {
             step={0.1}
             disabled
             // netgrossprem * tax 
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
-            //value={formData.duty}
+            // value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || 0}
+            value={formData.duty}
             name={`duty`}
             onChange={handleChange}
           />
@@ -724,9 +896,9 @@ const PolicyScreen = (props) => {
             type="number"
             step={0.1}
             disabled
-            // netgrossprem * tax 
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * tax).toFixed(2)) || ""}
-            //value={formData.tax}
+            
+            // value={parseFloat((((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 )* tax).toFixed(2)) || ""}
+            value={formData.tax}
             name={`tax`}
             onChange={handleChange}
           />
@@ -743,14 +915,31 @@ const PolicyScreen = (props) => {
           <input
             type="number" // Use an input element for displaying numbers
             className="form-control"
-            // value={formData.totalprem} // Display the totalprem value from the state
             //value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            // value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            value={formData.totalprem} // Display the totalprem value from the state
             step={0.1}
             name={`totalprem`}
-            readOnly
+            disabled
           />
         </div>
+
+        <div class="col-2">
+          <label class="form-label ">
+            ภาษีหัก ณ ที่จ่าย 1%<span class="text-danger"> *</span>
+          </label>
+          <input
+            type="number" // Use an input element for displaying numbers
+            className="form-control"
+            //value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
+            // value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            value={formData.withheld} // Display the totalprem value from the state
+            step={0.1}
+            name={`withheld`}
+            disabled
+          />
+        </div>
+
       </div>
 
       <div class="row">
@@ -1041,7 +1230,7 @@ const PolicyScreen = (props) => {
           <label class="form-label ">
             คำนำหน้า<span class="text-danger"> </span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`title`}
             onChange={handleChange}
@@ -1050,7 +1239,17 @@ const PolicyScreen = (props) => {
               {formData.title}
             </option>
             {titleDD}
-          </select>
+          </select> */}
+
+          <Select
+          // className="form-control"
+          name={`title`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            title: e.value,
+          }))}
+          options={titleDD}
+          />
         </div>
 
         <div class="col-2">

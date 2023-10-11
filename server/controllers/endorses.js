@@ -460,28 +460,65 @@ const createTransection = async (policy,t) => {
 
 }
 
-const getPolicy = (req, res) => {
-  Policy.findOne({
-    where: {
-      policyNo: req.body.policyNo
-    }
-  }).then((policy) => {
-    res.json(policy);
-  });
+const getPolicy = async (req, res) => {
+   
+    
+        try {
+    
+          //update policy
+          const trans = await sequelize.query(
+           `select * from  static_data."Transactions"  
+           where "policyNo" = :policyNo
+           and dfrpreferno is not null `,
+            {
+              replacements: {
+                policyNo: req.body.policyNo  
+              },
+              type: QueryTypes.SELECT
+            }
+          )
+          let policy = {}
+          if (trans.length > 0 && req.body.endorseType === 'edit') {
+            throw "กรมธรรม์เกิดการตัดหนี้ แก้ไขส่วนลดไม่ได้";
+          }else{
+            policy = await sequelize.query(
+                `select * from static_data."Policies" where "policyNo" = :policyNo and status ='A'`,
+                 {
+                   replacements: {
+                     policyNo: req.body.policyNo  
+                   },
+                   type: QueryTypes.SELECT
+                 }
+               )
+          }
+        console.log(policy[0][0].id);
+        //insert jupgr
+        req.body[i].polid = policy[0][0].id
+        
+    await res.json(policy)
+       
+      } catch (error) {
+        console.log(error);
+        await res.status(500).json(error);
+      }
+      
+   
+        
+    
 };
 
 const getPolicyList = async (req, res) => {
   const records = await sequelize.query(
-    `select *, pol."createdAt" as "createdAt", pol."updatedAt" as "updatedAt"  from static_data."Policies" pol join static_data."InsureTypes" ins on ins.id = pol."insureID" 
-    where 
-    case when :insurerCode IS NOT NULL then "insurerCode" = :insurerCode else true end and 
-    case when :policyNo IS NOT NULL then "policyNo" = :policyNo else true end and 
-    case when :insureID IS NOT NULL then "insureID" = :insureID else true end and 
-    case when :createdAt IS NOT NULL then pol."createdAt" >= :createdAt else true end and 
-    case when :actDate IS NOT NULL then "actDate" >= :actDate else true end and  
-    case when :agentCode IS NOT NULL then "agentCode" = :agentCode else true end and 
-    case when :itemList IS NOT NULL then "itemList" = :itemList else true end and 
-    status = :status`,
+    'select * from static_data."Policies" pol join static_data."InsureTypes" ins on ins.id = pol."insureID" ' +
+    'where ' +
+    'case when :insurerCode IS NOT NULL then "insurerCode" = :insurerCode else true end and ' +
+    'case when :policyNo IS NOT NULL then "policyNo" = :policyNo else true end and ' +
+    'case when :insureID IS NOT NULL then "insureID" = :insureID else true end and ' +
+    'case when :createdAt IS NOT NULL then pol."createdAt" >= :createdAt else true end and ' +
+    'case when :actDate IS NOT NULL then "actDate" >= :actDate else true end and  ' +
+    'case when :agentCode IS NOT NULL then "agentCode" = :agentCode else true end and ' +
+    'case when :itemList IS NOT NULL then "itemList" = :itemList else true end and ' +
+    'status = :status',
     {
       replacements: {
         insurerCode: req.body.insurerCode,
@@ -500,21 +537,7 @@ const getPolicyList = async (req, res) => {
   res.json(records)
 };
 
-const newPolicy = async (req, res) => {
-  createTransection(req)
-  await Policy.create(req.body.policy);
-  await res.json({ status: 'success' })
-};
 
-const getTransactionByid = (req, res) => {
-  Transaction.findOne({
-    where: {
-      id: req.params.id
-    }
-  }).then((transection) => {
-    res.json(transection);
-  });
-};
 
 
 const newPolicyList = async (req, res) => {
@@ -1464,8 +1487,6 @@ module.exports = {
 
   getPolicy,
   getPolicyList,
-  newPolicy,
-  getTransactionByid,
   newPolicyList,   //create policy status A from excel and add ARAP
   draftPolicyList, //create policy status I from excel
   editPolicyList, // change status I ->A and add ARAP
