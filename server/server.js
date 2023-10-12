@@ -101,42 +101,43 @@ app.use("/v1/payments",authenticateToken, routes.payments);
 app.use("/v1/bills",authenticateToken, routes.bills);
 // app.use("/v1/reports", routes.reports);
 app.use("/v1/getrunno",authenticateToken, routes.runno);  
-app.use("/v1/araps",authenticateToken, routes.arap);  
+app.use("/v1/araps",authenticateToken, routes.arap);
+app.use("/v1/endorses",authenticateToken, routes.endorse);    
 
 
 
-// app.listen(port, () => {
-//     console.log(`App running on http://localhost:${port}
-//                 --- env config ---
-//                 DB_USERNAME = ${process.env.DB_USERNAME}
-//                 DB_PASSWORD = ${process.env.DB_PASSWORD}
-//                 DB_NAME     = ${process.env.DB_NAME}
-//                 DB_HOST     = ${process.env.DB_HOST}
-//                 DB_DIALECT  = ${process.env.DB_DIALECT}
-//                 DB_PORT     = ${process.env.DB_PORT}
-//                 secretkey   = ${process.env.secretkey}
-//                 alloworigin = ${process.env.alloworigin}`);
-// });
-
-const options ={
-  // cert: fs.readFileSync('./certssl/Certificate_amityinsure.com.crt'),
-  //  ca: fs.readFileSync("./certssl/intermediateCA_amityinsure.com.cer"),
-  // key: fs.readFileSync("./certssl/PRIVATEKEY_amityinsure.com.key"),
-  cert: fs.readFileSync('./certssl/server.cert'),
-  key: fs.readFileSync("./certssl/server.key"),
-}
-
-const server = https.createServer(options, app);
-
-server.listen(port, () => {
-  console.log(`App running on https://localhost:${port}
-              --- env config ---
-              DB_USERNAME = ${process.env.DB_USERNAME}
-              DB_PASSWORD = ${process.env.DB_PASSWORD}
-              DB_NAME     = ${process.env.DB_NAME}
-              DB_HOST     = ${process.env.DB_HOST}
-              DB_DIALECT  = ${process.env.DB_DIALECT}
-              DB_PORT     = ${process.env.DB_PORT}
-              secretkey   = ${process.env.secretkey}
-              alloworigin = ${process.env.alloworigin}`);
+app.listen(port, () => {
+    console.log(`App running on http://localhost:${port}
+                --- env config ---
+                DB_USERNAME = ${process.env.DB_USERNAME}
+                DB_PASSWORD = ${process.env.DB_PASSWORD}
+                DB_NAME     = ${process.env.DB_NAME}
+                DB_HOST     = ${process.env.DB_HOST}
+                DB_DIALECT  = ${process.env.DB_DIALECT}
+                DB_PORT     = ${process.env.DB_PORT}
+                secretkey   = ${process.env.secretkey}
+                alloworigin = ${process.env.alloworigin}`);
 });
+
+// const options ={
+//   // cert: fs.readFileSync('./certssl/Certificate_amityinsure.com.crt'),
+//   //  ca: fs.readFileSync("./certssl/intermediateCA_amityinsure.com.cer"),
+//   // key: fs.readFileSync("./certssl/PRIVATEKEY_amityinsure.com.key"),
+//   cert: fs.readFileSync('./certssl/server.cert'),
+//   key: fs.readFileSync("./certssl/server.key"),
+// }
+
+// const server = https.createServer(options, app);
+
+// server.listen(port, () => {
+//   console.log(`App running on https://localhost:${port}
+//               --- env config ---
+//               DB_USERNAME = ${process.env.DB_USERNAME}
+//               DB_PASSWORD = ${process.env.DB_PASSWORD}
+//               DB_NAME     = ${process.env.DB_NAME}
+//               DB_HOST     = ${process.env.DB_HOST}
+//               DB_DIALECT  = ${process.env.DB_DIALECT}
+//               DB_PORT     = ${process.env.DB_PORT}
+//               secretkey   = ${process.env.secretkey}
+//               alloworigin = ${process.env.alloworigin}`);
+// });
