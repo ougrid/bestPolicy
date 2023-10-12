@@ -69,6 +69,79 @@ namespace report.Controllers
 
         }
 
+
+        [Route("[controller]/billingReport")]
+        [HttpGet]
+        public async Task<IActionResult> GetBillingReport()
+        {
+            var records = await _transactionService.GetTransactionList();
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Users");
+                var currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "InsurerCode";
+                worksheet.Cell(currentRow, 2).Value = "AdvisorCode";
+                worksheet.Cell(currentRow, 3).Value = "Duedate";
+                worksheet.Cell(currentRow, 4).Value = "Policyno";
+                worksheet.Cell(currentRow, 5).Value = "Endorseno";
+                worksheet.Cell(currentRow, 6).Value = "Invoiceno";
+                worksheet.Cell(currentRow, 7).Value = "seqno";
+                worksheet.Cell(currentRow, 8).Value = "customerid";
+                worksheet.Cell(currentRow, 9).Value = "insuredname";
+                worksheet.Cell(currentRow, 10).Value = "licenseno";
+                worksheet.Cell(currentRow, 11).Value = "province";
+                worksheet.Cell(currentRow, 12).Value = "chassisno";
+                worksheet.Cell(currentRow, 13).Value = "grossprem";
+                worksheet.Cell(currentRow, 14).Value = "specdiscrate";
+                worksheet.Cell(currentRow, 15).Value = "specdiscamt";
+                worksheet.Cell(currentRow, 16).Value = "netgrossprem";
+                worksheet.Cell(currentRow, 17).Value = "duty";
+                worksheet.Cell(currentRow, 18).Value = "tax";
+                worksheet.Cell(currentRow, 19).Value = "totalamt";
+                worksheet.Cell(currentRow, 20).Value = "comm-out1%";
+                worksheet.Cell(currentRow, 21).Value = "comm-out-amt1";
+                worksheet.Cell(currentRow, 22).Value = "worksheet.Cell(currentRow, 19).Value = \"totalamt\";";
+                worksheet.Cell(currentRow, 23).Value = "ov-out1%";
+                worksheet.Cell(currentRow, 24).Value = "ov-out amt1mt";
+                worksheet.Cell(currentRow, 25).Value = "comm-out2%";
+                worksheet.Cell(currentRow, 26).Value = "comm-out-amt";
+                worksheet.Cell(currentRow, 27).Value = "ov-out2%";
+                worksheet.Cell(currentRow, 28).Value = "ov-out amt2";
+                worksheet.Cell(currentRow, 29).Value = "comm-out%";
+                worksheet.Cell(currentRow, 30).Value = "comm-out-amt";
+                worksheet.Cell(currentRow, 31).Value = "ov-out%";
+                worksheet.Cell(currentRow, 32).Value = "[]net";
+                worksheet.Cell(currentRow, 32).Value = "billpremium ";
+
+
+                foreach (var record in records)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = record.Id;
+                    worksheet.Cell(currentRow, 2).Value = record.transType;
+                    worksheet.Cell(currentRow, 3).Value = record.transStatus;
+                    worksheet.Cell(currentRow, 4).Value = record.insurerCode;
+                    worksheet.Cell(currentRow, 5).Value = record.policyNo;
+                    worksheet.Cell(currentRow, 6).Value = record.agentCode;
+                    worksheet.Cell(currentRow, 7).Value = record.totalamt;
+
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(
+                        content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "รายงานใบวางบิล ${}.xlsx");
+                }
+            }
+
+
+        }
+
         [Route("[controller]/billing")]
         [HttpPost]
         public async Task<IActionResult> GetBilling(Billing data)
@@ -127,14 +200,14 @@ namespace report.Controllers
                     worksheet.Cell(currentRow, 12).Value = record.duty;
                     worksheet.Cell(currentRow, 13).Value = record.tax;
                     worksheet.Cell(currentRow, 14).Value = record.totalprem;
-                    //worksheet.Cell(currentRow, 15).Value = "เลขที่กรมธรรม์ (พรบ.)";
-                    //worksheet.Cell(currentRow, 16).Value = "เบี้ย พรบ.";
-                    //worksheet.Cell(currentRow, 17).Value = "อากร พรบ.";
-                    //worksheet.Cell(currentRow, 18).Value = "ภาษี พรบ.";
-                    //worksheet.Cell(currentRow, 19).Value = "เบี้ย พรบ. รวม";
-                    //worksheet.Cell(currentRow, 20).Value = "ป.1";
-                    //worksheet.Cell(currentRow, 21).Value = "พรบ.";
-                    //worksheet.Cell(currentRow, 22).Value = "ส่วนลด";
+                    worksheet.Cell(currentRow, 15).Value = "เลขที่กรมธรรม์ (พรบ.)";
+                    worksheet.Cell(currentRow, 16).Value = "เบี้ย พรบ.";
+                    worksheet.Cell(currentRow, 17).Value = "อากร พรบ.";
+                    worksheet.Cell(currentRow, 18).Value = "ภาษี พรบ.";
+                    worksheet.Cell(currentRow, 19).Value = "เบี้ย พรบ. รวม";
+                    worksheet.Cell(currentRow, 20).Value = "ป.1";
+                    worksheet.Cell(currentRow, 21).Value = "พรบ.";
+                    worksheet.Cell(currentRow, 22).Value = "ส่วนลด";
 
                 }
                 worksheet.Range("A4:V"+currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
