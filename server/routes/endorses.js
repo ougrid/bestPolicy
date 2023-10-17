@@ -3,7 +3,7 @@ const router = express.Router(); //creates a router object
 const ctrl = require("../controllers");
 
 // router.get("path", fucntion);
-router.post('/getpolicy', ctrl.endorse.getPolicy);
+router.post('/getpolicy', ctrl.endorses.getPolicy);
 
 // router.post('/', ctrl.cars.postCar);
 // router.delete('/:index', ctrl.cars.removeCar);

@@ -259,32 +259,34 @@ const PolicyCard = (props) => {
       });
   };
 
-  const editInstallment = (e,type, index) => {
+  const editInstallment = (e, type, index) => {
     // e.preventDefault();
     //get tambons in distric selected
-    const arrI =[]
-    const arrA =[]
+    const arrI = []
+    const arrA = []
     // get old installment
-    installment.insurer.map(ele =>{
+    installment.insurer.map(ele => {
       arrI.push(ele)
     })
-    installment.advisor.map(ele =>{
+    installment.advisor.map(ele => {
       arrA.push(ele)
     })
     if (type === 'insurer') {
       const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
       const netgrossprem = parseFloat(document.getElementsByName(`netgrossprem-${index}`)[0].value)
       const dutyamt = parseFloat(Math.ceil(netgrossprem * duty))
-      const taxamt = parseFloat((netgrossprem * tax).toFixed(2))
+      const taxamt = parseFloat(((netgrossprem + dutyamt) * tax).toFixed(2))
+      const witheldamt = parseFloat(((netgrossprem + dutyamt) * withheld).toFixed(2))
       const commin_amt = parseFloat((formData.commin_rate * netgrossprem / 100).toFixed(2))
       const ovin_amt = parseFloat((formData.ovin_rate * netgrossprem / 100).toFixed(2))
 
-      
+
       arrI[index] = {
         netgrossprem: netgrossprem,
         tax: taxamt,
         duty: dutyamt,
         totalprem: parseFloat((netgrossprem + tax + duty).toFixed(2)),
+        withheld: witheldamt,
         dueDate: dueDate,
         commin_amt: commin_amt,
         commin_taxamt: parseFloat((commin_amt * tax).toFixed(2)),
@@ -297,30 +299,32 @@ const PolicyCard = (props) => {
     } else if (type === 'advisor') {
       const dueDate = document.getElementsByName(`dueDate-${index}`)[0].value
       const netgrossprem = parseFloat(document.getElementsByName(`netgrossprem-${index}`)[0].value)
-      const dutyamt = parseFloat((duty * netgrossprem).toFixed(2))
-      const taxamt = parseFloat((tax * netgrossprem).toFixed(2))
+      const dutyamt = parseFloat(Math.ceil(duty * netgrossprem))
+      const taxamt = parseFloat((tax * (netgrossprem + dutyamt)).toFixed(2))
+      const witheldamt = parseFloat(((netgrossprem + dutyamt) * withheld).toFixed(2))
       const commin_amt = parseFloat((formData.commin_rate * netgrossprem / 100).toFixed(2))
       const ovin_amt = parseFloat((formData.ovin_rate * netgrossprem / 100).toFixed(2))
       const commout1_amt = parseFloat((formData.commout1_rate * netgrossprem / 100).toFixed(2))
       const ovout1_amt = parseFloat((formData.ovout1_rate * netgrossprem / 100).toFixed(2))
 
-    // get old installment
-    arrA[index] = {
-      netgrossprem: netgrossprem,
-      tax: taxamt,
-      duty: dutyamt,
-      totalprem: parseFloat((netgrossprem + tax + duty).toFixed(2)),
-      dueDate: dueDate,
-      commin_amt: commin_amt,
-      commin_taxamt: parseFloat((commin_amt * tax).toFixed(2)),
-      ovin_amt: ovin_amt,
-      ovin_taxamt: parseFloat((ovin_amt * tax).toFixed(2)),
-      commout1_amt: commout1_amt,
-      ovout1_amt: ovout1_amt
+      // get old installment
+      arrA[index] = {
+        netgrossprem: netgrossprem,
+        tax: taxamt,
+        duty: dutyamt,
+        totalprem: parseFloat((netgrossprem + tax + duty).toFixed(2)),
+        withheld: witheldamt,
+        dueDate: dueDate,
+        commin_amt: commin_amt,
+        commin_taxamt: parseFloat((commin_amt * tax).toFixed(2)),
+        ovin_amt: ovin_amt,
+        ovin_taxamt: parseFloat((ovin_amt * tax).toFixed(2)),
+        commout1_amt: commout1_amt,
+        ovout1_amt: ovout1_amt
+      }
+
     }
-    
-  }
-  setInstallment({insurer: arrI, advisor : arrA})
+    setInstallment({ insurer: arrI, advisor: arrA })
   };
 
 
@@ -516,9 +520,9 @@ const PolicyCard = (props) => {
 
         }
         else { premperseq = parseFloat((formData.netgrossprem / seqNoins).toFixed(2)) }
-        
+
         //cal duty
-        if (flagallowduty) { dutyseq =Math.ceil(premperseq * duty) }
+        if (flagallowduty) { dutyseq = Math.ceil(premperseq * duty) }
         else {
           if (i === 1) {
             dutyseq = Math.ceil(formData.netgrossprem * duty)
@@ -549,7 +553,7 @@ const PolicyCard = (props) => {
           commin_taxamt: parseFloat((comminseq * tax).toFixed(2)),
           ovin_amt: ovinseq,
           ovin_taxamt: parseFloat((ovinseq * tax).toFixed(2)),
-          withheld : withheldseq
+          withheld: withheldseq
         })
 
       }
@@ -570,9 +574,9 @@ const PolicyCard = (props) => {
 
         }
         else { premperseq = parseFloat((formData.netgrossprem / seqNoagt).toFixed(2)) }
-        
+
         //cal duty
-        if (flagallowduty) { dutyseq =Math.ceil(premperseq * duty) }
+        if (flagallowduty) { dutyseq = Math.ceil(premperseq * duty) }
         else {
           if (i === 1) {
             dutyseq = Math.ceil(formData.netgrossprem * duty)
@@ -608,8 +612,8 @@ const PolicyCard = (props) => {
           ovin_taxamt: ovinseq * tax,
           commout1_amt: commoutseq,
           ovout1_amt: ovoutseq,
-          withheld : withheldseq
-          
+          withheld: withheldseq
+
         })
 
       }
@@ -617,12 +621,95 @@ const PolicyCard = (props) => {
     }
     setInstallment({ insurer: arrI, advisor: arrA })
   }
-  
+
   return (
     <div>
       <h1 className="text-center">ใบคำขอเลขที่ {formData.applicationNo}</h1>
       {/* policy table */}
-      <div className="row form-group form-inline ">
+
+      <div className="table-responsive overflow-scroll"  >
+        <table class="table  table-striped " >
+          <thead>
+            <tr>
+              <th scope="col" className="input"> เลขที่กรมธรรม์ </th>
+              <th scope="col" className="input">วันที่ทำสัญญา</th>
+              <th scope="col">บริษัทรับประกัน</th>
+              <th scope="col">เลขที่ใบคำขอ</th>
+              <th scope="col">ผู้แนะนำ 1</th>
+              <th scope="col">ผู้แนะนำ 2</th>
+              <th scope="col">Class</th>
+              <th scope="col">Subclass</th>
+              <th scope="col">วันที่สร้าง</th>
+              <th scope="col">วันที่คุ้มครอง-สิ้นสุด</th>
+              <th scope="col">ชื่อผู้เอาประกัน</th>
+              <th scope="col">เลขทะเบียนรถ</th>
+              <th scope="col">เลขตัวถังรถ</th>
+              <th scope="col">เลขที่สลักหลัง</th>
+              <th scope="col">seqno</th>
+              <th scope="col">เลขที่ใบแจ้งหนี้</th>
+              <th scope="col">เลขที่ใบกำกับภาษี</th>
+              <th scope="col">เบี้ย</th>
+              <th scope="col">อากร</th>
+              <th scope="col">ภาษี</th>
+              <th scope="col">เบี้ยรวม</th>
+              <th scope="col">WHT 1%</th>
+              <th scope="col">ค่า Commin (บาท)</th>
+              <th scope="col">ค่า Ovin (บาท)</th>
+              <th scope="col">ค่า Commout (บาท)</th>
+              <th scope="col">ค่า Ovout (บาท)</th>
+
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td><input
+                className="form-control"
+                type="text"
+                defaultValue={formData.policyNo || ''}
+                name={`policyNo`}
+                onChange={handleChange}
+              /></td>
+              <td><input
+                className="form-control"
+                type="date"
+                defaultValue={formData.issueDate || ''}
+                name={`npm star`}
+                onChange={handleChange}
+              /></td>
+              <td>{formData.insurerCode}</td>
+              <td>{formData.applicationNo}</td>
+              <td>{formData.agentCode}</td>
+              <td>{formData.agentCode2 || '-'}</td>
+              <td>{formData.class}</td>
+              <td>{formData.subClass}</td>
+              <td>{formData.createdAt}</td>
+              <td>{formData.actDate} - {formData.expDate}</td>
+              <td>{formData.insureeCode}</td>
+              <td>{formData.licenseNo || '-'}</td>
+              <td>{formData.chassisNo || '-'}</td>
+              <td>{formData.endorseNo || '-'}</td>
+              <td>{formData.seqNo || '-'}</td>
+              <td>{formData.invioceNo || '-'}</td>
+              <td>{formData.taxInvioceNo || '-'}</td>
+              <td>{formData.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.totalprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.commout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.ovout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+            </tr>
+
+
+
+          </tbody>
+        </table>
+      </div>
+
+      {/* <div className="row form-group form-inline ">
         <div className="col-1"></div>
         <div className="col-2 form-group  ">
           <label class="form-label ">
@@ -676,9 +763,9 @@ const PolicyCard = (props) => {
             onChange={handleChange}
           />
         </div>
-        <div class="col-3">{/* null */}</div>
+        <div class="col-3"></div>
       </div>
-
+      
       <div class="row">
         <div className="col-1"></div>
         <div class="col-2 form-group ">
@@ -780,7 +867,6 @@ const PolicyCard = (props) => {
         </div>
 
       </div>
-      {/* policy table */}
 
       <div class="row">
         <div className="col-1"></div>
@@ -892,75 +978,14 @@ const PolicyCard = (props) => {
             className="form-control"
             // value={formData.totalprem} // Display the totalprem value from the state
             // value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty)*withheld).toFixed(2)) || ""}
+            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty) * withheld).toFixed(2)) || ""}
             disabled
             step={0.1}
             name={`totalprem`}
-            
+
           />
         </div>
       </div>
-
-      {/* <div class="row">
-        <div className="col-1"></div>
-        <div class="col-2">
-          <label class="form-label ">
-            comm_in%<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`commin_rate`]}
-            name={`commin_rate`}
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-        <div class="col-2">
-          <label class="form-label ">
-            จำนวนเงิน<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            value={(formData[`commin_rate`] * formData[`grossprem`]) / 100 || ""}
-            name={`commin_amt`}
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
-
-        <div class="col-2">
-          <label class="form-label ">
-            OV_in %<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`ovin_rate`]}
-            name={`ovin_rate`}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div class="col-2">
-          <label class="form-label ">
-            จำนวนเงิน<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            name={`ovin_amt`}
-            value={(formData[`ovin_rate`] * formData[`grossprem`]) / 100 || ""}
-            onChange={handleChange}
-          />
-        </div>
-
-      </div> */}
 
       <div class="row">
         <div className="col-1"></div>
@@ -1085,72 +1110,10 @@ const PolicyCard = (props) => {
 
           </div>
         </div>
-        {/* <div class="col-1 align-bottom">
         
-          <button type="button" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
-        </div> */}
 
 
       </div>
-      {/* <div className="row">
-        <div className="col-1"></div>
-        <div class="col-2">
-          <label class="form-label ">
-            comm_out%<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`commout_rate`]}
-            name={`commout_rate`}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div class="col-2">
-          <label class="form-label ">จำนวนเงิน</label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            value={(formData[`commout_rate`] * formData[`grossprem`]) / 100 || ""}
-            name={`commout_amt`}
-            onChange={handleChange}
-          />
-        </div>
-        <div class="col-2">
-          <label class="form-label ">
-            OV_out %<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="number"
-            step={0.1}
-            value={formData[`ovout_rate`]}
-            name={`ovout_rate`}
-            onChange={handleChange}
-          />
-        </div>
-        <div class="col-2">
-          <label class="form-label ">จำนวนเงิน</label>
-          <input
-            className="form-control"
-            type="number"
-            disabled
-            step={0.1}
-            name={`ovout_amt`}
-            value={(formData[`ovout_rate`] * formData[`grossprem`]) / 100 || ""}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div class="col-2 align-bottom">
-
-          <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
-        </div>
-      </div> */}
 
       <div class="row">
         <div className="col-1"></div>
@@ -1243,7 +1206,7 @@ const PolicyCard = (props) => {
                 value={parseFloat((formData[`commout_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 name={`commout_amt`}
                 onChange={(e) => handleChange(e)}
-                
+
               />
             </div>
           </div>
@@ -1277,45 +1240,33 @@ const PolicyCard = (props) => {
                 //value={(formData[`ovin2_rate`] * formData[`grossprem`]) / 100 || ""}
                 value={parseFloat((formData[`ovout_rate`] * (100 - formData[`specdiscrate`]) * formData[`grossprem`] / 10000).toFixed(2)) || ""}
                 onChange={handleChange}
-                
+
               />
             </div>
           </div>
 
         </div>
-        {/* <div class="col-1 align-bottom">
-
-          <button type="button" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
-        </div> */}
+        
 
 
-      </div>
+      </div> */}
 
-      <div class="row">
+      {/* end policy data */}
+      <h3 className="text-center" style={{padding:`20px`}}>แบ่งงวดชำระ</h3>
+
+      <div class="row ">
         <div className="col-1"></div>
         <div className="col-2">
-
-          <h4 class="form-label ">
-            แบ่งงวดชำระ
-          </h4>
-        </div>
-      </div>
-
-      <div class="row">
-        <div className="col-1"></div>
-        <div className="col-1">
-
-          <div class="form-check ">
+          <div class="form-check">
             <input class="form-check-input" type="checkbox" name="installmentInsurer" id="flexCheckDefault" />
             <label class="form-check-label" for="flexCheckChecked">
-              บริษัทประกัน
+            แบ่งงวด บริษัทประกัน
             </label>
           </div>
         </div>
-
         <div class="col-1">
           <label class="form-label ">
-            จำนวนงวด<span class="text-danger"> </span>
+            จำนวน<span class="text-danger"> </span>
           </label>
         </div>
         <div class="col-1">
@@ -1323,23 +1274,72 @@ const PolicyCard = (props) => {
           <input
             className="form-control"
             type="number"
-            defaultValue={formData.t_fn}
+            defaultValue={formData.seqNoins}
             name={`seqNoins`}
             onChange={handleChange}
           />
         </div>
+        <div class="col-1">
+          <label class="form-label ">
+            งวด<span class="text-danger"> </span>
+          </label>
+        </div>
+        <div className="col-2 border-left">
 
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" name="installmentAdvisor" id="flexCheckDefault" />
+            <label class="form-check-label" for="flexCheckChecked">
+            แบ่งงวด ผู้แนะนำ
+            </label>
+          </div>
+
+        </div>
+        <div class="col-1">
+          <label class="form-label ">
+            จำนวน<span class="text-danger"> </span>
+          </label>
+        </div>
+        <div class="col-1">
+
+          <input
+            className="form-control"
+            type="number"
+            defaultValue={formData.seqNoagt}
+            name={`seqNoagt`}
+            onChange={handleChange}
+          />
+        </div>
+        <div class="col-1">
+          <label class="form-label ">
+            งวด<span class="text-danger"> </span>
+          </label>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div className="col-1"></div>
+        <div class="col-2">
+
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" name="flagallowduty" defaultChecked={true} id="flexCheckDefault" />
+            <label class="form-check-label" for="flexCheckChecked">
+              แบ่งค่าอากร
+            </label>
+          </div>
+
+        </div>
         <div class="col-1">
 
           <label class="form-label ">
-            เวลา/งวด
+            เวลาต่องวด
           </label>
         </div>
         <div class="col-1">
           <input
             className="form-control"
             type="number"
-            defaultValue={formData.t_fn}
+            defaultValue={formData.seqNoinstime}
             name={`seqNoinstime`}
             onChange={handleChange}
           />
@@ -1358,66 +1358,18 @@ const PolicyCard = (props) => {
             <option value="M" selected>เดือน</option>
           </select>
         </div>
-
-
-
-
-        <div class="col-2">
-
-          <div class="form-check ">
-            <input class="form-check-input" type="checkbox" name="flagallowduty" defaultChecked={true} id="flexCheckDefault" />
-            <label class="form-check-label" for="flexCheckChecked">
-              แบ่งค่าอากร
-            </label>
-          </div>
-
-        </div>
-        <div class="col-2 align-bottom">
-
-          <button type="button" class="btn btn-primary align-bottom" onClick={calinstallment} >คำนวณ แบ่งงวดชำระ</button>
-        </div>
-
-      </div>
-
-      <div class="row">
-        <div className="col-1"></div>
-        <div className="col-1">
-
-          <div class="form-check ">
-            <input class="form-check-input" type="checkbox" name="installmentAdvisor" id="flexCheckDefault" />
-            <label class="form-check-label" for="flexCheckChecked">
-              ผู้แนะนำ
-            </label>
-          </div>
-        </div>
-
-        <div class="col-1">
-          <label class="form-label ">
-            จำนวนงวด<span class="text-danger"> </span>
-          </label>
-        </div>
-        <div class="col-1">
-
-          <input
-            className="form-control"
-            type="number"
-            defaultValue={formData.t_fn}
-            name={`seqNoagt`}
-            onChange={handleChange}
-          />
-        </div>
-
+        <div className="col-2 border-left"></div>
         <div class="col-1">
 
           <label class="form-label ">
-            เวลา/งวด
+            เวลาต่องวด
           </label>
         </div>
         <div class="col-1">
           <input
             className="form-control"
             type="number"
-            defaultValue={formData.t_fn}
+            defaultValue={formData.seqNoagttime}
             name={`seqNoagttime`}
             onChange={handleChange}
           />
@@ -1436,124 +1388,238 @@ const PolicyCard = (props) => {
             <option value="M" selected>เดือน</option>
           </select>
         </div>
-        <div className="col-2"></div>
-
-
-
-
-
-
-
       </div>
 
-      <table class="table  table-striped">
-        <thead>
-          <tr>
-            <th scope="col-1">ประเภท</th>
-            <th scope="col-1">แบ่งงวด</th>
-            <th scope="col-2">DueDate</th>
-            <th scope="col-2">เบี้ยประกัน</th>
-            <th scope="col-1">อากร</th>
-            <th scope="col-1">ภาษี</th>
-            <th scope="col-1">WHT 1%</th>
-            <th scope="col-1">Comm in</th>
-            <th scope="col-1">Ov in</th>
-            <th scope="col-1">Comm out</th>
-            <th scope="col-1">Ov out</th>
-          </tr>
-        </thead>
-        <tbody>
-          {installment.insurer.map((ele, i) => {
-            return (<tr>
-              <th scope="row">บริษัทประกัน</th>
-              <td scope="col-1">{i + 1}</td>
-              <td scope="col-2"><input type="date" className="w-100" name={`dueDate-${i}`} defaultValue={ele.dueDate}></input></td>
-              <td scope="col-2"><input type="text" className="w-100" name={`netgrossprem-${i}`} defaultValue={ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}></input></td>
-              {/* <td scope="col-1"><input type="number" className="w-100" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
+      <div class="d-flex justify-content-center "  style={{padding:`20px`}}>
+        <button type="button" class="btn btn-primary align-bottom text-center" onClick={calinstallment} >คำนวณ แบ่งงวดชำระ</button>
+      </div>
+
+      {installment.insurer.length > 0 ?
+      <>
+          <h4 className="text-left" style={{padding:`20px`}}>แบ่งงวด บริษัทประกัน </h4>
+        <div className="table-responsive overflow-scroll"  >
+          <table class="table  table-striped">
+            <thead>
+              <tr>
+                <th scope="col-1">ประเภท</th>
+                <th scope="col-1">แบ่งงวด</th>
+                <th scope="col-2">DueDate</th>
+                <th scope="col-2">เบี้ยประกัน</th>
+                <th scope="col-1">อากร</th>
+                <th scope="col-1">ภาษี</th>
+                <th scope="col-1">WHT 1%</th>
+                <th scope="col-1">Comm in</th>
+                <th scope="col-1">Ov in</th>
+                <th scope="col-1">Comm out</th>
+                <th scope="col-1">Ov out</th>
+                <th scope="col-1">แก้ไข</th>
+              </tr>
+            </thead>
+            <tbody>
+              {installment.insurer.map((ele, i) => {
+                return (<tr>
+                  <th scope="row">บริษัทประกัน</th>
+                  <td scope="col-1">{i + 1}</td>
+                  <td scope="col-2"><input
+                    className="form-control"
+                    type="date"
+                    defaultValue={ele.dueDate}
+                    name={`dueDate-${i}`}
+                    onChange={handleChange}
+                  /></td>
+                  <td scope="col-2"><input
+                    className="form-control"
+                    type="text"
+                    defaultValue={ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    name={`netgrossprem-${i}`}
+                    onChange={handleChange}
+                  /></td>
+                  {/* <td scope="col-1"><input type="number" className="w-100" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
               <td scope="col-1"><input type="number" className="w-100" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
               <td scope="col-1"><input type="number" className="w-100" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
               <td scope="col-1"><input type="number" className="w-100" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td> */}
-              <td scope="col-1">{ele.duty}</td>
-              <td scope="col-1">{ele.tax}</td>
-              <td scope="col-1">{ele.withheld}</td>
-              <td scope="col-1">{ele.commin_amt}</td>
-              <td scope="col-1">{ele.ovin_amt}</td>
-              <td scope="col-1"></td>
-              <td scope="col-1"></td>
-              <td scope="col-1"><button onClick={e=>editInstallment(e,'insurer', i)}>แก้ไข</button></td>
-            </tr>)
-          })}
-          {installment.advisor.map((ele, i) => {
-            return (<tr>
-              <th scope="row">ผู้แนะนำ</th>
-              <td>{i + 1}</td>
-              <td scope="col-2"><input type="date" name={`dueDate-${i}`} defaultValue={ele.dueDate}></input></td>
-              <td scope="col-2"><input type="number" name={`netgrossprem-${i}`} step={.01} defaultValue={ele.netgrossprem}></input></td>
-              {/* <td scope="col-1"><input type="number" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
+                  <td scope="col-1">{ele.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{ele.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{ele.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{ele.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{ele.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1"></td>
+                  <td scope="col-1"></td>
+                  <td scope="col-1"><button onClick={e => editInstallment(e, 'insurer', i)}>แก้ไข</button></td>
+                </tr>)
+              })}
+              {installment.insurer.length > 0 ?
+                <tr>
+                  <th scope="row">รวม บริษัทประกัน</th>
+                  <td></td>
+                  <td></td>
+                  <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                : null}
+
+
+
+            </tbody>
+          </table>
+        </div>
+        </>
+        : null}
+
+      {installment.advisor.length > 0 ?
+          <>
+          <h4 className="text-left" style={{padding:`20px`}} >แบ่งงวด ผู้แนะนำ </h4>
+        <div className="table-responsive overflow-scroll"  >
+          <table class="table  table-striped">
+            <thead>
+              <tr>
+                <th scope="col-1">ประเภท</th>
+                <th scope="col-1">แบ่งงวด</th>
+                <th scope="col-2">DueDate</th>
+                <th scope="col-2">เบี้ยประกัน</th>
+                <th scope="col-1">อากร</th>
+                <th scope="col-1">ภาษี</th>
+                <th scope="col-1">WHT 1%</th>
+                <th scope="col-1">Comm in</th>
+                <th scope="col-1">Ov in</th>
+                <th scope="col-1">Comm out</th>
+                <th scope="col-1">Ov out</th>
+                <th scope="col-1">แก้ไข</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              {installment.advisor.map((ele, i) => {
+                return (<tr>
+                  <th scope="row">ผู้แนะนำ</th>
+                  <td>{i + 1}</td>
+                  <td scope="col-2"><input
+                    className="form-control"
+                    type="date"
+                    defaultValue={ele.dueDate}
+                    name={`dueDate-${i}`}
+                    onChange={handleChange}
+                  /></td>
+                  <td scope="col-2"><input
+                    className="form-control"
+                    type="text"
+                    defaultValue={ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    name={`netgrossprem-${i}`}
+                    onChange={handleChange}
+                  /></td>
+                  {/* <td scope="col-1"><input type="number" name={`duty-${i}`} step={.01} defaultValue={ele.duty}></input></td>
               <td scope="col-1"><input type="number" name={`tax-${i}`} step={.01} defaultValue={ele.tax}></input></td>
               <td scope="col-1"><input type="number" name={`commin_amt-${i}`} step={.01} defaultValue={ele.commin_amt}></input></td>
               <td scope="col-1"><input type="number" name={`ovin_amt-${i}`} step={.01} defaultValue={ele.ovin_amt}></input></td>
               <td scope="col-1"><input type="number" name={`commout1_amt-${i}`} step={.01} defaultValue={ele.commout1_amt}></input></td>
               <td scope="col-1"><input type="number" name={`ovout1_amt-${i}`} step={.01} defaultValue={ele.ovout1_amt}></input></td> */}
-              <td scope="col-1">{ele.duty}</td>
-              <td scope="col-1">{ele.tax}</td>
-              <td scope="col-1">{ele.withheld}</td>
-              <td scope="col-1">{ele.commin_amt}</td>
-              <td scope="col-1">{ele.ovin_amt}</td>
-              <td scope="col-1">{ele.commout1_amt}</td>
-              <td scope="col-1">{ele.ovout1_amt}</td>
-              <td scope="col-1"><button onClick={e=>editInstallment(e,'advisor', i)}>แก้ไข</button></td>
-            </tr>)
-          })}
-          {installment.insurer.length > 0 ?
+                  <td scope="col-1">{ele.duty}</td>
+                  <td scope="col-1">{ele.tax}</td>
+                  <td scope="col-1">{ele.withheld}</td>
+                  <td scope="col-1">{ele.commin_amt}</td>
+                  <td scope="col-1">{ele.ovin_amt}</td>
+                  <td scope="col-1">{ele.commout1_amt}</td>
+                  <td scope="col-1">{ele.ovout1_amt}</td>
+                  <td scope="col-1"><button onClick={e => editInstallment(e, 'advisor', i)}>แก้ไข</button></td>
+                </tr>)
+              })}
+
+              {installment.advisor.length > 0 ?
+                <tr>
+                  <th scope="row">รวม ผู้แนะนำ</th>
+                  <td></td>
+                  <td></td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                </tr>
+                : null}
+
+
+            </tbody>
+          </table>
+        </div>
+        </>
+        : null}
+      <h4 className="text-left" style={{padding:`20px`}} >สรุป </h4>
+      <div className="table-responsive overflow-scroll"  >
+        <table class="table  table-striped">
+          <thead>
             <tr>
-              <th scope="row">รวม บริษัทประกัน</th>
-              <td></td>
-              <td></td>
-              <td scope="col-1">{ installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td></td>
-              <td></td>
+              <th scope="col-1">ประเภท</th>
+              <th scope="col-1">จำนวนงวด</th>
+              <th scope="col-2">เบี้ยประกัน</th>
+              <th scope="col-1">อากร</th>
+              <th scope="col-1">ภาษี</th>
+              <th scope="col-1">WHT 1%</th>
+              <th scope="col-1">Comm in</th>
+              <th scope="col-1">Ov in</th>
+              <th scope="col-1">Comm out</th>
+              <th scope="col-1">Ov out</th>
+              <th scope="col-1">แก้ไข</th>
             </tr>
-            : null}
+          </thead>
+          <tbody>
 
-          {installment.advisor.length > 0 ?
+            {installment.insurer.length > 0 ?
+              <tr>
+                <th scope="row">รวม บริษัทประกัน</th>
+                <td>{installment.insurer.length}</td>
+                <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.insurer.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td></td>
+                <td></td>
+              </tr>
+              : null}
+
+            {installment.advisor.length > 0 ?
+              <tr>
+                <th scope="row">รวม ผู้แนะนำ</th>
+                <td>{installment.advisor.length}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              </tr>
+              : null}
+
+
             <tr>
-              <th scope="row">รวม ผู้แนะนำ</th>
+              <th scope="row">กรมธรรม์</th>
               <td></td>
-              <td></td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.netgrossprem.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.duty.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.tax.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.withheld.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovin_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.commout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-              <td scope="col-1">{installment.advisor.reduce((prev, curr) => prev + parseFloat(curr.ovout1_amt.toFixed(2)), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.commout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{formData.ovout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
             </tr>
-            : null}
 
+          </tbody>
+        </table>
+      </div>
 
-          <tr>
-            <th scope="row">กรมธรรม์</th>
-            <td></td>
-            <td></td>
-            <td>{formData.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-            <td>{formData.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-            <td>{formData.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-            <td>{formData.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-            <td>{formData.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-            <td>{formData.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-            <td></td>
-            <td></td>
-          </tr>
-
-        </tbody>
-      </table>
       {/* entity table */}
       {/* <div class="row">
         <div className="col-1"></div>
@@ -1874,12 +1940,12 @@ const PolicyCard = (props) => {
           />
         </div>
       </div> */}
-      <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center" >
 
-        <button className="p-2 btn btn-primary" name="saveChange" onClick={e => props.setFormData(e, props.index, { ...formData, installment: installment })}>
+        <button className="p-2 btn btn-primary" style={{margin:`10px`}} name="saveChange" onClick={e => props.setFormData(e, props.index, { ...formData, installment: installment })}>
           บันทึก
         </button>
-        <button className="p-2 btn btn-secondary " name="closed" onClick={e => props.setFormData(e)}>
+        <button className="p-2 btn btn-secondary " style={{margin:`10px`}}  name="closed" onClick={e => props.setFormData(e)}>
           ปิด
         </button>
       </div>

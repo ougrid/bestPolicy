@@ -54,8 +54,8 @@ function Nav() {
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item"  href="/findpolicy">ค้นหากรมธรรม์</a></li>
-              <li><a class="dropdown-item"  href="/policyexcel">สร้างรายการใหม่ (excel)</a></li>
-              <li><a class="dropdown-item"  href="/policyscreen">สร้างรายการใหม่ (screen)</a></li>
+              <li><a class="dropdown-item"  href="/policyexcel">สร้างรายการใหม่ (Excel)</a></li>
+              <li><a class="dropdown-item"  href="/policyscreen">สร้างรายการใหม่ (Screen)</a></li>
               <li><a class="dropdown-item"  href="/policyreconcile">Reconcile</a></li>
             </ul>
           </div>

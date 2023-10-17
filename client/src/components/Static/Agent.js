@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Select from 'react-select';
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { CenterPage } from "../StylesPages/AdminStyles";
@@ -12,7 +13,7 @@ import {
 } from "react-router-dom";
 import {
   Header,
-  InputBtn,
+  input,
   LoginBtn,
   BackdropBox1,
 } from "../StylesPages/LoginStyles";
@@ -69,7 +70,9 @@ const Agent = () => {
           .then((title) => {
             const array2 = []
             title.data.forEach(ele => {
-              array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
+              array2.push(
+              // <option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>
+              {label: ele.TITLETHAIBEGIN, value: ele.TITLEID})
             });
             setTitleDD(array2)
           })
@@ -147,38 +150,51 @@ const Agent = () => {
   };
 
   const changeEntity = (e) => {
-    if (e.target.name === 'personType') {
-      if (e.target.value === 'P') {
-        axios
-          .get(url + "/static/titles/person/all", headers)
-          .then((title) => {
-            const array2 = []
-            title.data.forEach(ele => {
-              array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
-            });
-            setTitleDD(array2)
-          })
-          .catch((err) => {
-          });
-      }else{
-        axios
-        .get(url + "/static/titles/company/all", headers)
-        .then((title) => {
-          const array2 = []
-          title.data.forEach(ele => {
-            array2.push(<option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>)
-          });
-          setTitleDD(array2)
-        })
-        .catch((err) => {
-        });
-      }
-     
-    }
+    e.preventDefault()
     setEntityData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+    if (e.target.name === 'personType') {
+      if (e.target.value === 'P') {
+       
+          axios
+          .get(url + "/static/titles/person/all", headers)
+          .then((title) => {
+            const array2 = []
+            title.data.forEach(ele => {
+              array2.push(
+              // <option key={ele.TITLEID} value={ele.TITLEID}>{ele.TITLETHAIBEGIN}</option>
+              {label: ele.TITLETHAIBEGIN, value: ele.TITLEID})
+            });
+            setTitleDD(array2)
+          })
+          .catch((err) => {
+
+            // alert("cant get company");
+
+          });
+      }else{
+        axios
+          .get(url + "/static/titles/company/all", headers)
+          .then((title) => {
+            const array2 = []
+            title.data.forEach(ele => {
+              array2.push(
+              {label: ele.TITLETHAIBEGIN, value: ele.TITLEID}
+              )
+            });
+            setTitleDD(array2)
+          })
+          .catch((err) => {
+
+            // alert("cant get company");
+
+          });
+      }
+     
+    }
+    
   };
 
   const changeLocation = (e) => {
@@ -294,10 +310,10 @@ const removeRow = (e) => {
         {/* insurer table */}
         <h1 className="text-center" >ผู้แนะนำ</h1>
         <div class="row form-group form-inline">
-        <div class="col-2 "></div>
+        <div class="col-1 "></div>
           <div class="col-2">
-                <label class="form-label ">AgentCode<span class="text-danger"> *</span></label>
-            <InputBtn
+                <label class="form-label ">รหัสผู้แนะนำ<span class="text-danger"> *</span></label>
+            <input
                 className="form-control"
               type="text"
               required
@@ -307,7 +323,7 @@ const removeRow = (e) => {
             />
           </div>
           <div class="col-2">
-                <label class="form-label ">Stament type<span class="text-danger"> *</span></label>
+                <label class="form-label ">Statement Type<span class="text-danger"> *</span></label>
                 <select
                   className="form-control"
                   name={`stamentType`}
@@ -319,7 +335,7 @@ const removeRow = (e) => {
               </div>
               <div class="col-2">
                 <label class="form-label ">เครดิตเทอมค่าเบี้ย <span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="number"
               required
@@ -330,7 +346,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">เครดิตเทอมค่าcomm/ov <span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="number"
               required
@@ -340,8 +356,8 @@ const removeRow = (e) => {
             />
           </div>
           <div class="col-2">
-                <label class="form-label ">licentNo subBroker <span class="text-danger"> *</span></label>
-            <InputBtn
+                <label class="form-label ">เลขที่ใบอนุญาต Sub-Broker <span class="text-danger"> *</span></label>
+            <input
                 className="form-control"
               type="text"
               required
@@ -355,7 +371,7 @@ const removeRow = (e) => {
 
         {/* entity table */}
         <div class="row">
-        <div class="col-2 "></div>
+        <div class="col-1 "></div>
         <div class="col-1">
               <label class="form-label ">type<span class="text-danger"> *</span></label>
                 <select
@@ -372,15 +388,21 @@ const removeRow = (e) => {
                <>
                <div class="col-2">
                      <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
-                 <select 
-                     className="form-control" name="titleID" onChange={changeEntity}>
-                   <option value="" selected disabled hidden> </option>
-                   {titleDD}
-                 </select>
+                     <Select
+          // className="form-control"
+          name={`title`}
+          onChange={ (e) =>setEntityData((prevState) => ({
+            ...prevState,
+            titleID: e.value,
+          }))}
+          options={titleDD}
+          />
+        
+                 
                </div>
                <div class="col-2">
                      <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
-                 <InputBtn
+                 <input
                      className="form-control"
                    type="text"
                    name="t_firstName"
@@ -389,7 +411,7 @@ const removeRow = (e) => {
                </div>
                <div class="col-2">
                      <label class="form-label ">นามสกุล<span class="text-danger"> *</span></label>
-                 <InputBtn
+                 <input
                      className="form-control"
                    type="text"
                    name="t_lastName"
@@ -400,15 +422,19 @@ const removeRow = (e) => {
                :<>
                <div class="col-2">
                      <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
-                 <select 
-                     className="form-control" name="titleID" onChange={changeEntity}>
-                   <option value="" selected disabled hidden> </option>
-                   {titleDD}
-                 </select>
+                     <Select
+          // className="form-control"
+          name={`title`}
+          onChange={ (e) =>setEntityData((prevState) => ({
+            ...prevState,
+            titleID: e.value,
+          }))}
+          options={titleDD}
+          />
                </div>
                <div class="col-2">
                      <label class="form-label ">ชื่อ<span class="text-danger"> *</span></label>
-                 <InputBtn
+                 <input
                      className="form-control"
                    type="text"
                    name="t_ogName"
@@ -420,25 +446,41 @@ const removeRow = (e) => {
          
           
         </div>
+
         <div class="row">
-          <div class="col-2 "></div>
+          <div class="col-1 "></div>
           <div class="col-2">
             <label class="form-label ">
-              จดทะเบียน vat
+              ประเภทภาษีหัก ณ ที่จ่าย
             </label>
-            <InputBtn
-              type="checkbox"
-              name="vatflag"
-              onChange={(e) =>
-                setAgentData({ ...agentData, vatflag: e.target.checked })
-              }
+            <select 
+                className="form-control" name="provinceID" onChange={changeAgent}>
+              <option value="" selected disabled hidden></option>
+              <option value="" >ภาษีเงินได้หัก ณ ที่จ่าย (เงินเดือน/เบี้ยประชุม/ค่านายหน้า)</option>
+              <option value="" >ภาษีหัก ณ ที่จ่่าย นิติบุคคล (ปันผล)</option>
+              <option value="" >ภาษีหัก ณ ที่จ่าย บุคคลธรรมดา</option>
+              <option value="" >ภาษีหัก ณ ที่จ่าย นิติบุคคล</option>
+              <option value="" >ภาษีหัก ณ ที่จ่าย มาตรา70</option>
+              
+            </select>
+          </div>
+          
+          <div class="col-2">
+            <label class="form-label ">
+              อัตราภาษีหัก ณ ที่จ่าย
+            </label>
+            <input
+              className="form-control"
+              type='number'
+              name="deducttaxrate"
+              onChange={changeAgent}
             />
           </div>
           <div class="col-2">
             <label class="form-label ">
               เลขที่จดทะเบียน
             </label>
-            <InputBtn
+            <input
               className="form-control"
               type="text"
               name="taxno"
@@ -447,14 +489,23 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
             <label class="form-label ">
-              อัตราภาษีหัก ณ ที่จ่าย
+              อยู่ในระบบ VAT หรือไม่
             </label>
-            <InputBtn
-              className="form-control"
-              type='number'
-              name="deducttaxrate"
-              onChange={changeAgent}
-            />
+            <select 
+                className="form-control" name="vatflag" onChange={changeAgent}>
+              <option value="" selected disabled hidden></option>
+              <option value={true} >อยู่</option>
+              <option value={false} >ไม่อยู่</option>
+              
+              
+            </select>
+            {/* <input
+              type="checkbox"
+              name="vatflag"
+              onChange={(e) =>
+                setAgentData({ ...agentData, vatflag: e.target.checked })
+              }
+            /> */}
           </div>
         </div>
 
@@ -464,10 +515,10 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
-        <div class="col-2 "></div>
+        <div class="col-1 "></div>
           <div class="col-2">
                 <label class="form-label ">บ้านเลขที่<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="text"
               name="t_location_1"
@@ -476,7 +527,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">หมู่บ้านอาคาร<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="text"
               name="t_location_2"
@@ -485,7 +536,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">หมู่<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="text"
               name="t_location_3"
@@ -494,7 +545,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">ซอย<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="text"
               name="t_location_4"
@@ -504,10 +555,10 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
-        <div class="col-2 "></div>
+        <div class="col-1 "></div>
           <div class="col-2">
                 <label class="form-label ">ถนน<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
                 className="form-control"
               type="text"
               name="t_location_5"
@@ -539,7 +590,7 @@ const removeRow = (e) => {
         </div>
 
         <div class="row">
-        <div class="col-2 "></div>
+        <div class="col-1 "></div>
           <div class="col-2">
                 <label class="form-label ">รหัสไปรษณีย์<span class="text-danger"> *</span></label>
             <select className="form-control" name="zipcode" onChange={changeLocation}>
@@ -549,7 +600,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">Email<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
             className="form-control"
               type="text"
               name="email"
@@ -558,7 +609,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">เบอร์มือถือ<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
             className="form-control"
               type="text"
               name="telNum_2"
@@ -568,7 +619,7 @@ const removeRow = (e) => {
          
           <div class="col-2">
                 <label class="form-label ">เบอร์โทรศัพท์<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
             className="form-control"
               type="text"
               name="telNum_1"
@@ -577,7 +628,7 @@ const removeRow = (e) => {
           </div>
           <div class="col-2">
                 <label class="form-label ">เบอร์โทรสาร<span class="text-danger"> *</span></label>
-            <InputBtn
+            <input
             className="form-control"
               type="text"
               name="telNum_3"

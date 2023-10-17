@@ -472,16 +472,16 @@ const getPolicy = (req, res) => {
 
 const getPolicyList = async (req, res) => {
   const records = await sequelize.query(
-    'select * from static_data."Policies" pol join static_data."InsureTypes" ins on ins.id = pol."insureID" ' +
-    'where ' +
-    'case when :insurerCode IS NOT NULL then "insurerCode" = :insurerCode else true end and ' +
-    'case when :policyNo IS NOT NULL then "policyNo" = :policyNo else true end and ' +
-    'case when :insureID IS NOT NULL then "insureID" = :insureID else true end and ' +
-    'case when :createdAt IS NOT NULL then pol."createdAt" >= :createdAt else true end and ' +
-    'case when :actDate IS NOT NULL then "actDate" >= :actDate else true end and  ' +
-    'case when :agentCode IS NOT NULL then "agentCode" = :agentCode else true end and ' +
-    'case when :itemList IS NOT NULL then "itemList" = :itemList else true end and ' +
-    'status = :status',
+    `select *, pol."createdAt" as "createdAt", pol."updatedAt" as "updatedAt"  from static_data."Policies" pol join static_data."InsureTypes" ins on ins.id = pol."insureID" 
+    where 
+    case when :insurerCode IS NOT NULL then "insurerCode" = :insurerCode else true end and 
+    case when :policyNo IS NOT NULL then "policyNo" = :policyNo else true end and 
+    case when :insureID IS NOT NULL then "insureID" = :insureID else true end and 
+    case when :createdAt IS NOT NULL then pol."createdAt" >= :createdAt else true end and 
+    case when :actDate IS NOT NULL then "actDate" >= :actDate else true end and  
+    case when :agentCode IS NOT NULL then "agentCode" = :agentCode else true end and 
+    case when :itemList IS NOT NULL then "itemList" = :itemList else true end and 
+    status = :status`,
     {
       replacements: {
         insurerCode: req.body.insurerCode,

@@ -18,7 +18,7 @@ module.exports = {
     payments :require("./payment"),
     runno :require("./lib/runningno"),
     arap : require("./ARAP"),
-    endorse : require("./endorses"),
+    endorses : require("./endorses"),
     // reports : require("./report"),
     
 

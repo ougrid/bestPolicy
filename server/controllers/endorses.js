@@ -461,44 +461,51 @@ const createTransection = async (policy,t) => {
 }
 
 const getPolicy = async (req, res) => {
-  const policyNo = req.body.policyNo
-  try{
-
-    const trans = await sequelize.query(
-      `select * FROM static_data."Transactions" where "policyNo" = :policyNo
-      and dfrpreferno is not null and status = 'C'`,
-    {
-      replacements: {
-        policyNo: policyNo,
+   
+    
+        try {
+    
+          //update policy
+          const trans = await sequelize.query(
+           `select * from  static_data."Transactions"  
+           where "policyNo" = :policyNo
+           and dfrpreferno is not null `,
+            {
+              replacements: {
+                policyNo: req.body.policyNo  
+              },
+              type: QueryTypes.SELECT
+            }
+          )
+          let policy = {}
+          if (trans.length > 0 && req.body.endorseType === 'edit') {
+            throw "กรมธรรม์เกิดการตัดหนี้ แก้ไขส่วนลดไม่ได้";
+          }else{
+            policy = await sequelize.query(
+                `select * from static_data."Policies" where "policyNo" = :policyNo and status ='A'`,
+                 {
+                   replacements: {
+                     policyNo: req.body.policyNo  
+                   },
+                   type: QueryTypes.SELECT
+                 }
+               )
+          }
+        console.log(policy[0][0].id);
+        //insert jupgr
+        req.body[i].polid = policy[0][0].id
         
-      },
-      type: QueryTypes.SELECT
-    }
-  )
-
-  if (trans.length >0) {
-    res.status(201).json({msg:'กรมธรรม์ฉบับบนี้ยกเลิกไม่ได้ เนื่องจากมีการตัดหนี้แล้ว'})
-  }else{
-    const pol = await sequelize.query(
-      `select * FROM static_data."Policies" where "policyNo" = :policyNo
-      and  status = 'A'`,
-    {
-      replacements: {
-        policyNo: policyNo,
+    await res.json(policy)
+       
+      } catch (error) {
+        console.log(error);
+        await res.status(500).json(error);
+      }
+      
+   
         
-      },
-      type: QueryTypes.SELECT
-    }
-  )
-    res.status(200).json(pol)
-  }
-}catch (error) {
-  console.log(error);
-  await res.status(500).json(error);
-  return "fail"
-}
+    
 };
-
 
 const getPolicyList = async (req, res) => {
   const records = await sequelize.query(
