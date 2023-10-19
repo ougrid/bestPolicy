@@ -84,7 +84,9 @@ const getInsurerByid = (req, res) => {
 
 const getInsurerAll = (req, res) => {
   sequelize.query(
-    'select * FROM static_data."Insurers" ins JOIN static_data."Entities" ent ON ins."entityID" = ent."id";',
+    `select *,(t."TITLETHAIBEGIN" ||' '|| e."t_ogName"||' '||t."TITLETHAIEND") as fullname FROM static_data."Insurers" ins
+     JOIN static_data."Entities" e ON ins."entityID" = e."id"
+     join static_data."Titles" t on e."titleID" = t."TITLEID" ;`,
     { type: QueryTypes.SELECT }).then((insurer) => {
       res.json(insurer);
     });

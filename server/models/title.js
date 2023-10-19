@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Title.init({
     TITLEID: DataTypes.INTEGER,
     TITLETHAIBEGIN: DataTypes.STRING,
-    TITLEABTHAIBEGIN: DataTypes.STRING,
+    TITLETHAIEND: DataTypes.STRING,
     TITLETYPE: DataTypes.STRING,
    
     DHIPTITLE: DataTypes.INTEGER,

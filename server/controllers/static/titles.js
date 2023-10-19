@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 //handle index request
 const showAllCompany = (req,res) =>{
     Title.findAll({
-        attributes: ['TITLEID','TITLETHAIBEGIN','TITLEABTHAIBEGIN','DHIPTITLE'],
+        attributes: ['TITLEID','TITLETHAIBEGIN','TITLETHAIEND','DHIPTITLE'],
         where: {
             TITLETYPE: "C"
         }
@@ -16,7 +16,7 @@ const showAllCompany = (req,res) =>{
 
 const showAllPerson = (req, res) => {
   Title.findAll ({
-    attributes: ['TITLEID','TITLETHAIBEGIN','TITLEABTHAIBEGIN','DHIPTITLE','GENDER'],
+    attributes: ['TITLEID','TITLETHAIBEGIN','TITLETHAIEND','DHIPTITLE','GENDER'],
     where: {
         TITLETYPE: "P"
     }
@@ -27,7 +27,7 @@ const showAllPerson = (req, res) => {
 
 const searchByCompany = (req,res)=>{
   Title.findAll({
-    attributes: ['TITLEID','TITLETHAIBEGIN','TITLEABTHAIBEGIN','DHIPTITLE'],
+    attributes: ['TITLEID','TITLETHAIBEGIN','TITLETHAIEND','DHIPTITLE'],
     where: {
         TITLETYPE: "C",
       [req.params.para] :{
@@ -41,7 +41,7 @@ const searchByCompany = (req,res)=>{
 
 const searchByPerson = (req,res)=>{
     Title.findAll({
-      attributes: ['TITLEID','TITLETHAIBEGIN','TITLEABTHAIBEGIN','DHIPTITLE','GENDER'],
+      attributes: ['TITLEID','TITLETHAIBEGIN','TITLETHAIEND','DHIPTITLE','GENDER'],
       where: {
         TITLETYPE: "P",
         [req.params.para] :{
@@ -55,7 +55,7 @@ const searchByPerson = (req,res)=>{
   
   const showById = (req,res) =>{
     Title.findOne({
-        attributes: ['TITLEID','TITLETHAIBEGIN','TITLEABTHAIBEGIN','DHIPTITLE','GENDER'],
+        attributes: ['TITLEID','TITLETHAIBEGIN','TITLETHAIEND','DHIPTITLE','GENDER'],
       where: {
         TITLEID:req.params.index
       }
