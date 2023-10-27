@@ -185,7 +185,7 @@ const submitarpremout = async (e) => {
   return (
     <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
-        <h1>Stament ค่าเบี้ยส่งบริษัทประกัน</h1>
+        <h1>Statement ค่าเบี้ยส่งบริษัทประกัน</h1>
        
         {/* insurerCode  */}
         <div className="row my-3">

@@ -186,10 +186,10 @@ const PolicyCard = (props) => {
     {agentList.map((ele)=>{
        return <tr>
             
-            <td scope="col-1"><button className=" btn btn-primary"  onClick={e=>props.setFormData(e,name,data)}>เลือก</button></td>
+            <td scope="col-1"><button className=" btn btn-primary"  onClick={e=>props.setFormData(e,name,ele.agentCode)}>เลือก</button></td>
             <td scope="col-1">{ele.agentCode}</td>
             <td scope="col-1">{ele.fullName}</td>
-            <td scope="col-1">{ele.personType === 'P' ? 'บุคคล' :'นิติบุคคล'}</td>
+            <td scope="col-1">{ele.personType.trim() === 'P' ? 'บุคคล' :'นิติบุคคล'}</td>
            
           </tr>
     })}

@@ -7,7 +7,7 @@ const showAllCompany = (req,res) =>{
     Title.findAll({
         attributes: ['TITLEID','TITLETHAIBEGIN','TITLETHAIEND','DHIPTITLE'],
         where: {
-            TITLETYPE: "C"
+            TITLETYPE: "O"
         }
     }).then((tambon)=>{
         res.json(tambon);

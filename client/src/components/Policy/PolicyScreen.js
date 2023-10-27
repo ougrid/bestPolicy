@@ -53,28 +53,18 @@ const PolicyScreen = (props) => {
   const [hidecard, setHidecard] = useState([false,0]);
 
   //for modal
-  const editCard =(e) =>{
+  const editCard =(e,name) =>{
     // console.log(policiesData[e.target.id]);
-    setHidecard([true,e.target.name])
+    
+    setHidecard([true,name])
    
   };
   const handleChangeCard =  (e,name,data) => {
-   
-    
-    
-      if (name === 'btn-agent1') {
-        const newdata  =  formData
-        newdata.agentCode = data
-        // setFormData((prevState) => ({
-        //   ...prevState,
-        //   agentCode: data,
-        // }))
-        document.getElementsByName('agentCode')[0].value = data
-        setFormData({...formData,agentCode:data})
-      }else if  (name === 'btn-agent2') {
-        document.getElementsByName('agentCode2')[0].value = data
-        setFormData({...formData,agentCode2:data})
-      } 
+   console.log(data);
+     setFormData((prevState) => ({
+          ...prevState,
+          [name]: data,
+        }))
       setHidecard([false,0])
     
     
@@ -742,7 +732,7 @@ const PolicyScreen = (props) => {
               onChange={handleChange}
             />
           <div class="input-group-append">
-              <button class="btn btn-primary" type="button" name="btn-agent1" onClick={(e)=>editCard(e)}><BiSearchAlt style={{fontSize: "30px", color: "white"}}/></button>
+              <button class="btn btn-primary" type="button" name="btn-agent1" onClick={(e)=>editCard(e,'agentCode')}><BiSearchAlt  style={{fontSize: "30px", color: "white"}}/></button>
             </div>
        </div>
         </div>
@@ -760,7 +750,7 @@ const PolicyScreen = (props) => {
               onChange={handleChange}
             />
           <div class="input-group-append">
-              <button class="btn btn-primary" type="button" name="btn-agent2" onClick={(e)=>editCard(e)}><BiSearchAlt style={{fontSize: "30px", color: "white"}}/></button>
+              <button class="btn btn-primary" type="button" name="btn-agent2" onClick={(e)=>editCard(e,"agentCode2")}><BiSearchAlt  style={{fontSize: "30px", color: "white"}}/></button>
             </div>
        </div>
         
@@ -1555,7 +1545,7 @@ const PolicyScreen = (props) => {
                 onChange={handleChange}
               />
             </div>
-            <div class="col-2">
+            <div class="col-1">
               <label class="form-label ">
                 ปีที่จดทะเบียน<span class="text-danger"> *</span>
               </label>
@@ -1567,6 +1557,34 @@ const PolicyScreen = (props) => {
                 onChange={handleChange}
               />
             </div>
+            <div class="col-1">
+          <label class="form-label ">
+            จังหวัด<span class="text-danger"> *</span>
+          </label>
+          {/* <Typeahead
+            className="form-control"
+            labelKey={`province`}
+            onChange={handleChange}
+            options={provinceDD}
+            search
+          /> */}
+          <Select
+          // className="form-control"
+          name={`motorprovinceID`}
+          onChange={  (e) =>setFormData((prevState) => ({
+            ...prevState,
+            motorprovinceID: e.value,
+          }))}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+            {/* <option value={formData.province} disabled selected hidden>
+              {formData.province}
+            </option>
+            {provinceDD} */}
+          
+        </div>
           </div>
         </>
       ) : null}
