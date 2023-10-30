@@ -5,6 +5,7 @@ import jwt_decode from "jwt-decode";
 import PolicyCard from "./PolicyCard";
 import Modal from 'react-bootstrap/Modal';
 import * as XLSX from 'xlsx';
+import Select from 'react-select';
 import {
     BrowserRouter,
     Routes,
@@ -45,10 +46,13 @@ const FindPolicy = () => {
             "insurerCode": null,
             "policyNo": null,
             "insureID": null,
-            "createdAt": null,
-            "actDate": null,
+            "createdate_start": null,
+            "effdate_start": null,
+            "createusercode": null,
             "agentCode": null,
-            "itemList": null,
+            "carRegisNo" : null,
+            "chassisNo" : null,
+            "provinceID" : null,
             "status" : 'A',
 
         })
@@ -74,7 +78,8 @@ const FindPolicy = () => {
             .then((province) => {
                 const array = []
                 province.data.forEach(ele => {
-                    array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
+                    // array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
+                    array.push({label:ele.t_provincename, value:ele.provinceid})
                 });
                 setProvinceDD(array)
             })
@@ -184,8 +189,8 @@ const FindPolicy = () => {
                 //         <td>{res.data[i].chassisNo}</td>
                 //         <td>{res.data[i].endorseNo}</td>
                 //         <td>{res.data[i].seqNo}</td>
-                //         <td>{res.data[i].invioceNo}</td>
-                //         <td>{res.data[i].taxInvioceNo}</td>
+                //         <td>{res.data[i].invoiceNo}</td>
+                //         <td>{res.data[i].taxInvoiceNo}</td>
                 //         <td>{res.data[i].netgrossprem}</td>
                 //         <td>{res.data[i].duty}</td>
                 //         <td>{res.data[i].stamp}</td>
@@ -359,13 +364,17 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">วันที่เอาเข้าระบบ</label>
+                        <label class="col-form-label">วันที่เอาเข้าระบบ </label>
 
                     </div>
 
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control " name="createdate_start" onChange={handleChange} />
+                            <input type="date" class="form-control " name="createdate_start" onChange={handleChange} value={filterData.createdate_start} 
+                            onBlur={(e)=>{setFilterData((prevState) => ({
+                                ...prevState,
+                                createdate_end: e.target.value,
+                            }));}}/>
 
                         </div>
                     </div>
@@ -374,7 +383,7 @@ const FindPolicy = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control" name="createdate_end" onChange={handleChange} />
+                            <input type="date" class="form-control" name="createdate_end" onChange={handleChange} value={filterData.createdate_end}/>
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
@@ -399,7 +408,11 @@ const FindPolicy = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control " name="effdate_start" onChange={handleChange} />
+                            <input type="date" class="form-control " name="effdate_start" onChange={handleChange} value={filterData.effdate_start} 
+                            onBlur={(e)=>{setFilterData((prevState) => ({
+                                ...prevState,
+                                effdate_end: e.target.value,
+                            }));}}/>
                             <div class="input-group-append">
                                 {/* <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
@@ -415,11 +428,11 @@ const FindPolicy = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control " name="effdate_end" onChange={handleChange} />
+                            <input type="date" class="form-control " name="effdate_end" onChange={handleChange} value={filterData.effdate_end}/>
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="effdate-check" onChange={handleChange} />
+                                        <input class="form-check-input" type="checkbox" name="effdate-check" onChange={handleChange}  />
                                         <label class="form-check-label" >All</label>
                                     </div>
                                 </div>
@@ -456,15 +469,24 @@ const FindPolicy = () => {
                     <div class="col-2 ">
                         <input type="text" class="form-control" placeholder="เลขทะเบียนรถ" name="carRegisNo" onChange={handleChange} />
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label class="col-form-label">จังหวัดจดทะเบียนรถ</label>
                     </div>
                     <div class="col-2 ">
-                        <div class="input-group mb-3">
-                            <select class="form-control" name="provinceID" onChange={handleChange}>
-                                <option value="" selected disabled hidden>เลือกจังหวัด</option>
-                                {provinceDD}
-                            </select>
+                    <Select
+        //   className="form-control"
+          name={`provinceID`}
+          onChange={ (e) => setFilterData((prevState) => ({
+            ...prevState,
+            provinceID: e.value,
+          }))}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+                        {/* <div class="input-group mb-3 col-10">
+                           
+                
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
@@ -475,7 +497,7 @@ const FindPolicy = () => {
                             </div>
 
 
-                        </div>
+                        </div> */}
 
 
                     </div>
@@ -491,11 +513,11 @@ const FindPolicy = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="agentcode" onChange={handleChange} />
+                            <input type="text" class="form-control" name="agentCode" onChange={handleChange} />
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="agentcode" onChange={handleChange} />
+                                        <input class="form-check-input" type="checkbox" name="agentCode" onChange={handleChange} />
                                         <label class="form-check-label" >All</label>
                                     </div>
                                 </div>
@@ -588,8 +610,8 @@ const FindPolicy = () => {
                                 <td>{ele.chassisNo}</td>
                                 <td>{ele.endorseNo}</td>
                                 <td>{ele.seqNo}</td>
-                                <td>{ele.invioceNo}</td>
-                                <td>{ele.taxInvioceNo}</td>
+                                <td>{ele.invoiceNo}</td>
+                                <td>{ele.taxInvoiceNo}</td>
                                 <td>{ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td>{ele.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td>{ele.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>

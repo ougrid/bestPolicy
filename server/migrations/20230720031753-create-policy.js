@@ -45,7 +45,7 @@ module.exports = {
       endorseNo: {
         type: Sequelize.STRING
       },
-      invioceNo: {
+      invoiceNo: {
         type: Sequelize.STRING
       },
       taxInvoiceNo: {

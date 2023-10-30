@@ -57,12 +57,12 @@ export default function PremInCreateDirect() {
     tax: "ภาษี",
     withheld: "WHT 1%",
     totalprem: "เบี้ยประกันรวม",
-    commout_rate: "Comm Out %",
-    commout_amt: "จำนวน",
-    ovout_rate: "Ov Out %",
-    ovout_amt: "จำนวน",
-    netflag: "[] Net",
-    remainamt: "รวม (บาท)",
+    commin_rate: "Comm In %",
+    commin_amt: "จำนวน",
+    ovin_rate: "Ov In %",
+    ovin_amt: "จำนวน",
+    // netflag: "[] Net",
+    // remainamt: "รวม (บาท)",
 
   };
 

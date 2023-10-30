@@ -115,7 +115,7 @@ const newInsurer = async (req, res) => {
       await  CommOVIn.create(req.body.commOVIn[i], { transaction: t })
 
     }
-    res.json({ ...insurer, ...entity, ...location });
+    // res.json({ ...insurer, ...entity, ...location });
     await t.commit();
     await res.json({
       msg: `created insurer : ${req.body.insurer.insurerCode} success!!`,

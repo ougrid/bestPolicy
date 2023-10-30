@@ -513,10 +513,10 @@ const findARPremInDirect = async (req, res) => {
     cond = cond + ` and j."endorseNo" = '${req.body.endorseNoEnd}'`
   }
   if (req.body.invoiceNoStart  !== null && req.body.billadvisorno !== '') {
-    cond = cond + ` and j."invioceNo" = '${req.body.invoiceNoStart}'`
+    cond = cond + ` and j."invoiceNo" = '${req.body.invoiceNoStart}'`
   }
   if (req.body.invoiceNoEnd  !== null && req.body.billadvisorno !== '') {
-    cond = cond + ` and j."invioceNo" = '${req.body.invoiceNoEnd}'`
+    cond = cond + ` and j."invoiceNo" = '${req.body.invoiceNoEnd}'`
   }
   const trans = await sequelize.query(
     `select true as select, t."agentCode", t."insurerCode", t."withheld" ,
@@ -526,7 +526,7 @@ const findARPremInDirect = async (req, res) => {
         (select "entityID" from static_data."Insurees" where "insureeCode" = p."insureeCode" ) ) as insureeName , 
        
         j.polid, (select "licenseNo" from static_data."Motors" where id = p."itemList") , (select  "chassisNo" from static_data."Motors" where id = p."itemList"), j.netgrossprem, j.duty, j.tax, j.totalprem, j.commout_rate,
-        j.commout_amt, j.ovout_rate, j.ovout_amt, 'N' as netflag, t.remainamt, j.commin_amt, j.ovin_amt
+        j.commout_amt, j.ovout_rate, j.ovout_amt, 'N' as netflag, t.remainamt, j.commin_amt, j.ovin_amt, j.commin_rate, j.ovin_rate
         from static_data."Transactions" t 
         join static_data.b_jupgrs j on t.polid = j.polid and t."seqNo" = j."seqNo" 
         join static_data."Policies" p on p.id = j.polid

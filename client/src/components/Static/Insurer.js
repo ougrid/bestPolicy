@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CenterPage } from "../StylesPages/AdminStyles";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import Select from 'react-select';
 import jwt_decode from "jwt-decode";
 import {
@@ -40,6 +42,7 @@ const Insurer = () => {
   const [insurerData, setInsurerData] = useState({
     entityID: null,
     deductTaxRate: 3,
+    deductTaxType : "หักภาษี ณ ที่จ่ายค่านายหน้า"
   });
   const [entityData, setEntityData] = useState({
     personType: "O",
@@ -67,31 +70,31 @@ const Insurer = () => {
   };
 
   const changeEntity = (e) => {
-    
-    if (e.target.name === 'branch'){
+
+    if (e.target.name === 'branch') {
       const value = e.target.value;
-    // Check if the input is a number and has a length of 5 or less
-    if (/^\d+$/.test(value)  ) {
-      // Format the value with leading zeros
-      let formattedValue = value.padStart(5, "0");
-      if(value.length > 5){
-        formattedValue =value.substring(1)   
-      }       
-      setEntityData((prevState) => ({
-        ...prevState,
-        'branch': formattedValue,
-      }));
-      document.getElementsByName('branch')[0].value = formattedValue
-    } else{
-      document.getElementsByName('branch')[0].value = value.replace(/[^0-9]/g, '')
-    }
-    }else{
+      // Check if the input is a number and has a length of 5 or less
+      if (/^\d+$/.test(value)) {
+        // Format the value with leading zeros
+        let formattedValue = value.padStart(5, "0");
+        if (value.length > 5) {
+          formattedValue = value.substring(1)
+        }
+        setEntityData((prevState) => ({
+          ...prevState,
+          'branch': formattedValue,
+        }));
+        document.getElementsByName('branch')[0].value = formattedValue
+      } else {
+        document.getElementsByName('branch')[0].value = value.replace(/[^0-9]/g, '')
+      }
+    } else {
       setEntityData((prevState) => ({
         ...prevState,
         [e.target.name]: e.target.value,
       }));
     }
-    
+
   };
 
   const changeComOv = (e) => {
@@ -109,9 +112,9 @@ const Insurer = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-   
+
   };
-  const changeProvince = (e) =>{
+  const changeProvince = (e) => {
     setLocationData((prevState) => ({
       ...prevState,
       provinceID: e.value,
@@ -119,38 +122,38 @@ const Insurer = () => {
       subDistrictID: null,
       zipcode: null
     }));
-   
+
     setZipCodeDD([])
     setSubDistricDD([])
     setDistricDD([])
-      getDistrict(e.value);
-    
-    
+    getDistrict(e.value);
+
+
   }
-  const changeDistrict = (e) =>{
+  const changeDistrict = (e) => {
     setLocationData((prevState) => ({
       ...prevState,
       districtID: e.value,
     }));
-      getSubDistrict(e.value);
+    getSubDistrict(e.value);
   }
-  const changeSubDistrict = (e) =>{
+  const changeSubDistrict = (e) => {
     setLocationData((prevState) => ({
       ...prevState,
       subDistrictID: e.value,
     }));
     const postcode = subDistricDD.find(el => el.value === e.value).postcode;
-    
+
     const arrayZip = postcode.map((zip, index) => (
       <option key={index} value={zip}>
         {zip}
       </option>
     ));
     setZipCodeDD(arrayZip);
-        setLocationData((prevState) => ({
-          ...prevState,
-          zipcode: postcode[0]
-        }))
+    setLocationData((prevState) => ({
+      ...prevState,
+      zipcode: postcode[0]
+    }))
   }
   const getDistrict = (provinceID) => {
     //get distric in province selected
@@ -160,7 +163,7 @@ const Insurer = () => {
         const array = [];
         distric.data.forEach((ele) => {
           array.push(
-            {label: ele.t_amphurname, value: ele.amphurid}
+            { label: ele.t_amphurname, value: ele.amphurid }
           );
         });
         setDistricDD(array);
@@ -177,18 +180,18 @@ const Insurer = () => {
         const zip = [];
         subdistric.data.forEach((ele) => {
           arraySub.push(
-            {label: ele.t_tambonname, value: ele.tambonid, postcode: ele.postcodeall.split("/") }
+            { label: ele.t_tambonname, value: ele.tambonid, postcode: ele.postcodeall.split("/") }
           );
           zip.push(...ele.postcodeall.split("/"));
         });
-        
+
         setSubDistricDD(arraySub);
-        
-       
+
+
       })
       .catch((err) => { });
   };
-  
+
 
   useEffect(() => {
     //get province
@@ -204,7 +207,7 @@ const Insurer = () => {
         const array = [];
         province.data.forEach((ele) => {
           array.push(
-            {label:ele.t_provincename, value:ele.provinceid }
+            { label: ele.t_provincename, value: ele.provinceid }
           );
         });
         setProvinceDD(array);
@@ -338,7 +341,7 @@ const Insurer = () => {
             </div>
             <div class="col-1">
               <label class="form-label ">
-                เครดิตเทอมค่าเบี้ย<span class="text-danger"> *</span>
+                เครดิตเทอมเบี้ย<span class="text-danger"> *</span>
               </label>
               <input
                 className="form-control"
@@ -361,7 +364,7 @@ const Insurer = () => {
             </div>
             <div class="col-1">
               <label class="form-label ">
-                เครดิตเทอมค่า Com<span class="text-danger"> *</span>
+                เครดิตเทอมCom<span class="text-danger"> *</span>
               </label>
               <input
                 className="form-control"
@@ -385,8 +388,8 @@ const Insurer = () => {
 
 
           </div>
-{/* entity table */}
-<div class="row">
+          {/* entity table */}
+          <div class="row">
             <div class="col-1"></div>
             <div class="col-2">
               <label class="form-label ">คำนำหน้า<span class="text-danger"> *</span></label>
@@ -493,31 +496,44 @@ const Insurer = () => {
               <label class="form-label ">
                 วันที่จดทะเบียน<span class="text-danger"> *</span>
               </label>
-              <input
+              <DatePicker
+
+                showIcon
+                selected={entityData.taxActDate}
+                onChange={(date) => setEntityData((prevState) => ({
+                  ...prevState,
+                  "taxActDate": date,
+                }))}
+                dateFormat="dd/MM/yyyy" // Specify the custom date format here
                 className="form-control"
-                type="date"
                 required
                 name="taxActDate"
-                data-date-format="DD MM YYYY"
-                onChange={changeEntity}
               />
+
             </div>
             <div class="col-1">
               <label class="form-label ">
                 วันที่หมดอายุ<span class="text-danger"> *</span>
               </label>
-              <input
+
+              <DatePicker
+
+                showIcon
+                selected={entityData.taxExpDate}
+                onChange={(date) => setEntityData((prevState) => ({
+                  ...prevState,
+                  "taxExpDate": date,
+                }))}
+                dateFormat="dd/MM/yyyy" // Specify the custom date format here
                 className="form-control"
-                type="date"
                 required
                 name="taxExpDate"
-                onChange={changeEntity}
               />
             </div>
 
           </div>
 
-          
+
 
           <div class="row">
             <div class="col-1"></div>
@@ -534,19 +550,19 @@ const Insurer = () => {
               />
             </div> */}
             <div class="col-2">
-            <label class="form-label ">
-              อยู่ในระบบ VAT หรือไม่
-            </label>
-            <select
-              className="form-control" name="vatRegis" onChange={changeEntity}>
-              <option value="" selected disabled hidden></option>
-              <option value={true} >อยู่</option>
-              <option value={false} >ไม่อยู่</option>
+              <label class="form-label ">
+                อยู่ในระบบ VAT หรือไม่
+              </label>
+              <select
+                className="form-control" name="vatRegis" onChange={changeEntity}>
+                <option value="" selected disabled hidden></option>
+                <option value={true} >อยู่</option>
+                <option value={false} >ไม่อยู่</option>
 
 
-            </select>
-            
-          </div>
+              </select>
+
+            </div>
             <div class="col-2">
               <label class="form-label ">
                 เลขที่ ภพ.20<span class="text-danger"> *</span>
@@ -637,44 +653,44 @@ const Insurer = () => {
 
           <div class="row">
             <div class="col-1 "></div>
-            
+
             <div class="col-2">
               <label class="form-label ">
                 จังหวัด<span class="text-danger"> *</span>
               </label>
               <Select
-          // className="form-control"
-          ref={selectInputProvince}
-          name={`provinceID`}
-          onChange={ (e) =>changeProvince(e)}
-          options={provinceDD}
-          styles={{zIndex:2000}}
-          // onChange={opt => console.log(opt)}
-          />
+                // className="form-control"
+                ref={selectInputProvince}
+                name={`provinceID`}
+                onChange={(e) => changeProvince(e)}
+                options={provinceDD}
+                styles={{ zIndex: 2000 }}
+              // onChange={opt => console.log(opt)}
+              />
             </div>
             <div class="col-2">
               <label class="form-label ">
                 อำเภอ<span class="text-danger"> *</span>
               </label>
               <Select
-          // className="form-control"
-          ref={selectInputDistrict}
-          name={`districtID`}
-          onChange={ (e) =>changeDistrict(e)}
-          options={districDD}
-          />
+                // className="form-control"
+                ref={selectInputDistrict}
+                name={`districtID`}
+                onChange={(e) => changeDistrict(e)}
+                options={districDD}
+              />
             </div>
             <div class="col-2">
               <label class="form-label ">
                 ตำบล<span class="text-danger"> *</span>
               </label>
               <Select
-          // className="form-control"
-          ref={selectInputSubDistrict}
-          name={`subDistrictID`}
-          onChange={ (e) =>changeSubDistrict(e)}
-          options={subDistricDD}
-          />
+                // className="form-control"
+                ref={selectInputSubDistrict}
+                name={`subDistrictID`}
+                onChange={(e) => changeSubDistrict(e)}
+                options={subDistricDD}
+              />
             </div>
 
             <div class="col-2">
@@ -682,16 +698,16 @@ const Insurer = () => {
                 รหัสไปรษณีย์<span class="text-danger"> *</span>
               </label>
               <select className="form-control" name="zipcode" onChange={changeLocation}>
-              {/* <option value="" selected disabled hidden>เลือกรหัสไปรษณีย์</option> */}
-              {zipcodeDD}
-            </select>
+                {/* <option value="" selected disabled hidden>เลือกรหัสไปรษณีย์</option> */}
+                {zipcodeDD}
+              </select>
             </div>
 
           </div>
 
           <div class="row">
             <div class="col-1 "></div>
-            
+
             <div class="col-2">
               <label class="form-label ">
                 Email<span class="text-danger"> *</span>

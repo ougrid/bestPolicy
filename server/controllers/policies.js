@@ -490,29 +490,45 @@ const getPolicy = (req, res) => {
 };
 
 const getPolicyList = async (req, res) => {
+  let cond = ` pol.status = '${req.body.status}'`
+  if(req.body.insurerCode !== null && req.body.insurerCode !== ''){
+    cond = `${cond} and pol."insurerCode" = '${req.body.insurerCode}'`
+  }
+  if(req.body.policyNo !== null && req.body.policyNo !== ''){
+    cond = `${cond} and pol."policyNo" = '${req.body.policyNo}'`
+  }
+  if(req.body.insureID !== null && req.body.insureID !== ''){
+    cond = `${cond} and pol."insureID" = ${req.body.insureID}`
+  }
+  if(req.body.createdate_start !== null && req.body.createdate_start !== ''){
+    cond = `${cond} and  TO_CHAR(pol."createdAt", 'YYYY-MM-DD') between '${req.body.createdate_start}' and '${req.body.createdate_end}'`
+  }
+  if(req.body.effdate_start !== null && req.body.effdate_start !== ''){
+    cond = `${cond} and  pol."actDate" between '${req.body.effdate_start}' and '${req.body.effdate_end}'`
+  }
+  if(req.body.createusercode !== null && req.body.createusercode !== ''){
+    cond = `${cond} and pol."createusercode" = '${req.body.createusercode}'`
+  }
+  if(req.body.agentCode !== null && req.body.agentCode !== ''){
+    cond = `${cond} and pol."agentCode" = '${req.body.agentCode}'`
+  }
+  if(req.body.carRegisNo !== null && req.body.carRegisNo !== ''){
+    cond = `${cond} and mt."licenseNo" = '${req.body.carRegisNo}'`
+  }
+  if(req.body.chassisNo !== null && req.body.chassisNo !== ''){
+    cond = `${cond} and mt."chassisNo" = '${req.body.chassisNo}'`
+  }
+  if(req.body.provinceID !== null && req.body.provinceID !== ''){
+    cond = `${cond} and mt."motorprovinceID" = ${req.body.provinceID}`
+  }
   const records = await sequelize.query(
-    `select *, pol."createdAt" as "createdAt", pol."updatedAt" as "updatedAt"  from static_data."Policies" pol join static_data."InsureTypes" ins on ins.id = pol."insureID" 
-    where 
-    case when :insurerCode IS NOT NULL then "insurerCode" = :insurerCode else true end and 
-    case when :policyNo IS NOT NULL then "policyNo" = :policyNo else true end and 
-    case when :insureID IS NOT NULL then "insureID" = :insureID else true end and 
-    case when :createdAt IS NOT NULL then pol."createdAt" >= :createdAt else true end and 
-    case when :actDate IS NOT NULL then "actDate" >= :actDate else true end and  
-    case when :agentCode IS NOT NULL then "agentCode" = :agentCode else true end and 
-    case when :itemList IS NOT NULL then "itemList" = :itemList else true end and 
-    status = :status`,
+    `select *, pol."createdAt" as "createdAt", pol."updatedAt" as "updatedAt"  
+    from static_data."Policies" pol 
+    
+    join static_data."Motors" mt on mt.id = pol."itemList"
+    where ${cond}`,
     {
-      replacements: {
-        insurerCode: req.body.insurerCode,
-        policyNo: req.body.policyNo,
-        insureID: req.body.insureID,
-        createdAt: req.body.createdAt,
-        actDate: req.body.actDate,
-        agentCode: req.body.agentCode,
-        itemList: req.body.itemList,
-        status : req.body.status,
-
-      },
+     
       type: QueryTypes.SELECT
     }
   )

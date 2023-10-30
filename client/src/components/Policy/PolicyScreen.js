@@ -11,6 +11,8 @@ import { numberWithCommas} from '../lib/number';
 import {BiSearchAlt } from "react-icons/bi";
 import Modal from 'react-bootstrap/Modal';
 import ModalSearchAgent from "./ModalSearchAgent";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const config = require("../../config.json");
 
@@ -32,6 +34,7 @@ const PolicyScreen = (props) => {
     grossprem:0,
     specdiscamt:0,
     netgrossprem:0,
+    specdiscrate: 0,
     duty :0,
     tax:0,
     totalprem:0,
@@ -51,6 +54,7 @@ const PolicyScreen = (props) => {
   const [motorbrandDD, setMotorbrandDD] = useState([]);
   const [motormodelDD, setMotormodelDD] = useState([]);
   const [hidecard, setHidecard] = useState([false,0]);
+  const [showMotorData, setShowMotorData] = useState(false);
 
   //for modal
   const editCard =(e,name) =>{
@@ -287,38 +291,7 @@ const PolicyScreen = (props) => {
   };
 
  
-  const NumberInputWithCommas =  ({ value, name ,onChange, e}) =>{
-    // Remove commas when displaying the value
-    let displayValue ='';
-    
-    if (value) {
-      displayValue = value.toLocaleString();
-    }
-  
-    const handleChangeN =  (e) => {
-      e.preventDefault()
-      const inputValue = e.target.value;
-      // Remove commas and non-numeric characters
-      const numericValue = inputValue.replace(/[^0-9]/g, '');
-  
-      // Format the numeric value with commas
-      const formattedValue = Number(numericValue).toLocaleString();
-      e.target.value = Number(numericValue).toLocaleString();
-      console.log(e);
-      onChange(e);
-      // console.log(formData);
-    };
-  
-    return (
-      <input
-        type="text"
-        className="form-control numbers"
-        // value={displayValue}
-        name={name}
-        onBlur={(e)=>handleChangeN(e)}
-      />
-    );
-  }
+ 
 
   const changeProvince = (e) =>{
     setFormData((prevState) => ({
@@ -672,14 +645,16 @@ const PolicyScreen = (props) => {
             วันที่เริ่มคุ้มครอง<span class="text-danger"> *</span>
           </label>
           <input
+        
             className="form-control"
             type="date"
-            
+            format="dd/MM/yyyy"
             value={formData.actDate}
             name={`actDate`}
             onChange={handleChangeActdate}
             onBlur={(e)=>validateDate(e)}
           />
+        
         </div>
 
         <div class="col-2 form-group ">
@@ -1465,10 +1440,48 @@ const PolicyScreen = (props) => {
 
         </div>
       </div>
-      {/* motor table */}
-      {formData.class === "MO" ? (
+      <div class="row">
+        <div className="col-1"></div>
+        <div class="col-2">
+          <label class="form-label ">
+            เบอร์โทรศัพท์<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            defaultValue={formData.telNum_1}
+            name={`telNum_1`}
+            onChange={handleChange}
+          />
+        </div>
+        <div class="col-2">
+          <label class="form-label ">
+            E-mail<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            defaultValue={formData.Email}
+            name={`Email`}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      { formData.class === "MO" ? 
+      <div class="row">
+            <div className="col-3"></div>
+            <div className="col-3"><h4>รายละเอียดรถ (ทรัพย์สินที่เอาประกัน) </h4></div>
+            <div className="col-3">
+              <button className="p-2 btn btn-danger" name="showMotor" onClick={(e) =>{setShowMotorData(!showMotorData)}}>
+                hide/unhide
+              </button>
+</div>
+            </div>
+            : null }
+      {/* motor table formData.class === "MO"*/}
+      { showMotorData ? (
         <>
-          <div class="row">
+         <div class="row">
             <div className="col-1"></div>
             <div class="col-2">
               <label class="form-label ">
@@ -1535,7 +1548,7 @@ const PolicyScreen = (props) => {
             </div>
             <div class="col-2">
               <label class="form-label ">
-                เลขตัวถังรถ<span class="text-danger"> *</span>
+                รหัสรถ (V)<span class="text-danger"> </span>
               </label>
               <input
                 className="form-control"
@@ -1547,13 +1560,56 @@ const PolicyScreen = (props) => {
             </div>
             <div class="col-1">
               <label class="form-label ">
-                ปีที่จดทะเบียน<span class="text-danger"> *</span>
+                รหัสรถ (C)<span class="text-danger"> </span>
               </label>
               <input
                 className="form-control"
                 type="text"
                 name={`modelYear`}
                 defaultValue={formData.modelYear}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-1">
+          <label class="form-label ">
+            ป้ายแดง<span class="text-danger"> *</span>
+          </label>
+          {/* <Typeahead
+            className="form-control"
+            labelKey={`province`}
+            onChange={handleChange}
+            options={provinceDD}
+            search
+          /> */}
+          <Select
+          // className="form-control"
+          name={`motorprovinceID`}
+          onChange={  (e) =>setFormData((prevState) => ({
+            ...prevState,
+            motorprovinceID: e.value,
+          }))}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+            {/* <option value={formData.province} disabled selected hidden>
+              {formData.province}
+            </option>
+            {provinceDD} */}
+          
+        </div>
+          </div>
+          <div class="row">
+            <div className="col-1"></div>
+            <div class="col-2">
+              <label class="form-label ">
+                เลขทะเบียนรถ<span class="text-danger"> *</span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`licenseNo`}
+                defaultValue={formData.licenseNo}
                 onChange={handleChange}
               />
             </div>
@@ -1585,36 +1641,237 @@ const PolicyScreen = (props) => {
             {provinceDD} */}
           
         </div>
+        <div class="col-2">
+              <label class="form-label ">
+                เลขตัวถังรถ<span class="text-danger"> *</span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                เลขเครื่อง<span class="text-danger"> *</span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-1">
+              <label class="form-label ">
+                ปีที่จดทะเบียน<span class="text-danger"> *</span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`modelYear`}
+                defaultValue={formData.modelYear}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                ยี่ห้อรถยนต์<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`brandname`}
+                onChange={handleChange}
+              >
+                <option value={formData.brandname} selected disabled hidden>
+                  {formData.brandname}
+                </option>
+                {motorbrandDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                รุ่น<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`modelname`}
+                onChange={handleChange}
+              >
+                <option value={formData.modelname} selected disabled hidden>
+                  {formData.modelname}
+                </option>
+                {motormodelDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
+
+            </div>
+            
+           
+            
+          </div>
+
+          <div class="row">
+            <div className="col-1"></div>
+            <div class="col-2">
+              <label class="form-label ">
+                ยี่ห้อรถยนต์<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`brandname`}
+                onChange={handleChange}
+              >
+                <option value={formData.brandname} selected disabled hidden>
+                  {formData.brandname}
+                </option>
+                {motorbrandDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                รุ่น<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`modelname`}
+                onChange={handleChange}
+              >
+                <option value={formData.modelname} selected disabled hidden>
+                  {formData.modelname}
+                </option>
+                {motormodelDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                รุ่นย่อย<span class="text-danger"> </span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            
+            
+          </div>
+          <div class="row">
+            <div className="col-1"></div>
+            <div class="col-2">
+              <label class="form-label ">
+                ซีซี<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`brandname`}
+                onChange={handleChange}
+              >
+                <option value={formData.brandname} selected disabled hidden>
+                  {formData.brandname}
+                </option>
+                {motorbrandDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                ที่นั่ง<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`modelname`}
+                onChange={handleChange}
+              >
+                <option value={formData.modelname} selected disabled hidden>
+                  {formData.modelname}
+                </option>
+                {motormodelDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                น้ำหนัก<span class="text-danger"> </span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            
+            
           </div>
         </>
       ) : null}
-      <div class="row">
-        <div className="col-1"></div>
-        <div class="col-2">
-          <label class="form-label ">
-            เบอร์โทรศัพท์<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.telNum_1}
-            name={`telNum_1`}
-            onChange={handleChange}
-          />
-        </div>
-        <div class="col-2">
-          <label class="form-label ">
-            E-mail<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.Email}
-            name={`Email`}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
+      
       <div class="d-flex justify-content-center">
 
         <button className="p-2 btn btn-primary" name="saveChange" onClick={handleSubmit}>

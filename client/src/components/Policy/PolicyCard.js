@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { CenterPage } from "../StylesPages/AdminStyles";
 import { Container } from "../StylesPages/PagesLayout";
 import { async } from "q";
+import Modal from 'react-bootstrap/Modal';
+import jwt_decode from "jwt-decode";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 const PolicyCard = (props) => {
@@ -14,6 +18,7 @@ const PolicyCard = (props) => {
   const withheld = config.witheld
 
   //import excel
+  const [cookies] = useCookies(["jwt"]);
   const [formData, setFormData] = useState(props.formData);
   const [provinceDD, setProvinceDD] = useState([]);
   const [districDD, setDistricDD] = useState([]);
@@ -27,6 +32,7 @@ const PolicyCard = (props) => {
   const [motorbrandDD, setMotorbrandDD] = useState([]);
   const [motormodelDD, setMotormodelDD] = useState([]);
   const [installment, setInstallment] = useState({ insurer: [], advisor: [] })
+  const [hidecard, setHidecard] = useState([false, 0]);
 
   const handleChange = async (e) => {
     e.preventDefault();
@@ -326,7 +332,18 @@ const PolicyCard = (props) => {
     }
     setInstallment({ insurer: arrI, advisor: arrA })
   };
+  const editCard = (e) => {
+    setHidecard([true, 1])
+    setFormData((prevState) => ({
+      ...prevState,
+      updatedAt: new Date().toLocaleDateString(),
+      updateusercode : jwt_decode(cookies["jwt"]).USERNAME
+    }));
 
+};
+const handleClose = (e) => {
+    setHidecard([false, 0])
+}
 
   const handleSubmit = async (e) => {
     const data = [];
@@ -690,8 +707,8 @@ const PolicyCard = (props) => {
               <td>{formData.chassisNo || '-'}</td>
               <td>{formData.endorseNo || '-'}</td>
               <td>{formData.seqNo || '-'}</td>
-              <td>{formData.invioceNo || '-'}</td>
-              <td>{formData.taxInvioceNo || '-'}</td>
+              <td>{formData.invoiceNo || '-'}</td>
+              <td>{formData.taxInvoiceNo || '-'}</td>
               <td>{formData.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
               <td>{formData.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
               <td>{formData.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
@@ -1940,9 +1957,56 @@ const PolicyCard = (props) => {
           />
         </div>
       </div> */}
+      <Modal size='l' show={hidecard[0]} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title >Confirm</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* <div class="row">
+                        <div class="col-2">
+                            <label class="col-form-label">เลขที่ใบวางบิล</label>
+                        </div>
+                        <div class="col-2"> {filterData.billadvisor}</div>
+                    </div> */}
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="col-form-label">ใบคำขอเลขที่</label>
+                        </div>
+                        <div class="col-4">{formData.applicationNo} </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="col-form-label">กรมธรรม์เลขที่</label>
+                        </div>
+                        <div class="col-4"> <label class="col-form-label">{formData.policyNo}</label></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="col-form-label">วันที่อัพเดทข้อมูล </label>
+                        </div>
+                        <div class="col-4">
+                            <label class="col-form-label">{formData.updatedAt}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label class="col-form-label">updateusercode</label>
+                        </div>
+                        <div class="col-4">
+                            <label class="col-form-label">{formData.updateusercode}</label>
+                        </div>
+                    </div>
+                    
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <button type="button" class="btn btn-primary" onClick={e => props.setFormData(e, props.index, { ...formData, installment: installment })}>Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={handleClose}>Close</button>
+                </Modal.Footer>
+            </Modal>
       <div class="d-flex justify-content-center" >
 
-        <button className="p-2 btn btn-primary" style={{margin:`10px`}} name="saveChange" onClick={e => props.setFormData(e, props.index, { ...formData, installment: installment })}>
+        <button className="p-2 btn btn-primary" style={{margin:`10px`}} name="saveChange" onClick={(e) => editCard(e)}>
           บันทึก
         </button>
         <button className="p-2 btn btn-secondary " style={{margin:`10px`}}  name="closed" onClick={e => props.setFormData(e)}>

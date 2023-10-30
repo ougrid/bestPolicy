@@ -42,6 +42,7 @@ const signup = (req,res)=>{
               const token = jwt.sign(
                 {
                     USERID: newUser.id,
+                    USERNAME : newUser.userName
                 },
                 secretKey,
                 {
@@ -77,6 +78,7 @@ const login = (req,res)=>{
                         const token = jwt.sign(
                             {
                                 USERID: foundUser.id,
+                                USERNAME : foundUser.userName
                             },
                             secretKey,
                             {

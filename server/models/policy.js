@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     policyNo:  DataTypes.STRING,
     endorseNo:  DataTypes.STRING,
     invoiceNo:  DataTypes.STRING,
-    taxinvoiceNo:  DataTypes.STRING,
+    taxInvoiceNo:  DataTypes.STRING,
     seqNoins: DataTypes.INTEGER,
     seqNoagt: DataTypes.INTEGER,
     insureeCode: DataTypes.STRING,
