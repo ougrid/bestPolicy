@@ -112,7 +112,7 @@ namespace BestPolicyReport.Controllers
             return File(
                 content,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                $"{sheetName}.xlsx");
+                $"รายงาน{sheetName}.xlsx");
         }
     }
 }
