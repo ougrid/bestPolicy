@@ -23,7 +23,7 @@ namespace BestPolicyReport.Services.CashierService
                          r.actualvalue as ""actualValue"", r.diffamt as ""diffAmt"", r.status
                          from static_data.b_jacashiers c, static_data.b_jabilladvisors a, static_data.b_jaaraps r
                          where c.billadvisorno = a.billadvisorno and c.dfrpreferno = r.dfrpreferno and c.cashierreceiveno = r.cashierreceiveno ";
-            string currentDate = (DateTime.Now).ToString("yyyy-MM-dd");
+            string currentDate = DateTime.Now.ToString("yyyy-MM-dd", new System.Globalization.CultureInfo("en-US"));
             if (!string.IsNullOrEmpty(data.StartCashierDate?.ToString()))
             {
                 if (!string.IsNullOrEmpty(data.EndCashierDate?.ToString()))

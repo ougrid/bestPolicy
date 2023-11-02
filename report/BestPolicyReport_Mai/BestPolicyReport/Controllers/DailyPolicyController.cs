@@ -49,7 +49,7 @@ namespace BestPolicyReport.Controllers
             var headers = new string[]
              {
             "ApplicationNo", "หมายเลขกรมธรรม์", "วันที่นำข้อมูลเข้า", "วันที่เริ่มคุ้มครอง", "วันที่สิ้นสุดคุ้มครอง",
-            "วันที่ทำสัญญา", "รหัสผู้บันทึก", "Username", "รหัสผู้ดูแล 1", "ชื่อผู้ดูแล 1",
+            "วันที่ทำสัญญา", "รหัสผู้บันทึก", "Username ผู้บันทึก", "รหัสผู้ดูแล 1", "ชื่อผู้ดูแล 1",
             "รหัสผู้ดูแล 2", "ชื่อผู้ดูแล 2", "รหัสผู้แนะนำ 1", "ชื่อผู้แนะนำ 1", "รหัสผู้แนะนำ 2", "ชื่อผู้แนะนำ 2",
             "รหัสผู้เอาประกัน", "ชื่อผู้เอาประกัน", "ประเภทประกัน", "ประเภทย่อยประกัน", "ป้ายทะเบียน", "จังหวัด", "เลขตัวถัง",
             "GrossPrem", "SpecDiscRate", "SpecDiscAmt", "NetGrossPrem", "Duty", "Tax",
@@ -118,6 +118,7 @@ namespace BestPolicyReport.Controllers
             // You can set the table name and style here if needed
             table.Name = "Table";
             table.ShowAutoFilter = true;
+            worksheet.Columns().AdjustToContents();
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);

@@ -2,6 +2,7 @@
 using BestPolicyReport.Models.BillReport;
 using BestPolicyReport.Models.CashierReport;
 using BestPolicyReport.Models.OutputVatCommInReport;
+using BestPolicyReport.Models.OutputVatOvInReport;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestPolicyReport.Data
@@ -19,11 +20,13 @@ namespace BestPolicyReport.Data
             modelBuilder.Entity<BillReportResult>().HasNoKey();
             modelBuilder.Entity<CashierReportResult>().HasNoKey();
             modelBuilder.Entity<OutputVatCommInReportResult>().HasNoKey();
+            modelBuilder.Entity<OutputVatOvInReportResult>().HasNoKey();
         }
 
         public DbSet<DailyPolicyReport> DailyPolicyReports { get; set; }
         public DbSet<BillReportResult> BillReportResults { get; set; }
         public DbSet<CashierReportResult> CashierReportResults { get; set; }
         public DbSet<OutputVatCommInReportResult> OutputVatCommInReportResults { get; set; }
+        public DbSet<OutputVatOvInReportResult> OutputVatOvInReportResults { get; set; }
     }
 }

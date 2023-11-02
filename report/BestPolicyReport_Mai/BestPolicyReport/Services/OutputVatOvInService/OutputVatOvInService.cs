@@ -1,21 +1,21 @@
 ﻿using BestPolicyReport.Data;
 using BestPolicyReport.Models;
-using BestPolicyReport.Models.OutputVatCommInReport;
+using BestPolicyReport.Models.OutputVatOvInReport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BestPolicyReport.Services.OutputVatCommInService
+namespace BestPolicyReport.Services.OutputVatOvInService
 {
-    public class OutputVatCommInService : IOutputVatCommInService
+    public class OutputVatOvInService : IOutputVatOvInService
     {
         private readonly DataContext _dataContext;
 
-        public OutputVatCommInService(DataContext dataContext)
+        public OutputVatOvInService(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
-        public async Task<List<OutputVatCommInReportResult>?> GetOutputVatCommInReportJson(OutputVatCommInReportInput data)
+        public async Task<List<OutputVatOvInReportResult>?> GetOutputVatOvInReportJson(OutputVatOvInReportInput data)
         {
             var sql = $@"select t.dfrpreferno as ""dfRpReferNo"", t.rprefdate as ""rpRefDate"", t.""insurerCode"", 
                          case 
@@ -23,10 +23,10 @@ namespace BestPolicyReport.Services.OutputVatCommInService
                          	when e.""personType"" = 'P' then concat(tt.""TITLETHAIBEGIN"", ' ', e.""t_firstName"", ' ', e.""t_lastName"", ' ', tt.""TITLETHAIEND"") 
                          	else ''
                          end as ""insurerName"",
-                         t.commamt as ""commInAmt"", t.commtaxamt as ""vatCommInAmt"", t.status as ""transactionStatus"", t.""transType"" as ""transactionType"", p.status as ""policyStatus""
+                         t.ovamt as ""ovInAmt"", t.ovtaxamt as ""vatOvInAmt"", t.status as ""transactionStatus"", t.""transType"" as ""transactionType"", p.status as ""policyStatus""
                          from static_data.""Transactions"" t, static_data.""Insurers"" i, static_data.""Entities"" e, static_data.""Titles"" tt, static_data.""Policies"" p 
                          where i.""insurerCode"" = t.""insurerCode"" and i.""entityID"" = e.id and e.""titleID"" = tt.""TITLEID"" and t.polid = p.id and p.status = 'A'
-                         and t.""transType"" = 'COMM-IN' and t.txtype2 in (1, 2, 3, 4, 5) and t.dfrpreferno is not null ";
+                         and t.""transType"" = 'OV-IN' and t.txtype2 in (1, 2, 3, 4, 5) and t.dfrpreferno is not null ";
             if (!string.IsNullOrEmpty(data.InsurerCode))
             {
                 sql += $@"and t.""insurerCode"" = '{data.InsurerCode}' ";
@@ -44,7 +44,7 @@ namespace BestPolicyReport.Services.OutputVatCommInService
                 }
             }
             sql += $@"order by t.""insurerCode"" asc, t.dfrpreferno asc, t.rprefdate asc;";
-            var json = await _dataContext.OutputVatCommInReportResults.FromSqlRaw(sql).ToListAsync();
+            var json = await _dataContext.OutputVatOvInReportResults.FromSqlRaw(sql).ToListAsync();
             return json;
         }
     }

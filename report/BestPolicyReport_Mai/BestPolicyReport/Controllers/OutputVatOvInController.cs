@@ -1,6 +1,6 @@
 ﻿using BestPolicyReport.Models;
-using BestPolicyReport.Models.OutputVatCommInReport;
-using BestPolicyReport.Services.OutputVatCommInService;
+using BestPolicyReport.Models.OutputVatOvInReport;
+using BestPolicyReport.Services.OutputVatOvInService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,22 +8,22 @@ namespace BestPolicyReport.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OutputVatCommInController : ControllerBase
+    public class OutputVatOvInController : ControllerBase
     {
-        private readonly IOutputVatCommInService _outputVatCommInService;
+        private readonly IOutputVatOvInService _outputVatOvInService;
 
-        public OutputVatCommInController(IOutputVatCommInService outputVatCommInService)
+        public OutputVatOvInController(IOutputVatOvInService outputVatOvInService)
         {
-            _outputVatCommInService = outputVatCommInService;
+            _outputVatOvInService = outputVatOvInService;
         }
 
         [HttpPost("json")]
-        public async Task<ActionResult<List<OutputVatCommInReportResult>?>> GetOutputVatCommInReportJson(OutputVatCommInReportInput data)
+        public async Task<ActionResult<List<OutputVatOvInReportResult>?>> GetOutputVatOvInReportJson(OutputVatOvInReportInput data)
         {
-            var result = await _outputVatCommInService.GetOutputVatCommInReportJson(data);
+            var result = await _outputVatOvInService.GetOutputVatOvInReportJson(data);
             if (result == null)
             {
-                return Ok(new List<OutputVatCommInReportResult>());
+                return Ok(new List<OutputVatOvInReportResult>());
             }
             return Ok(result);
         }
@@ -31,21 +31,21 @@ namespace BestPolicyReport.Controllers
 
         
         [HttpPost("excel")]
-        public async Task<IActionResult?> GetOutputVatCommInReportExcel(OutputVatCommInReportInput data)
+        public async Task<IActionResult?> GetOutputVatOvInReportExcel(OutputVatOvInReportInput data)
         {
-            var result = await _outputVatCommInService.GetOutputVatCommInReportJson(data);
+            var result = await _outputVatOvInService.GetOutputVatOvInReportJson(data);
             if (result == null)
             {
                 return BadRequest("sql result = null");
             }
             using var workbook = new XLWorkbook();
-            var sheetName = "ภาษีขาย_CommIn";
+            var sheetName = "ภาษีขาย_OvIn";
             var worksheet = workbook.Worksheets.Add(sheetName);
 
             // Headers
             var headers = new string[]
             {
-            "เลขที่ตัดรับ", "วันที่ตัดรับ", "รหัสบริษัทประกัน", "ชื่อบริษัทประกัน", "ยอดคอมมิชชั่นรับ", "ยอดภาษีขายคอมมิชชั่นรับ", "สถานะ",
+            "เลขที่ตัดรับ", "วันที่ตัดรับ", "รหัสบริษัทประกัน", "ชื่อบริษัทประกัน", "ยอด OV รับ", "ยอดภาษีขาย OV รับ", "สถานะ",
             };
 
             for (int col = 1; col <= headers.Length; col++)
@@ -62,8 +62,8 @@ namespace BestPolicyReport.Controllers
                 worksheet.Cell(row, col++).Value = i.RpRefDate;
                 worksheet.Cell(row, col++).Value = i.InsurerCode;
                 worksheet.Cell(row, col++).Value = i.InsurerName;
-                worksheet.Cell(row, col++).Value = i.CommInAmt;
-                worksheet.Cell(row, col++).Value = i.VatCommInAmt;
+                worksheet.Cell(row, col++).Value = i.OvInAmt;
+                worksheet.Cell(row, col++).Value = i.VatOvInAmt;
                 worksheet.Cell(row, col++).Value = i.TransactionStatus;
                 row++;
             }

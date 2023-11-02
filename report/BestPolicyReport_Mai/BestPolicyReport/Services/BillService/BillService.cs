@@ -66,7 +66,7 @@ namespace BestPolicyReport.Services.BillService
             {
                 sql += $@"and ""billAdvisorSubNo"" between {data.StartBillAdvisorNo} and {data.EndBillAdvisorNo} ";
             }
-            string currentDate = (DateTime.Now).ToString("yyyy-MM-dd");
+            string currentDate = DateTime.Now.ToString("yyyy-MM-dd", new System.Globalization.CultureInfo("en-US"));
             if (!string.IsNullOrEmpty(data.StartBillDate?.ToString()))
             {
                 if (!string.IsNullOrEmpty(data.EndBillDate?.ToString()))

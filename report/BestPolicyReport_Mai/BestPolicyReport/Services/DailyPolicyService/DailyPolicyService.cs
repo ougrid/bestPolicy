@@ -84,7 +84,7 @@ namespace BestPolicyReport.Services.DailyPolicyService
                         left join static_data.""Motors"" m on (p.""itemList"" is not null and m.id = p.""itemList"")
                         left join static_data.provinces pv on (p.""itemList"" is not null and m.""motorprovinceID"" = pv.provinceid)
                         where p.""endorseNo"" is null ";
-            string currentDate = (DateTime.Now).ToString("yyyy-MM-dd");
+            string currentDate = DateTime.Now.ToString("yyyy-MM-dd", new System.Globalization.CultureInfo("en-US"));
             if (data.ContainsKey("startPolicyDate") && !string.IsNullOrEmpty(data["startPolicyDate"]?.ToString()))
             {
                 if (data.ContainsKey("endPolicyDate") && !string.IsNullOrEmpty(data["endPolicyDate"]?.ToString()))

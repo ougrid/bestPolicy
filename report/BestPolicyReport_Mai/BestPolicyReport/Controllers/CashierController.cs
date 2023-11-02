@@ -82,6 +82,7 @@ namespace BestPolicyReport.Controllers
             var table = tableRange.AsTable();
             table.Name = "Table";
             table.ShowAutoFilter = true;
+            worksheet.Columns().AdjustToContents();
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
