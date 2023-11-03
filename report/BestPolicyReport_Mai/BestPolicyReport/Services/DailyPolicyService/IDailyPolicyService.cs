@@ -1,10 +1,9 @@
-﻿using BestPolicyReport.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using BestPolicyReport.Models.DailyPolicyReport;
 
 namespace BestPolicyReport.Services.DailyPolicyService
 {
     public interface IDailyPolicyService
     {
-        Task<List<DailyPolicyReport>?> GetDailyPolicyReportJson(Dictionary<string, string> data);
+        Task<List<DailyPolicyReportResult>?> GetDailyPolicyReportJson(DailyPolicyReportInput data);
     }
 }

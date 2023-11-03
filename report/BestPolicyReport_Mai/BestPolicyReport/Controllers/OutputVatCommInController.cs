@@ -1,5 +1,4 @@
-﻿using BestPolicyReport.Models;
-using BestPolicyReport.Models.OutputVatCommInReport;
+﻿using BestPolicyReport.Models.OutputVatCommInReport;
 using BestPolicyReport.Services.OutputVatCommInService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +27,6 @@ namespace BestPolicyReport.Controllers
             return Ok(result);
         }
 
-
-        
         [HttpPost("excel")]
         public async Task<IActionResult?> GetOutputVatCommInReportExcel(OutputVatCommInReportInput data)
         {

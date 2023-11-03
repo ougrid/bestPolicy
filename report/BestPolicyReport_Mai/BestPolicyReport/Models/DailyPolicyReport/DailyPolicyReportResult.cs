@@ -1,6 +1,6 @@
-﻿namespace BestPolicyReport.Models
+﻿namespace BestPolicyReport.Models.DailyPolicyReport
 {
-    public class DailyPolicyReport
+    public class DailyPolicyReportResult
     {
         public string? ApplicationNo { get; set; }
         public string? PolicyNo { get; set; }
@@ -43,6 +43,5 @@
         public double? OvOutRate { get; set; }
         public double? OvOutAmt { get; set; }
         public string? InsurerCode { get; set; }
-    }                                              
-}                                                  
-                                                   
+    }
+}

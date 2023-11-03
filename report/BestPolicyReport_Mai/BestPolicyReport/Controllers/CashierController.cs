@@ -1,5 +1,4 @@
-﻿using BestPolicyReport.Models;
-using BestPolicyReport.Models.CashierReport;
+﻿using BestPolicyReport.Models.CashierReport;
 using BestPolicyReport.Services.CashierService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +26,6 @@ namespace BestPolicyReport.Controllers
             }
             return Ok(result);
         }
-
-
         
         [HttpPost("excel")]
         public async Task<IActionResult?> GetCashierReportExcel(CashierReportInput data)

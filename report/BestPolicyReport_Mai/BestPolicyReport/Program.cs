@@ -1,7 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using BestPolicyReport.Data;
 using BestPolicyReport.Services.DailyPolicyService;
 using BestPolicyReport.Services.BillService;
-using Microsoft.EntityFrameworkCore;
 using BestPolicyReport.Services.CashierService;
 using BestPolicyReport.Services.OutputVatCommInService;
 using BestPolicyReport.Services.OutputVatOvInService;

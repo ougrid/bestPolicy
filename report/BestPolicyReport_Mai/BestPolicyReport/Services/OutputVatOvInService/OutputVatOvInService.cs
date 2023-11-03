@@ -1,8 +1,6 @@
 ﻿using BestPolicyReport.Data;
-using BestPolicyReport.Models;
 using BestPolicyReport.Models.OutputVatOvInReport;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BestPolicyReport.Services.OutputVatOvInService
 {

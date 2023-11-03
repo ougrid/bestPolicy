@@ -1,5 +1,4 @@
-﻿using BestPolicyReport.Models;
-using BestPolicyReport.Models.BillReport;
+﻿using BestPolicyReport.Models.BillReport;
 using BestPolicyReport.Services.BillService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +26,6 @@ namespace BestPolicyReport.Controllers
             }
             return Ok(result);
         }
-
-
         
         [HttpPost("excel")]
         public async Task<IActionResult?> GetBillReportExcel(BillReportInput data)

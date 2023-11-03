@@ -1,5 +1,5 @@
 ﻿using BestPolicyReport.Data;
-using BestPolicyReport.Models;
+using BestPolicyReport.Models.DailyPolicyReport;
 using Microsoft.EntityFrameworkCore;
 
 namespace BestPolicyReport.Services.DailyPolicyService
@@ -13,7 +13,7 @@ namespace BestPolicyReport.Services.DailyPolicyService
             _dataContext = dataContext;
         }
 
-        public async Task<List<DailyPolicyReport>?> GetDailyPolicyReportJson(Dictionary<string, string> data)
+        public async Task<List<DailyPolicyReportResult>?> GetDailyPolicyReportJson(DailyPolicyReportInput data)
         {
 
             var sql = $@"select p.""applicationNo"", p.""policyNo"", p.""policyDate"", p.""actDate"", p.""expDate"", p.""issueDate"", p.createusercode, 
@@ -85,71 +85,71 @@ namespace BestPolicyReport.Services.DailyPolicyService
                         left join static_data.provinces pv on (p.""itemList"" is not null and m.""motorprovinceID"" = pv.provinceid)
                         where p.""endorseNo"" is null ";
             string currentDate = DateTime.Now.ToString("yyyy-MM-dd", new System.Globalization.CultureInfo("en-US"));
-            if (data.ContainsKey("startPolicyDate") && !string.IsNullOrEmpty(data["startPolicyDate"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.StartPolicyDate?.ToString()))
             {
-                if (data.ContainsKey("endPolicyDate") && !string.IsNullOrEmpty(data["endPolicyDate"]?.ToString()))
+                if (!string.IsNullOrEmpty(data.EndPolicyDate?.ToString()))
                 {
-                    sql += $@"and p.""policyDate"" between '{data["startPolicyDate"]}' and '{data["endPolicyDate"]}' ";
+                    sql += $@"and p.""policyDate"" between '{data.StartPolicyDate}' and '{data.EndPolicyDate}' ";
                 }
                 else
                 {
-                    sql += $@"and p.""policyDate"" between '{data["startPolicyDate"]}' and '{currentDate}' ";
+                    sql += $@"and p.""policyDate"" between '{data.StartPolicyDate}' and '{currentDate}' ";
                 }
             }
-            if (data.ContainsKey("createUserCode") && !string.IsNullOrEmpty(data["createUserCode"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.CreateUserCode?.ToString()))
             {
-                sql += $@"and p.createusercode = '{data["createUserCode"]}' ";
+                sql += $@"and p.createusercode = '{data.CreateUserCode}' ";
             }
-            if (data.ContainsKey("contactPersonId1") && !string.IsNullOrEmpty(data["contactPersonId1"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.ContactPersonId1?.ToString()))
             {
-                sql += $@"and a1.""contactPersonID"" = {data["contactPersonId1"]} ";
+                sql += $@"and a1.""contactPersonID"" = {data.ContactPersonId1} ";
             }
-            if (data.ContainsKey("contactPersonId2") && !string.IsNullOrEmpty(data["contactPersonId2"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.ContactPersonId2?.ToString()))
             {
-                sql += $@"and a2.""contactPersonID"" = {data["contactPersonId2"]} ";
+                sql += $@"and a2.""contactPersonID"" = {data.ContactPersonId2} ";
             }
-            if (data.ContainsKey("agentCode1") && !string.IsNullOrEmpty(data["agentCode1"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.AgentCode1?.ToString()))
             {
-                sql += $@"and p.""agentCode"" = '{data["agentCode1"]}' ";
+                sql += $@"and p.""agentCode"" = '{data.AgentCode1}' ";
             }
-            if (data.ContainsKey("agentCode2") && !string.IsNullOrEmpty(data["agentCode2"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.AgentCode2?.ToString()))
             {
-                sql += $@"and p.""agentCode2"" = '{data["agentCode2"]}' ";
+                sql += $@"and p.""agentCode2"" = '{data.AgentCode2}' ";
             }
-            if (data.ContainsKey("insurerCode") && !string.IsNullOrEmpty(data["insurerCode"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.InsurerCode?.ToString()))
             {
-                sql += $@"and p.""insurerCode"" = '{data["insurerCode"]}' ";
+                sql += $@"and p.""insurerCode"" = '{data.InsurerCode}' ";
             }
-            if (data.ContainsKey("status") && !string.IsNullOrEmpty(data["status"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.Status?.ToString()))
             {
-                sql += $@"and p.status = '{data["status"]} ";
+                sql += $@"and p.status = '{data.Status}' ";
             }
-            if (data.ContainsKey("class") && !string.IsNullOrEmpty(data["class"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.Class?.ToString()))
             {
-                sql += $@"and it.""class"" = '{data["class"]}' ";
+                sql += $@"and it.""class"" = '{data.Class}' ";
             }
-            if (data.ContainsKey("subClass") && !string.IsNullOrEmpty(data["subClass"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.SubClass?.ToString()))
             {
-                sql += $@"and it.""subClass"" = '{data["subClass"]}' ";
+                sql += $@"and it.""subClass"" = '{data.SubClass}' ";
             }
-            if (data.ContainsKey("orderBy") && !string.IsNullOrEmpty(data["orderBy"]?.ToString()))
+            if (!string.IsNullOrEmpty(data.OrderBy?.ToString()))
             {
-                if (data["orderBy"].ToString() == "ผู้บันทึก")
+                if (data.OrderBy == "ผู้บันทึก")
                 {
                     sql += $@"order by p.createusercode asc";
                 }
-                else if (data["orderBy"].ToString() == "ผู้ดูแล")
+                else if (data.OrderBy.ToString() == "ผู้ดูแล")
                 {
                     sql += $@"order by a1.""contactPersonID"" asc, a2.""contactPersonID"" asc";
                 }
-                else if (data["orderBy"].ToString() == "ผู้แนะนำ")
+                else if (data.OrderBy.ToString() == "ผู้แนะนำ")
                 {
                     sql += $@"order by p.""agentCode"" asc, p.""agentCode2"" asc";
                 }
             }
             sql += $@";";
-            var dailyPolicyReport = await _dataContext.DailyPolicyReports.FromSqlRaw(sql).ToListAsync();
-            return dailyPolicyReport;
+            var json = await _dataContext.DailyPolicyReportResults.FromSqlRaw(sql).ToListAsync();
+            return json;
         }
     }
 }

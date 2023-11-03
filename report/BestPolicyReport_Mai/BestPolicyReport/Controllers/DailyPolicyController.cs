@@ -1,4 +1,4 @@
-﻿using BestPolicyReport.Models;
+﻿using BestPolicyReport.Models.DailyPolicyReport;
 using BestPolicyReport.Services.DailyPolicyService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
@@ -17,20 +17,18 @@ namespace BestPolicyReport.Controllers
         }
 
         [HttpPost("json")]
-        public async Task<ActionResult<List<DailyPolicyReport>?>> GetDailyPolicyReportJson(Dictionary<string, string> data)
+        public async Task<ActionResult<List<DailyPolicyReportResult>?>> GetDailyPolicyReportJson(DailyPolicyReportInput data)
         {
             var result = await _dailyPolicyService.GetDailyPolicyReportJson(data);
             if (result == null)
             {
-                return Ok(new List<DailyPolicyReport>());
+                return Ok(new List<DailyPolicyReportResult>());
             }
             return Ok(result);
         }
 
-
-        
         [HttpPost("excel")]
-        public async Task<IActionResult?> GetDailyPolicyExcel(Dictionary<string, string> data)
+        public async Task<IActionResult?> GetDailyPolicyExcel(DailyPolicyReportInput data)
         {
             var result = await _dailyPolicyService.GetDailyPolicyReportJson(data);
             if (result == null)
@@ -39,9 +37,9 @@ namespace BestPolicyReport.Controllers
             }
             using var workbook = new XLWorkbook();
             var sheetName = "บันทึกกธประจำวัน";
-            if (data.ContainsKey("orderBy") && !string.IsNullOrEmpty(data["orderBy"].ToString()))
+            if (!string.IsNullOrEmpty(data.OrderBy?.ToString()))
             {
-                sheetName += $"_ตาม{data["orderBy"]}";
+                sheetName += $"_ตาม{data.OrderBy}";
             }
             var worksheet = workbook.Worksheets.Add(sheetName);
 
