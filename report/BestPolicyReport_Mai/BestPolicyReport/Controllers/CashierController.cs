@@ -73,6 +73,7 @@ namespace BestPolicyReport.Controllers
                 worksheet.Cell(row, col++).Value = i.CashierAmt;
                 worksheet.Cell(row, col++).Value = i.DfRpReferNo;
                 worksheet.Cell(row, col++).Value = i.RpRefDate;
+                worksheet.Cell(row, col++).Value = i.ActualValue;
                 worksheet.Cell(row, col++).Value = i.DiffAmt;
                 worksheet.Cell(row, col++).Value = i.Status;
                 row++;
