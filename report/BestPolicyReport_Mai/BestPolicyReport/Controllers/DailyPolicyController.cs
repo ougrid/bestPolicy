@@ -1,4 +1,4 @@
-﻿using BestPolicyReport.Models;
+﻿using BestPolicyReport.Models.DailyPolicyReport;
 using BestPolicyReport.Services.DailyPolicyService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
@@ -17,20 +17,18 @@ namespace BestPolicyReport.Controllers
         }
 
         [HttpPost("json")]
-        public async Task<ActionResult<List<DailyPolicyReport>?>> GetDailyPolicyReportJson(Dictionary<string, string> data)
+        public async Task<ActionResult<List<DailyPolicyReportResult>?>> GetDailyPolicyReportJson(DailyPolicyReportInput data)
         {
             var result = await _dailyPolicyService.GetDailyPolicyReportJson(data);
             if (result == null)
             {
-                return Ok(new List<DailyPolicyReport>());
+                return Ok(new List<DailyPolicyReportResult>());
             }
             return Ok(result);
         }
 
-
-        
         [HttpPost("excel")]
-        public async Task<IActionResult?> GetDailyPolicyExcel(Dictionary<string, string> data)
+        public async Task<IActionResult?> GetDailyPolicyExcel(DailyPolicyReportInput data)
         {
             var result = await _dailyPolicyService.GetDailyPolicyReportJson(data);
             if (result == null)
@@ -39,9 +37,9 @@ namespace BestPolicyReport.Controllers
             }
             using var workbook = new XLWorkbook();
             var sheetName = "บันทึกกธประจำวัน";
-            if (data.ContainsKey("orderBy") && !string.IsNullOrEmpty(data["orderBy"].ToString()))
+            if (!string.IsNullOrEmpty(data.OrderBy?.ToString()))
             {
-                sheetName += $"_ตาม{data["orderBy"]}";
+                sheetName += $"_ตาม{data.OrderBy}";
             }
             var worksheet = workbook.Worksheets.Add(sheetName);
 
@@ -49,12 +47,12 @@ namespace BestPolicyReport.Controllers
             var headers = new string[]
              {
             "ApplicationNo", "หมายเลขกรมธรรม์", "วันที่นำข้อมูลเข้า", "วันที่เริ่มคุ้มครอง", "วันที่สิ้นสุดคุ้มครอง",
-            "วันที่ทำสัญญา", "รหัสผู้บันทึก", "Username", "รหัสผู้ดูแล 1", "ชื่อผู้ดูแล 1",
+            "วันที่ทำสัญญา", "รหัสผู้บันทึก", "Username ผู้บันทึก", "รหัสผู้ดูแล 1", "ชื่อผู้ดูแล 1",
             "รหัสผู้ดูแล 2", "ชื่อผู้ดูแล 2", "รหัสผู้แนะนำ 1", "ชื่อผู้แนะนำ 1", "รหัสผู้แนะนำ 2", "ชื่อผู้แนะนำ 2",
             "รหัสผู้เอาประกัน", "ชื่อผู้เอาประกัน", "ประเภทประกัน", "ประเภทย่อยประกัน", "ป้ายทะเบียน", "จังหวัด", "เลขตัวถัง",
-            "GrossPrem", "SpecDiscRate", "SpecDiscAmt", "NetGrossPrem", "Duty", "Tax",
-            "TotalPrem", "CommInRate", "CommInAmt", "CommInTaxAmt", "OvInRate", "OvInAmt", "OvInTaxAmt",
-            "CommOutRate", "CommOutAmt", "OvOutRate", "OvOutAmt", "บริษัทประกัน"
+            "เบี้ยรวม", "อัตราส่วนลด", "มูลค่าส่วนลด", "เบี้ยสุทธิ", "อากร", "ภาษี",
+            "เบี้ยประกันภัยรับรวม", "อัตราคอมมิชชั่นรับ", "ยอดคอมมิชชั่นรับ", "ยอดภาษีคอมมิชชั่นรับ", "อัตรา OV รับ", "ยอด OV รับ", "ยอดภาษี OV รับ",
+            "อัตราคอมมิชชั่นจ่าย", "ยอดคอมมิชชั่นจ่าย", "อัตรา OV จ่าย", "ยอด OV จ่าย", "บริษัทประกัน"
             };
 
             for (int col = 1; col <= headers.Length; col++)
@@ -118,6 +116,7 @@ namespace BestPolicyReport.Controllers
             // You can set the table name and style here if needed
             table.Name = "Table";
             table.ShowAutoFilter = true;
+            worksheet.Columns().AdjustToContents();
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -126,7 +125,7 @@ namespace BestPolicyReport.Controllers
             return File(
                 content,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                $"{sheetName}.xlsx");
+                $"รายงาน{sheetName}.xlsx");
         }
     }
 }

@@ -1,7 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using BestPolicyReport.Data;
 using BestPolicyReport.Services.DailyPolicyService;
 using BestPolicyReport.Services.BillService;
-using Microsoft.EntityFrameworkCore;
+using BestPolicyReport.Services.CashierService;
+using BestPolicyReport.Services.OutputVatCommInService;
+using BestPolicyReport.Services.OutputVatOvInService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDailyPolicyService, DailyPolicyService>();
 builder.Services.AddScoped<IBillService, BillService>();
+builder.Services.AddScoped<ICashierService, CashierService>();
+builder.Services.AddScoped<IOutputVatCommInService, OutputVatCommInService>();
+builder.Services.AddScoped<IOutputVatOvInService, OutputVatOvInService>();
 builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Amitydb")));
 
 var app = builder.Build();

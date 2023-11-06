@@ -1,5 +1,4 @@
-﻿using BestPolicyReport.Models;
-using BestPolicyReport.Models.BillReport;
+﻿using BestPolicyReport.Models.BillReport;
 using BestPolicyReport.Services.BillService;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +26,6 @@ namespace BestPolicyReport.Controllers
             }
             return Ok(result);
         }
-
-
         
         [HttpPost("excel")]
         public async Task<IActionResult?> GetBillReportExcel(BillReportInput data)
@@ -47,10 +44,10 @@ namespace BestPolicyReport.Controllers
             {
             "บริษัทประกัน", "รหัสผู้แนะนำ 1", "รหัสผู้แนะนำ 2", "วันที่กำหนดชำระ", "หมายเลขกรมธรรม์", "เลขสลักหลัง", "เลขที่ใบแจ้งหนี้", 
             "เลขที่งวด", "รหัสผู้เอาประกัน", "ชื่อผู้เอาประกัน", "ป้ายทะเบียน", "จังหวัด", "เลขตัวถัง",
-            "GrossPrem", "SpecDiscRate", "SpecDiscAmt", "NetGrossPrem", "Duty", "Tax",
-            "TotalPrem", "CommOutRate1", "CommOutAmt1", "OvOutRate1", "OvOutAmt1",
-            "CommOutRate2", "CommOutAmt2", "OvOutRate2", "OvOutAmt2",
-            "CommOutRate", "CommOutAmt", "OvOutRate", "OvOutAmt", "netFlag", "billPremium"
+            "เบี้ยรวม", "อัตราส่วนลด", "มูลค่าส่วนลด", "เบี้ยสุทธิ", "อากร", "ภาษี",
+            "เบี้ยประกันภัยรับรวม", "อัตราคอมมิชชั่นจ่ายของผู้แนะนำ 1", "ยอดคอมมิชชั่นจ่ายของผู้แนะนำ 1", "อัตรา OV จ่ายของผู้แนะนำ 1", "ยอด OV จ่ายของผู้แนะนำ 1",
+            "อัตราคอมมิชชั่นจ่ายของผู้แนะนำ 2", "ยอดคอมมิชชั่นจ่ายของผู้แนะนำ 2", "อัตรา OV จ่ายของผู้แนะนำ 2", "ยอด OV จ่ายของผู้แนะนำ 2",
+            "อัตราคอมมิชชั่นจ่าย", "ยอดคอมมิชชั่นจ่าย", "อัตรา OV จ่าย", "ยอด OV จ่าย", "netFlag", "billPremium"
             };
 
             for (int col = 1; col <= headers.Length; col++)
@@ -104,6 +101,7 @@ namespace BestPolicyReport.Controllers
             var table = tableRange.AsTable();
             table.Name = "Table";
             table.ShowAutoFilter = true;
+            worksheet.Columns().AdjustToContents();
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -112,7 +110,7 @@ namespace BestPolicyReport.Controllers
             return File(
                 content,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                $"{sheetName}.xlsx");
+                $"รายงาน{sheetName}.xlsx");
         }
     }
 }
