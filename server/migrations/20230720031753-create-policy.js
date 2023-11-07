@@ -45,7 +45,7 @@ module.exports = {
       endorseNo: {
         type: Sequelize.STRING
       },
-      invioceNo: {
+      invoiceNo: {
         type: Sequelize.STRING
       },
       taxInvoiceNo: {
@@ -155,6 +155,9 @@ module.exports = {
         type: Sequelize.FLOAT
       },
       ovout_amt: {
+        type: Sequelize.FLOAT
+      },
+      cover_amt: {
         type: Sequelize.FLOAT
       },
       createusercode:{

@@ -2,9 +2,15 @@ import React, { useEffect, useState }  from "react";
 import PremInTable from "../PremIn/PremInTable";
 import axios from "axios";
 import Modal from 'react-bootstrap/Modal';
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 export default function PremOutCreate() {
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+  headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const [filterData, setFilterData] = useState(
@@ -44,33 +50,34 @@ export default function PremOutCreate() {
     "billpremium",
   ];
   const cols2Data = {
-    select : "select",
-    insurerCode:"insurerCode",
-    agentCode:"advisorCode",
+    select : "เลือก",
+    insurerCode:"รหัสบริษัทประกัน",
+    agentCode:"รหัสผู้แนะนำ",
     dueDate:"Duedate",
-    policyNo:"Policyno",
-    endorseNo: "Endorseno",
-    invoiceNo: "Invoiceno",
-    seqNo: "seqno",
-    customerid: "customerid",
-    insureename:  "insuredname",
-    licenseNo: "licenseno",
+    policyNo:"เลขกรมธรรม์",
+    endorseNo: "เลขสลักหลัง",
+    invoiceNo: "เลขใบแจ้งหนี้",
+    seqNo: "งวด",
+    customerid: "id",
+    insureename:  "ชื่อ ผู้เอาประกัน",
+    licenseNo: "เลทะเบียนรถ",
     // province: "province", // nodata
-    chassisNo: "chassisno",
-    netgrossprem: "grossprem",
-    duty: "duty",
-    tax: "tax",
-    totalprem: "totalamt",
-    commin_rate: "comm-in%",
-    commin_amt: "comm-in-amt",
-    commin_taxamt: "vat-comm-in",
-    commin_total: "comm-in-total",
-    ovin_rate: "ov-in%",
-    ovin_amt: "ov-in-amt",
-    ovin_taxamt: "vat-ov-in",
-    ovin_total: "ov-in-total",
-    netflag: "[] net",
-    paymentamt: "billpremium",
+    chassisNo: "เลขคัชซี",
+    netgrossprem: "เบี้ยประกัน",
+    duty: "อากร",
+    tax: "ภาษี",
+    withheld: "WHT 1%",
+    totalprem: "เบี้ยประกันรวม",
+    commin_rate: "Comm In%",
+    commin_amt: "จำนวน",
+    commin_taxamt: "Vat Comm In",
+    commin_total: "Comm In รวม",
+    ovin_rate: "Ov In%",
+    ovin_amt: "จำนวน",
+    ovin_taxamt: "Vat Ov In",
+    ovin_total: "Ov In รวม",
+    netflag: "[] Net",
+    paymentamt: "รวม (บาท)",
 
 };
   const handleClose = (e) => {
@@ -129,7 +136,7 @@ export default function PremOutCreate() {
     e.preventDefault();
     console.log(filterData);
     axios
-        .post(url + "/araps/getaptrans", filterData)
+        .post(url + "/araps/getaptrans", filterData, headers)
         .then((res) => {
             if (res.status === 201) {
                 console.log(res.data);
@@ -161,7 +168,7 @@ export default function PremOutCreate() {
 
 const savearpremout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
-  await axios.post(url + "/araps/saveappremout", {master : filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/saveappremout", {master : filterData, trans : policiesData}, headers).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -169,7 +176,7 @@ const savearpremout = async (e) => {
 
 const submitarpremout = async (e) => {
   console.log({master :  filterData, trans : policiesData});
-  await axios.post(url + "/araps/submitappremout", {master :filterData, trans : policiesData}).then((res) => {
+  await axios.post(url + "/araps/submitappremout", {master :filterData, trans : policiesData}, headers).then((res) => {
     alert("save account recive successed!!!");
     // window.location.reload(false);
   }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -178,12 +185,12 @@ const submitarpremout = async (e) => {
   return (
     <div className="container d-fle justify-content-center ">
       <form onSubmit={(e)=>submitFilter(e)}>
-        <h1>Stament ค่าเบี้ยส่ง insurer</h1>
+        <h1>Statement ค่าเบี้ยส่งบริษัทประกัน</h1>
        
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -199,7 +206,7 @@ const submitarpremout = async (e) => {
         {/* advisorCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -247,12 +254,12 @@ const submitarpremout = async (e) => {
        
         
         <div className="row my-3">
-          <input type="submit" className="btn btn-success"/>
+          <input type="submit" className="btn btn-success" value={'ค้นหา'}/>
         </div>
       </form>
       <Modal size='m' show={hidecard[0]} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title >Summary</Modal.Title>
+                    <Modal.Title >สรุปค่าเบี้ยรวมจ่ายบริษัทประกัน</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* <div class="row">
@@ -263,38 +270,38 @@ const submitarpremout = async (e) => {
                     </div> */}
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">totalpremium</label>
+                            <label class="col-form-label">เบี้ยประกันรวม</label>
                             </div>
                         <div class="col-6">
                            <label class="col-form-label">{filterData.netprem}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">comm-in</label>
+                            <label class="col-form-label">Comm In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.commin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">VAT comm-in</label>
+                            <label class="col-form-label">VAT Comm In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.vatcommin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">ov-in</label>
+                            <label class="col-form-label">Ov In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.ovin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">VAT ov-in</label>
+                            <label class="col-form-label">VAT Ov In</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.vatovin}</label></div>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label class="col-form-label">paymentamt</label>
+                            <label class="col-form-label">จำนวนเงินที่จ่าย (บาท)</label>
                         </div>
                         <div class="col-6"> <label class="col-form-label">{filterData.actualvalue}</label></div>
                     </div>
@@ -305,9 +312,9 @@ const submitarpremout = async (e) => {
                 </Modal.Footer>
             </Modal>
       <div>
-        <PremInTable cols={cols2Data} rows={policiesData} handleChange={handleChange}/>
+        <PremInTable cols={cols2Data} rows={policiesData} handleChange={handleChange} checknetflag={true}/>
         <button className="btn btn-primary">Export To Excel</button>
-        <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >confirm</button>
+        <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >ยืนยัน</button>
        
       </div>
     </div>

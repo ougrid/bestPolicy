@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
 import { Link, redirect, useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 import logoamity from './amity_3.webp'
 import {
   NavBar,
@@ -15,8 +16,10 @@ import {
 function Nav() {
   const navigate = useNavigate();
   const [showToggle, setShowToggle] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
   const handleLogOut = (e) => {
-    localStorage.removeItem("jwt");
+    
+    removeCookie("jwt")
   };
 
   const admin = (
@@ -26,7 +29,7 @@ function Nav() {
   );
 
   
-  if (localStorage.getItem("jwt") !== null) {
+  if (cookies["jwt"] !== undefined) {
     // const decoded = jwt_decode(localStorage.getItem("jwt"));
     return (
       // Use React Fragment
@@ -51,15 +54,15 @@ function Nav() {
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item"  href="/findpolicy">ค้นหากรมธรรม์</a></li>
-              <li><a class="dropdown-item"  href="/policyexcel">สร้างรายการใหม่ (excel)</a></li>
-              <li><a class="dropdown-item"  href="/policyscreen">สร้างรายการใหม่ (screen)</a></li>
+              <li><a class="dropdown-item"  href="/policyexcel">สร้างรายการใหม่ (Excel)</a></li>
+              <li><a class="dropdown-item"  href="/policyscreen">สร้างรายการใหม่ (Screen)</a></li>
               <li><a class="dropdown-item"  href="/policyreconcile">Reconcile</a></li>
             </ul>
           </div>
           
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              Bill Advisor
+              ใบวางบิล
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -70,7 +73,7 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              Cashier Receive
+              รายการรับเงิน
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -82,13 +85,13 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AR PREM-IN
+              ตัดรับค่าเบี้ย
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li><a class="dropdown-item" href="/premin/find">ค้นหารายการ</a></li>
               <li><a class="dropdown-item" href="/premin/create">สร้างรายการใหม่</a></li>
-              <li><a class="dropdown-item" href="/premin/createdirect">สร้างรายการใหม่ (จ่ายแบบ direct)</a></li>
+              <li><a class="dropdown-item" href="/premin/createdirect">สร้างรายการใหม่ (จ่ายประกันโดยตรง)</a></li>
               <li><a class="dropdown-item" href="/premin/paid/premout">ค้นหารายการ prem-out</a></li>
               <li><a class="dropdown-item" href="/premin/paid/commovout">ค้นหารายการ comm/ov-out</a></li>
               <li><a class="dropdown-item" href="/premin/paid/wht3">ค้นหารายการ WHT 3%</a></li>
@@ -96,7 +99,7 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AP Prem-out
+              ตัดจ่ายค่าเบี้ย
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -105,7 +108,7 @@ function Nav() {
           </div>
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AR Comm-in
+              ตัดรับค่าคอม
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -115,7 +118,7 @@ function Nav() {
 
           <div class="dropdown">
             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              AP Comm-out
+              ตัดจ่ายค่าคอม
             </a>
 
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -164,7 +167,7 @@ function Nav() {
             </a>
             
             <a class="btn btn-secondary " href="/" role="button" onClick={handleLogOut}>
-              logout
+              ออกจากระบบ
             </a>
               
              

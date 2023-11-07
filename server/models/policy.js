@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     policyNo:  DataTypes.STRING,
     endorseNo:  DataTypes.STRING,
     invoiceNo:  DataTypes.STRING,
-    taxinvoiceNo:  DataTypes.STRING,
+    taxInvoiceNo:  DataTypes.STRING,
     seqNoins: DataTypes.INTEGER,
     seqNoagt: DataTypes.INTEGER,
     insureeCode: DataTypes.STRING,
@@ -57,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
     commout_amt: DataTypes.FLOAT,
     ovout_rate:  DataTypes.FLOAT,
     ovout_amt:  DataTypes.FLOAT,
+    cover_amt:  DataTypes.FLOAT,
     createusercode: DataTypes.STRING,
     lastVersion:  DataTypes.CHAR,
     // A or I

@@ -13,10 +13,17 @@ import {
   InputBtnProfile,
 } from "../StylesPages/ProfileStyles";
 import { InputBtn } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 const PolicyExcel = () => {
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const [profile, setProfile] = useState({});
   // var decoded = jwt_decode(localStorage.getItem("jwt"));
   // useEffect(() => {
@@ -130,7 +137,7 @@ const PolicyExcel = () => {
         </form>
       </Border> */}
 
-      <h2 className="text-center">Add New Policy</h2>
+      <h2 className="text-center">บันทึกข้อมูลกรมธรรม์จากไฟล์ excel</h2>
       <PolicyListV2 userId={profile.id} />
     </div>
   );

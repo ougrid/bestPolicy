@@ -17,6 +17,7 @@ import {
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
 import { Button } from "react-bootstrap";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -29,6 +30,11 @@ const Joi = require('joi');
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateCashierReceive = () => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const { txtype } = useParams();
@@ -83,12 +89,7 @@ const CreateCashierReceive = () => {
         let data = JSON.stringify({
             "filter": txtype === 'premin' ? billAdvisorNo : dfrpreferno
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo?txtype=" + txtype, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo?txtype=" + txtype, data, headers)
             .then((response) => {
                 console.log(response);
                 setInsurer(response.data[0].insurerCode)
@@ -118,12 +119,7 @@ const CreateCashierReceive = () => {
     useEffect(() => {
         console.log(txtype);
         let data = {}
-        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBrand", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBrand",  headers)
             .then((response) => {
                 console.log(response.data);
                 setBankAmityBrandData(response.data)
@@ -136,12 +132,7 @@ const CreateCashierReceive = () => {
                 alert("Something went wrong, Try Again.");
             });
 
-        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBrand?" + "type=I", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBrand?" + "type=I",  headers)
             .then((response) => {
                 console.log(response.data);
                 setBankPartnerBrandData(response.data)
@@ -166,12 +157,7 @@ const CreateCashierReceive = () => {
     useEffect(() => {
         let data = {}
         if (bankAmity != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?brand=" + bankAmity, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?brand=" + bankAmity, headers)
                 .then((response) => {
                     console.log(response.data);
                     setBankAmityBranchData(response.data)
@@ -189,12 +175,7 @@ const CreateCashierReceive = () => {
         let data = {}
         console.log(bankBranchAmity)
         if (bankBranchAmity != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchAmity + "&brand=" + bankAmity, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchAmity + "&brand=" + bankAmity, headers)
                 .then((response) => {
                     // console.log(response.data);
                     setBankAmityNoData(response.data)
@@ -212,12 +193,7 @@ const CreateCashierReceive = () => {
     useEffect(() => {
         let data = {}
         if (bankPartner != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBranch?brand=" + bankPartner + "&type=I", data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankPartnerBranch?brand=" + bankPartner + "&type=I", headers)
                 .then((response) => {
                     console.log(response.data);
                     setBankPartnerBranchData(response.data)
@@ -235,12 +211,7 @@ const CreateCashierReceive = () => {
         let data = {}
         console.log(bankBranchAmity)
         if (bankBranchPartner != "")
-            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchPartner + "&brand=" + bankPartner + "&type=I", data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-                }
-            })
+            axios.get(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/static/bank/BankAmityBranch?branch=" + bankBranchPartner + "&brand=" + bankPartner + "&type=I",  headers)
                 .then((response) => {
                     // console.log(response.data);
                     setBankPartnerNoData(response.data)
@@ -346,12 +317,7 @@ const CreateCashierReceive = () => {
             return
         }
         console.log(data);  
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/submitCasheir?txtype=" + txtype, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/submitCasheir?txtype=" + txtype, data, headers)
             .then((response) => {
 
                 if (response.status == 200) {
@@ -440,12 +406,7 @@ const CreateCashierReceive = () => {
             setModalText(error)
             return
         }
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/saveCasheir", data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVU0VSSUQiOjEsImlhdCI6MTY5MzE5NzY5MCwiZXhwIjoxNjkzMjA0ODkwfQ.YXyE5vG5yrtD8JVkEy4dpWe11J4EAePcFY7jKyAOJqA'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/saveCasheir", data, headers)
             .then((response) => {
                 console.log(response)
                 if (response.status == 200) {
@@ -465,11 +426,7 @@ const CreateCashierReceive = () => {
         let data = JSON.stringify({
             "billadvisorno": billAdvisorNo
         });
-        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo", data, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        axios.post(window.globalConfig.BEST_POLICY_V1_BASE_URL + "/bills/findDataByBillAdvisoryNo", data, headers)
             .then((response) => {
                 // console.log(response.data);
                 if (response.data[0]) {
@@ -509,9 +466,9 @@ const CreateCashierReceive = () => {
                     <div className="col-lg-6">
                         <form>
                             {txtype === 'premin' ?
-                                <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการ Cashier PREM-IN ใหม่</h2>
+                                <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการรับเงิน PREM-IN ใหม่</h2>
                                 :
-                                <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการ Cashier COMM-IN ใหม่</h2>
+                                <h2 className="text-center" style={{ marginBottom: "30px" }}>สร้างรายการรับเงิน COMM-IN ใหม่</h2>
                             }
                             {/* Bill Advisor No */}
                             {txtype === 'premin' ?
@@ -523,7 +480,7 @@ const CreateCashierReceive = () => {
                                         <input type="text" required id="billAdvisorNo" value={billAdvisorNo} onChange={(e) => setBillAdvisorNo(e.target.value)} className="form-control" />
                                     </div>
                                     <div className="col-1 text-center">
-                                        <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
+                                        <button type="submit" className="btn btn-primary" onClick={onSearch}>ค้นหา</button>
                                     </div>
                                 </div>
                                 :
@@ -536,7 +493,7 @@ const CreateCashierReceive = () => {
                                         <input type="text" required id="dfrpreferno" value={dfrpreferno} onChange={(e) => setDfrpreferno(e.target.value)} className="form-control" />
                                     </div>
                                     <div className="col-1 text-center">
-                                        <button type="submit" className="btn btn-primary" onClick={onSearch}>Search</button>
+                                        <button type="submit" className="btn btn-primary" onClick={onSearch}>ค้นหา</button>
                                     </div>
                                 </div>
                             }
@@ -546,7 +503,7 @@ const CreateCashierReceive = () => {
                             {/* Insurer */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="Insurer" className="form-label">Insurer</label>
+                                    <label htmlFor="Insurer" className="form-label">บริษัทประกัน</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="text" id="Insurer" required value={Insurer} readOnly={insurerReadOnly}
@@ -561,7 +518,7 @@ const CreateCashierReceive = () => {
                             {/* Advisor */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="Advisor" className="form-label">Advisor</label>
+                                    <label htmlFor="Advisor" className="form-label">ผู้แนะนำ</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="text" id="Advisor" required value={Advisor} readOnly={advisoryReadOnly}
@@ -576,7 +533,7 @@ const CreateCashierReceive = () => {
                             {/* Customer */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="CustomerId" className="form-label">Customer ID</label>
+                                    <label htmlFor="CustomerId" className="form-label">ID ลูกค้า</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="number" id="Customer" value={Customer} required onChange={(e) => setCustomer(e.target.value)} className="form-control" />
@@ -596,7 +553,7 @@ const CreateCashierReceive = () => {
                             {/* Cashier Date */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="cashierDate" className="form-label">Cashier Date</label>
+                                    <label htmlFor="cashierDate" className="form-label">วันที่รับเงิน</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="datetime-local" id="cashierDate" required value={cashierDate} onChange={(e) => setCashierDate(e.target.value)} className="form-control" />
@@ -606,7 +563,7 @@ const CreateCashierReceive = () => {
                             {/* Receive Form */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="receiveForm" className="form-label">Receive Form</label>
+                                    <label htmlFor="receiveForm" className="form-label">รับเงิน จาก</label>
                                 </div>
                                 <div className="col-7">
                                     {txtype === 'premin' ?
@@ -620,9 +577,9 @@ const CreateCashierReceive = () => {
 
                                         >
                                             <option value="" disabled>Select Transaction Type</option>
-                                            <option value="Advisor">Advisor</option>
+                                            <option value="Advisor">ผู้แนะนำ</option>
 
-                                            <option value="Customer">Customer</option>
+                                            <option value="Customer">ผู้เอาประกัน</option>
                                         </select>
                                         :
                                         <select type="text" id="receiveForm" value={receiveForm} onChange={(e) => setReceiveForm(e.target.value)}
@@ -633,7 +590,7 @@ const CreateCashierReceive = () => {
                                         >
                                             <option value="" disabled>Select Transaction Type</option>
 
-                                            <option value="Insurer">Insurer</option>
+                                            <option value="Insurer">บริษัทประกัน</option>
 
                                         </select>}
                                 </div>
@@ -642,7 +599,7 @@ const CreateCashierReceive = () => {
                             {/* Receive Name */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="receiveName" className="form-label">Receive Name</label>
+                                    <label htmlFor="receiveName" className="form-label">ชื่อผู้จ่าย</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="text" id="receiveName" value={receiveName} required
@@ -657,7 +614,7 @@ const CreateCashierReceive = () => {
                             {/* Receive Type */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="receiveType" className="form-label">Receive Type</label>
+                                    <label htmlFor="receiveType" className="form-label">รูปแบบการชำระ</label>
                                 </div>
                                 <div className="col-7">
                                     <select id="receiveType" value={receiveType} onChange={(e) => setReceiveType(e.target.value)} className="form-control">
@@ -674,7 +631,7 @@ const CreateCashierReceive = () => {
                             {/* Transaction Type */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="transactionType" className="form-label">Transaction Type</label>
+                                    <label htmlFor="transactionType" className="form-label">ประเภทธุรกรรม</label>
                                 </div>
                                 <div className="col-7">
                                     <select
@@ -700,7 +657,7 @@ const CreateCashierReceive = () => {
                                     {/* Ref no  */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="refno" className="form-label">Ref No</label>
+                                            <label htmlFor="refno" className="form-label">เลขที่อ้างอิง</label>
                                         </div>
                                         <div className="col-7">
                                             <input type="text" id="refno" required value={refno} onChange={(e) => setRefno(e.target.value)} className="form-control" />
@@ -711,7 +668,7 @@ const CreateCashierReceive = () => {
                                     {/* Bank Partner */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="bankPartner" className="form-label">Bank Partner</label>
+                                            <label htmlFor="bankPartner" className="form-label">จากธนาคาร</label>
                                         </div>
                                         <div className="col-7">
                                             <select
@@ -739,7 +696,7 @@ const CreateCashierReceive = () => {
                                     {/* Bank Branch Partner */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="bankBranchPartner" className="form-label">Bank Branch Partner</label>
+                                            <label htmlFor="bankBranchPartner" className="form-label">สาขา</label>
                                         </div>
                                         <div className="col-7">
                                             <select
@@ -766,7 +723,7 @@ const CreateCashierReceive = () => {
                                     {/* Bank No Partner */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="bankNoPartner" className="form-label">Bank No Partner</label>
+                                            <label htmlFor="bankNoPartner" className="form-label">เลขที่บัญชี</label>
                                         </div>
                                         <div className="col-7">
                                             <select
@@ -793,7 +750,7 @@ const CreateCashierReceive = () => {
                                     {/* Bank Amity */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="bankAmity" className="form-label">Bank Amity</label>
+                                            <label htmlFor="bankAmity" className="form-label">ธนาคาร (Amity)</label>
                                         </div>
                                         <div className="col-7">
                                             <select
@@ -821,7 +778,7 @@ const CreateCashierReceive = () => {
                                     {/* Bank Branch Amity */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="bankBranchAmity" className="form-label">Bank Branch Amity</label>
+                                            <label htmlFor="bankBranchAmity" className="form-label">สาขา (Amity)</label>
                                         </div>
                                         <div className="col-7">
                                             <select
@@ -848,7 +805,7 @@ const CreateCashierReceive = () => {
                                     {/* Bank No */}
                                     <div className="row mb-3">
                                         <div className="col-4">
-                                            <label htmlFor="bankNo" className="form-label">Bank No</label>
+                                            <label htmlFor="bankNo" className="form-label">เลขที่บัญชี (Amity)</label>
                                         </div>
                                         <div className="col-7">
                                             <select
@@ -876,7 +833,7 @@ const CreateCashierReceive = () => {
                             {/* Amount */}
                             <div className="row mb-3">
                                 <div className="col-4">
-                                    <label htmlFor="amount" className="form-label">Amount</label>
+                                    <label htmlFor="amount" className="form-label">จำนวนเงิน</label>
                                 </div>
                                 <div className="col-7">
                                     <input type="text" id="amount" required value={amount}

@@ -16,6 +16,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,6 +27,11 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindBillAdvisor = () => {
+    
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -50,7 +56,7 @@ const FindBillAdvisor = () => {
     useEffect(() => {
         //get province
         axios
-            .get(url + "/static/provinces/all")
+            .get(url + "/static/provinces/all", headers)
             .then((province) => {
                 const array = []
                 province.data.forEach(ele => {
@@ -64,7 +70,7 @@ const FindBillAdvisor = () => {
 
         // get agent all
         axios
-            .get(url + "/persons/agentall")
+            .get(url + "/persons/agentall", headers)
             .then((agent) => {
                 const array = [];
                 agent.data.forEach((ele) => {
@@ -80,7 +86,7 @@ const FindBillAdvisor = () => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -130,7 +136,7 @@ const FindBillAdvisor = () => {
         e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/payments/findbill", filterData)
+            .post(url + "/payments/findbill", filterData, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -180,13 +186,13 @@ const FindBillAdvisor = () => {
             {/* <BackdropBox1> */}
             <form className="container-fluid " onSubmit={submitFilter}>
                 {/* insurer table */}
-                <h1 className="text-center">ค้นหา billadvisor</h1>
+                <h1 className="text-center">ค้นหาใบวางบิล</h1>
                 <div class="row">
                     <div class="col-1">
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Insurer</label>
+                        <label class="col-form-label">รหัสบริษัทประกัน</label>
 
                     </div>
                     <div class="col-2 ">
@@ -213,7 +219,7 @@ const FindBillAdvisor = () => {
                     </div>
                     <div class="col align-self-end ">
                         <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg" >Search</button>
+                            <button type="submit" class="btn btn-primary btn-lg" >ค้นหา</button>
                         </div>
                     </div>
 
@@ -223,7 +229,7 @@ const FindBillAdvisor = () => {
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Advisor</label>
+                        <label class="col-form-label">รหัสผู้แนะนำ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -304,13 +310,13 @@ const FindBillAdvisor = () => {
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">InsurerCode</th>
-                            <th scope="col">AdvisorCode</th>
-                            <th scope="col">BillAdvisorNo</th>
-                            <th scope="col">BillDate</th>
-                            <th scope="col">Amt</th>
-                            <th scope="col">createusercode</th>
-                            <th scope="col">EDIT</th>
+                            <th scope="col">รหัสบริษัทประกัน</th>
+                            <th scope="col">รหัสผู้แนะนำ</th>
+                            <th scope="col">เลขที่ใบวางบิล</th>
+                            <th scope="col">วันที่</th>
+                            <th scope="col">จำนวนเงิน</th>
+                            <th scope="col">รหัสผู้สร้าง</th>
+                            <th scope="col">แก้ไข</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -321,9 +327,9 @@ const FindBillAdvisor = () => {
                                 <td>{ele.agentCode}</td>
                                 <td>{ele.billadvisorno}</td>
                                 <td>{ele.billdate}</td>
-                                <td>{ele.amt}</td>
+                                <td>{ele.amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td>{ele.createusercode}</td>
-                                <td><button onClick={() =>navigate('/bill/editbill/' + ele.billadvisorno)}>EDIT</button></td>
+                                <td><button onClick={() =>navigate('/bill/editbill/' + ele.billadvisorno)}>แก้ไข</button></td>
                             </tr>)
 
                         })}
@@ -333,7 +339,7 @@ const FindBillAdvisor = () => {
 
 
                 <div className="d-flex justify-content-center">
-                    <LoginBtn type="submit">confirm</LoginBtn>
+                    <LoginBtn type="submit">ยืนยัน</LoginBtn>
                 </div>
             </form>
 

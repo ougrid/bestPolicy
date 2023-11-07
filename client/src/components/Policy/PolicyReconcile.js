@@ -7,9 +7,15 @@ import PolicyCard from "./PolicyCard";
 import Modal from 'react-bootstrap/Modal';
 import { async } from "q";
 import Pagination from "./Pagination";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 const PolicyReconcile = (props) => {
+  const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   //import excel
   const [formData, setFormData] = useState([{
@@ -85,7 +91,8 @@ const PolicyReconcile = (props) => {
     }
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data, headers)
+    .then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     });

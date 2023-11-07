@@ -15,7 +15,7 @@ import {
   LoginBtn,
   BackdropBox1,
 } from "../StylesPages/LoginStyles";
-
+import { useCookies } from "react-cookie";
 const config = require("../../config.json");
 
 const NormalText = {
@@ -29,7 +29,10 @@ const InsureType = () => {
   const navigate = useNavigate();
   const [insureData, setInsureData] = useState({});
   // const [locationData, setLocationData] = useState({entityID : null});
-
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const changeInsurer = (e) => {
     setInsureData((prevState) => ({
       ...prevState,
@@ -41,7 +44,7 @@ const InsureType = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(url + "/insures/insuretypenew", { insure: insureData })
+      .post(url + "/insures/insuretypenew", { insure: insureData }, headers)
       .then((res) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);

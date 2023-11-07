@@ -17,7 +17,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      TITLEABTHAIBEGIN: {
+      TITLETHAIEND: {
         type: Sequelize.STRING
       },
       TITLETYPE: {

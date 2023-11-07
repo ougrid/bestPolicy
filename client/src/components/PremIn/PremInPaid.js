@@ -3,10 +3,15 @@ import React, { useEffect, useState}  from "react";
 import { useParams} from "react-router-dom";
 import PremInTable from "./PremInTable";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
 export default function PremInPaid() {
+  const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const [filterData, setFilterData] = useState(
     {
@@ -19,28 +24,29 @@ export default function PremInPaid() {
     })
     const [policiesData, setPoliciesData] = useState([])
     const colData = {
-      insurerCode: "insurerCode",
-      agentCode: "advisorCode",
+      insurerCode: "รหัสบริษัทประกัน",
+      agentCode: "รหัสผู้แนะนำ",
       dueDate:"Duedate",
-      policyNo:"Policyno",
-      endorseNo:"Endorseno",
-      invoiceNo:"Invoiceno",
-      seqNo: "seqno",
-      customerid:"customerid",
-      insureename:"insuredname",
-      licenseNo:"licenseno",
+      policyNo:"เลขที่กรมธรรม์",
+      endorseNo:"เลขที่สลักหลัง",
+      invoiceNo:"เลขที่ใบวางบิล",
+      seqNo: "งวด",
+      customerid:"id",
+      insureename:"ชื่อ ผู้เอาประกัน",
+      licenseNo:"เลขทะเบียนรถ",
       // "province",
-      chassisNo:"chassisno",
-      netgrossprem:"grossprem",
-      duty:"duty",
-      tax:"tax",
-      totalprem:"totalamt",
-      commout_rate:"comm-out%",
-      commout_amt:"comm-out-amt",
-      ovout_rate:"ov-out%",
-      ovout_amt:"ov-out-amt",
-      netflag:"[] net",
-      remainamt:"billpremium",
+      chassisNo:"เลขคัชซี",
+      netgrossprem:"เบี้ยประกัน",
+      duty:"อากร",
+      tax:"ภาษี",
+      withheld:"WHT 1%",
+      totalprem:"เบี้ยประกันรวม",
+      commout_rate:"Comm Out %",
+      commout_amt:"จำนวน",
+      ovout_rate:"Ov Out %",
+      ovout_amt:"จำนวน",
+      netflag:"[] Net",
+      remainamt:"รวม (บาท)",
   
   };
   
@@ -63,7 +69,7 @@ export default function PremInPaid() {
       setFilterData(data)
     }
     axios
-    .post(url + "/araps/getartrans", filterData)
+    .post(url + "/araps/getartrans", filterData, headers)
     .then((res) => {
       console.log(res.data);
         if (res.status === 201) {
@@ -92,7 +98,7 @@ export default function PremInPaid() {
         {/* BillAdvisorNo */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billAdvisorNo">
-            BillAdvisorNo
+            เลขที่ใบวางบิล
           </label>
           <div className="col-4">
             <input
@@ -106,7 +112,7 @@ export default function PremInPaid() {
         {/* Insurercode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="Insurercode">
-            Insurercode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -135,7 +141,7 @@ export default function PremInPaid() {
         {/* Advisorcode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="Advisorcode">
-            Advisorcode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -164,7 +170,7 @@ export default function PremInPaid() {
         {/* CashierReceiveNo */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="CashierReceiveNo">
-            CashierReceiveNo
+            เลขที่รับเงิน
           </label>
           <div className="col-4 ">
             <input
@@ -193,7 +199,7 @@ export default function PremInPaid() {
         {/* ARNO */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="ARNO">
-            ARNO
+            เลขที่ตัดหนี้
           </label>
           <div className="col-4 ">
             <input className="form-control" type="text" name="ARNO" id="ARNO" />
@@ -216,7 +222,7 @@ export default function PremInPaid() {
         </div>
 
         <div className="row my-3">
-          <button className="btn btn-success">Search</button>
+          <button className="btn btn-success">ค้นหา</button>
         </div>
       </form>
       <div>

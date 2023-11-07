@@ -35,6 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     taxno: DataTypes.STRING,
     contactPersonID : DataTypes.INTEGER,
     deducttaxrate: DataTypes.INTEGER,
+    commovCreditUnit: DataTypes.STRING,
+    premCreditUnit: DataTypes.STRING,
     
   }, {
     sequelize,

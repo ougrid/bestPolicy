@@ -5,6 +5,7 @@ import jwt_decode from "jwt-decode";
 import PolicyCard from "./PolicyCard";
 import Modal from 'react-bootstrap/Modal';
 import * as XLSX from 'xlsx';
+import Select from 'react-select';
 import {
     BrowserRouter,
     Routes,
@@ -18,6 +19,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -28,6 +30,10 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const FindPolicy = () => {
+    const [cookies] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
@@ -40,10 +46,13 @@ const FindPolicy = () => {
             "insurerCode": null,
             "policyNo": null,
             "insureID": null,
-            "createdAt": null,
-            "actDate": null,
+            "createdate_start": null,
+            "effdate_start": null,
+            "createusercode": null,
             "agentCode": null,
-            "itemList": null,
+            "carRegisNo" : null,
+            "chassisNo" : null,
+            "provinceID" : null,
             "status" : 'A',
 
         })
@@ -65,11 +74,12 @@ const FindPolicy = () => {
     useEffect(() => {
         //get province
         axios
-            .get(url + "/static/provinces/all")
+            .get(url + "/static/provinces/all", headers)
             .then((province) => {
                 const array = []
                 province.data.forEach(ele => {
-                    array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
+                    // array.push(<option key={ele.provinceid} value={ele.provinceid}>{ele.t_provincename}</option>)
+                    array.push({label:ele.t_provincename, value:ele.provinceid})
                 });
                 setProvinceDD(array)
             })
@@ -79,7 +89,7 @@ const FindPolicy = () => {
 
         // get insuretype all
         axios
-            .get(url + "/insures/insuretypeall")
+            .get(url + "/insures/insuretypeall", headers)
             .then((insuretype) => {
                 const array = [];
                 insuretype.data.forEach((ele) => {
@@ -95,7 +105,7 @@ const FindPolicy = () => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -144,7 +154,7 @@ const FindPolicy = () => {
         // e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/policies/policygetlist", filterData)
+            .post(url + "/policies/policygetlist", filterData, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -179,8 +189,8 @@ const FindPolicy = () => {
                 //         <td>{res.data[i].chassisNo}</td>
                 //         <td>{res.data[i].endorseNo}</td>
                 //         <td>{res.data[i].seqNo}</td>
-                //         <td>{res.data[i].invioceNo}</td>
-                //         <td>{res.data[i].taxInvioceNo}</td>
+                //         <td>{res.data[i].invoiceNo}</td>
+                //         <td>{res.data[i].taxInvoiceNo}</td>
                 //         <td>{res.data[i].netgrossprem}</td>
                 //         <td>{res.data[i].duty}</td>
                 //         <td>{res.data[i].stamp}</td>
@@ -207,7 +217,7 @@ const FindPolicy = () => {
        
         console.log(data);
         e.preventDefault();
-        await axios.post(url + "/policies/policyedit/batch", data).then((res) => {
+        await axios.post(url + "/policies/policyedit/batch", data, headers).then((res) => {
           alert("policy batch updated");
           //window.location.reload(false);
         }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -223,7 +233,7 @@ const FindPolicy = () => {
 
     return (
         <div>
-<Modal  size="xl" show={hidecard[0]} onHide={handleClose}>
+<Modal  size="xl" fullscreen='xxl-down' show={hidecard[0]} onHide={handleClose} dialogClassName="my-modal">
         <Modal.Header closeButton>
           <Modal.Title >แก้ไขกรมธรรม์</Modal.Title>
         </Modal.Header>
@@ -241,7 +251,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">InsurerCode</label>
+                        <label class="col-form-label">รหัสบริษัทประกัน</label>
 
                     </div>
                     <div class="col-2 ">
@@ -278,7 +288,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">PolicyNo</label>
+                        <label class="col-form-label">เลขกรมธรรม์</label>
 
                     </div>
                     <div class="col-2 ">
@@ -299,7 +309,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">PolicyStaus</label>
+                        <label class="col-form-label">สถานะกรมธรรม์</label>
 
                     </div>
                     <div class="col-2 ">
@@ -321,13 +331,13 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Class/subclass</label>
+                        <label class="col-form-label">Class/Subclass</label>
 
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
                             <select name={`insureID`} class="form-control" onChange={handleChange} >
-                                <option disabled selected hidden>class/subclass</option>
+                                <option disabled selected hidden>Class/Subclass</option>
                                 {insureTypeDD}
                             </select>
                             <div class="input-group-append">
@@ -354,13 +364,17 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Createdate</label>
+                        <label class="col-form-label">วันที่เอาเข้าระบบ </label>
 
                     </div>
 
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control " name="createdate_start" onChange={handleChange} />
+                            <input type="date" class="form-control " name="createdate_start" onChange={handleChange} value={filterData.createdate_start} 
+                            onBlur={(e)=>{setFilterData((prevState) => ({
+                                ...prevState,
+                                createdate_end: e.target.value,
+                            }));}}/>
 
                         </div>
                     </div>
@@ -369,7 +383,7 @@ const FindPolicy = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control" name="createdate_end" onChange={handleChange} />
+                            <input type="date" class="form-control" name="createdate_end" onChange={handleChange} value={filterData.createdate_end}/>
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
@@ -389,12 +403,16 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Effectivedate</label>
+                        <label class="col-form-label">วันคุ้มครอง</label>
 
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control " name="effdate_start" onChange={handleChange} />
+                            <input type="date" class="form-control " name="effdate_start" onChange={handleChange} value={filterData.effdate_start} 
+                            onBlur={(e)=>{setFilterData((prevState) => ({
+                                ...prevState,
+                                effdate_end: e.target.value,
+                            }));}}/>
                             <div class="input-group-append">
                                 {/* <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
@@ -410,11 +428,11 @@ const FindPolicy = () => {
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="date" class="form-control " name="effdate_end" onChange={handleChange} />
+                            <input type="date" class="form-control " name="effdate_end" onChange={handleChange} value={filterData.effdate_end}/>
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="effdate-check" onChange={handleChange} />
+                                        <input class="form-check-input" type="checkbox" name="effdate-check" onChange={handleChange}  />
                                         <label class="form-check-label" >All</label>
                                     </div>
                                 </div>
@@ -428,7 +446,7 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">createusercode</label>
+                        <label class="col-form-label">รหัสผู้เอาเข้าระบบ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -451,15 +469,24 @@ const FindPolicy = () => {
                     <div class="col-2 ">
                         <input type="text" class="form-control" placeholder="เลขทะเบียนรถ" name="carRegisNo" onChange={handleChange} />
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <label class="col-form-label">จังหวัดจดทะเบียนรถ</label>
                     </div>
                     <div class="col-2 ">
-                        <div class="input-group mb-3">
-                            <select class="form-control" name="provinceID" onChange={handleChange}>
-                                <option value="" selected disabled hidden>เลือกจังหวัด</option>
-                                {provinceDD}
-                            </select>
+                    <Select
+        //   className="form-control"
+          name={`provinceID`}
+          onChange={ (e) => setFilterData((prevState) => ({
+            ...prevState,
+            provinceID: e.value,
+          }))}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+                        {/* <div class="input-group mb-3 col-10">
+                           
+                
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
@@ -470,7 +497,7 @@ const FindPolicy = () => {
                             </div>
 
 
-                        </div>
+                        </div> */}
 
 
                     </div>
@@ -481,16 +508,16 @@ const FindPolicy = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">advisorcode</label>
+                        <label class="col-form-label">รหัสผู้แนะนำ</label>
 
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="agentcode" onChange={handleChange} />
+                            <input type="text" class="form-control" name="agentCode" onChange={handleChange} />
                             <div class="input-group-append">
                                 <div class="input-group-text ">
                                     <div class="form-check checkbox-xl">
-                                        <input class="form-check-input" type="checkbox" name="agentcode" onChange={handleChange} />
+                                        <input class="form-check-input" type="checkbox" name="agentCode" onChange={handleChange} />
                                         <label class="form-check-label" >All</label>
                                     </div>
                                 </div>
@@ -528,15 +555,15 @@ const FindPolicy = () => {
                     <thead>
                         <tr>
                             <th scope="col">ลำดับ</th>
-                            <th scope="col">selected</th>
-                            <th scope="col">edit</th>
+                            <th scope="col">เลือก</th>
+                            <th scope="col">แก้ไข</th>
                             <th scope="col">บริษัทรับประกัน</th>
                             <th scope="col">เลขที่ใบคำขอ</th>
                             <th scope="col">เลขที่กรมธรรม์</th>
                             <th scope="col">ผู้แนะนำ 1</th>
                             <th scope="col">ผู้แนะนำ 2</th>
-                            <th scope="col">class</th>
-                            <th scope="col">subclass</th>
+                            <th scope="col">Class</th>
+                            <th scope="col">Subclass</th>
                             <th scope="col">วันที่สร้าง</th>
                             <th scope="col">วันที่คุ้มครอง-สิ้นสุด</th>
                             <th scope="col">ชื่อผู้เอาประกัน</th>
@@ -550,10 +577,11 @@ const FindPolicy = () => {
                             <th scope="col">อากร</th>
                             <th scope="col">ภาษี</th>
                             <th scope="col">เบี้ยรวม</th>
-                            <th scope="col">commin amt</th>
-                            <th scope="col">ovin amt</th>
-                            <th scope="col">commout amt</th>
-                            <th scope="col">ovout amt</th>
+                            <th scope="col">WHT 1%</th>
+                            <th scope="col">ค่า Commin (บาท)</th>
+                            <th scope="col">ค่า Ovin (บาท)</th>
+                            <th scope="col">ค่า Commout (บาท)</th>
+                            <th scope="col">ค่า Ovout (บาท)</th>
 
                         </tr>
                     </thead>
@@ -575,23 +603,24 @@ const FindPolicy = () => {
                                 <td>{ele.agentCode2}</td>
                                 <td>{ele.class}</td>
                                 <td>{ele.subClass}</td>
-                                <td>{ele.createdAt}</td>
+                                <td>{ele.createdAt.split('T')[0]}</td>
                                 <td>{ele.actDate} - {ele.expDate}</td>
                                 <td>{ele.insureeCode}</td>
                                 <td>{ele.licenseNo}</td>
                                 <td>{ele.chassisNo}</td>
                                 <td>{ele.endorseNo}</td>
                                 <td>{ele.seqNo}</td>
-                                <td>{ele.invioceNo}</td>
-                                <td>{ele.taxInvioceNo}</td>
-                                <td>{ele.netgrossprem}</td>
-                                <td>{ele.duty}</td>
-                                <td>{ele.tax}</td>
-                                <td>{ele.totalprem}</td>
-                                <td>{ele.commin_amt}</td>
-                                <td>{ele.ovin_amt}</td>
-                                <td>{ele.commout_amt}</td>
-                                <td>{ele.ovout_amt}</td>
+                                <td>{ele.invoiceNo}</td>
+                                <td>{ele.taxInvoiceNo}</td>
+                                <td>{ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.totalprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovin_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>)
 
                         })}
@@ -599,10 +628,12 @@ const FindPolicy = () => {
                     </tbody>
                 </table>
                 </div>
+
+
                 <div className="d-flex justify-content-center">
 
-                    <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>export to excel</button>
-                    <button type="button" class="btn btn-primary btn-lg" onClick={handleSubmit}>save Policy</button>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={ExportData}>Export to Excel</button>
+                    <button type="button" class="btn btn-primary btn-lg" onClick={handleSubmit}>บันทึกกรมธรรม์</button>
 
 
                 </div>

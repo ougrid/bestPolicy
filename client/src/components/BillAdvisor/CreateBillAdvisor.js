@@ -16,6 +16,7 @@ import {
     LoginBtn,
     BackdropBox1,
 } from "../StylesPages/LoginStyles";
+import { useCookies } from "react-cookie";
 
 const config = require("../../config.json");
 
@@ -26,7 +27,12 @@ const NormalText = {
 /* eslint-disable react-hooks/exhaustive-deps */
 
 const CreateBillAdvisor = () => {
+    const [cookies] = useCookies(["jwt"]);
+    const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
     const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
+    const wht = config.wht
     const navigate = useNavigate();
     const [insureeData, setinsureeData] = useState({ entityID: null });
     const [entityData, setEntityData] = useState({ personType: 'P' });
@@ -58,7 +64,7 @@ const CreateBillAdvisor = () => {
 
         // get agent all
         axios
-            .get(url + "/persons/agentall")
+            .get(url + "/persons/agentall", headers)
             .then((agent) => {
                 const array = [];
                 agent.data.forEach((ele) => {
@@ -74,7 +80,7 @@ const CreateBillAdvisor = () => {
 
         // get insurer all
         axios
-            .get(url + "/persons/insurerall")
+            .get(url + "/persons/insurerall", headers)
             .then((insurer) => {
                 const array = [];
                 insurer.data.forEach((ele) => {
@@ -100,11 +106,11 @@ const CreateBillAdvisor = () => {
             if (policiesData[i].select) {
                 if (policiesData[i].statementtype) {
                     net.no++
-                    net.prem = net.prem + policiesData[i].totalprem
+                    net.prem = net.prem + policiesData[i].totalprem - policiesData[i].commout_amt - policiesData[i].ovout_amt - policiesData[i].withheld
                     net.comm_out = net.comm_out + policiesData[i].commout_amt
-                    net.whtcom = net.comm_out * 3 / 100
+                    net.whtcom = net.comm_out * wht
                     net.ov_out = net.ov_out + policiesData[i].ovout_amt
-                    net.whtov = net.ov_out * 3 / 100
+                    net.whtov = net.ov_out * wht
                 } else {
                     gross.no++
                     gross.prem = gross.prem + policiesData[i].totalprem
@@ -170,7 +176,7 @@ const CreateBillAdvisor = () => {
         e.preventDefault();
         console.log(filterData);
         axios
-            .post(url + "/payments/findpolicyinDue", filterData)
+            .post(url + "/payments/findpolicyinDue", filterData, headers)
             .then((res) => {
                 if (res.status === 201) {
                     console.log(res.data);
@@ -215,7 +221,7 @@ const CreateBillAdvisor = () => {
         console.log(Date.now)
     
         axios
-            .post(url + "/payments/createbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array })
+            .post(url + "/payments/createbill", { bill:{...filterData,amt:policiesRender.total.billprem}, detail:array }, headers)
             .then((res) => {
                 // let token = res.data.jwt;
                 // let decode = jwt_decode(token);
@@ -244,7 +250,7 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Insurer</label>
+                        <label class="col-form-label">รหัสบริษัทประกัน</label>
 
                     </div>
                     <div class="col-2 ">
@@ -271,7 +277,7 @@ const CreateBillAdvisor = () => {
                     </div>
                     <div class="col align-self-end ">
                         <div class="input-group mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg" >Search</button>
+                            <button type="submit" class="btn btn-primary btn-lg" >ค้นหา</button>
                         </div>
                     </div>
 
@@ -281,7 +287,7 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-2">
-                        <label class="col-form-label">รหัส Advisor</label>
+                        <label class="col-form-label">รหัสผู้แนะนำ</label>
 
                     </div>
                     <div class="col-2 ">
@@ -332,11 +338,11 @@ const CreateBillAdvisor = () => {
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">Policy No.</label>
+                        <label class="col-form-label">เลขกรมธรรม์</label>
 
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">form</label>
+                        <label class="col-form-label">จากวันที่</label>
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
@@ -345,7 +351,7 @@ const CreateBillAdvisor = () => {
                         </div>
                     </div>
                     <div class="col-1">
-                        <label class="col-form-label">to</label>
+                        <label class="col-form-label">ถึงวันที่</label>
                     </div>
                     <div class="col-2 ">
                         <div class="input-group mb-3">
@@ -370,31 +376,33 @@ const CreateBillAdvisor = () => {
                 </div>
             </form>
             <form className="container-fluid " >
-
+            <div className="table-responsive overflow-scroll"  >
                 <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col"><input type="checkbox" name="select" onClick={selectAll} />select</th>
-                            <th scope="col">InsurerCode</th>
-                            <th scope="col">AdvisorCode</th>
+                            <th scope="col">รหัสบริษัทประกัน</th>
+                            <th scope="col">รหัสผู้แนะนำ</th>
                             <th scope="col">Duedate</th>
-                            <th scope="col">Policyno</th>
-                            <th scope="col">Endorseno</th>
-                            <th scope="col">Invoiceno</th>
+                            <th scope="col">เลขกรมธรรม์</th>
+                            <th scope="col">เลขสลักหลัง</th>
+                            <th scope="col">เลขใบแจ้งหนี้</th>
                             <th scope="col">seqno</th>
-                            <th scope="col">customerid</th>
-                            <th scope="col">insuredname</th>
-                            <th scope="col">licenseno</th>
-                            <th scope="col">province</th>
-                            <th scope="col">chassino</th>
-                            <th scope="col">netgrossprem</th>
-                            <th scope="col">duty</th>
-                            <th scope="col">tax</th>
-                            <th scope="col">totalamt</th>
+                            <th scope="col">idผู้อาประกัน</th>
+                            <th scope="col">ชื่อผู้เอาประกัน</th>
+                            <th scope="col">เลขทะเบียนรถ</th>
+                            <th scope="col">จังหวัดที่จดทะเบียน</th>
+                            <th scope="col">เลขคัชซี</th>
+                            
+                            <th scope="col">เบี้ยสุทธิ</th>
+                            <th scope="col">อากร</th>
+                            <th scope="col">ภาษี</th>
+                            <th scope="col">เบี้ยประกันรวม</th>
+                            <th scope="col">ภาษีหัก ณ ที่จ่าย (1%)</th>
                             <th scope="col">comm-out%</th>
-                            <th scope="col">comm-out-amt</th>
+                            <th scope="col">จำนวนเงิน</th>
                             <th scope="col">ov-out%</th>
-                            <th scope="col">ov-out-amt</th>
+                            <th scope="col">จำนวนเงิน</th>
                             <th scope="col"><input type="checkbox" name="statementtype"  onClick={selectAll} />net</th>
                             {/* <th scope="col">billpremium</th> */}
 
@@ -416,14 +424,15 @@ const CreateBillAdvisor = () => {
                                 <td>{ele.licenseNo}</td>
                                 <td>{ele.motorprovinceID}</td>
                                 <td>{ele.chassisNo}</td>
-                                <td>{ele.netgrossprem}</td>
-                                <td>{ele.duty}</td>
-                                <td>{ele.tax}</td>
-                                <td>{ele.totalprem}</td>
-                                <td>{ele.commout_rate}</td>
-                                <td>{ele.commout_amt}</td>
-                                <td>{ele.ovout_rate}</td>
-                                <td>{ele.ovout_amt}</td>
+                                <td>{ele.netgrossprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.duty.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.totalprem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.withheld ? ele.withheld.toLocaleString(undefined, { minimumFractionDigits: 2 }): 0}</td>
+                                <td>{ele.commout_rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.commout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovout_rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{ele.ovout_amt.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td><input type="checkbox" name="statementtype" id={i} onClick={changestatementtype} /></td>
                                 {/* <td><input type="number" disabled value={billpremiumData[i]} /></td> */}
                             </tr>)
@@ -433,11 +442,11 @@ const CreateBillAdvisor = () => {
 
                     </tbody>
                 </table>
-
+                </div>
 
                 <div className="d-flex justify-content-center">
                     {/* <LoginBtn type="submit">confirm</LoginBtn> */}
-                    <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >confirm</button>
+                    <button type="button" class="btn btn-primary " onClick={(e) => editCard(e)} >ยืนยัน</button>
                 </div>
             </form>
 
@@ -456,9 +465,9 @@ const CreateBillAdvisor = () => {
                     </div> */}
                     <div class="row">
                         <div class="col-2">
-                            <label class="col-form-label">billpremium</label>
+                            <label class="col-form-label">จำนวนเงินสุทธิ</label>
                         </div>
-                        <div class="col-2"> {policiesRender.total.billprem}</div>
+                        <div class="col-2"> {policiesRender.total.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                     </div>
                     <div class="row">
                         <div class="col-2">
@@ -530,16 +539,16 @@ const CreateBillAdvisor = () => {
                             <tr>
                                 <td>net</td>
                                 <td>{policiesRender.net.no}</td>
-                                <td>{policiesRender.net.prem}</td>
-                                <td>{policiesRender.net.comm_out}</td>
-                                <td>{policiesRender.net.whtcom}</td>
-                                <td>{policiesRender.net.ov_out}</td>
-                                <td>{policiesRender.net.whtov}</td>
+                                <td>{policiesRender.net.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.comm_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.whtcom.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.ov_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.net.whtov.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>
                             <tr>
                                 <td>gross</td>
                                 <td>{policiesRender.gross.no}</td>
-                                <td>{policiesRender.gross.prem}</td>
+                                <td>{policiesRender.gross.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                 <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
@@ -548,66 +557,20 @@ const CreateBillAdvisor = () => {
                             <tr>
                                 <td>รวมทั้งสิ้น</td>
                                 <td>{policiesRender.total.no}</td>
-                                <td>{policiesRender.total.prem}</td>
-                                <td>{policiesRender.total.comm_out}</td>
-                                <td>{policiesRender.total.whtcom}</td>
-                                <td>{policiesRender.total.ov_out}</td>
-                                <td>{policiesRender.total.whtov}</td>
+                                <td>{policiesRender.total.prem.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.comm_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.whtcom.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.ov_out.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                <td>{policiesRender.total.whtov.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>
                         </tbody>
                     </table>
-                    {/* <div class="row">
-                        <div class="col-1">
-                            <label class="col-form-label">ชำระแบบ gross </label>
-                        </div>
-                        <div class="col-1">
-                            <label class="col-form-label">{} รายการ</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} จำนวนเงินค่าเบี้ย</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}</label>
-                         </div>
-                    </div>
                     <div class="row">
-                        <div class="col-1">
-                            <label class="col-form-label">รวมทั้งสิ้น </label>
+                        <div class="col-2">
+                            <label class="col-form-label">Bill Payment</label>
                         </div>
-                        <div class="col-1">
-                           
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} จำนวนเงินค่าเบี้ย</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}comm-out</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} WHT 3%</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{}ov-out</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} WHT 3%</label>
-                         </div>
-                         <div class="col-1">
-                            <label class="col-form-label">{} </label>
-                         </div>
-                    </div> */}
+                        <div class="col-2"> {(policiesRender.total.prem + policiesRender.total.whtov + policiesRender.total.whtcom).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                    </div>
 
                 </Modal.Body>
                 <Modal.Footer>

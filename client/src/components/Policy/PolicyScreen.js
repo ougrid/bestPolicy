@@ -4,16 +4,44 @@ import { useEffect, useState } from "react";
 import { CenterPage } from "../StylesPages/AdminStyles";
 import { Container } from "../StylesPages/PagesLayout";
 import { async } from "q";
+import Select from 'react-select';
+import { useCookies } from "react-cookie";
+import { date, number } from "joi";
+import { numberWithCommas} from '../lib/number';
+import {BiSearchAlt } from "react-icons/bi";
+import Modal from 'react-bootstrap/Modal';
+import ModalSearchAgent from "./ModalSearchAgent";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 const config = require("../../config.json");
 
 const PolicyScreen = (props) => {
 
+  const [cookies, setCookie, removeCookie] = useCookies(["jwt"]);
+  const headers = {
+    headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const tax = config.tax;
   const duty = config.duty;
-
+  const withheld = config.witheld;
+  let datenow = new Date()
+  datenow = datenow.toISOString().substring(0, 10);
+  
   //import excel
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    grossprem:0,
+    specdiscamt:0,
+    netgrossprem:0,
+    specdiscrate: 0,
+    duty :0,
+    tax:0,
+    totalprem:0,
+    withheld:0,
+    agentCode:'',
+    agentCode2:'',
+  });
   const [provinceDD, setProvinceDD] = useState([]);
   const [districDD, setDistricDD] = useState([]);
   const [subDistricDD, setSubDistricDD] = useState([]);
@@ -25,69 +53,35 @@ const PolicyScreen = (props) => {
   const [insurerDD, setInsurerDD] = useState([]);
   const [motorbrandDD, setMotorbrandDD] = useState([]);
   const [motormodelDD, setMotormodelDD] = useState([]);
+  const [hidecard, setHidecard] = useState([false,0]);
+  const [showMotorData, setShowMotorData] = useState(false);
+
+  //for modal
+  const editCard =(e,name) =>{
+    // console.log(policiesData[e.target.id]);
+    
+    setHidecard([true,name])
+   
+  };
+  const handleChangeCard =  (e,name,data) => {
+   console.log(data);
+     setFormData((prevState) => ({
+          ...prevState,
+          [name]: data,
+        }))
+      setHidecard([false,0])
+    
+    
+  };
+  const handleClose = (e) =>{
+        setHidecard([false,0])
+      }
+  //end modal
 
   const handleChange = async (e) => {
     e.preventDefault();
-    //set dropdown subclass when class change
-    if (e.target.name === "class") {
-      const array = [];
-      insureTypeDD.forEach((ele) => {
-        if (e.target.value === ele.class) {
-          array.push(
-            <option key={ele.id} value={ele.subClass}>
-              {ele.subClass}
-            </option>
-          );
-        }
-      });
-      setInsureSubClassDD(array);
-    }
-    //  set totalprem
-    // if (
-    //   formData.duty !== null &&
-    //   formData.tax !== null &&
-    //   formData.grossprem !== null
-    // ) {
-    //   const newTotalPrem =
-    //     parseFloat(formData.netgrossprem) +
-    //     parseFloat(formData.duty) +
-    //     parseFloat(formData.tax);
-    //   setFormData((prevState) => ({
-    //     ...prevState,
-    //     [e.target.name]: e.target.value,
-    //     totalprem: newTotalPrem,
-    //   }));
-    // } else {
-    //   if (e.target.name === 'commin_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'ovin_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'commout_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   } else if (e.target.name === 'ovout_rate') {
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       [e.target.name]: e.target.value,
-    //       ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
-    //     }));
-    //   }
-    //   setFormData((prevState) => ({
-    //     ...prevState,
-    //     [e.target.name]: e.target.value,
-    //   }));
-    // }
+    // console.log(e);
+    
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -96,32 +90,40 @@ const PolicyScreen = (props) => {
     if (e.target.name === "personType") {
       if (e.target.value === "P") {
         axios
-          .get(url + "/static/titles/person/all")
+          .get(url + "/static/titles/person/all",headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
               array2.push(
-                <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
-                  {ele.TITLETHAIBEGIN}
-                </option>
+                // <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
+                //   {ele.TITLETHAIBEGIN}
+                // </option>
+                {label: ele.TITLETHAIBEGIN, value: ele.TITLETHAIBEGIN}
               );
+              
             });
             setTitleDD(array2);
           })
           .catch((err) => { });
       } else {
         axios
-          .get(url + "/static/titles/company/all")
+          .get(url + "/static/titles/company/all",headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
               array2.push(
-                <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
-                  {ele.TITLETHAIBEGIN}
-                </option>
+                // <option key={ele.TITLEID} value={ele.TITLETHAIBEGIN}>
+                //   {ele.TITLETHAIBEGIN}
+                // </option>
+                {label: ele.TITLETHAIBEGIN, value: ele.TITLETHAIBEGIN}
               );
             });
             setTitleDD(array2);
+            const withheldamt = parseFloat(((formData.netgrossprem + formData.duty) * withheld).toFixed(2))
+            setFormData((prevState) => ({
+              ...prevState,
+              withheld: withheldamt,
+            }));
           })
           .catch((err) => { });
       }
@@ -136,22 +138,198 @@ const PolicyScreen = (props) => {
     } else if (e.target.name === "brandname") {
       getMotormodel(e.target.value);
     }
-    //get com/ov setup
+    //set dropdown subclass when class change
+    if (e.target.name === "class") {
+      const array = [];
+      insureTypeDD.forEach((ele) => {
+        if (e.target.value === ele.class) {
+          array.push(
+            <option key={ele.id} value={ele.subClass}>
+              {ele.subClass}
+            </option>
+          );
+        }
+      });
+      setInsureSubClassDD(array);
+    }
 
   };
+
+  const handleChangeActdate =  (e) => {
+    e.preventDefault();
+    console.log(e.target.value);
+    console.log( typeof(e.target.value));
+    const originalDate = new Date(e.target.value);
+
+    // Add one year (365 days) to the date
+    originalDate.setFullYear(originalDate.getFullYear() + 1);
+
+    // Convert the updated Date object back to a string
+    const updatedDateString = originalDate.toISOString().substring(0, 10);
+    
+
+    setFormData((prevState) => ({
+      ...prevState,
+      actDate: e.target.value,
+      expDate: updatedDateString
+    }));
+ 
+
+  };
+
+  function validateDate(e) {
+    e.preventDefault();
+    let mindate = new Date()
+    let maxdate = new Date()
+    if (e.target.name === 'actDate') {
+      mindate.setFullYear(mindate.getFullYear() - 3)
+      maxdate.setFullYear(maxdate.getFullYear() + 3)    
+    }else if (e.target.name === 'expDate'){
+      mindate.setFullYear(mindate.getFullYear() - 4)
+      maxdate.setFullYear(maxdate.getFullYear() + 4)   
+    }
+  
+    const inputDate = new Date(e.target.value);
+    let actdate =''
+    let expdate = ''
+  
+    if (inputDate < mindate) {
+       actdate = mindate.toISOString().substring(0, 10)
+      mindate.setFullYear(mindate.getFullYear() + 1)
+       expdate = mindate.toISOString().substring(0, 10)
+    } else if (inputDate > maxdate) {
+       actdate = maxdate.toISOString().substring(0, 10)
+      maxdate.setFullYear(maxdate.getFullYear() + 1)
+       expdate = maxdate.toISOString().substring(0, 10)
+    }else {
+      actdate = e.target.value
+      inputDate.setFullYear(inputDate.getFullYear() + 1)
+      expdate = inputDate.toISOString().substring(0, 10)
+    }
+
+    if (e.target.name === 'actDate') {
+      setFormData((prevState) => ({
+        ...prevState,
+        actDate: actdate,
+        expDate: expdate
+      }));
+      // document.getElementsByName("actDate")[0].value = actdate
+    }else if (e.target.name === 'expDate'){
+      setFormData((prevState) => ({
+        ...prevState,
+        expDate: actdate
+      }));
+      // document.getElementsByName("expDate")[0].value = actdate
+    }
+  }
+  const handleChangePrem = async (e) => {
+    e.preventDefault();
+    // console.log(e);
+    
+    //  set totalprem
+    if (e.target.name === 'grossprem') {
+      const netgrosspremamt = e.target.value - formData.specdiscamt
+      const dutyamt =Math.ceil( netgrosspremamt * duty)
+      const taxamt = parseFloat(((netgrosspremamt + dutyamt) * tax).toFixed(2))
+      const totalpremamt = netgrosspremamt + dutyamt + taxamt
+      setFormData((prevState) => ({
+        ...prevState,
+        grossprem: e.target.value,
+        netgrossprem: netgrosspremamt,
+        duty: dutyamt,
+        tax: taxamt, 
+        totalprem: totalpremamt,
+      }));
+    } else if(e.target.name === 'specdiscrate')
+    {
+      const specdiscamt =parseFloat( (e.target.value * formData.grossprem/100).toFixed(2))
+      const netgrosspremamt = formData.grossprem - specdiscamt
+      const dutyamt =Math.ceil( netgrosspremamt * duty)
+      const taxamt = parseFloat(((netgrosspremamt + dutyamt) * tax).toFixed(2))
+      const totalpremamt = netgrosspremamt + dutyamt + taxamt
+      setFormData((prevState) => ({
+        ...prevState,
+        specdiscrate: e.target.value,
+        specdiscamt: specdiscamt,
+        netgrossprem: netgrosspremamt,
+        duty: dutyamt,
+        tax: taxamt, 
+        totalprem: totalpremamt,
+      }));
+    } 
+    else  {
+      if (e.target.name === 'commin_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          commin_amt: (formData[`commin_rate`] * formData[`grossprem`]) / 100
+        }));
+      } else if (e.target.name === 'ovin_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          ovin_amt: (formData[`ovin_rate`] * formData[`grossprem`]) / 100
+        }));
+      } else if (e.target.name === 'commout_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          commout_amt: (formData[`commout_rate`] * formData[`grossprem`]) / 100
+        }));
+      } else if (e.target.name === 'ovout_rate') {
+        setFormData((prevState) => ({
+          ...prevState,
+          [e.target.name]: e.target.value,
+          ovout_amt: (formData[`ovout_rate`] * formData[`grossprem`]) / 100
+        }));
+      }
+      setFormData((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
+    }
+  };
+
+ 
+ 
+
+  const changeProvince = (e) =>{
+    setFormData((prevState) => ({
+      ...prevState,
+      province: e.value,
+    }));
+      getDistrict(e.value);
+    
+    
+  }
+  const changeDistrict = (e) =>{
+    setFormData((prevState) => ({
+      ...prevState,
+      district: e.value,
+    }));
+      getSubDistrict(e.value);
+  }
+  const changeMotorBrand = (e) =>{
+    setFormData((prevState) => ({
+      ...prevState,
+      brandname: e.value,
+    }));
+      getMotormodel(e.value);
+  }
 
   const getDistrict = (provincename) => {
     //get distric in province selected
     axios
-      .post(url + "/static/amphurs/search", { provincename: provincename })
+      .post(url + "/static/amphurs/search", { provincename: provincename },headers)
       .then((distric) => {
         const array = [];
         distric.data.forEach((ele) => {
-          array.push(
-            <option id={ele.amphurid} value={ele.t_amphurname} value2={ele.t_amphurname}>
-              {ele.t_amphurname}
-            </option>
-          );
+          // array.push(
+          //   <option id={ele.amphurid} value={ele.t_amphurname} value2={ele.t_amphurname}>
+          //     {ele.t_amphurname}
+          //   </option>
+          // );
+          array.push({label: ele.t_amphurname, value: ele.t_amphurname})
         });
         setDistricDD(array);
       })
@@ -163,15 +341,16 @@ const PolicyScreen = (props) => {
   const getMotormodel = (brandname) => {
     //get distric in province selected
     axios
-      .post(url + "/static/mt_models/search", { brandname: brandname })
+      .post(url + "/static/mt_models/search", { brandname: brandname },headers)
       .then((model) => {
         const array = [];
         model.data.forEach((ele) => {
-          array.push(
-            <option value={ele.MODEL} >
-              {ele.MODEL}
-            </option>
-          );
+          // array.push(
+          //   <option value={ele.MODEL} >
+          //     {ele.MODEL}
+          //   </option>
+          // );
+          array.push({label: ele.MODEL, value: ele.MODEL})
         });
         setMotormodelDD(array);
       })
@@ -179,6 +358,37 @@ const PolicyScreen = (props) => {
         // alert("cant get aumphur");
       });
   };
+  const getSubDistrict = (amphurname) => {
+    //get tambons in distric selected
+    axios
+      .post(url + "/static/tambons/search", { amphurname: amphurname },headers)
+      .then((subdistric) => {
+        const arraySub = [];
+        const arrayZip = [];
+        const zip = [];
+        subdistric.data.forEach((ele) => {
+          // arraySub.push(
+          //   <option id={ele.tambonid} value={ele.t_tambonname}>
+          //     {ele.t_tambonname}
+          //   </option>
+          // );
+          arraySub.push({label: ele.t_tambonname, value: ele.t_tambonname})
+          zip.push(ele.postcodeall.split("/"));
+        });
+        const uniqueZip = [...new Set(...zip)];
+        console.log(uniqueZip);
+        uniqueZip.forEach((zip) => {
+          // arrayZip.push(<option value={zip}>{zip}</option>);
+          arrayZip.push({label: zip, value: zip})
+        });
+        setSubDistricDD(arraySub);
+        setZipCodeDD(arrayZip);
+      })
+      .catch((err) => {
+        // alert("cant get tambons");
+      });
+  };
+
   const getcommov = (e) => {
     e.preventDefault();
     //get comm  ov setup
@@ -189,7 +399,7 @@ const PolicyScreen = (props) => {
       i =2
     }
     axios
-      .post(url + "/insures/getcommov", formData)
+      .post(url + "/insures/getcommov", formData,headers)
       .then((res) => {
         console.log(res.data);
         setFormData((prevState) => ({
@@ -229,36 +439,6 @@ const PolicyScreen = (props) => {
 
   }
 
-
-
-  const getSubDistrict = (amphurname) => {
-    //get tambons in distric selected
-    axios
-      .post(url + "/static/tambons/search", { amphurname: amphurname })
-      .then((subdistric) => {
-        const arraySub = [];
-        const arrayZip = [];
-        const zip = [];
-        subdistric.data.forEach((ele) => {
-          arraySub.push(
-            <option id={ele.tambonid} value={ele.t_tambonname}>
-              {ele.t_tambonname}
-            </option>
-          );
-          zip.push(ele.postcodeall.split("/"));
-        });
-        const uniqueZip = [...new Set(...zip)];
-        console.log(uniqueZip);
-        uniqueZip.forEach((zip) => {
-          arrayZip.push(<option value={zip}>{zip}</option>);
-        });
-        setSubDistricDD(arraySub);
-        setZipCodeDD(arrayZip);
-      })
-      .catch((err) => {
-        // alert("cant get tambons");
-      });
-  };
 
   const handleSubmit = async (e) => {
     const data = []
@@ -300,7 +480,7 @@ const PolicyScreen = (props) => {
     data[0].ovout_amt = document.getElementsByName('ovout_amt')[0].value 
     console.log(data);
     e.preventDefault();
-    await axios.post(url + "/policies/policydraft/batch", data).then((res) => {
+    await axios.post(url + "/policies/policydraft/batch", data,headers).then((res) => {
       alert("policy batch Created");
       window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -308,9 +488,10 @@ const PolicyScreen = (props) => {
 
 
   useEffect(() => {
-    //get province
+    
+    // get province
     axios
-      .get(url + "/static/provinces/all")
+      .get(url + "/static/provinces/all",headers)
       .then((province) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -320,16 +501,18 @@ const PolicyScreen = (props) => {
 
         const array = [];
         province.data.forEach((ele) => {
-          array.push(
-            <option value={ele.t_provincename} >
-              {ele.t_provincename}
-            </option>
-          );
+          // array.push(
+          //   <option value={ele.t_provincename} >
+          //     {ele.t_provincename}
+          //   </option>
+          // );
+
+          array.push({label:ele.t_provincename, value:ele.t_provincename})
         });
         setProvinceDD(array);
         // get title
         axios
-          .get(url + "/static/titles/company/all")
+          .get(url + "/static/titles/company/all",headers)
           .then((title) => {
             const array2 = [];
             title.data.forEach((ele) => {
@@ -348,7 +531,7 @@ const PolicyScreen = (props) => {
 
     //get insureType
     axios
-      .get(url + "/insures/insuretypeall")
+      .get(url + "/insures/insuretypeall",headers)
       .then((insuretype) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -380,7 +563,7 @@ const PolicyScreen = (props) => {
 
     //get insurer
     axios
-      .get(url + "/persons/insurerall")
+      .get(url + "/persons/insurerall",headers)
       .then((insurer) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -404,7 +587,7 @@ const PolicyScreen = (props) => {
 
     //get motor brand
     axios
-      .get(url + "/static/mt_brands/all")
+      .get(url + "/static/mt_brands/all",headers)
       .then((brands) => {
         // let token = res.data.jwt;
         // let decode = jwt_decode(token);
@@ -414,11 +597,12 @@ const PolicyScreen = (props) => {
 
         const array = [];
         brands.data.forEach((ele) => {
-          array.push(
-            <option key={ele.id} value={ele.BRANDNAME}>
-              {ele.BRANDNAME}
-            </option>
-          );
+          // array.push(
+          //   <option key={ele.id} value={ele.BRANDNAME}>
+          //     {ele.BRANDNAME}
+          //   </option>
+          // );
+          array.push({label:ele.BRANDNAME, value:ele.BRANDNAME})
         });
         setMotorbrandDD(array);
       })
@@ -428,6 +612,16 @@ const PolicyScreen = (props) => {
 
   return (
     <div>
+      <Modal  size="l" show={hidecard[0]} onHide={handleClose} >
+        <Modal.Header closeButton>
+          <Modal.Title >ค้นหาผู้แนะนำ</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {<ModalSearchAgent name ={hidecard[1]} formData={formData} setFormData ={handleChangeCard}/>}
+        </Modal.Body>
+       
+      </Modal>
+
       <h1 className="text-center">สร้างรายการกรมธรรม์</h1>
       {/* policy table */}
 
@@ -451,12 +645,16 @@ const PolicyScreen = (props) => {
             วันที่เริ่มคุ้มครอง<span class="text-danger"> *</span>
           </label>
           <input
+        
             className="form-control"
             type="date"
-            defaultValue={formData.actDate}
+            format="dd/MM/yyyy"
+            value={formData.actDate}
             name={`actDate`}
-            onChange={handleChange}
+            onChange={handleChangeActdate}
+            onBlur={(e)=>validateDate(e)}
           />
+        
         </div>
 
         <div class="col-2 form-group ">
@@ -466,16 +664,13 @@ const PolicyScreen = (props) => {
           <input
             className="form-control"
             type="date"
-            defaultValue={formData.expDate}
+            
+            value={formData.expDate}
             name={`expDate`}
             onChange={handleChange}
+            onBlur={(e)=>validateDate(e)}
           />
         </div>
-        <div class="col-3">{/* null */}</div>
-      </div>
-
-      <div class="row">
-        <div className="col-1"></div>
         <div class="col-2 form-group ">
           <label class="form-label px-3">
             บริษัทรับประกัน<span class="text-danger"> *</span>
@@ -492,30 +687,48 @@ const PolicyScreen = (props) => {
           </select>
         </div>
 
+        <div class="col-3">{/* null */}</div>
+      </div>
+
+      <div class="row">
+        <div className="col-1"></div>
+        
+
         <div class="col-2 form-group ">
           <label class="form-label px-3">
             รหัสผู้แนะนำ 1<span class="text-danger"> *</span>
           </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.agentCode}
-            name={`agentCode`}
-            onChange={handleChange}
-          />
+          <div class="input-group mb-3">              
+            <input
+              className="form-control"
+              type="text"
+              value={formData.agentCode}
+              name={`agentCode`}
+              onChange={handleChange}
+            />
+          <div class="input-group-append">
+              <button class="btn btn-primary" type="button" name="btn-agent1" onClick={(e)=>editCard(e,'agentCode')}><BiSearchAlt  style={{fontSize: "30px", color: "white"}}/></button>
+            </div>
+       </div>
         </div>
 
         <div class="col-2 form-group ">
           <label class="form-label px-3">
-            รหัสผู้แนะนำ 2<span class="text-danger"> *</span>
+            รหัสผู้แนะนำ 2
           </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.agentCode2}
-            name={`agentCode2`}
-            onChange={handleChange}
-          />
+          <div class="input-group mb-3">              
+            <input
+              className="form-control"
+              type="text"
+              value={formData.agentCode2}
+              name={`agentCode2`}
+              onChange={handleChange}
+            />
+          <div class="input-group-append">
+              <button class="btn btn-primary" type="button" name="btn-agent2" onClick={(e)=>editCard(e,"agentCode2")}><BiSearchAlt  style={{fontSize: "30px", color: "white"}}/></button>
+            </div>
+       </div>
+        
         </div>
         <div class="col-2 form-group ">
           <div className="row">
@@ -552,9 +765,21 @@ const PolicyScreen = (props) => {
           </div>
           
           </div>
-         
+        
         </div>
-
+        <div class="col-2 form-group ">
+          <label class="form-label px-3">
+            ทุนประกัน<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="number"
+            step={0.1}
+            defaultValue={formData.cover_amt}
+            name={`cover_amt`}
+            onChange={handleChange}
+          />
+        </div>
        
       </div>
       {/* policy table */}
@@ -563,21 +788,24 @@ const PolicyScreen = (props) => {
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            ค่าเบี้ย<span class="text-danger"> *</span>
+            เบี้ย<span class="text-danger"> *</span>
           </label>
           <input
-            className="form-control"
+            className="form-control numbers"
+            id="grossprem"
             type="number"
             step={0.1}
-            value={formData.grossprem}
+            value={formData.grossprem}    
             name={`grossprem`}
-            onChange={(e) => handleChange(e)}
+            onChange={(e) => handleChangePrem(e)}
           />
+{/* <NumberInputWithCommas value={formData.grossprem} name={`grossprem`} onChange={handleChange}  /> */}
+
         </div>
 
         <div class="col-2">
           <label class="form-label ">
-            ส่วนลด % 
+            ส่วนลด walkin 
           </label>
           <div className="row">
             <div className="col">
@@ -587,7 +815,7 @@ const PolicyScreen = (props) => {
                 step={0.1}
                 value={parseFloat(formData[`specdiscrate`]) }
                 name={`specdiscrate`}
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => handleChangePrem(e)}
               />
             </div>
             <div className="col">
@@ -596,7 +824,8 @@ const PolicyScreen = (props) => {
                 type="number"
                 disabled
                 step={0.1}
-                value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || 0}
+                // value={parseFloat((formData[`specdiscrate`] * formData[`grossprem`] / 100).toFixed(2)) || 0}
+                value={formData.specdiscamt}
                 name={`specdiscamt`}
                 onChange={(e) => handleChange(e)}
               />
@@ -606,10 +835,26 @@ const PolicyScreen = (props) => {
         </div>
 
         <div class="col-2">
+          <label class="form-label ">
+            เบี้ยสุทธิ 
+          </label>
+          <input
+            type="number" // Use an input element for displaying numbers
+            className="form-control"
+            //value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
+            // value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            value={formData.netgrossprem} // Display the totalprem value from the state
+            step={0.1}
+            name={`withheld`}
+            disabled
+          />
+        </div>
+
+        <div class="col-2">
           <div className="row">
             <div className="col">
             <label class="form-label ">
-            ค่าแสตมอากรณ์
+            อากร
           </label>
           <input
             className="form-control"
@@ -617,8 +862,8 @@ const PolicyScreen = (props) => {
             step={0.1}
             disabled
             // netgrossprem * tax 
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || ""}
-            //value={formData.duty}
+            // value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * duty).toFixed(2)) || 0}
+            value={formData.duty}
             name={`duty`}
             onChange={handleChange}
           />
@@ -632,9 +877,9 @@ const PolicyScreen = (props) => {
             type="number"
             step={0.1}
             disabled
-            // netgrossprem * tax 
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * tax).toFixed(2)) || ""}
-            //value={formData.tax}
+            
+            // value={parseFloat((((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 )* tax).toFixed(2)) || ""}
+            value={formData.tax}
             name={`tax`}
             onChange={handleChange}
           />
@@ -646,26 +891,29 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            ค่าเบี้ยรวม<span class="text-danger"> *</span>
+            เบี้ยรวม<span class="text-danger"> *</span>
           </label>
           <input
             type="number" // Use an input element for displaying numbers
             className="form-control"
-            // value={formData.totalprem} // Display the totalprem value from the state
             //value={parseFloat(formData.grossprem) - parseFloat(formData.duty) - parseFloat(formData.tax)}
-            value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            // value={parseFloat(((100 - formData[`specdiscrate`]) * formData[`grossprem`] / 100 * (1 + duty +tax)).toFixed(2)) || ""}
+            value={formData.totalprem} // Display the totalprem value from the state
             step={0.1}
             name={`totalprem`}
-            readOnly
+            disabled
           />
         </div>
+
+       
+
       </div>
 
       <div class="row">
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            comm_in% <span class="text-danger"> *</span>
+            Comm In% <span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -696,7 +944,7 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            OV_in % <span class="text-danger"> *</span>
+            Ov In% <span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -726,7 +974,7 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            comm_out% (1)<span class="text-danger"> *</span>
+            Comm Out% (1)<span class="text-danger"> *</span>
           </label>
           <div className="row">
             <div className="col">
@@ -755,7 +1003,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-2">
           <label class="form-label ">
-            OV_out % (1)<span class="text-danger"> *</span>
+            Ov Out% (1)<span class="text-danger"> *</span>
           </label>
 
           <div className="row">
@@ -786,7 +1034,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-1 align-bottom">
         
-          <button type="button" name="btn_comm1" class="btn btn-primary align-bottom form-control" onClick={getcommov} >defualt comm/ov</button>
+          <button type="button" name="btn_comm1" class="btn btn-primary align-bottom form-control" onClick={getcommov} >ค่า comm/ov : ผู้แนะนำคนที่ 1</button>
         </div>
 
 
@@ -796,7 +1044,7 @@ const PolicyScreen = (props) => {
         <div className="col-1"></div>
         <div class="col-2">
           <label class="form-label ">
-            comm_out% (2)<span class="text-danger"> *</span>
+            Comm Out% (2)
           </label>
           <div className="row">
             <div className="col">
@@ -828,7 +1076,7 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            OV_out % (2)<span class="text-danger"> *</span>
+            Ov Out% (2)
           </label>
           <div className="row">
             <div className="col">
@@ -859,7 +1107,7 @@ const PolicyScreen = (props) => {
 
         <div class="col-2">
           <label class="form-label ">
-            comm_out% (sum)<span class="text-danger"> *</span>
+            Comm Out% (sum)
           </label>
           <div className="row">
             <div className="col">
@@ -889,7 +1137,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-2">
           <label class="form-label ">
-            OV_out % (sum)<span class="text-danger"> *</span>
+            Ov Out% (sum)
           </label>
 
           <div className="row">
@@ -920,7 +1168,7 @@ const PolicyScreen = (props) => {
         </div>
         <div class="col-1 align-bottom">
 
-          <button type="button" name="btn_comm2" class="btn btn-primary align-bottom" onClick={getcommov} >defualt comm/ov</button>
+          <button type="button" name="btn_comm2" class="btn btn-primary align-bottom" onClick={getcommov} >ค่า comm/ov : ผู้แนะนำคนที่ 2</button>
         </div>
 
 
@@ -949,7 +1197,7 @@ const PolicyScreen = (props) => {
           <label class="form-label ">
             คำนำหน้า<span class="text-danger"> </span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`title`}
             onChange={handleChange}
@@ -958,7 +1206,17 @@ const PolicyScreen = (props) => {
               {formData.title}
             </option>
             {titleDD}
-          </select>
+          </select> */}
+
+          <Select
+          // className="form-control"
+          name={`title`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            title: e.value,
+          }))}
+          options={titleDD}
+          />
         </div>
 
         <div class="col-2">
@@ -1085,37 +1343,56 @@ const PolicyScreen = (props) => {
           <label class="form-label ">
             จังหวัด<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <Typeahead
             className="form-control"
-            name={`province`}
+            labelKey={`province`}
             onChange={handleChange}
-          >
-            <option value={formData.province} disabled selected hidden>
+            options={provinceDD}
+            search
+          /> */}
+          <Select
+          // className="form-control"
+          name={`province`}
+          onChange={ (e) =>changeProvince(e)}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+            {/* <option value={formData.province} disabled selected hidden>
               {formData.province}
             </option>
-            {provinceDD}
-          </select>
+            {provinceDD} */}
+          
         </div>
         <div class="col-2">
           <label class="form-label ">
             อำเภอ<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`district`}
             onChange={handleChange}
+            search
           >
             <option value={formData.district} disabled selected hidden>
               {formData.district}
             </option>
             {districDD}
-          </select>
+          </select> */}
+
+          <Select
+          // className="form-control"
+          name={`district`}
+          onChange={ (e) =>changeDistrict(e)}
+          options={districDD}
+          />
+
         </div>
         <div class="col-2">
           <label class="form-label ">
             ตำบล<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`subdistrict`}
             onChange={handleChange}
@@ -1124,13 +1401,24 @@ const PolicyScreen = (props) => {
               {formData.subdistrict}
             </option>
             {subDistricDD}
-          </select>
+          </select> */}
+
+          <Select
+          // className="form-control"
+          name={`subdistrict`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            subdistrict: e.value,
+          }))}
+          options={subDistricDD}
+          />
+
         </div>
         <div class="col-2">
           <label class="form-label ">
             รหัสไปรษณี<span class="text-danger"> *</span>
           </label>
-          <select
+          {/* <select
             className="form-control"
             name={`zipcode`}
             onChange={handleChange}
@@ -1139,13 +1427,61 @@ const PolicyScreen = (props) => {
               {formData.zipcode}
             </option>
             {zipcodeDD}
-          </select>
+          </select> */}
+        <Select
+          // className="form-control"
+          name={`zipcode`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            zipcode: e.value,
+          }))}
+          options={zipcodeDD}
+          />
+
         </div>
       </div>
-      {/* motor table */}
-      {formData.class === "MO" ? (
+      <div class="row">
+        <div className="col-1"></div>
+        <div class="col-2">
+          <label class="form-label ">
+            เบอร์โทรศัพท์<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            defaultValue={formData.telNum_1}
+            name={`telNum_1`}
+            onChange={handleChange}
+          />
+        </div>
+        <div class="col-2">
+          <label class="form-label ">
+            E-mail<span class="text-danger"> *</span>
+          </label>
+          <input
+            className="form-control"
+            type="text"
+            defaultValue={formData.Email}
+            name={`Email`}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      { formData.class === "MO" ? 
+      <div class="row">
+            <div className="col-3"></div>
+            <div className="col-3"><h4>รายละเอียดรถ (ทรัพย์สินที่เอาประกัน) </h4></div>
+            <div className="col-3">
+              <button className="p-2 btn btn-danger" name="showMotor" onClick={(e) =>{setShowMotorData(!showMotorData)}}>
+                hide/unhide
+              </button>
+</div>
+            </div>
+            : null }
+      {/* motor table formData.class === "MO"*/}
+      { showMotorData ? (
         <>
-          <div class="row">
+         <div class="row">
             <div className="col-1"></div>
             <div class="col-2">
               <label class="form-label ">
@@ -1164,7 +1500,7 @@ const PolicyScreen = (props) => {
                 ยี่ห้อรถยนต์<span class="text-danger"> *</span>
               </label>
 
-              <select
+              {/* <select
                 className="form-control"
                 name={`brandname`}
                 onChange={handleChange}
@@ -1173,13 +1509,22 @@ const PolicyScreen = (props) => {
                   {formData.brandname}
                 </option>
                 {motorbrandDD}
-              </select>
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
             </div>
             <div class="col-2">
               <label class="form-label ">
                 รุ่น<span class="text-danger"> *</span>
               </label>
-              <select
+
+              {/* <select
                 className="form-control"
                 name={`modelname`}
                 onChange={handleChange}
@@ -1188,10 +1533,115 @@ const PolicyScreen = (props) => {
                   {formData.modelname}
                 </option>
                 {motormodelDD}
-              </select>
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
 
             </div>
             <div class="col-2">
+              <label class="form-label ">
+                รหัสรถ (V)<span class="text-danger"> </span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-1">
+              <label class="form-label ">
+                รหัสรถ (C)<span class="text-danger"> </span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`modelYear`}
+                defaultValue={formData.modelYear}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-1">
+          <label class="form-label ">
+            ป้ายแดง<span class="text-danger"> *</span>
+          </label>
+          {/* <Typeahead
+            className="form-control"
+            labelKey={`province`}
+            onChange={handleChange}
+            options={provinceDD}
+            search
+          /> */}
+          <Select
+          // className="form-control"
+          name={`motorprovinceID`}
+          onChange={  (e) =>setFormData((prevState) => ({
+            ...prevState,
+            motorprovinceID: e.value,
+          }))}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+            {/* <option value={formData.province} disabled selected hidden>
+              {formData.province}
+            </option>
+            {provinceDD} */}
+          
+        </div>
+          </div>
+          <div class="row">
+            <div className="col-1"></div>
+            <div class="col-2">
+              <label class="form-label ">
+                เลขทะเบียนรถ<span class="text-danger"> *</span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`licenseNo`}
+                defaultValue={formData.licenseNo}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-1">
+          <label class="form-label ">
+            จังหวัด<span class="text-danger"> *</span>
+          </label>
+          {/* <Typeahead
+            className="form-control"
+            labelKey={`province`}
+            onChange={handleChange}
+            options={provinceDD}
+            search
+          /> */}
+          <Select
+          // className="form-control"
+          name={`motorprovinceID`}
+          onChange={  (e) =>setFormData((prevState) => ({
+            ...prevState,
+            motorprovinceID: e.value,
+          }))}
+          options={provinceDD}
+          styles={{zIndex:2000}}
+          // onChange={opt => console.log(opt)}
+          />
+            {/* <option value={formData.province} disabled selected hidden>
+              {formData.province}
+            </option>
+            {provinceDD} */}
+          
+        </div>
+        <div class="col-2">
               <label class="form-label ">
                 เลขตัวถังรถ<span class="text-danger"> *</span>
               </label>
@@ -1205,6 +1655,18 @@ const PolicyScreen = (props) => {
             </div>
             <div class="col-2">
               <label class="form-label ">
+                เลขเครื่อง<span class="text-danger"> *</span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            <div class="col-1">
+              <label class="form-label ">
                 ปีที่จดทะเบียน<span class="text-danger"> *</span>
               </label>
               <input
@@ -1215,40 +1677,205 @@ const PolicyScreen = (props) => {
                 onChange={handleChange}
               />
             </div>
+            <div class="col-2">
+              <label class="form-label ">
+                ยี่ห้อรถยนต์<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`brandname`}
+                onChange={handleChange}
+              >
+                <option value={formData.brandname} selected disabled hidden>
+                  {formData.brandname}
+                </option>
+                {motorbrandDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                รุ่น<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`modelname`}
+                onChange={handleChange}
+              >
+                <option value={formData.modelname} selected disabled hidden>
+                  {formData.modelname}
+                </option>
+                {motormodelDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
+
+            </div>
+            
+           
+            
+          </div>
+
+          <div class="row">
+            <div className="col-1"></div>
+            <div class="col-2">
+              <label class="form-label ">
+                ยี่ห้อรถยนต์<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`brandname`}
+                onChange={handleChange}
+              >
+                <option value={formData.brandname} selected disabled hidden>
+                  {formData.brandname}
+                </option>
+                {motorbrandDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                รุ่น<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`modelname`}
+                onChange={handleChange}
+              >
+                <option value={formData.modelname} selected disabled hidden>
+                  {formData.modelname}
+                </option>
+                {motormodelDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                รุ่นย่อย<span class="text-danger"> </span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            
+            
+          </div>
+          <div class="row">
+            <div className="col-1"></div>
+            <div class="col-2">
+              <label class="form-label ">
+                ซีซี<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`brandname`}
+                onChange={handleChange}
+              >
+                <option value={formData.brandname} selected disabled hidden>
+                  {formData.brandname}
+                </option>
+                {motorbrandDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`brandname`}
+          onChange={ (e) =>changeMotorBrand(e)}
+          options={motorbrandDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                ที่นั่ง<span class="text-danger"> *</span>
+              </label>
+
+              {/* <select
+                className="form-control"
+                name={`modelname`}
+                onChange={handleChange}
+              >
+                <option value={formData.modelname} selected disabled hidden>
+                  {formData.modelname}
+                </option>
+                {motormodelDD}
+              </select> */}
+
+              <Select
+          // className="form-control"
+          name={`modelname`}
+          onChange={ (e) =>setFormData((prevState) => ({
+            ...prevState,
+            modelname: e.value,
+          }))}
+          options={motormodelDD}
+          />
+
+            </div>
+            <div class="col-2">
+              <label class="form-label ">
+                น้ำหนัก<span class="text-danger"> </span>
+              </label>
+              <input
+                className="form-control"
+                type="text"
+                name={`chassisNo`}
+                defaultValue={formData.chassisNo}
+                onChange={handleChange}
+              />
+            </div>
+            
+            
           </div>
         </>
       ) : null}
-      <div class="row">
-        <div className="col-1"></div>
-        <div class="col-2">
-          <label class="form-label ">
-            เบอร์โทรศัพท์<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.telNum_1}
-            name={`telNum_1`}
-            onChange={handleChange}
-          />
-        </div>
-        <div class="col-2">
-          <label class="form-label ">
-            Email<span class="text-danger"> *</span>
-          </label>
-          <input
-            className="form-control"
-            type="text"
-            defaultValue={formData.Email}
-            name={`Email`}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
+      
       <div class="d-flex justify-content-center">
 
         <button className="p-2 btn btn-primary" name="saveChange" onClick={handleSubmit}>
-          submit
+          บันทึก
         </button>
 
       </div>

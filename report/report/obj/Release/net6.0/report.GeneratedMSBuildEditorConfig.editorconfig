@@ -9,9 +9,17 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = report
 build_property.RootNamespace = report
+<<<<<<< HEAD
 build_property.ProjectDir = C:\Users\ougridd\Source\Repos\bestPolicy\report\report\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = C:\Users\ougridd\Source\Repos\bestPolicy\report\report
+=======
+build_property.ProjectDir = D:\Project\BestPolicy\report\report\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\Project\BestPolicy\report\report
+>>>>>>> upstream/main
 build_property._RazorSourceGeneratorDebug = 

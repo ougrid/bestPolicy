@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import PremInTable from "./PremInTable";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+
 const config = require("../../config.json");
 
 export default function PremInCreateDirect() {
+  const [cookies] = useCookies(["jwt"]);
+  const headers = {
+  headers: { Authorization: `Bearer ${cookies["jwt"]}` }
+};
   const url = window.globalConfig.BEST_POLICY_V1_BASE_URL;
   const wht = config.wht;
   const vat = config.tax;
@@ -33,29 +39,30 @@ export default function PremInCreateDirect() {
   const [policiesData, setPoliciesData] = useState([])
   const colsData = {
 
-    select: "select",
-    insurerCode: "insurerCode",
-    agentCode: "advisorCode",
+    select: "เลือก",
+    insurerCode: "รหัสบริษัทประกัน",
+    agentCode: "รหัสผู้แนะนำ",
     dueDate: "Duedate",
-    policyNo: "Policyno",
-    endorseNo: "Endorseno",
-    invoiceNo: "Invoiceno",
-    seqNo: "seqno",
-    customerid: "customerid",
-    insureename: "insuredname",
-    licenseNo: "licenseno",
+    policyNo: "เลขกรมธรรม์",
+    endorseNo: "เลขสลักหลัง",
+    invoiceNo: "เลขใบแจ้งหนี้",
+    seqNo: "งวด",
+    customerid: "id",
+    insureename: "ชื่อ ผู้เอาประกัน",
+    licenseNo: "เลขทะเบียนรถ",
     // "province",
-    chassisNo: "chassisno",
-    netgrossprem: "grossprem",
-    duty: "duty",
-    tax: "tax",
-    totalprem: "totalamt",
-    commout_rate: "comm-out%",
-    commout_amt: "comm-out-amt",
-    ovout_rate: "ov-out%",
-    ovout_amt: "ov-out-amt",
-    netflag: "[] net",
-    remainamt: "billpremium",
+    chassisNo: "เลขคัชซี",
+    netgrossprem: "เบี้ยประกัน",
+    duty: "อากร",
+    tax: "ภาษี",
+    withheld: "WHT 1%",
+    totalprem: "เบี้ยประกันรวม",
+    commin_rate: "Comm In %",
+    commin_amt: "จำนวน",
+    ovin_rate: "Ov In %",
+    ovin_amt: "จำนวน",
+    // netflag: "[] Net",
+    // remainamt: "รวม (บาท)",
 
   };
 
@@ -90,7 +97,7 @@ export default function PremInCreateDirect() {
     e.preventDefault();
 
     axios
-      .post(url + "/araps/getartransdirect", filterData)
+      .post(url + "/araps/getartransdirect", filterData, headers)
       .then((res) => {
         if (res.status === 201) {
           console.log(res.data);
@@ -154,7 +161,7 @@ export default function PremInCreateDirect() {
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
     console.log(master);
-    await axios.post(url + "/araps/savearpremindirect", { master: master, trans: policiesData }).then((res) => {
+    await axios.post(url + "/araps/savearpremindirect", { master: master, trans: policiesData }, headers).then((res) => {
       alert("save account recive successed!!!");
       // window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -191,7 +198,7 @@ export default function PremInCreateDirect() {
     master.whtcommout = master.commout * wht
     master.whtovout = master.ovout * wht
     console.log({ master: master, trans: selecteddata });
-    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: selecteddata }).then((res) => {
+    await axios.post(url + "/araps/submitarpremindirect", { master: master, trans: selecteddata }, headers).then((res) => {
       alert("save account recive successed!!!");
       window.location.reload(false);
     }).catch((err)=>{ alert("Something went wrong, Try Again.");});
@@ -205,7 +212,7 @@ export default function PremInCreateDirect() {
         {/* insurerCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="insurerCode">
-            insurerCode
+            รหัสบริษัทประกัน
           </label>
           <div className="col-4 ">
             <input
@@ -219,13 +226,13 @@ export default function PremInCreateDirect() {
           </div>
           <div className="col-4 ">
 
-            <button className="btn btn-success" onClick={submitFilter}>SEARCH</button>
+            <button className="btn btn-success" onClick={submitFilter}>ค้นหา</button>
           </div>
         </div>
         {/* advisorCode  */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="agentCode">
-            advisorCode
+            รหัสผู้แนะนำ
           </label>
           <div className="col-4 ">
             <input
@@ -241,7 +248,7 @@ export default function PremInCreateDirect() {
         {/* policyno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            policyno
+            เลขที่กรมธรรม์
           </label>
 
           <div className="col-4">
@@ -254,7 +261,7 @@ export default function PremInCreateDirect() {
             />
           </div>
           <label class="col-sm-1 col-form-label" htmlFor="billadvisorno">
-            to
+            ถึง
           </label>
           <div className="col-4">
             <input
@@ -270,7 +277,7 @@ export default function PremInCreateDirect() {
         {/* endorseno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            endorseno
+            เลขสลักหลัง
           </label>
 
           <div className="col-4">
@@ -283,7 +290,7 @@ export default function PremInCreateDirect() {
             />
           </div>
           <label class="col-sm-1 col-form-label" htmlFor="billadvisorno">
-            to
+            ถึง
           </label>
           <div className="col-4">
             <input
@@ -299,7 +306,7 @@ export default function PremInCreateDirect() {
         {/* invoiceno */}
         <div className="row my-3">
           <label class="col-sm-2 col-form-label" htmlFor="billadvisorno">
-            invoiceno
+            เลขใบแจ้งหนี้
           </label>
 
           <div className="col-4">
@@ -312,7 +319,7 @@ export default function PremInCreateDirect() {
             />
           </div>
           <label class="col-sm-1 col-form-label" htmlFor="billadvisorno">
-            to
+            ถึง
           </label>
           <div className="col-4">
             <input
