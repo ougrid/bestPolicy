@@ -497,7 +497,26 @@ namespace report.Controllers
                 // worksheet.Cell(currentRow, 12).Value = record.duty;
                 // //worksheet.Cell(currentRow, 13).Value = record.tax;
                 // //worksheet.Cell(currentRow, 14).Value = record.totalprem;
-
+                // worksheet.Cell(currentRow, 15).Value = record.</>;
+                // worksheet.Cell(currentRow, 16).Value = record.</>;
+                // worksheet.Cell(currentRow, 17).Value = record.</>;
+                // worksheet.Cell(currentRow, 18).Value = record.</>;
+                // worksheet.Cell(currentRow, 19).Value = record.</>;
+                // worksheet.Cell(currentRow, 20).Value = record.</>;
+                // worksheet.Cell(currentRow, 21).Value = record.</>;
+                // worksheet.Cell(currentRow, 22).Value = record.</>;
+                // worksheet.Cell(currentRow, 23).Value = record.</>;
+                // worksheet.Cell(currentRow, 24).Value = record.</>;
+                // worksheet.Cell(currentRow, 25).Value = record.</>;
+                // worksheet.Cell(currentRow, 26).Value = record.</>;
+                // worksheet.Cell(currentRow, 27).Value = record.</>;
+                // worksheet.Cell(currentRow, 28).Value = record.</>;
+                // worksheet.Cell(currentRow, 29).Value = record.</>;
+                // worksheet.Cell(currentRow, 30).Value = record.</>;
+                // worksheet.Cell(currentRow, 31).Value = record.</>;
+                // worksheet.Cell(currentRow, 32).Value = record.</>;
+                // worksheet.Cell(currentRow, 33).Value = record.</>;
+                // worksheet.Cell(currentRow, 34).Value = record.</>;
             }
             worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorder = XLBorderStyleValues.Thin;
             worksheet.Range("A4:AF" + currentRow).Style.Border.InsideBorderColor = XLColor.Black;
@@ -517,7 +536,7 @@ namespace report.Controllers
     }
 
 
-    [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-balance
+    [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-outstanding
     [HttpPost]
     public async Task<IActionResult> GetPremInOutstanding(Transaction data)
     {

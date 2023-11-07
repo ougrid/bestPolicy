@@ -78,7 +78,7 @@ namespace report.Services
             // where t."transType" = 'PREM-IN'
             // and t."duty" in ('1', '2', '3', '4', '5')
             // and t."status" = 'N'
-            // and t."createdAt" between '2023-09-01' and '2023-09-30'
+            // and t."createdAt" between '2023-09-01' and '2023-09-30'                                                                                       
             // and t."agentCode" = 'A12134'
             // and t."insurerCode" = 'test23';
 
@@ -93,7 +93,7 @@ namespace report.Services
             return policyList;
         }
 
-        public async Task<List<Transaction>> GetPolicyListByPremInClearing(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
+        public async Task<List<Transaction>> GetPolicyListByPremInClearing(Transaction data) // ตัดหนี้ตัวแทน ตัวตัด 
         {
             string insurerCode = data.insurerCode;
             string agentCode = data.agentCode;

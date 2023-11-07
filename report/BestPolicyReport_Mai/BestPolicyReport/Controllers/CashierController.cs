@@ -26,7 +26,7 @@ namespace BestPolicyReport.Controllers
             }
             return Ok(result);
         }
-        
+
         [HttpPost("excel")]
         public async Task<IActionResult?> GetCashierReportExcel(CashierReportInput data)
         {
