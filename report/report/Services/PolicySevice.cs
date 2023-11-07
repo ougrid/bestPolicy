@@ -28,7 +28,7 @@ namespace report.Services
             return policyList;
         }
 
-        public async Task<List<Transaction>> GetPolicyListByPremIn(Transaction data)
+        public async Task<List<Transaction>> GetPolicyListByPremInOpenitem(Transaction data)
         {
             // string agentCode = data.agentCode;
             // DateTime startDate = data.startDate;
@@ -93,7 +93,7 @@ namespace report.Services
             return policyList;
         }
 
-        public async Task<List<Transaction>> GetPolicyListByPremInDeduct(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
+        public async Task<List<Transaction>> GetPolicyListByPremInClearing(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
         {
             string insurerCode = data.insurerCode;
             string agentCode = data.agentCode;
@@ -109,7 +109,7 @@ namespace report.Services
 
         }
 
-        public async Task<List<Transaction>> GetPolicyListByPremInBalance(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
+        public async Task<List<Transaction>> GetPolicyListByPremInOutstanding(Transaction data) // ตัดหนีตัวแทน ตัวตัด 
         {
             string insurerCode = data.insurerCode;
             string agentCode = data.agentCode;

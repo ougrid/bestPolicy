@@ -273,9 +273,9 @@ namespace report.Controllers
             return dt;
         }
 
-        [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-outstanding
+        [Route("[controller]/report-premin-openitem")] // รายงานตัดหนี้ตัวแทน ตัวตั้ง report-premin-openitem (Openitem: ตัวตั้ง, Clearing: ตัวตัด, Outstanding: คงเหลือ)
         [HttpPost]
-        public async Task<IActionResult> GetPremInOutstanding(Transaction data)
+        public async Task<IActionResult> GetPremInOpenitem(Transaction data)
         {
             var records = await _policyService.GetPolicyListByPremIn(data);
             var dateNow = DateOnly.FromDateTime(DateTime.Now);
@@ -395,9 +395,9 @@ namespace report.Controllers
 
     }
 
-    [Route("[controller]/report-premin-deduct")] // รายงานตัดหนี้ตัวแทน ตัวตัด report-premin-deduct
+    [Route("[controller]/report-premin-clearing")] // รายงานตัดหนี้ตัวแทน ตัวตัด report-premin-clearing
     [HttpPost]
-    public async Task<IActionResult> GetPremInOutstanding(Transaction data)
+    public async Task<IActionResult> GetPremInClearing(Transaction data)
     {
         var records = await _policyService.GetPolicyListByPremIn(data);
         var dateNow = DateOnly.FromDateTime(DateTime.Now);
@@ -517,7 +517,7 @@ namespace report.Controllers
     }
 
 
-    [Route("[controller]/report-premin-balance")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-balance
+    [Route("[controller]/report-premin-outstanding")] // รายงานตัดหนี้ตัวแทน คงเหลือ report-premin-balance
     [HttpPost]
     public async Task<IActionResult> GetPremInOutstanding(Transaction data)
     {
